@@ -159,7 +159,6 @@ main {
   justify-content: flex-start;
   align-items: center;
 }
-
 .tips {
   --tw-text-opacity: 1;
   line-height: 1.4;
@@ -352,6 +351,10 @@ mark {
   .img-dark-compatible {
     filter: invert(50%);
   }
+  .svg-icon{
+    color: #eee;
+    stroke:  #eee;
+  }
 }
 
 @media (prefers-color-scheme: light) {
@@ -360,5 +363,9 @@ mark {
   }
   .tag-variable {
     color: rgb(20, 20, 20);
+  }
+  .svg-icon{
+    color: #171717;
+    stroke:  #171717;
   }
 }

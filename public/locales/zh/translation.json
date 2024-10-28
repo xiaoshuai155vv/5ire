@@ -190,5 +190,6 @@
   "Subscription.Notification.RedeemFailed": "兑换失败！",
   "Subscription.Notification.InvalidRedeemCode": "错误的兑换码",
   "Subscription.HowToGetRedeemCode": "如何获取兑换码？",
-  "Subscription.Placeholder.RedeemCode": "兑换码"
+  "Subscription.Placeholder.RedeemCode": "兑换码",
+  "Common.GitHub": "GitHub"
 }
