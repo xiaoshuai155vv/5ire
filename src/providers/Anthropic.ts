@@ -17,7 +17,7 @@ export default {
     },
     models: {
       'claude-3.5-sonnet': {
-        name: 'claude-3-5-sonnet-20240620',
+        name: 'claude-3-5-sonnet-latest',
         contextWindow: 200000,
         maxTokens: 4096,
         inputPrice: 0.003,
