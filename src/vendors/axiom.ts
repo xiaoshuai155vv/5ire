@@ -2,8 +2,8 @@ import { Axiom } from '@axiomhq/js';
 import { captureException } from '@sentry/electron/main';
 
 const axiom = new Axiom({
-  token: window.envVars.AXIOM_TOKEN as string,
-  orgId: window.envVars.AXIOM_ORG_ID as string,
+  token: process.env.AXIOM_TOKEN as string,
+  orgId: process.env.AXIOM_ORG_ID as string,
 });
 
 export default {
