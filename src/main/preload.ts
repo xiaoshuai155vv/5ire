@@ -129,4 +129,14 @@ const electronHandler = {
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
 
+const envVars = {
+  SUPA_PROJECT_ID: process.env.SUPA_PROJECT_ID,
+  SUPA_KEY: process.env.SUPA_KEY,
+  AXIOM_TOKEN: process.env.AXIOM_TOKEN,
+  AXIOM_ORG_ID: process.env.AXIOM_ORG_ID,
+}
+contextBridge.exposeInMainWorld('envVars', envVars);
+
+
 export type ElectronHandler = typeof electronHandler;
+export type EnvVars = typeof envVars;

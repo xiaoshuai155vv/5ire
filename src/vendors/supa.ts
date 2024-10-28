@@ -6,8 +6,8 @@ import { captureException } from '@sentry/electron/renderer';
 const debug = Debug('5ire:vendors:supa');
 
 const supabase = createClient(
-  `https://${process.env.SUPA_PROJECT_ID}.supabase.co`,
-  process.env.SUPA_KEY as string
+  `https://${window.envVars.SUPA_PROJECT_ID}.supabase.co`,
+  window.envVars.SUPA_KEY as string
 );
 
 export async function fetchById<Type>(
