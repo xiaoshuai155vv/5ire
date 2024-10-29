@@ -200,7 +200,7 @@ export default function Register() {
                 onBlur={() => validateEmail(email)}
                 value={email}
                 onChange={onEmailChange}
-                type="email"
+                type="text"
                 icon={<Mail20Regular />}
                 isValid={isEmailValid}
                 errorMsg={t('Auth.Notification.InvalidEmailWarning')}
