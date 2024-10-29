@@ -36,7 +36,7 @@ export default function TabSubscription() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return (
-      subscription &&
+      subscription && subscription.deadline &&
       new Date(subscription.deadline).getTime() >= today.getTime()
     );
   }, [subscription]);
@@ -121,7 +121,7 @@ export default function TabSubscription() {
         .from('subscriptions')
         .select('id, quota_per_day, deadline')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
       if (error) {
         notifyError(error.message);
       } else {
