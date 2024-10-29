@@ -18,6 +18,7 @@ import {
   Input,
 } from '@fluentui/react-components';
 import { fmtDateTime } from 'utils/util';
+import { debounce } from 'lodash';
 
 const debug = Debug('5ire:pages:user:TabSubscription');
 
@@ -36,7 +37,8 @@ export default function TabSubscription() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return (
-      subscription && subscription.deadline &&
+      subscription &&
+      subscription.deadline &&
       new Date(subscription.deadline).getTime() >= today.getTime()
     );
   }, [subscription]);
@@ -76,44 +78,47 @@ export default function TabSubscription() {
     }
   };
 
-  const onRedeem = useCallback(async (userId: string | undefined) => {
-    if (!userId) {
-      notifyError('User not found');
-      return;
-    }
-    if (redeemCode.length != 20) {
-      notifyInfo(t('Subscription.Notification.InvalidRedeemCode'));
-      return;
-    }
-    try {
-      setRedeeming(true);
-      const { data, error } = await supabase
-        .from('coupons')
-        .update({
-          user_id: userId
-        })
-        .eq('id', redeemCode)
-        .is('user_id', null)
-        .is('redeemed_at', null)
-        .select('id')
-        .maybeSingle()
-      if (error || !data) {
-        notifyError(
-          error?.message || t('Subscription.Notification.RedeemFailed')
-        );
-      } else {
-        notifySuccess(t('Subscription.Notification.RedeemSuccess'));
-        loadSubscription(userId);
-        loadOrders(userId);
-        setRedeemOpen(false);
+  const onRedeem = useCallback(
+    async (userId: string | undefined) => {
+      if (!userId) {
+        notifyError('User not found');
+        return;
       }
-    } catch (error) {
-      debug(error);
-      captureException(error);
-    } finally {
-      setRedeeming(false);
-    }
-  }, [redeemCode]);
+      if (redeemCode.length != 20) {
+        notifyInfo(t('Subscription.Notification.InvalidRedeemCode'));
+        return;
+      }
+      try {
+        setRedeeming(true);
+        const { data, error } = await supabase
+          .from('coupons')
+          .update({
+            user_id: userId,
+          })
+          .eq('id', redeemCode)
+          .is('user_id', null)
+          .is('redeemed_at', null)
+          .select('id')
+          .maybeSingle();
+        if (error || !data) {
+          notifyError(
+            error?.message || t('Subscription.Notification.RedeemFailed')
+          );
+        } else {
+          notifySuccess(t('Subscription.Notification.RedeemSuccess'));
+          loadSubscription(userId);
+          loadOrders(userId);
+          setRedeemOpen(false);
+        }
+      } catch (error) {
+        debug(error);
+        captureException(error);
+      } finally {
+        setRedeeming(false);
+      }
+    },
+    [redeemCode]
+  );
 
   const loadSubscription = async (userId: string) => {
     try {
@@ -213,7 +218,10 @@ export default function TabSubscription() {
                 orders.map((order) => (
                   <div key={order.id} className="grid grid-cols-3">
                     <div>
-                      <span className='inline-block w-3 number'>{order.num_of_month}</span>{t('Subscription.Month')}
+                      <span className="inline-block w-3 number">
+                        {order.num_of_month}
+                      </span>
+                      {t('Subscription.Month')}
                     </div>
                     <div className="text-right mr-4 number">
                       {order.amount / 100} {order.currency}
@@ -232,20 +240,28 @@ export default function TabSubscription() {
           </div>
         </div>
       )}
-      <Dialog modalType="non-modal" open={redeemOpen} onOpenChange={(open)=>setRedeemOpen(!open)}>
+      <Dialog
+        modalType="non-modal"
+        open={redeemOpen}
+        onOpenChange={(open) => setRedeemOpen(!open)}
+      >
         <DialogSurface aria-describedby={undefined}>
           <DialogBody>
             <DialogTitle>{t('Subscription.Redeem')}</DialogTitle>
             <DialogContent>
-              <button className='underline p-0' onClick={()=>window.electron.openExternal('https://5ire.app/redeem-code')}>
+              <button
+                className="underline p-0"
+                onClick={() =>
+                  window.electron.openExternal('https://5ire.app/redeem-code')
+                }
+              >
                 {t('Subscription.HowToGetRedeemCode')}
               </button>
               <Input
                 className="w-full my-4"
-                onChange={(e) =>setRedeemCode(e.currentTarget.value)}
+                onChange={(e) => setRedeemCode(e.currentTarget.value)}
                 placeholder={t('Subscription.Placeholder.RedeemCode')}
               />
-
             </DialogContent>
             <DialogActions>
               <DialogTrigger disableButtonEnhancement>

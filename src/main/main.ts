@@ -2,6 +2,7 @@
 // import 'v8-compile-cache';
 import os from 'node:os';
 import path from 'path';
+import dotenv from 'dotenv';
 import {
   app,
   dialog,
@@ -11,6 +12,13 @@ import {
   ipcMain,
   nativeTheme,
 } from 'electron';
+
+dotenv.config({
+  path: app.isPackaged
+    ? path.join(process.resourcesPath, '.env')
+    : path.resolve(process.cwd(), '.env'),
+});
+
 import { autoUpdater } from 'electron-updater';
 import { Deeplink } from 'electron-deeplink';
 import Store from 'electron-store';
@@ -25,15 +33,11 @@ import { Embedder } from './embedder';
 import initCrashReporter from '../CrashReporter';
 import { encrypt, decrypt } from './crypt';
 import { MessageBoxOptions } from 'electron';
-import dotenv from 'dotenv';
+
 import Knowledge from './knowledge';
 
 import { SUPPORTED_FILE_TYPES, MAX_FILE_SIZE } from '../consts';
-dotenv.config({
-  path: app.isPackaged
-    ? path.join(process.resourcesPath, '.env')
-    : path.resolve(process.cwd(), '.env'),
-});
+
 log.info('Main process start...');
 
 /**
