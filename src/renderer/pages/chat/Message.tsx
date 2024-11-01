@@ -102,7 +102,7 @@ export default function Message({ message }: { message: IChatMessage }) {
         >
           <div className="avatar flex-shrink-0 mr-2" />
           <div
-            className="mt-1"
+            className="mt-1 break-all"
             dangerouslySetInnerHTML={{
               __html: render(highlight(message.prompt, keyword) || ''),
             }}
