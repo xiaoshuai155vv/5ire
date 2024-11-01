@@ -1,8 +1,8 @@
 {
   "name": "5ire",
-  "version": "0.7.9",
+  "version": "0.8.0",
   "description": "An Open Source LLMs Desktop Client",
-  "license": "UNLICENSED",
+  "license": "GPL-3.0-only",
   "author": {
     "name": "Ironben",
     "email": "support@5ire.app",
