@@ -18,7 +18,6 @@ import {
   Input,
 } from '@fluentui/react-components';
 import { fmtDateTime } from 'utils/util';
-import { debounce } from 'lodash';
 
 const debug = Debug('5ire:pages:user:TabSubscription');
 

@@ -1,7 +1,5 @@
 import {
   Avatar,
-  Button,
-  Link,
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
@@ -12,17 +10,19 @@ import {
 } from '@fluentui/react-components';
 import {
   CheckmarkStarburst16Filled,
-  PersonStarburst24Regular,
   Premium24Regular,
   ShieldKeyhole24Regular,
 } from '@fluentui/react-icons';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Empty from 'renderer/components/Empty';
 import useAppearanceStore from 'stores/useAppearanceStore';
 import useAuthStore from 'stores/useAuthStore';
 import TabPassword from './TabPassword';
 import TabSubscription from './TabSubscription';
+
+const MemorizedTabPassword = memo(TabPassword);
+const MemorizedTabSubscription = memo(TabSubscription);
 
 export default function Account() {
   const { t } = useTranslation();
@@ -85,17 +85,23 @@ export default function Account() {
             <div className="mt-10 flex justify-start items-start h-5/6">
               <div className="flex-shrink-0 h-full">
                 <TabList selectedValue={tab} vertical onTabSelect={onTabSelect}>
-                  <Tab value="subscription" icon={<Premium24Regular className='tips' />}>
+                  <Tab
+                    value="subscription"
+                    icon={<Premium24Regular className="tips" />}
+                  >
                     {t('Common.Subscription')}
                   </Tab>
-                  <Tab value="password" icon={<ShieldKeyhole24Regular className='tips'/>}>
+                  <Tab
+                    value="password"
+                    icon={<ShieldKeyhole24Regular className="tips" />}
+                  >
                     {t('Common.Password')}
                   </Tab>
                 </TabList>
               </div>
               <div className="border-l border-base w-full px-5">
-                {tab == 'password' && <TabPassword />}
-                {tab == 'subscription' && <TabSubscription />}
+                {tab == 'password' && <MemorizedTabPassword />}
+                {tab == 'subscription' && <MemorizedTabSubscription />}
               </div>
             </div>
           </div>
