@@ -20,6 +20,7 @@
   "Common.APIKey": "API Key",
   "Common.Premium": "Premium",
   "Azure.DeploymentID": "Deployment ID",
+  "Doubao.DeploymentID": "Access Point Name",
   "Common.SecretKey": "Secret Key",
   "Common.Analytics": "Analytics",
   "Common.Workspace": "Workspace",

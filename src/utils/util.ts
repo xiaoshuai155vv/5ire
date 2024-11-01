@@ -133,6 +133,10 @@ export function isGPT(model: string) {
   return isGPT35(model) || isGPT4(model);
 }
 
+export function isDoubao(model:string){
+  return model.toLowerCase().startsWith('doubao')
+}
+
 export function isClaude1(model: string) {
   return model.toLowerCase() === 'claude-instant-1';
 }

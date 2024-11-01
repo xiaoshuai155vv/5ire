@@ -9,6 +9,7 @@ import BaiduChatService from './BaiduChatService';
 import ChatBroChatService from './ChatBroChatService';
 import MoonshotChatService from './MoonshotChatService';
 import FireChatService from './FireChatService';
+import DoubaoChatService from './DoubaoChatService';
 
 export default function createService(
   providerName: ProviderType,
@@ -33,6 +34,8 @@ export default function createService(
       return new ChatBroChatService(chatCtx);
     case '5ire':
       return new FireChatService(chatCtx);
+    case 'Doubao':
+        return new DoubaoChatService(chatCtx);
     default:
       throw new Error(`Invalid provider:${providerName}`);
   }

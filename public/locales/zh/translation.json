@@ -13,6 +13,7 @@
   "Common.APIKey": "API 密钥",
   "Common.Premium": "尊享",
   "Azure.DeploymentID": "Deployment ID",
+  "Doubao.DeploymentID": "接入点名称",
   "Common.SecretKey": "Secret Key",
   "Common.Analytics": "统计",
   "Common.Workspace": "空间",

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useEffect, useMemo } from 'react';
+import { ChangeEvent, useState, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dropdown,
@@ -8,18 +8,19 @@ import {
   Option,
   Tooltip,
 } from '@fluentui/react-components';
-import { Info16Regular, Premium16Regular } from '@fluentui/react-icons';
+import {  Premium16Regular } from '@fluentui/react-icons';
 import useSettingsStore from '../../../stores/useSettingsStore';
 import ModelField from './ModelField';
 import { IServiceProvider } from '../../../providers/types';
 import MaskableInput from 'renderer/components/MaskableInput';
 import useProvider from 'hooks/useProvider';
 import useAuthStore from 'stores/useAuthStore';
+import TooltipIcon from 'renderer/components/TooltipIcon';
+
 export default function APISettings() {
   const { t } = useTranslation();
   const api = useSettingsStore((state) => state.api);
   const session = useAuthStore((state) => state.session);
-  const user = useAuthStore((state) => state.user);
   const setAPI = useSettingsStore((state) => state.setAPI);
   const { getProviders, getProvider, getDefaultChatModel } = useProvider();
   const providers = useMemo(() => getProviders(), []);
@@ -87,21 +88,6 @@ export default function APISettings() {
     setAPI({ deploymentId: data.value });
   };
 
-  const renderTooltip = (tip: string | undefined) => {
-    return tip ? (
-      <Tooltip
-        content={{
-          children: t(tip),
-        }}
-        positioning="above-start"
-        withArrow
-        relationship="label"
-      >
-        <Info16Regular tabIndex={0} className="inline-block ml-1.5" />
-      </Tooltip>
-    ) : null;
-  };
-
   return (
     <div className="settings-section">
       <div className="settings-section--header">{t('Common.API')}</div>
@@ -139,7 +125,7 @@ export default function APISettings() {
           <div className="my-3.5">
             <div className="flex justify-start items-center mb-1.5">
               <Label htmlFor="apiBase">{t('Common.APIBase')}</Label>
-              {renderTooltip(provider.chat.docs?.base)}
+              <TooltipIcon tip={provider.chat.docs?.base}/>
             </div>
             <div>
               <Input
@@ -170,11 +156,13 @@ export default function APISettings() {
             </div>
           </div>
         )}
-        {provider.name === 'Azure' ? (
+        {['Azure', 'Doubao'].includes(provider.name) ? (
           <div className="my-3.5">
             <div className="flex justify-start items-center mb-1.5">
-              <Label htmlFor="deploymentId">{t('Azure.DeploymentID')}</Label>
-              {renderTooltip(provider.chat.docs?.deploymentId)}
+              <Label htmlFor="deploymentId">
+                {t(`${provider.name}.DeploymentID`)}
+              </Label>
+              <TooltipIcon tip={provider.chat.docs?.deploymentId}/>
             </div>
             <Input
               value={api.deploymentId || ''}
@@ -188,7 +176,7 @@ export default function APISettings() {
           <div className="my-3.5">
             <div className="flex justify-start items-center mb-1.5">
               <Label htmlFor="apiSecret">{t('Common.SecretKey')}</Label>
-              {renderTooltip(provider.chat.docs?.apiSecret)}
+              <TooltipIcon tip={provider.chat.docs?.apiSecret}/>
             </div>
             <MaskableInput
               id="apiSecret"

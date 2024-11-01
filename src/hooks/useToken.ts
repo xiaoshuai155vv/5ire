@@ -1,4 +1,4 @@
-import { isGPT, isGemini, isMoonshot, isLlama } from 'utils/util';
+import { isGPT, isGemini, isMoonshot, isLlama, isDoubao } from 'utils/util';
 import {
   countGPTTokens,
   countTokensOfGemini,
@@ -7,7 +7,7 @@ import {
 } from 'utils/token';
 import { captureException } from '@sentry/react';
 import useChatContext from './useChatContext';
-import { IChatMessage, IChatRequestMessage } from 'intellichat/types';
+import { IChatMessage } from 'intellichat/types';
 import useSettingsStore from 'stores/useSettingsStore';
 
 export default function useToken() {
@@ -16,7 +16,8 @@ export default function useToken() {
   const modelName = ctx.getModel().name
   return {
     countInput: async (prompt: string): Promise<number> => {
-      if (isGPT(modelName)) {
+
+      if (isGPT(modelName) || isDoubao(modelName)) {
         const messages = [];
         ctx.getCtxMessages().forEach((msg: IChatMessage) => {
           messages.push({ role: 'user', content: msg.prompt });
@@ -37,7 +38,7 @@ export default function useToken() {
           messages,
           api.base,
           api.key,
-          ctx.model
+          ctx.getModel().name
         );
       }
 

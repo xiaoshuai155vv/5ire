@@ -12,6 +12,7 @@ import { useEffect, useMemo } from 'react';
 import { IChatModel, IServiceProvider } from '../../../providers/types';
 import useProvider from 'hooks/useProvider';
 import {  Info16Regular } from '@fluentui/react-icons';
+import TooltipIcon from 'renderer/components/TooltipIcon';
 
 export default function ModelField({
   provider,
@@ -44,6 +45,7 @@ export default function ModelField({
     <div className="my-3.5">
       <div className="flex justify-start items-center mb-1.5">
         <Label htmlFor="model">{t('Common.Model')}</Label>
+        <TooltipIcon tip={provider.chat.docs?.model}/>
       </div>
       {}
       <div>

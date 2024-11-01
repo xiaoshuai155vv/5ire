@@ -9,6 +9,7 @@ import Anthropic from './Anthropic';
 import Fire from './Fire';
 import Ollama from './Ollama';
 import { merge } from 'lodash';
+import Doubao from './Doubao';
 
 export const providers: { [key: string]: IServiceProvider } = {
   OpenAI,
@@ -20,6 +21,7 @@ export const providers: { [key: string]: IServiceProvider } = {
   ChatBro,
   Ollama,
   '5ire':Fire,
+  Doubao
 };
 
 export function getProvider(providerName: ProviderType): IServiceProvider {

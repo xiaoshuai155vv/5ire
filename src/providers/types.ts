@@ -8,6 +8,7 @@ export type ProviderType =
   | 'Ollama'
   | 'ChatBro'
   | '5ire'
+  | 'Doubao'
 
 export interface INumberRange {
   min: number;
@@ -28,6 +29,8 @@ export type ChatModelGroup =
   | 'Moonshot'
   | 'Claude-3'
   | 'Claude-3.5'
+  | 'Doubao-Pro'
+  | 'Doubao-Lite'
   | 'Open Source';
 
 

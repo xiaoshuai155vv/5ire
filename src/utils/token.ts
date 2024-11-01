@@ -34,6 +34,14 @@ export function countGPTTokens(messages: IChatRequestMessage[], model: string) {
       'gpt-4-32k-0314',
       'gpt-4-0613',
       'gpt-4-32k-0613',
+      // doubao
+      'doubao-pro-256k',
+      'doubao-pro-128k',
+      'doubao-pro-32k',
+      'doubao-pro-4k',
+      'doubao-lite-128k',
+      'doubao-lite-32k',
+      'doubao-lite-4k',
     ].includes(model)
   ) {
     tokensPerMessage = 3;
