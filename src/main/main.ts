@@ -61,7 +61,6 @@ const store = new Store();
 
 class AppUpdater {
   constructor() {
-    const server = 'https://update.electronjs.org';
     autoUpdater.setFeedURL({
       provider: 'generic',
       url: 'https://github.com/nanbingxyz/5ire/releases/latest/download/',
