@@ -1,9 +1,9 @@
 import { IServiceProvider } from './types';
 
 export default {
-  name: 'Grok',
-  apiBase: 'https://api.x.ai',
-  currency: 'USD',
+  name: 'DeepSeek',
+  apiBase: 'https://api.deepseek.com',
+  currency: 'CNY',
   options: {
     apiBaseCustomizable: true,
     apiKeyCustomizable: true,
@@ -12,20 +12,20 @@ export default {
     apiSchema: ['base', 'key', 'model'],
     presencePenalty: { min: -2, max: 2, default: 0 },
     topP: { min: 0, max: 1, default: 1 },
-    temperature: { min: 0, max: 2, default: 0.9 },
+    temperature: { min: 0, max: 2, default: 1 },
     options: {
       modelCustomizable: false,
     },
     models: {
-      'grok-beta': {
-        name: 'grok-beta',
-        contextWindow: 131072,
+      'deepseek-chat': {
+        name: 'deepseek-chat',
+        contextWindow: 128000,
         maxTokens: 4096,
-        inputPrice: 0.005,
-        outputPrice: 0.015,
+        inputPrice: 0.0001,
+        outputPrice: 0.001,
         isDefault: true,
-        description: `Comparable performance to Grok 2 but with improved efficiency, speed and capabilities.`,
-        group: 'Grok',
+        description: ``,
+        group: 'DeepSeek',
       }
     },
   },

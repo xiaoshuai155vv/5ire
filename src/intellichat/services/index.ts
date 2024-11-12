@@ -11,6 +11,8 @@ import MoonshotChatService from './MoonshotChatService';
 import FireChatService from './FireChatService';
 import DoubaoChatService from './DoubaoChatService';
 import GrokChatService from './GrokChatService';
+import DeepSeek from 'providers/DeepSeek';
+import DeepSeekChatService from './DeepSeekChatService';
 
 export default function createService(
   providerName: ProviderType,
@@ -39,6 +41,8 @@ export default function createService(
       return new DoubaoChatService(chatCtx);
     case 'Grok':
       return new GrokChatService(chatCtx);
+    case 'DeepSeek':
+      return new DeepSeekChatService(chatCtx);
     default:
       throw new Error(`Invalid provider:${providerName}`);
   }

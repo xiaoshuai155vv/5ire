@@ -1,4 +1,4 @@
-import { isGPT, isGemini, isMoonshot, isLlama, isDoubao, isGrok } from 'utils/util';
+import { isGPT, isGemini, isMoonshot, isLlama, isDoubao, isGrok, isDeepSeek } from 'utils/util';
 import {
   countGPTTokens,
   countTokensOfGemini,
@@ -17,7 +17,7 @@ export default function useToken() {
   return {
     countInput: async (prompt: string): Promise<number> => {
 
-      if (isGPT(modelName) || isDoubao(modelName) || isGrok(modelName)) {
+      if (isGPT(modelName) || isDoubao(modelName) || isGrok(modelName) || isDeepSeek(modelName)) {
         const messages = [];
         ctx.getCtxMessages().forEach((msg: IChatMessage) => {
           messages.push({ role: 'user', content: msg.prompt });

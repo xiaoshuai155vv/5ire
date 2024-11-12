@@ -141,6 +141,10 @@ export function isGrok(model: string) {
   return model.toLowerCase().startsWith('grok');
 }
 
+export function isDeepSeek(model: string) {
+  return model.toLowerCase().startsWith('deepseek');
+}
+
 export function isClaude1(model: string) {
   return model.toLowerCase() === 'claude-instant-1';
 }
