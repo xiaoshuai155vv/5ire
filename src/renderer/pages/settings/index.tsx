@@ -63,7 +63,7 @@ export default function Settings() {
           .from('settings')
           .select('updated_at')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         if (error) {
           notifyError(error.message);
         } else {
