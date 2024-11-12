@@ -93,7 +93,7 @@ export default function Settings() {
         .from('settings')
         .select('data')
         .eq('id', user.id)
-        .single();
+        .maybeSingle()
       if (error) {
         notifyError(error.message);
       } else {
