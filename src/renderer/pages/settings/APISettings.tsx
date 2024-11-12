@@ -131,7 +131,6 @@ export default function APISettings() {
               <Input
                 id="apiBase"
                 className="w-4/5 min-w-fit"
-                type="url"
                 disabled={!provider.options.apiBaseCustomizable}
                 placeholder={t(provider.chat.placeholders?.base || '')}
                 value={api.base}
