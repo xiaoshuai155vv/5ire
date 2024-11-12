@@ -28,7 +28,7 @@ export default function Footer({ collapsed }: { collapsed: boolean }) {
     window.electron.ingestEvent([{ app: 'go-feedback' }]);
   }, []);
   const getHomepage = useCallback(() => {
-    window.electron.openExternal('https://get.5ire.app');
+    window.electron.openExternal('https://5ire.app');
     window.electron.ingestEvent([{ app: 'go-homepage' }]);
   }, []);
 

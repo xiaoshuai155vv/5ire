@@ -157,13 +157,7 @@ export default class MenuBuilder {
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://get.5ire.app');
-          },
-        },
-        {
-          label: 'Documentation',
-          click() {
-            shell.openExternal('https://get.5ire.app/docs');
+            shell.openExternal('https://5ire.app');
           },
         },
         {
