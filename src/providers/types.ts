@@ -9,6 +9,7 @@ export type ProviderType =
   | 'ChatBro'
   | '5ire'
   | 'Doubao'
+  | 'Grok'
 
 export interface INumberRange {
   min: number;
@@ -25,6 +26,7 @@ export type ChatModelGroup =
   | 'GPT-3.5'
   | 'GPT-4'
   | 'Gemini'
+  | 'Grok'
   | 'ERNIE'
   | 'Moonshot'
   | 'Claude-3'

@@ -137,6 +137,10 @@ export function isDoubao(model:string){
   return model.toLowerCase().startsWith('doubao')
 }
 
+export function isGrok(model: string) {
+  return model.toLowerCase().startsWith('grok');
+}
+
 export function isClaude1(model: string) {
   return model.toLowerCase() === 'claude-instant-1';
 }

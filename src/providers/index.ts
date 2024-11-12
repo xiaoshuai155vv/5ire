@@ -10,18 +10,20 @@ import Fire from './Fire';
 import Ollama from './Ollama';
 import { merge } from 'lodash';
 import Doubao from './Doubao';
+import Grok from './Grok';
 
 export const providers: { [key: string]: IServiceProvider } = {
   OpenAI,
   Anthropic,
   Azure,
   Google,
+  Grok,
   Baidu,
   Moonshot,
   ChatBro,
   Ollama,
+  Doubao,
   '5ire':Fire,
-  Doubao
 };
 
 export function getProvider(providerName: ProviderType): IServiceProvider {

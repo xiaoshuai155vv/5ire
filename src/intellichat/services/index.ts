@@ -1,5 +1,5 @@
 import { IChatContext } from '../types';
-import {ProviderType} from '../../providers/types';
+import { ProviderType } from '../../providers/types';
 import AnthropicChatService from './AnthropicChatService';
 import AzureChatService from './AzureChatService';
 import OllamaChatService from './OllamaChatService';
@@ -10,6 +10,7 @@ import ChatBroChatService from './ChatBroChatService';
 import MoonshotChatService from './MoonshotChatService';
 import FireChatService from './FireChatService';
 import DoubaoChatService from './DoubaoChatService';
+import GrokChatService from './GrokChatService';
 
 export default function createService(
   providerName: ProviderType,
@@ -35,7 +36,9 @@ export default function createService(
     case '5ire':
       return new FireChatService(chatCtx);
     case 'Doubao':
-        return new DoubaoChatService(chatCtx);
+      return new DoubaoChatService(chatCtx);
+    case 'Grok':
+      return new GrokChatService(chatCtx);
     default:
       throw new Error(`Invalid provider:${providerName}`);
   }

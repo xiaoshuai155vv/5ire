@@ -42,6 +42,8 @@ export function countGPTTokens(messages: IChatRequestMessage[], model: string) {
       'doubao-lite-128k',
       'doubao-lite-32k',
       'doubao-lite-4k',
+      // grok
+      'grok-beta',
     ].includes(model)
   ) {
     tokensPerMessage = 3;
