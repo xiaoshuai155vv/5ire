@@ -3,18 +3,31 @@
     <img src="https://5ire.app/logo.png" alt="Logo" width="120">
   </a>
    <br />
-    <br />
+  <br />
   <img src="https://5ire.app/hero.png" width="100%" alt="Screenshot"/>
   <p>
     <br />
     <strong>A Cross-platform LLMs Desktop Client</strong>
     <br />
+    <div style="display:flex;justify-content:space-around;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:15px;">
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">OpenAI</span>
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">Azure OpenAI</span>
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">Anthropic</span>
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">Google</span>
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">Baidu</span>
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">Moonshot</span>
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">Doubao</span>
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">Grok</span>
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">DeepSeek</span>
+    <span style="font-size:12px;display:inline-block;padding:0 6px;border-radius:4px;background:#f7f7f7;">Ollama</span>
+  </div>
     <br />
     <a href="https://x.com/intent/follow?screen_name=1ronben">Twitter</a>
     ·
     <a href="https://github.com/nanbingxyz/5ire/releases/latest">Releases</a>
   </p>
 </div>
+
 
 ## Features
 
