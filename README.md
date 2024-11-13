@@ -1,4 +1,5 @@
 
+
 <div align="center">
   <a href="https://github.com/nanbingxyz/5ire">
     <img src="https://5ire.app/logo.png" alt="Logo" width="120">
@@ -9,7 +10,7 @@
   <img src="https://5ire.app/hero.png" width="100%" alt="Screenshot"/>
   <p>
     <br />
-    <strong>A Cross-platform LLMs Desktop Client</strong>
+    <strong style="font-Size:20px">A Cross-platform LLMs Desktop Client</strong>
     <br />
     <div style="display:flex;justify-content:space-around;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:15px;">
     <span style="font-size:12px;">OpenAI</span>
