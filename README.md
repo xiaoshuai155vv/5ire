@@ -10,7 +10,7 @@
   <img src="https://5ire.app/hero.png" width="100%" alt="Screenshot"/>
   <p>
     <br />
-    <strong style="font-Size:20px">A Cross-platform LLMs Desktop Client</strong>
+    <strong style="font-Size:24px">A Cross-platform LLMs Desktop Client</strong>
     <br />
     <div style="display:flex;justify-content:space-around;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:15px;">
     <span style="font-size:12px;">OpenAI</span>
@@ -22,7 +22,7 @@
     <span style="font-size:12px;">/ Doubao</span>
     <span style="font-size:12px;">/ Grok</span>
     <span style="font-size:12px;">/ DeepSeek</span>
-    <span style="font-size:12px;">Ollama</span>
+    <span style="font-size:12px;">/ Ollama</span>
   </div>
     <br />
     <a href="https://x.com/intent/follow?screen_name=1ronben">Twitter</a>
