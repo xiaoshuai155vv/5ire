@@ -29,6 +29,7 @@
     <a href="https://github.com/nanbingxyz/5ire/releases/latest">Releases</a>
   </p>
 </div>
+
 ## Features
 
 ### 1.Local Knowledge Base
