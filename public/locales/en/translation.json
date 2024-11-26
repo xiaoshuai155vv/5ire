@@ -192,5 +192,6 @@
   "Subscription.Notification.InvalidRedeemCode": "Invalid redeem code",
   "Subscription.HowToGetRedeemCode": "How to get redeem code?",
   "Subscription.Placeholder.RedeemCode": "Redeem Code",
-  "Common.GitHub": "GitHub"
+  "Common.GitHub": "GitHub",
+  "Common.SelectImage": "Select Image"
 }

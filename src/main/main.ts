@@ -1,6 +1,7 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 // import 'v8-compile-cache';
 import os from 'node:os';
+import fs from 'node:fs';
 import path from 'path';
 import dotenv from 'dotenv';
 import {
@@ -36,7 +37,11 @@ import { MessageBoxOptions } from 'electron';
 
 import Knowledge from './knowledge';
 
-import { SUPPORTED_FILE_TYPES, MAX_FILE_SIZE } from '../consts';
+import {
+  SUPPORTED_FILE_TYPES,
+  MAX_FILE_SIZE,
+  SUPPORTED_IMAGE_TYPES,
+} from '../consts';
 
 log.info('Main process start...');
 
@@ -302,6 +307,60 @@ ipcMain.handle('select-knowledge-files', async () => {
     }
     log.debug(files);
     return JSON.stringify(files);
+  } catch (err) {
+    Sentry.captureException(err);
+  }
+});
+
+const imgToBase64 = (file: File) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function (e: any) {
+      resolve(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
+ipcMain.handle('select-image-with-base64', async () => {
+  try {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [
+        {
+          name: 'Images',
+          extensions: ['jpg', 'png', 'jpeg'],
+        },
+      ],
+    });
+    const filePath = result.filePaths[0];
+    const fileType = await getFileType(filePath);
+    if (!SUPPORTED_IMAGE_TYPES[fileType]) {
+      dialog.showErrorBox(
+        'Error',
+        `Unsupported file type ${fileType} for ${filePath}`
+      );
+      return null;
+    }
+    const fileInfo: any = await getFileInfo(filePath);
+    if (fileInfo.size > MAX_FILE_SIZE) {
+      dialog.showErrorBox(
+        'Error',
+        `the size of ${filePath} exceeds the limit (${
+          MAX_FILE_SIZE / (1024 * 1024)
+        } MB})`
+      );
+      return null;
+    }
+    const blob = fs.readFileSync(filePath);
+    const base64 = Buffer.from(blob).toString('base64');
+    return JSON.stringify({
+      name: fileInfo.name,
+      path: filePath,
+      size: fileInfo.size,
+      type: fileInfo.type,
+      base64: `data:image/${fileType};base64,${base64}`,
+    });
   } catch (err) {
     Sentry.captureException(err);
   }
