@@ -17,3 +17,8 @@ export const SUPPORTED_FILE_TYPES: { [key: string]: string } = {
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 };
+export const SUPPORTED_IMAGE_TYPES: { [key: string]: string } = {
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+};

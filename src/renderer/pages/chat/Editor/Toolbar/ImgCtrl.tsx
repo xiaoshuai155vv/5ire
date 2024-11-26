@@ -32,16 +32,23 @@ import { IChatModelVision } from 'providers/types';
 
 const ImageAddIcon = bundleIcon(ImageAdd20Filled, ImageAdd20Regular);
 
-export default function ImgCtrl({ ctx, chat }: { ctx: IChatContext, chat: IChat}) {
+export default function ImgCtrl({
+  ctx,
+  chat,
+}: {
+  ctx: IChatContext;
+  chat: IChat;
+}) {
   const editStage = useStageStore((state) => state.editStage);
   const { t } = useTranslation();
 
   const [imgType, setImgType] = useState<'url' | 'file'>('url');
   const [imgURL, setImgURL] = useState<string>('');
+  const [imgName, setImgName] = useState<string>('');
   const [imgBase64, setImgBase64] = useState<string>('');
   const [errMsg, setErrMsg] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
-  const model = ctx.getModel()
+  const model = ctx.getModel();
 
   const vision = useMemo<IChatModelVision>(() => {
     return model?.vision || { enabled: false };
@@ -86,15 +93,8 @@ export default function ImgCtrl({ ctx, chat }: { ctx: IChatContext, chat: IChat}
     setOpen(false);
     setImgURL('');
     setImgBase64('');
+    setImgName('');
     editor.focus();
-  };
-
-  const imgToBase64 = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = function (e: any) {
-      setImgBase64(e.target.result);
-    };
-    reader.readAsDataURL(file);
   };
 
   const renderImgUrlInput = () => {
@@ -112,17 +112,22 @@ export default function ImgCtrl({ ctx, chat }: { ctx: IChatContext, chat: IChat}
 
   const renderImgFileInput = () => {
     return (
-      <input
-        type="file"
-        accept={vision.allowedMimeTypes?.join(',')}
-        id="image-file"
-        className="file-button"
-        onChange={(e) => {
-          if (e.target.files) {
-            imgToBase64(e.target.files[0]);
-          }
-        }}
-      />
+      <div className="flex justify-start items-start gap-2">
+        <Button
+          className="file-button"
+          onClick={async () => {
+            const dataString = await window.electron.selectImageWithBase64();
+            const file = JSON.parse(dataString);
+            if (file.name && file.base64) {
+              setImgName(file.name);
+              setImgBase64(file.base64);
+            }
+          }}
+        >
+          {t('Common.SelectImage')}
+        </Button>
+        <div className="mt-1 text-base">{imgName}</div>
+      </div>
     );
   };
 
@@ -182,7 +187,16 @@ export default function ImgCtrl({ ctx, chat }: { ctx: IChatContext, chat: IChat}
           </DialogContent>
           <DialogActions>
             <DialogTrigger disableButtonEnhancement>
-              <Button appearance="secondary" onClick={() => setOpen(false)}>
+              <Button
+                appearance="secondary"
+                onClick={() => {
+                  setOpen(false);
+                  setImgURL('');
+                  setImgBase64('');
+                  setImgName('');
+                  setErrMsg('');
+                }}
+              >
                 {t('Common.Cancel')}
               </Button>
             </DialogTrigger>
