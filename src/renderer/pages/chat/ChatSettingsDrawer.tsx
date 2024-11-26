@@ -12,13 +12,7 @@ import {
   DrawerHeader,
   DrawerHeaderTitle,
 } from '@fluentui/react-components';
-import {
-  bundleIcon,
-  Search24Regular,
-  DeleteFilled,
-  DeleteRegular,
-  Dismiss24Regular,
-} from '@fluentui/react-icons';
+import { Search24Regular, Dismiss24Regular } from '@fluentui/react-icons';
 import Debug from 'debug';
 import {
   useState,
@@ -29,16 +23,9 @@ import {
 } from 'react';
 import useChatStore from 'stores/useChatStore';
 import { useTranslation } from 'react-i18next';
-import {
-  MIN_CTX_MESSAGES,
-  MAX_CTX_MESSAGES,
-  NUM_CTX_MESSAGES,
-} from 'consts';
-import useToast from 'hooks/useToast';
+import { MIN_CTX_MESSAGES, MAX_CTX_MESSAGES, NUM_CTX_MESSAGES } from 'consts';
 import useChatContext from 'hooks/useChatContext';
-import useNav from 'hooks/useNav';
-import { isNumber } from 'lodash';
-
+import { debounce, isNumber } from 'lodash';
 
 const debug = Debug('5ire:pages:chat:ChatSettingsDrawer');
 
@@ -50,16 +37,16 @@ export default function ChatSettingsDrawer({
   setOpen: (open: boolean) => void;
 }) {
   const { t } = useTranslation();
-  const activeChat = useChatContext().getActiveChat()
-
+  const activeChat = useChatContext().getActiveChat();
   const [ctxMessages, setCtxMessages] = useState<number>(NUM_CTX_MESSAGES);
   useEffect(() => {
+    setSystemMessage(activeChat.systemMessage || '');
     setCtxMessages(
       isNumber(activeChat.maxCtxMessages)
         ? activeChat.maxCtxMessages
         : NUM_CTX_MESSAGES
     );
-  }, [activeChat?.maxCtxMessages]);
+  }, [activeChat?.id]);
 
   const setKeyword = useChatStore((state) => state.setKeyword);
   const keywords = useChatStore((state) => state.keywords);
@@ -69,10 +56,7 @@ export default function ChatSettingsDrawer({
     [keywords, activeChat?.id]
   );
 
-  const [systemMessage, setSystemMessage] = useState('');
-  useEffect(() => {
-    setSystemMessage(activeChat?.systemMessage || '');
-  }, [activeChat?.systemMessage]);
+  const [systemMessage, setSystemMessage] = useState<string>();
 
   const updateChat = useChatStore((state) => state.updateChat);
   const editChat = useChatStore((state) => state.editChat);
@@ -103,17 +87,25 @@ export default function ChatSettingsDrawer({
     ]);
   };
 
-  const updateSystemMessage = (ev: ChangeEvent<HTMLTextAreaElement>) => {
-    const systemMessage = ev.target.value;
-    setSystemMessage(systemMessage);
-    if (activeChat.isPersisted) {
-      updateChat({ id: activeChat.id, systemMessage });
-      debug('Update SystemMessage of Chat', systemMessage);
-    } else {
-      editChat({ systemMessage });
-      debug('Edit SystemMessage of Chat', systemMessage);
-    }
+  const onSystemMessageChange = (ev: ChangeEvent<HTMLTextAreaElement>) => {
+    setSystemMessage(ev.target.value);
+    updateSystemMessage(ev);
   };
+
+  const updateSystemMessage = useMemo(
+    () =>
+      debounce((ev: ChangeEvent<HTMLTextAreaElement>) => {
+        const systemMessage = ev.target.value;
+        if (activeChat.isPersisted) {
+          updateChat({ id: activeChat.id, systemMessage });
+          debug('Update SystemMessage of Chat', systemMessage);
+        } else {
+          editChat({ systemMessage });
+          debug('Edit SystemMessage of Chat', systemMessage);
+        }
+      }, 1000),
+    [activeChat?.id]
+  );
 
   return (
     <div>
@@ -161,13 +153,15 @@ export default function ChatSettingsDrawer({
                 size="large"
                 rows={20}
                 value={systemMessage}
-                onChange={updateSystemMessage}
+                onChange={onSystemMessageChange}
                 resize="vertical"
               />
             </Field>
           </div>
           <div>
-            <Field label={`${t('Common.MaxNumOfContextMessages')} (${ctxMessages})`}>
+            <Field
+              label={`${t('Common.MaxNumOfContextMessages')} (${ctxMessages})`}
+            >
               <div className="flex items-center p-1.5">
                 <Label aria-hidden>{MIN_CTX_MESSAGES}</Label>
                 <Slider
@@ -186,7 +180,6 @@ export default function ChatSettingsDrawer({
           <div className="flex-grow" />
         </DrawerBody>
       </Drawer>
-
     </div>
   );
 }

@@ -1,14 +1,29 @@
+
+
 <div align="center">
   <a href="https://github.com/nanbingxyz/5ire">
     <img src="https://5ire.app/logo.png" alt="Logo" width="120">
   </a>
-   <br />
-    <br />
+  <div>
+  <img src="https://glitch-art.vercel.app/api/simple?word=Simplicity%20Unlocks%20Power%20of%20AI&width=600&height=70&fontSize=26&font=Barlow"/>
+  </div>
   <img src="https://5ire.app/hero.png" width="100%" alt="Screenshot"/>
   <p>
     <br />
-    <strong>A Cross-platform LLMs Desktop Client</strong>
+    <strong style="font-Size:24px">A Cross-platform LLMs Desktop Client</strong>
     <br />
+    <div style="display:flex;justify-content:space-around;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:15px;">
+    <span style="font-size:12px;">OpenAI</span>
+    <span style="font-size:12px;">/ Azure OpenAI</span>
+    <span style="font-size:12px;">/ Anthropic</span>
+    <span style="font-size:12px;">/ Google</span>
+    <span style="font-size:12px;">/ Baidu</span>
+    <span style="font-size:12px;">/ Moonshot</span>
+    <span style="font-size:12px;">/ Doubao</span>
+    <span style="font-size:12px;">/ Grok</span>
+    <span style="font-size:12px;">/ DeepSeek</span>
+    <span style="font-size:12px;">/ Ollama</span>
+  </div>
     <br />
     <a href="https://x.com/intent/follow?screen_name=1ronben">Twitter</a>
     ·
@@ -34,12 +49,10 @@ The prompt library provides an effective way to create and organize your own pro
 ![Prompts Library Screenshot](https://5ire.app/prompts.png)
 
 ### 4. Bookmarks
-
 You can bookmark each conversation, and even if the original messages are deleted, the saved bookmarked content remains unaffected.
 ![Bookmarks Screenshot](https://5ire.app/bookmarks.png)
 
 ### 5.Quick Keyword Search
-
 You can perform keyword searches across all conversations, quickly pinpointing the information you need.
 ![Search Screenshot](https://5ire.app/search.png)
 
