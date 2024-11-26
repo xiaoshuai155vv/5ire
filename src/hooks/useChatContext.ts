@@ -21,7 +21,7 @@ export default function useChatContext(): IChatContext{
   const context = useMemo(() => {
     const getActiveChat = () => {
       const { chat } = useChatStore.getState();
-      debug(`Chat(${chat.id}):getActiveChat: ${chat.summary}`);
+      // debug(`Chat(${chat.id}):getActiveChat: ${chat.summary}`);
       return {
         ...chat,
         isPersisted: !!(chat?.id && chat.id !== tempChatId),
@@ -52,7 +52,7 @@ export default function useChatContext(): IChatContext{
       if (chat?.model) {
         model = getChatModel(api.provider, chat.model) || model;
       }
-      debug(`Chat(${chat.id}):getModel: ${model.label}`);
+      // debug(`Chat(${chat.id}):getModel: ${model.label}`);
       return model;
     };
 
@@ -61,7 +61,7 @@ export default function useChatContext(): IChatContext{
       const prompt = useStageStore.getState().getPrompt(chat.id);
       const systemMessage =
         prompt?.systemMessage || chat?.systemMessage || null;
-      debug(`Chat(${chat.id}):getSystemMessage: ${systemMessage}`);
+      // debug(`Chat(${chat.id}):getSystemMessage: ${systemMessage}`);
       return systemMessage;
     };
 
@@ -77,7 +77,7 @@ export default function useChatContext(): IChatContext{
       if (isValidTemperature(chat?.temperature, api.provider)) {
         temperature = chat?.temperature as number;
       }
-      debug(`Chat(${chat.id}):getSystemMessage: ${temperature}`);
+      // debug(`Chat(${chat.id}):getSystemMessage: ${temperature}`);
       return temperature;
     };
 
@@ -93,14 +93,14 @@ export default function useChatContext(): IChatContext{
       if (isValidMaxTokens(chat?.maxTokens, api.provider, model.name)) {
         maxTokens = chat?.maxTokens as number | null;
       }
-      debug(`Chat(${chat.id}):getMaxTokens: ${maxTokens}`);
+      // debug(`Chat(${chat.id}):getMaxTokens: ${maxTokens}`);
       return maxTokens;
     };
 
     const getChatContext = () => {
       const { chat } = useChatStore.getState();
       const chatContext = chat?.context || '';
-      debug(`Chat(${chat.id}):getChatContext: ${chatContext}`);
+      // debug(`Chat(${chat.id}):getChatContext: ${chatContext}`);
       return chatContext;
     };
 
@@ -110,7 +110,7 @@ export default function useChatContext(): IChatContext{
       if (!isNil(chat?.stream)) {
         stream = chat.stream;
       }
-      debug(`Chat(${chat.id}):isStream: ${stream}`);
+      // debug(`Chat(${chat.id}):isStream: ${stream}`);
       return stream;
     };
 
@@ -132,7 +132,7 @@ export default function useChatContext(): IChatContext{
           );
         }
       }
-      debug(`Chat(${chat.id}):getCtxMessages: ${ctxMessages.length} messages`);
+      // debug(`Chat(${chat.id}):getCtxMessages: ${ctxMessages.length} messages`);
       return ctxMessages;
     };
 

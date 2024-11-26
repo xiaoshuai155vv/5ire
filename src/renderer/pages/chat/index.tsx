@@ -115,7 +115,7 @@ export default function Chat() {
   const updateMessage = useChatStore((state) => state.updateMessage);
   const appendReply = useChatStore((state) => state.appendReply);
 
-  const { moveChatCollections, listChatCollections, setChatCollections } =
+  const { moveChatCollections, setChatCollections } =
     useChatKnowledgeStore.getState();
 
   const onSubmit = useCallback(
@@ -157,7 +157,7 @@ export default function Chat() {
         const filesId = [
           ...new Set<string>(knowledgeChunks.map((k: any) => k.fileId)),
         ];
-        files = await useKnowledgeStore.getState().getFiles(filesId)
+        files = await useKnowledgeStore.getState().getFiles(filesId);
         actualPrompt = `
 # Context #
 Please read carefully and use the following context information in JSON format to answer questions.
@@ -192,7 +192,7 @@ ${prompt}
         model: model.label,
         temperature: chatService.context.getTemperature(),
         maxTokens: chatService.context.getMaxTokens(),
-        isActive: 1
+        isActive: 1,
       });
 
       scrollToBottom();
@@ -210,23 +210,29 @@ ${prompt}
         } else {
           const inputTokens = result.inputTokens || (await countInput(prompt));
           const outputTokens =
-            result.outputTokens || (await countOutput($reply));
-          const citedChunkIds = extractCitationIds($reply);
-          const citedChunks = knowledgeChunks.filter((k:any) => citedChunkIds.includes(k.id));
-          const citedFileIds = [...new Set(citedChunks.map((k: any) => k.fileId))];
+            result.outputTokens || (await countOutput(result.content));
+          const citedChunkIds = extractCitationIds(result.content);
+          const citedChunks = knowledgeChunks.filter((k: any) =>
+            citedChunkIds.includes(k.id)
+          );
+          const citedFileIds = [
+            ...new Set(citedChunks.map((k: any) => k.fileId)),
+          ];
           const citedFiles = files.filter((f) => citedFileIds.includes(f.id));
           updateMessage({
             id: msg.id,
-            reply: $reply,
+            reply: result.content,
             inputTokens,
             outputTokens,
             isActive: 0,
             citedFiles: JSON.stringify(citedFiles.map((f) => f.name)),
-            citedChunks: JSON.stringify(citedChunks.map((k: any, idx: number) => ({
-              seqNo: idx + 1,
-              content: k.content,
-              id: k.id,
-            }))),
+            citedChunks: JSON.stringify(
+              citedChunks.map((k: any, idx: number) => ({
+                seqNo: idx + 1,
+                content: k.content,
+                id: k.id,
+              }))
+            ),
           });
           useUsageStore.getState().create({
             provider: chatService.provider.name,
@@ -298,12 +304,7 @@ ${prompt}
                   <Messages messages={messages} />
                 </div>
               ) : chatService.isReady() ? null : (
-                <Empty
-                  image="hint"
-                  text={t(
-                    'Notification.APINotReady'
-                  )}
-                />
+                <Empty image="hint" text={t('Notification.APINotReady')} />
               )}
             </div>
           </Pane>
@@ -317,11 +318,7 @@ ${prompt}
               />
             ) : (
               <div className="flex flex-col justify-center h-3/4 text-center text-sm text-gray-400">
-                {id === tempChatId
-                  ? ''
-                  : t(
-                      'Notification.APINotReady'
-                    )}
+                {id === tempChatId ? '' : t('Notification.APINotReady')}
               </div>
             )}
           </Pane>
