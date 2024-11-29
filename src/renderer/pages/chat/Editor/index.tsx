@@ -77,14 +77,17 @@ export default function Editor({
     // @ts-expect-error clipboardData is not defined in types
     const clipboardItems = e.clipboardData.items || window.clipboardData;
     let text = '';
-
     // 遍历剪贴板中的项目
     for (const item of clipboardItems) {
-      if (item.kind === 'string') {
+      if (item.kind === 'string' && item.type === 'text/html') {
         // 获取纯文本
         item.getAsString(function (clipText) {
-          text += clipText; // 收集文本
-          insertText(text.replace(/(<([^>]+)>)/gi, '')); // 插入文本
+          let _text = clipText.replace(/&[a-z]+;/gi, ' ');
+          _text = _text.replace(/<\/(p|div|br|h[1-6])>/gi, '\n');
+          _text = _text.replace(/(<([^>]+)>)/gi, '')
+          _text = _text.replace(/\n+/g, '\n\n').trim();
+          text += _text;
+          insertText(text); // 插入文本
         });
       } else if (item.kind === 'file' && item.type.startsWith('image/')) {
         // 处理图片
@@ -153,7 +156,7 @@ export default function Editor({
         onKeyDown={onKeyDown}
         onBlur={onBlur}
         onFocus={restoreRange}
-        style={{ resize: 'none' }}
+        style={{ resize: 'none', whiteSpace:'pre-wrap' }}
       />
       <div className="h-12 flex-shrink-0" />
     </div>
