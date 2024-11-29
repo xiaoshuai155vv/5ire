@@ -10,8 +10,8 @@ let llama3Tokenizer: any;
 let llamaTokenizer: any;
 
 (async () => {
-  llama3Tokenizer = await import('llama3-tokenizer-js');
-  llamaTokenizer = await import('llama-tokenizer-js');
+  llama3Tokenizer = (await import('llama3-tokenizer-js')).default;
+  llamaTokenizer = (await import('llama-tokenizer-js')).default;
 })();
 
 export function countGPTTokens(messages: IChatRequestMessage[], model: string) {
@@ -28,7 +28,6 @@ export function countGPTTokens(messages: IChatRequestMessage[], model: string) {
     console.warn('Model not found. Using cl100k_base encoding.');
     encoding = getEncoding('cl100k_base');
   }
-
   let tokensPerMessage = 3;
   let tokensPerName = 1;
   let numTokens = 0;

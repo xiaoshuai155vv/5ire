@@ -77,7 +77,12 @@ export default function useToken() {
       return Promise.resolve(countTokenOfLlama(messages, modelName));
     },
     countOutput: async (reply: string): Promise<number> => {
-      if (isGPT(modelName)) {
+      if (
+        isGPT(modelName) ||
+        isDoubao(modelName) ||
+        isGrok(modelName) ||
+        isDeepSeek(modelName)
+      ) {
         return Promise.resolve(
           countGPTTokens([{ role: 'assistant', content: reply }], modelName)
         );
