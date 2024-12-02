@@ -1,11 +1,17 @@
-import { isGPT, isGemini, isMoonshot, isLlama, isDoubao, isGrok, isDeepSeek } from 'utils/util';
+import {
+  isGPT,
+  isGemini,
+  isMoonshot,
+  isDoubao,
+  isGrok,
+  isDeepSeek,
+} from 'utils/util';
 import {
   countGPTTokens,
   countTokensOfGemini,
   countTokensOfMoonshot,
   countTokenOfLlama,
 } from 'utils/token';
-import { captureException } from '@sentry/react';
 import useChatContext from './useChatContext';
 import { IChatMessage } from 'intellichat/types';
 import useSettingsStore from 'stores/useSettingsStore';
@@ -13,11 +19,15 @@ import useSettingsStore from 'stores/useSettingsStore';
 export default function useToken() {
   const { api } = useSettingsStore();
   const ctx = useChatContext();
-  const modelName = ctx.getModel().name
+  const modelName = ctx.getModel().name;
   return {
     countInput: async (prompt: string): Promise<number> => {
-
-      if (isGPT(modelName) || isDoubao(modelName) || isGrok(modelName) || isDeepSeek(modelName)) {
+      if (
+        isGPT(modelName) ||
+        isDoubao(modelName) ||
+        isGrok(modelName) ||
+        isDeepSeek(modelName)
+      ) {
         const messages = [];
         ctx.getCtxMessages().forEach((msg: IChatMessage) => {
           messages.push({ role: 'user', content: msg.prompt });
@@ -57,22 +67,22 @@ export default function useToken() {
         );
       }
 
-      if (isLlama(modelName)) {
-        const messages = [];
-        ctx.getCtxMessages().forEach((msg: IChatMessage) => {
-          messages.push({ role: 'user', content: msg.prompt });
-          messages.push({ role: 'assistant', content: msg.reply });
-        });
-        messages.push({ role: 'user', content: prompt });
-        return Promise.resolve(countTokenOfLlama(messages, modelName));
-      }
-      captureException(
-        `Can't calculate tokens due to invalid Model: ${modelName}`
-      );
-      return Promise.resolve(0);
+      // Note: use Llama as default
+      const messages = [];
+      ctx.getCtxMessages().forEach((msg: IChatMessage) => {
+        messages.push({ role: 'user', content: msg.prompt });
+        messages.push({ role: 'assistant', content: msg.reply });
+      });
+      messages.push({ role: 'user', content: prompt });
+      return Promise.resolve(countTokenOfLlama(messages, modelName));
     },
     countOutput: async (reply: string): Promise<number> => {
-      if (isGPT(modelName)) {
+      if (
+        isGPT(modelName) ||
+        isDoubao(modelName) ||
+        isGrok(modelName) ||
+        isDeepSeek(modelName)
+      ) {
         return Promise.resolve(
           countGPTTokens([{ role: 'assistant', content: reply }], modelName)
         );
@@ -94,15 +104,10 @@ export default function useToken() {
           modelName
         );
       }
-      if (isLlama(modelName)) {
-        return Promise.resolve(
-          countTokenOfLlama([{ role: 'assistant', content: reply }], modelName)
-        );
-      }
-      captureException(
-        `Can't calculate output tokens due to invalid Model: ${modelName}`
+      // Note: use Llama as default
+      return Promise.resolve(
+        countTokenOfLlama([{ role: 'assistant', content: reply }], modelName)
       );
-      return Promise.resolve(0);
     },
   };
 }

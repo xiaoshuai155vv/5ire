@@ -118,7 +118,7 @@ export default class OpenAIChatService
       try {
         let result = '';
         const choice = JSON.parse(data).choices[0];
-        result = choice.delta.content;
+        result = choice.delta.content||'';
         msg = '';
         concatTimes = 0;
         return {

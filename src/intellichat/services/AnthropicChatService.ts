@@ -37,13 +37,13 @@ export default class AnthropicChatService
     if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content);
       const result: IChatRequestMessageContent[] = [];
-      for(let item of items){
+      for (let item of items) {
         if (item.type === 'image') {
           let data = '';
-          if(item.dataType === 'URL'){
-            data = await getBase64(item.data)
-          }else{
-            data = item.data.split(',')[1] // remove data:image/png;base64,
+          if (item.dataType === 'URL') {
+            data = await getBase64(item.data);
+          } else {
+            data = item.data.split(',')[1]; // remove data:image/png;base64,
           }
           result.push({
             type: 'image',
@@ -53,7 +53,6 @@ export default class AnthropicChatService
               data,
             },
           });
-
         } else if (item.type === 'text') {
           result.push({
             type: 'text',
@@ -69,7 +68,9 @@ export default class AnthropicChatService
     return Promise.resolve(stripHtmlTags(content));
   }
 
-  private async  composeMessages(message: string): Promise<IChatRequestMessage[]> {
+  private async composeMessages(
+    message: string
+  ): Promise<IChatRequestMessage[]> {
     const result = [];
     this.context.getCtxMessages().forEach((msg: IChatMessage) => {
       result.push({
@@ -81,7 +82,10 @@ export default class AnthropicChatService
         content: msg.reply,
       });
     });
-    result.push({ role: 'user', content: await this.composePromptMessage(message) });
+    result.push({
+      role: 'user',
+      content: await this.composePromptMessage(message),
+    });
     return result as IChatRequestMessage[];
   }
 

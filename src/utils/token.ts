@@ -3,66 +3,33 @@ import {
   TiktokenModel,
   Tiktoken,
 } from 'tiktoken';
-import { get_encoding as getEncoding, } from "tiktoken/init";
+import { get_encoding as getEncoding } from 'tiktoken/init';
 import { IChatRequestMessage } from 'intellichat/types';
 
 let llama3Tokenizer: any;
 let llamaTokenizer: any;
 
 (async () => {
-  llama3Tokenizer = await import('llama3-tokenizer-js');
-  llamaTokenizer = await import('llama-tokenizer-js');
+  llama3Tokenizer = (await import('llama3-tokenizer-js')).default;
+  llamaTokenizer = (await import('llama-tokenizer-js')).default;
 })();
 
 export function countGPTTokens(messages: IChatRequestMessage[], model: string) {
+  let _model = model;
+  if (model.startsWith('gpt-3.5') || model.startsWith('gpt-35')) {
+    _model = 'gpt-3.5-turbo-0613';
+  } else if (model.startsWith('gpt-4')) {
+    _model = 'gpt-4-0613';
+  }
   let encoding: Tiktoken;
   try {
-    encoding = encodingForModel(model as TiktokenModel);
+    encoding = encodingForModel(_model as TiktokenModel);
   } catch (err) {
     console.warn('Model not found. Using cl100k_base encoding.');
     encoding = getEncoding('cl100k_base');
   }
-
-  let tokensPerMessage: number;
-  let tokensPerName: number;
-
-  if (
-    [
-      'gpt-3.5-turbo-0613',
-      'gpt-3.5-turbo-16k-0613',
-      'gpt-4-0314',
-      'gpt-4-32k-0314',
-      'gpt-4-0613',
-      'gpt-4-32k-0613',
-      // doubao
-      'doubao-pro-256k',
-      'doubao-pro-128k',
-      'doubao-pro-32k',
-      'doubao-pro-4k',
-      'doubao-lite-128k',
-      'doubao-lite-32k',
-      'doubao-lite-4k',
-      // grok
-      'grok-beta',
-      // deepseek
-      'deepseek-chat',
-    ].includes(model)
-  ) {
-    tokensPerMessage = 3;
-    tokensPerName = 1;
-  } else if (model === 'gpt-3.5-turbo-0301') {
-    tokensPerMessage = 4;
-    tokensPerName = -1;
-  } else if (model.startsWith('gpt-3.5') || model.startsWith('gpt-35')) {
-    console.warn('Assuming gpt-3.5-turbo-0613 tokenization.');
-    return countGPTTokens(messages, 'gpt-3.5-turbo-0613');
-  } else if (model.startsWith('gpt-4')) {
-    console.warn('Assuming gpt-4-0613 tokenization.');
-    return countGPTTokens(messages, 'gpt-4-0613');
-  } else {
-    throw new Error(`numTokensFromMessages not implemented for ${model}`);
-  }
-
+  let tokensPerMessage = 3;
+  let tokensPerName = 1;
   let numTokens = 0;
 
   messages.forEach((msg: any) => {
@@ -75,7 +42,6 @@ export function countGPTTokens(messages: IChatRequestMessage[], model: string) {
     });
   });
   numTokens += 3; // For assistant prompt
-
   return numTokens;
 }
 
