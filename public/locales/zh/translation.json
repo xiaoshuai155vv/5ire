@@ -122,7 +122,7 @@
   "Common.ChangePassword": "更改密码",
   "Common.Password": "密码",
   "Common.User": "用户",
-  "Editor.Toolbar.KnowledgeCtrl.SelectedCollections": "精选知识集",
+  "Editor.Toolbar.KnowledgeCtrl.SelectedCollections": "已选知识集",
   "Editor.Toolbar.StreamEnabled": "流式响应已启用",
   "Knowledge.Collection": "知识集",
   "Knowledge.FileDrawer.DialogContent.EmbeddingModelIsRequired": "为解析文件内容，需要嵌入模型。请先导航至“设置”>“嵌入”以下载所需的嵌入模型。",
