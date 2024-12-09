@@ -168,7 +168,7 @@
     "markdown-it-mathjax3": "^4.3.2",
     "mini-css-extract-plugin": "^2.7.6",
     "node-abi": "^3.65.0",
-    "office-text-extractor": "^3.0.3",
+    "officeparser": "^5.1.1",
     "pdf-parse": "^1.1.1",
     "postcss": "^8.4.24",
     "postcss-loader": "^7.3.3",
@@ -228,7 +228,6 @@
     ],
     "files": [
       "dist",
-      "node_modules",
       "package.json",
       "!**/node_modules/**/*.map",
       "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,LICENSE,test.js}",
@@ -243,11 +242,12 @@
       "!**/{appveyor.yml,.travis.yml,circle.yml}",
       "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}",
       "!**/src/**",
+      "!**/source/**",
       "!**/node_modules/@xenova/transformers/dist/**",
-      "**/node_modules/@xenova/transformers/src/**"
+      "**/node_modules/@xenova/transformers/src/**",
+      "**/node_modules/textract/lib/extractors/**"
     ],
     "afterPack": ".erb/scripts/remove-useless.js",
-    "afterSign": ".erb/scripts/notarize.js",
     "mac": {
       "target": {
         "target": "default",
