@@ -57,7 +57,7 @@ export default class Downloader {
         } else {
           fs.unlink(savePath, (err) => {
             if (err) {
-              log.warn('error deleting file', savePath, e);
+              log.warn('error deleting file', savePath, err);
             }
           });
           onFailed && onFailed(fileName, savePath, state);

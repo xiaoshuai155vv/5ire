@@ -5,6 +5,7 @@
     <img src="https://5ire.app/logo.png" alt="Logo" width="120">
   </a>
   <div>
+    
   <img src="https://glitch-art.vercel.app/api/simple?word=Simplicity%20Unlocks%20Power%20of%20AI&width=600&height=70&fontSize=26&font=Barlow"/>
   </div>
   <img src="https://5ire.app/hero.png" width="100%" alt="Screenshot"/>
@@ -29,6 +30,7 @@
     ·
     <a href="https://github.com/nanbingxyz/5ire/releases/latest">Releases</a>
   </p>
+  <video src="https://github.com/user-attachments/assets/93c83474-f962-49e6-a521-5196da945a4c.mp4"></video>
 </div>
 
 ## Features
