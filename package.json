@@ -1,7 +1,7 @@
 {
   "name": "5ire",
   "productName": "5ire",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "An Open Source LLMs Desktop Client",
   "main": "src/main/main.ts",
   "repository": "https://github.com/nanbingxyz/5ire.git",
@@ -248,6 +248,7 @@
       "**/node_modules/textract/lib/extractors/**"
     ],
     "afterPack": ".erb/scripts/remove-useless.js",
+    "afterSign": ".erb/scripts/notarize.js",
     "mac": {
       "target": {
         "target": "default",
