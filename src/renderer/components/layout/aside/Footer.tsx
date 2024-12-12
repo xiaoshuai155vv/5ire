@@ -9,9 +9,6 @@ import {
   QuestionCircle20Regular,
   ArrowRight16Regular,
   ArrowLeft16Regular,
-  Mail20Regular,
-  Chat20Regular,
-  EmojiMeme20Regular,
   Alert20Regular,
 } from '@fluentui/react-icons';
 import { useCallback, useEffect } from 'react';
@@ -39,7 +36,7 @@ export default function Footer({ collapsed }: { collapsed: boolean }) {
 
   useEffect(() => {
     //@ts-ignore
-    const canny = Window?.Canny;
+    const canny = window?.Canny;
     if (canny) {
       canny('initChangelog', {
         appID: '64cd076f9481f00996a16c42',
@@ -49,7 +46,7 @@ export default function Footer({ collapsed }: { collapsed: boolean }) {
       });
     }
     //@ts-ignore
-  }, [Window?.Canny]);
+  }, []);
 
   return (
     <div
