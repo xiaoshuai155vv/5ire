@@ -162,15 +162,15 @@ export default function Chat() {
 # Context #
 Please read carefully and use the following context information in JSON format to answer questions.
 The context format is {"seqNo": number, "id": "id", "file":"fileName", "content": "content"}.
-When using context information in your response, mark the reference as [(<seqNo>)](citation#<id> "<file>")] strictly after the relevant content.
+When using context information in your response, output the reference as \`[(<seqNo>)](citation#<id> '<file>')\` strictly after the relevant content.
 ---------------------------------------------------
 For example:
 the context information is: {"seqNo": 1, "id": "432939KFD83242", "file":"Fruit Encyclopedia", "content": "apples are one of common fruit"}.
 and the question is: "What are some common fruits?".
 The answer should be:
-"According to the information provided, apples are a common fruit [(1)](citation#432939KFD83242 "Fruit Encyclopedia")]."
+"According to the information provided, apples are a common fruit [(1)](citation#432939KFD83242 'Fruit Encyclopedia')."
 ---------------------------------------------------
-Ensure that the context information is accurately referenced, and label it as [(<seqNo>)](citation#<id> <file>)] when a piece of information is actually used.
+Ensure that the context information is accurately referenced, and label it as [(<seqNo>)](citation#<id> '<file>') when a piece of information is actually used.
 ${JSON.stringify(
   knowledgeChunks.map((k: any, idx: number) => ({
     seqNo: idx + 1,
@@ -182,7 +182,7 @@ ${JSON.stringify(
 
 # Objective #
 ${prompt}
-        `;
+`;
       }
 
       const msg = await useChatStore.getState().createMessage({

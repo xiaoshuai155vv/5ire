@@ -331,7 +331,7 @@ export function isOneDimensionalArray(arr: any[]): boolean {
 }
 
 export function extractCitationIds(text: string): string[] {
-  const regex = /\[\(?\d+\)?\]\(citation#([a-z0-9]+)\s*".*?"\)/g;
+  const regex = /\[\(?\d+\)?\]\(citation#([a-z0-9]+)\s*.*?\)/g;
   // 使用matchAll返回所有匹配结果
   const matches = text.matchAll(regex);
   return [...matches].map((match) => match[1]);
