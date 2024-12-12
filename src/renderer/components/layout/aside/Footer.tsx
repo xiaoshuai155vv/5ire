@@ -23,17 +23,13 @@ export default function Footer({ collapsed }: { collapsed: boolean }) {
     (state) => state.toggleSidebarCollapsed
   );
   const { t } = useTranslation();
-  const goFeedback = useCallback(() => {
-    window.electron.openExternal('https://5ire.canny.io/');
-    window.electron.ingestEvent([{ app: 'go-feedback' }]);
+  const goTwitter = useCallback(() => {
+    window.electron.openExternal('https://x.com/1ronben');
+    window.electron.ingestEvent([{ app: 'go-twitter' }]);
   }, []);
   const getHomepage = useCallback(() => {
     window.electron.openExternal('https://5ire.app');
     window.electron.ingestEvent([{ app: 'go-homepage' }]);
-  }, []);
-
-  const mailToSupport = useCallback(() => {
-    window.electron.openExternal('mailto:support@5ire.app');
   }, []);
 
   const goGitHub = useCallback(() => {
@@ -87,49 +83,66 @@ export default function Footer({ collapsed }: { collapsed: boolean }) {
         </MenuTrigger>
         <MenuPopover>
           <MenuList>
-            <MenuItem icon={<Chat20Regular />} onClick={goFeedback}>
-              {t('Common.Feedback')}
+            <MenuItem
+              icon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  width="18"
+                  height="18"
+                  stroke-width="1.5"
+                >
+                  <path d="M4 4l11.733 16h4.267l-11.733 -16z"></path>
+                  <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path>
+                </svg>
+              }
+              onClick={goTwitter}
+            >
+              {t('Common.Author')}
             </MenuItem>
             <MenuItem
               icon={
                 <svg
-                  width="18px"
-                  height="18px"
-                  strokeWidth="1.5"
+                  xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="svg-icon"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  width="18"
+                  height="18"
+                  stroke-width="1.5"
                 >
-                  <path
-                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  ></path>
-                  <path
-                    d="M14.3333 19V17.137C14.3583 16.8275 14.3154 16.5163 14.2073 16.2242C14.0993 15.9321 13.9286 15.6657 13.7067 15.4428C15.8 15.2156 18 14.4431 18 10.8989C17.9998 9.99256 17.6418 9.12101 17 8.46461C17.3039 7.67171 17.2824 6.79528 16.94 6.01739C16.94 6.01739 16.1533 5.7902 14.3333 6.97811C12.8053 6.57488 11.1947 6.57488 9.66666 6.97811C7.84666 5.7902 7.05999 6.01739 7.05999 6.01739C6.71757 6.79528 6.69609 7.67171 6.99999 8.46461C6.35341 9.12588 5.99501 10.0053 5.99999 10.9183C5.99999 14.4366 8.19999 15.2091 10.2933 15.4622C10.074 15.6829 9.90483 15.9461 9.79686 16.2347C9.68889 16.5232 9.64453 16.8306 9.66666 17.137V19"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  ></path>
-                  <path
-                    d="M9.66667 17.7018C7.66667 18.3335 6 17.7018 5 15.7544"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  ></path>
+                  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path>
                 </svg>
               }
               onClick={goGitHub}
             >
               {t('Common.GitHub')}
             </MenuItem>
-            <MenuItem icon={<EmojiMeme20Regular />} onClick={getHomepage}>
+            <MenuItem
+              icon={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  width="20"
+                  height="20"
+                  stroke-width="1.5"
+                >
+                  <path d="M12 12c2 -2.96 0 -7 -1 -8c0 3.038 -1.773 4.741 -3 6c-1.226 1.26 -2 3.24 -2 5a6 6 0 1 0 12 0c0 -1.532 -1.056 -3.94 -2 -5c-1.786 3 -2.791 3 -4 2z"></path>
+                </svg>
+              }
+              onClick={getHomepage}
+            >
               {t('Common.About')}
-            </MenuItem>
-            <MenuItem icon={<Mail20Regular />} onClick={mailToSupport}>
-              support@5ire.app
             </MenuItem>
           </MenuList>
         </MenuPopover>

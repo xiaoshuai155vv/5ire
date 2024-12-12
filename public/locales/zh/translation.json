@@ -193,5 +193,6 @@
   "Subscription.HowToGetRedeemCode": "如何获取兑换码？",
   "Subscription.Placeholder.RedeemCode": "兑换码",
   "Common.GitHub": "GitHub",
-  "Common.SelectImage": "选择图片"
+  "Common.SelectImage": "选择图片",
+  "Common.Author": "作者"
 }

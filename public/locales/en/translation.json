@@ -193,5 +193,6 @@
   "Subscription.HowToGetRedeemCode": "How to get redeem code?",
   "Subscription.Placeholder.RedeemCode": "Redeem Code",
   "Common.GitHub": "GitHub",
-  "Common.SelectImage": "Select Image"
+  "Common.SelectImage": "Select Image",
+  "Common.Author": "Author"
 }
