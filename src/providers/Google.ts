@@ -15,7 +15,7 @@ export default {
     temperature: { min: 0, max: 1, default: 0.9 },
     options: {
       modelCustomizable: true,
-      streamCustomizable: true,
+      streamCustomizable: false,
     },
     models: {
       'gemini-1.5-pro': {
