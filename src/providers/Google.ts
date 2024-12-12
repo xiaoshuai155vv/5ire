@@ -20,7 +20,7 @@ export default {
     models: {
       'gemini-1.5-pro': {
         name: 'gemini-1.5-pro',
-        contextWindow: 1048576000,
+        contextWindow: 1048576,
         maxTokens: 8192,
         inputPrice: 0.00035,
         outputPrice: 0.0105,
@@ -34,57 +34,56 @@ export default {
       },
       'gemini-1.5-flash': {
         name: 'gemini-1.5-flash',
-        contextWindow: 1048576000,
+        contextWindow: 1048576,
         maxTokens: 8192,
         inputPrice: 0.00035,
         outputPrice: 0.00105,
-        jsonModelEnabled: false,
+        jsonModelEnabled: true,
         vision:{
           enabled:true,
         },
         description: `Lightweight, fast and cost-efficient while featuring multimodal reasoning and a breakthrough long context window of up to one million tokens.`,
         group: 'Gemini',
       },
-    },
-  },
-
-  // https://ai.google.dev/models/gemini?hl=zh-cn#embedding
-  // https://ai.google.dev/tutorials/rest_quickstart#embedding
-  /**
-   * curl https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent?key=$API_KEY \
-    -H 'Content-Type: application/json' \
-    -X POST \
-    -d '{
-        "model": "models/embedding-001",
-        "content": {
-        "parts":[{
-          "text": "Write a story about a magic backpack."}]} }'
-   */
-  /**
-   * return
-   * {
-  "embedding": {
-    "values": [
-      0.008624583,
-      -0.030451821,
-      -0.042496547,
-      -0.029230341,
-      0.05486475,
-      0.006694871,
-      0.004025645,
-   */
-  embedding: {
-    apiSchema: ['base', 'key', 'model'],
-    models: {
-      'embedding-001': {
-        name: 'embedding-001',
-        dimension: 768,
-        price: 0.000025,
-        maxTokens: 2048,
-        description:
-          'Optimized for creating embeddings for text with up to 2048 tokens, 1500 requests per minute.',
-        isDefault: true,
+      'gemini-1.5-flash-8b': {
+        name: 'gemini-1.5-flash-8b',
+        contextWindow: 1048576,
+        maxTokens: 8192,
+        inputPrice: 0.0000375,
+        outputPrice: 0.00015,
+        jsonModelEnabled: true,
+        vision:{
+          enabled:true,
+        },
+        description: `The Gemini 1.5 Flash-8B is a small model designed for tasks that require less intelligence.`,
+        group: 'Gemini',
+      },
+      'gemini-2.0-flash-exp': {
+        name: 'gemini-2.0-flash-exp',
+        contextWindow: 1048576,
+        maxTokens: 8192,
+        inputPrice: 0.0000375,
+        outputPrice: 0.00015,
+        jsonModelEnabled: true,
+        vision:{
+          enabled:true,
+        },
+        description: `Next generation features, superior speed, native tool use, and multimodal generation`,
+        group: 'Gemini',
+      },
+      'gemini-exp-1206': {
+        name: 'gemini-exp-1121',
+        contextWindow: 1048576,
+        maxTokens: 8192,
+        inputPrice: 0.0000375,
+        outputPrice: 0.00015,
+        jsonModelEnabled: true,
+        vision:{
+          enabled:true,
+        },
+        description: `Quality improvements, celebrate 1 year of Gemini`,
+        group: 'Gemini',
       },
     },
-  }
+  },
 } as IServiceProvider;
