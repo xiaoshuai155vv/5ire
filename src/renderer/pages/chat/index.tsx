@@ -1,7 +1,7 @@
 import Debug from 'debug';
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { debounce } from 'lodash';
+import { debounce, set } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import SplitPane, { Pane } from 'split-pane-react';
 import useChatStore from 'stores/useChatStore';
@@ -20,14 +20,12 @@ import './Chat.scss';
 import 'split-pane-react/esm/themes/default.css';
 import { IChatResponseMessage } from 'intellichat/types';
 import { isBlank } from 'utils/validators';
-import IChatService from 'intellichat/services/IChatService';
 import useChatKnowledgeStore from 'stores/useChatKnowledgeStore';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import CitationDialog from './CitationDialog';
 import { ICollectionFile } from 'types/knowledge';
 import { extractCitationIds } from 'utils/util';
 import INextChatService from 'intellichat/services/INextCharService';
-import { on } from 'events';
 
 const debug = Debug('5ire:pages:chat');
 
@@ -47,13 +45,12 @@ export default function Chat() {
 
   const keywords = useChatStore((state) => state.keywords);
   const messages = useChatStore((state) => state.messages);
-
   const setKeyword = useChatStore((state) => state.setKeyword);
   const fetchMessages = useChatStore((state) => state.fetchMessages);
   const initChat = useChatStore((state) => state.initChat);
   const getChat = useChatStore((state) => state.getChat);
   const updateChat = useChatStore((state) => state.updateChat);
-  const setLoading = useChatStore((state) => state.setLoading);
+  const updateStates = useChatStore((state) => state.updateStates);
 
   const [chatService] = useState<INextChatService>(useChatService());
 
@@ -122,7 +119,6 @@ export default function Chat() {
 
   const onSubmit = useCallback(
     async (prompt: string) => {
-      setLoading(true);
       const model = chatService.context.getModel();
       let $chatId = activeChatId;
       if (activeChatId === tempChatId) {
@@ -140,8 +136,9 @@ export default function Chat() {
         });
         setKeyword(activeChatId, ''); // clear filter keyword
       }
-      let $reply = '';
+      updateStates($chatId, { loading: true });
 
+      let $reply = '';
       // Knowledge Collections
       let knowledgeChunks = [];
       let files: ICollectionFile[] = [];
@@ -249,22 +246,23 @@ ${prompt}
             });
           }
         }
+        updateStates($chatId, { loading: false, runningTool: null });
         navigate(`/chats/${$chatId}`);
       };
-      console.log(chatService);
       chatService.onComplete(onChatComplete);
       chatService.onReading((content: string) => {
         $reply = appendReply(msg.id, content);
         scrollToBottom();
       });
       chatService.onToolCalling((toolName: string) => {
-        debug('Tool calling:', toolName);
+        updateStates($chatId, { runningTool: toolName });
       });
       chatService.onError((err: any, aborted: boolean) => {
         console.error(err);
         if (!aborted) {
           notifyError(err.message || err);
         }
+        updateStates($chatId, { loading: false });
       });
 
       await chatService.chat([

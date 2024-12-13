@@ -7,13 +7,12 @@ import {
   IChatResponseMessage,
   IGeminiChatRequestMessageContent,
 } from 'intellichat/types';
+import { merge } from 'lodash';
 import { IServiceProvider } from 'providers/types';
 import useSettingsStore from 'stores/useSettingsStore';
 import { raiseError, stripHtmlTags } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:NextChatService');
-
-const MAX_CONCAT_TIMES = 2;
 
 export interface ITool {
   id: string;
@@ -37,6 +36,7 @@ export default abstract class NextCharService {
   private onReadingCallback: (chunk: string) => void;
   private onToolCallingCallback: (toolName: string) => void;
   private onErrorCallback: (error: any, aborted: boolean) => void;
+  protected usedToolNames: string[] = [];
   private tool: ITool | null = null;
   private inputTokens: number = 0;
   private outputTokens: number = 0;
@@ -68,18 +68,25 @@ export default abstract class NextCharService {
     };
   }
 
-  protected abstract makePayload(messages: IChatRequestMessage[]): Promise<IChatRequestPayload>;
-  protected abstract makeRequest(messages: IChatRequestMessage[]): Promise<Response>;
+  protected abstract makePayload(
+    messages: IChatRequestMessage[]
+  ): Promise<IChatRequestPayload>;
+  protected abstract makeRequest(
+    messages: IChatRequestMessage[]
+  ): Promise<Response>;
 
   /**
    * 由于可能出现一条 message 实际上是多条回复，所以返回数组
    * @param message
    * @return parsedMessages IParsedMessage[]
    */
-  protected abstract parseReply(message: string): IChatResponseMessage[];
+  protected abstract parseReply(message: string): IChatResponseMessage;
 
   protected abstract parseTools(chunk: string): ITool | null;
-  protected abstract parseToolArgs(chunk: string): string;
+  protected abstract parseToolArgs(chunk: string): {
+    index: number;
+    args: string;
+  };
 
   public onComplete(callback: (result: any) => void) {
     this.onCompleteCallback = callback;
@@ -170,7 +177,7 @@ export default abstract class NextCharService {
       }
       const decoder = new TextDecoder('utf-8');
       let isFunction = false;
-      let functionArgs = '';
+      let functionArgs: string[] = [];
       let index = 0;
       let done = false;
       while (!done) {
@@ -188,11 +195,29 @@ export default abstract class NextCharService {
           .split('\n')
           .map((i) => i.trim())
           .filter((i) => i !== '');
+
         for (const chunk of chunks) {
           if (chunk === 'data: [DONE]') {
             done = true;
             break;
           }
+          if (chunk.startsWith('data:')) {
+            try {
+              const data = JSON.parse(chunk.substring(5).trim());
+              if (!data.choices) {
+                continue;
+              }
+              const choice = data.choices[0];
+              if (choice.delta.content === null && !choice.delta.tool_calls) {
+                continue;
+              }
+            } catch (error) {
+              console.error('parseReply', error);
+              console.debug('chunk', chunk);
+              continue;
+            }
+          }
+
           if (index === 0) {
             const tool = this.parseTools(chunk);
             if (tool) {
@@ -206,25 +231,27 @@ export default abstract class NextCharService {
             }
           }
           if (isFunction) {
-            functionArgs += this.parseToolArgs(chunk);
+            const { index: argIndex, args } = this.parseToolArgs(chunk);
+            if (index >= 0 && functionArgs[argIndex] === undefined) {
+              functionArgs[argIndex] = '';
+            }
+            functionArgs[argIndex] += args;
           } else {
-            const messages: IChatResponseMessage[] = this.parseReply(chunk);
+            this.tool = null;
+            const message = this.parseReply(chunk);
             // eslint-disable-next-line no-plus
-            for (let i = 0; i < messages.length; i++) {
-              const message = messages[i];
-              reply += message.content;
-              this.onReadingCallback(message.content || '');
-              if (message.outputTokens) {
-                this.outputTokens += message.outputTokens;
+            reply += message.content;
+            this.onReadingCallback(message.content || '');
+            if (message.outputTokens) {
+              this.outputTokens += message.outputTokens;
+            }
+            if (message.isEnd) {
+              // inputToken 不会变化，所以只取最后一次的值
+              if (message.inputTokens) {
+                this.inputTokens = message.inputTokens;
               }
-              if (message.isEnd) {
-                // inputToken 不会变化，所以只取最后一次的值
-                if (message.inputTokens) {
-                  this.inputTokens = message.inputTokens;
-                }
-                context = message.context || null; // ollama 最后会输出 context 信息
-                done = true;
-              }
+              context = message.context || null; // ollama 最后会输出 context 信息
+              done = true;
             }
           }
           index++;
@@ -232,13 +259,38 @@ export default abstract class NextCharService {
       }
 
       if (this.tool) {
-        this.tool.args = JSON.parse(functionArgs);
+        const args = functionArgs.map((arg) => JSON.parse(arg));
+        this.tool.args = merge({}, ...args);
+        this.usedToolNames.push(this.tool.name);
         const [client, name] = this.tool.name.split('-000-');
         const result = await window.electron.mcp.callTool({
           client,
           name,
           args: this.tool.args,
         });
+        const _messages = [
+          ...messages,
+          {
+            role: 'assistant',
+            tool_calls: [
+              {
+                id: this.tool.id,
+                type: 'function',
+                function: {
+                  arguments: JSON.stringify(this.tool.args),
+                  name: this.tool.name,
+                },
+              },
+            ],
+          },
+          {
+            role: 'tool',
+            name: this.tool.name,
+            content: result.content,
+            tool_call_id: this.tool.id,
+          },
+        ] as IChatRequestMessage[];
+        await this.chat(_messages);
       } else {
         await this.onCompleteCallback({
           content: reply,

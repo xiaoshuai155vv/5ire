@@ -3,9 +3,8 @@ import {
   useEffect,
   useState,
   useRef,
-  useMemo,
-  FormEvent,
   useCallback,
+  useMemo,
 } from 'react';
 import useChatStore from 'stores/useChatStore';
 import { useTranslation } from 'react-i18next';
@@ -23,10 +22,10 @@ export default function Editor({
   onAbort: () => void;
 }) {
   const { t } = useTranslation();
-  const chat = useChatStore((state) => state.chat);
   const editorRef = useRef<HTMLDivElement>(null);
-  const isLoading = useChatStore((state) => state.isLoading);
-  const setLoading = useChatStore((state) => state.setLoading);
+  const chat = useChatStore((state) => state.chat);
+  const states = useChatStore().getCurState()
+  const updateStates = useChatStore((state) => state.updateStates);
   const inputs = useStageStore((state) => state.inputs);
   const editStage = useStageStore((state) => state.editStage);
   const [savedRange, setSavedRange] = useState<Range | null>(null);
@@ -84,7 +83,7 @@ export default function Editor({
         item.getAsString(function (clipText) {
           let _text = clipText.replace(/&[a-z]+;/gi, ' ');
           _text = _text.replace(/<\/(p|div|br|h[1-6])>/gi, '\n');
-          _text = _text.replace(/(<([^>]+)>)/gi, '')
+          _text = _text.replace(/(<([^>]+)>)/gi, '');
           _text = _text.replace(/\n+/g, '\n\n').trim();
           text += _text;
           insertText(text); // 插入文本
@@ -129,7 +128,7 @@ export default function Editor({
 
   const onAbortClick = () => {
     onAbort();
-    setLoading(false);
+    updateStates(chat.id, { loading: false });
   };
 
   const onToolbarActionConfirm = () => {
@@ -138,7 +137,7 @@ export default function Editor({
 
   return (
     <div className="relative flex flex-col editor">
-      {isLoading ? (
+      {states.loading ? (
         <div className="editor-loading-mask absolute flex flex-col justify-center items-center">
           <Button onClick={onAbortClick} className="flex items-center">
             <Spinner size={18} className="mr-2" />
@@ -156,7 +155,7 @@ export default function Editor({
         onKeyDown={onKeyDown}
         onBlur={onBlur}
         onFocus={restoreRange}
-        style={{ resize: 'none', whiteSpace:'pre-wrap' }}
+        style={{ resize: 'none', whiteSpace: 'pre-wrap' }}
       />
       <div className="h-12 flex-shrink-0" />
     </div>

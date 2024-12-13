@@ -16,12 +16,22 @@ import { getProvider, getChatModel } from 'providers';
 const debug = Debug('5ire:stores:useChatStore');
 
 export interface IChatStore {
-  isLoading: boolean;
   chats: IChat[];
-  chat: { id: string } & Partial<IChat>;
+  chat: {
+    id: string;
+  } & Partial<IChat>;
   messages: IChatMessage[];
   keywords: { [key: string]: string };
-  setLoading: (isLoading: boolean) => void;
+  states: {
+    [key: string]: {
+      loading: boolean;
+      runningTool: string;
+    };
+  };
+  updateStates: (
+    chatId: string,
+    states: { loading?: boolean; runningTool?: string | null }
+  ) => void;
   getKeyword: (chatId: string) => string;
   setKeyword: (chatId: string, keyword: string) => void;
   // chat
@@ -38,6 +48,7 @@ export interface IChatStore {
   updateMessage: (message: { id: string } & Partial<IChatMessage>) => void;
   bookmarkMessage: (id: string, bookmarkId: string | null) => void;
   deleteMessage: (id: string) => Promise<boolean>;
+  getCurState: () => { loading: boolean; runningTool: string };
   fetchMessages: ({
     chatId,
     limit,
@@ -52,13 +63,29 @@ export interface IChatStore {
 }
 
 const useChatStore = create<IChatStore>((set, get) => ({
-  isLoading: false,
   keywords: {},
   chats: [],
   chat: { id: tempChatId, model: '' },
   messages: [],
+  states: {},
   stages: {},
-  setLoading: (isLoading) => set({ isLoading }),
+  updateStates: (
+    chatId: string,
+    states: { loading?: boolean; runningTool?: string | null }
+  ) => {
+    set(
+      produce((state: IChatStore) => {
+        state.states[chatId] = Object.assign(
+          state.states[chatId] || {},
+          states
+        );
+      })
+    );
+  },
+  getCurState: () => {
+    const { chat, states } = get();
+    return states[chat.id] || {};
+  },
   getKeyword: (chatId: string) => {
     return get().keywords[chatId] || '';
   },
@@ -185,7 +212,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
       $chat.maxTokens = chat.maxTokens;
       params.push($chat.maxTokens);
     }
-    if(!isNil(chat.context)){
+    if (!isNil(chat.context)) {
       stats.push('context = ?');
       chat.context = chat.context as string;
       params.push(chat.context);
@@ -337,12 +364,12 @@ const useChatStore = create<IChatStore>((set, get) => ({
       msg.isActive = message.isActive as boolean;
       params.push(msg.isActive ? 1 : 0);
     }
-    if(!isBlank(message.citedFiles)){
+    if (!isBlank(message.citedFiles)) {
       stats.push('citedFiles = ?');
       msg.citedFiles = message.citedFiles as string;
       params.push(msg.citedFiles);
     }
-    if(!isBlank(message.citedChunks)){
+    if (!isBlank(message.citedChunks)) {
       stats.push('citedChunks = ?');
       msg.citedChunks = message.citedChunks as string;
       params.push(msg.citedChunks);

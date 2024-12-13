@@ -1,6 +1,4 @@
-import { input } from './../../../node_modules/zod/lib/types.d';
 import Debug from 'debug';
-import IChatService from './IChatService';
 import {
   IChatContext,
   IChatResponseMessage,
@@ -16,7 +14,6 @@ import NextChatService, { ITool } from './NextChatService';
 import INextChatService from './INextCharService';
 
 const debug = Debug('5ire:intellichat:OpenAIChatService');
-const MAX_CONCAT_TIMES = 2;
 
 export default class OpenAIChatService
   extends NextChatService
@@ -81,7 +78,14 @@ export default class OpenAIChatService
     });
     for (const msg of messages) {
       if (msg.role === 'tool') {
-        result.push({ role: 'tool', content: JSON.stringify(msg.content) });
+        result.push({
+          role: 'tool',
+          content: JSON.stringify(msg.content),
+          name: msg.name,
+          tool_call_id: msg.tool_call_id,
+        });
+      } else if (msg.role === 'assistant' && msg.tool_calls) {
+        result.push(msg);
       } else {
         result.push({
           role: 'user',
@@ -111,21 +115,27 @@ export default class OpenAIChatService
     });
     const tools = await window.electron.mcp.listTools();
     if (tools) {
-      payload.tools = tools.map((tool: any) => {
-        return {
-          type: 'function',
-          function: {
-            name: tool.name,
-            description: tool.description,
-            parameters: {
-              type: tool.inputSchema.type,
-              properties: tool.inputSchema.properties,
-              required: tool.inputSchema.required,
+      const _tools = tools
+        .filter((tool: any) => !this.usedToolNames.includes(tool.name))
+        .map((tool: any) => {
+          return {
+            type: 'function',
+            function: {
+              name: tool.name,
+              description: tool.description,
+              parameters: {
+                type: tool.inputSchema.type,
+                properties: tool.inputSchema.properties,
+                required: tool.inputSchema.required,
+                additionalProperties: tool.inputSchema.additionalProperties,
+              },
             },
-          },
-        };
-      });
-      payload.tool_choice = 'auto';
+          };
+        });
+      if (_tools.length > 0) {
+        payload.tools = _tools;
+        payload.tool_choice = 'auto';
+      }
     }
     if (this.context.getMaxTokens()) {
       payload.max_tokens = this.context.getMaxTokens();
@@ -139,7 +149,6 @@ export default class OpenAIChatService
     if (chunk.startsWith('data:')) {
       data = chunk.substring(5).trim();
     }
-    console.log('data', data);
     const choice = JSON.parse(data).choices[0];
     let tool = null;
     if (choice.delta.tool_calls) {
@@ -151,7 +160,7 @@ export default class OpenAIChatService
     return tool;
   }
 
-  protected parseToolArgs(chunk: string): string {
+  protected parseToolArgs(chunk: string): { index: number; args: string } {
     let data = chunk;
     if (chunk.startsWith('data:')) {
       data = chunk.substring(5).trim();
@@ -161,62 +170,46 @@ export default class OpenAIChatService
       if (choices) {
         const choice = choices[0];
         if (choice.finish_reason) {
-          return '';
+          return { index: -1, args: '' };
         }
-        return choice.delta.tool_calls[0].function.arguments;
+        const toolCalls = choice.delta.tool_calls[0];
+        return {
+          index: toolCalls.index,
+          args: toolCalls.function.arguments,
+        };
       }
     } catch (err) {
       console.error('parseToolArgs', err);
     }
-    return '';
+    return { index: -1, args: '' };
   }
 
-  protected parseReply(chunk: string): IChatResponseMessage[] {
-    debug('chunk', chunk);
-    const lines = chunk
-      .split('\n')
-      .map((i) => i.trim())
-      .filter((i) => i !== '');
-
-    let msg = '';
-    let concatTimes = 0;
-    return lines.map((line: string) => {
-      msg += line;
-      concatTimes += 1;
-      let data = msg;
-      if (data.startsWith('data:')) {
-        data = data.substring(5).trim();
-      }
-
-      if (data === '[DONE]') {
-        return {
-          content: '',
-          isEnd: true,
-        };
-      }
-      try {
-        let result = '';
-        const choice = JSON.parse(data).choices[0];
-        result = choice.delta.content || '';
-        msg = '';
-        concatTimes = 0;
-        return {
-          content: result,
-          isEnd: false,
-        };
-      } catch (err) {
-        if (concatTimes >= MAX_CONCAT_TIMES) {
-          msg = '';
-          concatTimes = 0;
-          debug(err);
-          debug(`Concat:${concatTimes},data:${data}`);
-        }
-        return {
-          content: '',
-          isEnd: false,
-        };
-      }
-    });
+  protected parseReply(chunk: string): IChatResponseMessage {
+    let data = chunk;
+    if (data.startsWith('data:')) {
+      data = data.substring(5).trim();
+    }
+    if (data === '[DONE]') {
+      return {
+        content: '',
+        isEnd: true,
+      };
+    }
+    try {
+      let result = '';
+      const choice = JSON.parse(data).choices[0];
+      result = choice.delta.content || '';
+      return {
+        content: result,
+        isEnd: false,
+      };
+    } catch (err) {
+      debug(err);
+      return {
+        content: '',
+        isEnd: false,
+      };
+    }
   }
 
   protected async makeRequest(

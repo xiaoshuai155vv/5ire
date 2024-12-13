@@ -2,7 +2,7 @@
 /* eslint-disable react/no-danger */
 // @ts-ignore
 import useChatStore from 'stores/useChatStore';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import useMarkdown from 'hooks/useMarkdown';
 import MessageToolbar from './MessageToolbar';
 import { highlight } from '../../../utils/util';
@@ -11,11 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { Divider } from '@fluentui/react-components';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useToast from 'hooks/useToast';
+import Spinner from 'renderer/components/Spinner';
 
 export default function Message({ message }: { message: IChatMessage }) {
   const { t } = useTranslation();
   const { notifyInfo } = useToast();
   const keywords = useChatStore((state: any) => state.keywords);
+  const states = useChatStore().getCurState();
   const { showCitation } = useKnowledgeStore();
   const keyword = useMemo(
     () => keywords[message.chatId],
@@ -25,15 +27,15 @@ export default function Message({ message }: { message: IChatMessage }) {
     () => JSON.parse(message.citedFiles || '[]'),
     [message.citedFiles]
   );
-  const isLoading = useChatStore((state: any) => state.isLoading);
   const { render } = useMarkdown();
-
   const onCitationClick = async (event: any) => {
     const url = new URL(event.target?.href);
     if (url.pathname === '/citation' || url.protocol.startsWith('file:')) {
       event.preventDefault();
       const chunkId = url.hash.replace('#', '');
-      const chunk = JSON.parse(message.citedChunks || '[]').find((chunk:any) => chunk.id === chunkId);
+      const chunk = JSON.parse(message.citedChunks || '[]').find(
+        (chunk: any) => chunk.id === chunkId
+      );
       if (chunk) {
         showCitation(chunk.content);
       } else {
@@ -52,13 +54,19 @@ export default function Message({ message }: { message: IChatMessage }) {
         link.removeEventListener('click', onCitationClick);
       });
     };
-  });
+  }, []);
 
-  const replyNode = () => {
-    if (message.isActive && isLoading) {
+  const replyNode = useCallback(() => {
+    if (message.isActive && states.loading) {
       if (!message.reply || message.reply === '') {
         return (
           <div className="w-full mt-1.5">
+            {states.runningTool && (
+              <div className="flex flex-row justify-start items-center gap-1">
+                <Spinner size={14} className="-mb-1" />
+                <span>{states.runningTool}</span>
+              </div>
+            )}
             <span className="skeleton-box" style={{ width: '80%' }} />
             <span className="skeleton-box" style={{ width: '90%' }} />
           </div>
@@ -86,7 +94,7 @@ export default function Message({ message }: { message: IChatMessage }) {
         />
       </div>
     );
-  };
+  }, [message, keyword, states]);
 
   return (
     <div className="leading-6 message">

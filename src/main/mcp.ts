@@ -93,10 +93,6 @@ export default class ModuleContext {
     if (!this.clients[client]) {
       throw new Error(`MCP Client ${client} not found`);
     }
-    console.log(JSON.stringify({
-      name,
-      arguments: args,
-    }));
     const result = await this.clients[client].callTool({
       name,
       arguments: args,

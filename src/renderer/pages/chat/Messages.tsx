@@ -1,4 +1,3 @@
-import React from 'react';
 import Message from './Message';
 import { IChatMessage } from 'intellichat/types';
 
