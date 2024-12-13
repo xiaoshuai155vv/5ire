@@ -1,4 +1,4 @@
-import { IChatContext } from '../types';
+import { IChat, IChatContext } from '../types';
 import { ProviderType } from '../../providers/types';
 import AnthropicChatService from './AnthropicChatService';
 import AzureChatService from './AzureChatService';
@@ -11,30 +11,31 @@ import MoonshotChatService from './MoonshotChatService';
 import FireChatService from './FireChatService';
 import DoubaoChatService from './DoubaoChatService';
 import GrokChatService from './GrokChatService';
-import DeepSeek from 'providers/DeepSeek';
 import DeepSeekChatService from './DeepSeekChatService';
+import IChatService from './IChatService';
+import INextChatService from './INextCharService';
 
 export default function createService(
   providerName: ProviderType,
   chatCtx: IChatContext
-) {
+): INextChatService {
   switch (providerName) {
-    case 'Anthropic':
-      return new AnthropicChatService(chatCtx);
+    // case 'Anthropic':
+    //   return new AnthropicChatService(chatCtx);
     case 'OpenAI':
       return new OpenAIChatService(chatCtx);
     case 'Azure':
       return new AzureChatService(chatCtx);
-    case 'Google':
-      return new GoogleChatService(chatCtx);
-    case 'Baidu':
-      return new BaiduChatService(chatCtx);
-    case 'Moonshot':
-      return new MoonshotChatService(chatCtx);
-    case 'Ollama':
-      return new OllamaChatService(chatCtx);
-    case 'ChatBro':
-      return new ChatBroChatService(chatCtx);
+    // case 'Google':
+    //   return new GoogleChatService(chatCtx);
+    // case 'Baidu':
+    //   return new BaiduChatService(chatCtx);
+    // case 'Moonshot':
+    //   return new MoonshotChatService(chatCtx);
+    // case 'Ollama':
+    //   return new OllamaChatService(chatCtx);
+    // case 'ChatBro':
+    //   return new ChatBroChatService(chatCtx);
     case '5ire':
       return new FireChatService(chatCtx);
     case 'Doubao':

@@ -194,5 +194,6 @@
   "Subscription.Placeholder.RedeemCode": "Redeem Code",
   "Common.GitHub": "GitHub",
   "Common.SelectImage": "Select Image",
-  "Common.Author": "Author"
+  "Common.Author": "Author",
+  "Common.MCPServers": "MCP Servers"
 }

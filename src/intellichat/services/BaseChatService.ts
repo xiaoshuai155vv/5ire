@@ -1,6 +1,5 @@
 import Debug from 'debug';
 import IChatService from './IChatService';
-import { isWebUri } from 'valid-url';
 import {
   IChatContext,
   IChatResponseMessage,
@@ -99,11 +98,13 @@ export default abstract class BaseChatService implements IChatService {
     message,
     onMessage,
     onComplete,
+    onToolCalling,
     onError,
   }: {
     message: string;
     onMessage: (message: string) => void;
     onComplete: (result: IChatResponseMessage) => Promise<void>;
+    onToolCalling?: (tool: string) => void;
     onError: (error: any, aborted: boolean) => void;
   }) {
     this.abortController = new AbortController();

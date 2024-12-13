@@ -1,3 +1,4 @@
+import { input } from './../../../node_modules/zod/lib/types.d';
 import Debug from 'debug';
 import IChatService from './IChatService';
 import {
@@ -8,17 +9,18 @@ import {
   IChatMessage,
   IChatRequestMessageContent,
 } from 'intellichat/types';
-import BaseChatService from './BaseChatService';
 import OpenAI from '../../providers/OpenAI';
 import { isBlank } from 'utils/validators';
 import { splitByImg, stripHtmlTags } from 'utils/util';
+import NextChatService, { ITool } from './NextChatService';
+import INextChatService from './INextCharService';
 
 const debug = Debug('5ire:intellichat:OpenAIChatService');
 const MAX_CONCAT_TIMES = 2;
 
 export default class OpenAIChatService
-  extends BaseChatService
-  implements IChatService
+  extends NextChatService
+  implements INextChatService
 {
   constructor(context: IChatContext) {
     super({
@@ -30,34 +32,35 @@ export default class OpenAIChatService
   protected composePromptMessage(
     content: string
   ): string | IChatRequestMessageContent[] {
-    if(this.context.getModel().vision?.enabled){
+    if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content);
       const result: IChatRequestMessageContent[] = [];
       items.forEach((item: any) => {
-        if (item.type==='image') {
+        if (item.type === 'image') {
           result.push({
             type: 'image_url',
             image_url: {
-              url: item.data
+              url: item.data,
             },
-          })
-
-        }else if(item.type === 'text'){
+          });
+        } else if (item.type === 'text') {
           result.push({
             type: 'text',
             text: item.data,
           });
-        }else{
+        } else {
           console.error('Unknown message type', item);
           throw new Error('Unknown message type');
         }
       });
       return result;
     }
-    return stripHtmlTags(content)
+    return stripHtmlTags(content);
   }
 
-  protected composeMessages(message: string): IChatRequestMessage[] {
+  protected composeMessages(
+    messages: IChatRequestMessage[]
+  ): IChatRequestMessage[] {
     const result = [];
     const systemMessage = this.context.getSystemMessage();
     if (!isBlank(systemMessage)) {
@@ -76,25 +79,100 @@ export default class OpenAIChatService
         content: msg.reply,
       });
     });
-    result.push({ role: 'user', content: this.composePromptMessage(message) });
+    for (const msg of messages) {
+      if (msg.role === 'tool') {
+        result.push({ role: 'tool', content: JSON.stringify(msg.content) });
+      } else {
+        result.push({
+          role: 'user',
+          content: this.composePromptMessage(msg.content as string),
+        });
+      }
+    }
     return result as IChatRequestMessage[];
   }
 
-  protected async makePayload(message: string):  Promise<IChatRequestPayload> {
+  protected async makePayload(
+    message: IChatRequestMessage[]
+  ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
       model: this.context.getModel().name,
       messages: this.composeMessages(message),
       temperature: this.context.getTemperature(),
       stream: true,
     };
+    await window.electron.mcp.activate({
+      name: 'mcp-obsidian',
+      command: 'npx',
+      args: [
+        'mcp-obsidian',
+        '/Users/ironben/Library/Mobile Documents/iCloud~md~obsidian/Documents/Ironben/',
+      ],
+    });
+    const tools = await window.electron.mcp.listTools();
+    if (tools) {
+      payload.tools = tools.map((tool: any) => {
+        return {
+          type: 'function',
+          function: {
+            name: tool.name,
+            description: tool.description,
+            parameters: {
+              type: tool.inputSchema.type,
+              properties: tool.inputSchema.properties,
+              required: tool.inputSchema.required,
+            },
+          },
+        };
+      });
+      payload.tool_choice = 'auto';
+    }
     if (this.context.getMaxTokens()) {
       payload.max_tokens = this.context.getMaxTokens();
     }
     debug('payload', payload);
-    return Promise.resolve(payload);;
+    return Promise.resolve(payload);
   }
 
-  protected parseReplyMessage(chunk: string): IChatResponseMessage[] {
+  protected parseTools(chunk: string): ITool | null {
+    let data = chunk;
+    if (chunk.startsWith('data:')) {
+      data = chunk.substring(5).trim();
+    }
+    console.log('data', data);
+    const choice = JSON.parse(data).choices[0];
+    let tool = null;
+    if (choice.delta.tool_calls) {
+      tool = {
+        id: choice.delta.tool_calls[0].id,
+        name: choice.delta.tool_calls[0].function.name,
+      };
+    }
+    return tool;
+  }
+
+  protected parseToolArgs(chunk: string): string {
+    let data = chunk;
+    if (chunk.startsWith('data:')) {
+      data = chunk.substring(5).trim();
+    }
+    try {
+      const { choices } = JSON.parse(data);
+      if (choices) {
+        const choice = choices[0];
+        if (choice.finish_reason) {
+          return '';
+        }
+        return choice.delta.tool_calls[0].function.arguments;
+      }
+    } catch (err) {
+      console.error('parseToolArgs', err);
+    }
+    return '';
+  }
+
+  protected parseReply(chunk: string): IChatResponseMessage[] {
+    debug('chunk', chunk);
     const lines = chunk
       .split('\n')
       .map((i) => i.trim())
@@ -109,6 +187,7 @@ export default class OpenAIChatService
       if (data.startsWith('data:')) {
         data = data.substring(5).trim();
       }
+
       if (data === '[DONE]') {
         return {
           content: '',
@@ -118,7 +197,7 @@ export default class OpenAIChatService
       try {
         let result = '';
         const choice = JSON.parse(data).choices[0];
-        result = choice.delta.content||'';
+        result = choice.delta.content || '';
         msg = '';
         concatTimes = 0;
         return {
@@ -130,7 +209,7 @@ export default class OpenAIChatService
           msg = '';
           concatTimes = 0;
           debug(err);
-          debug(`concats:${concatTimes},data:${data}`);
+          debug(`Concat:${concatTimes},data:${data}`);
         }
         return {
           content: '',
@@ -140,8 +219,10 @@ export default class OpenAIChatService
     });
   }
 
-  protected async makeRequest(message: string): Promise<Response> {
-    const payload = await this.makePayload(message);
+  protected async makeRequest(
+    messages: IChatRequestMessage[]
+  ): Promise<Response> {
+    const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
     const response = await fetch(`${base}/v1/chat/completions`, {

@@ -26,6 +26,8 @@ import useKnowledgeStore from 'stores/useKnowledgeStore';
 import CitationDialog from './CitationDialog';
 import { ICollectionFile } from 'types/knowledge';
 import { extractCitationIds } from 'utils/util';
+import INextChatService from 'intellichat/services/INextCharService';
+import { on } from 'events';
 
 const debug = Debug('5ire:pages:chat');
 
@@ -53,7 +55,7 @@ export default function Chat() {
   const updateChat = useChatStore((state) => state.updateChat);
   const setLoading = useChatStore((state) => state.setLoading);
 
-  const [chatService] = useState<IChatService>(useChatService());
+  const [chatService] = useState<INextChatService>(useChatService());
 
   const { notifyError } = useToast();
 
@@ -210,8 +212,8 @@ ${prompt}
         } else {
           const inputTokens = result.inputTokens || (await countInput(prompt));
           const outputTokens =
-            result.outputTokens || (await countOutput(result.content));
-          const citedChunkIds = extractCitationIds(result.content);
+            result.outputTokens || (await countOutput(result.content || ''));
+          const citedChunkIds = extractCitationIds(result.content || '');
           const citedChunks = knowledgeChunks.filter((k: any) =>
             citedChunkIds.includes(k.id)
           );
@@ -249,26 +251,28 @@ ${prompt}
         }
         navigate(`/chats/${$chatId}`);
       };
-
-      await chatService.chat({
-        message: actualPrompt,
-        onMessage: (content: string) => {
-          $reply = appendReply(msg.id, content);
-          scrollToBottom();
-        },
-        onComplete: async (result: IChatResponseMessage) => {
-          await onChatComplete(result);
-          scrollToBottom();
-          setLoading(false);
-        },
-        onError: (err, aborted) => {
-          console.error(err);
-          if (!aborted) {
-            notifyError(err.message || err);
-          }
-        },
+      console.log(chatService);
+      chatService.onComplete(onChatComplete);
+      chatService.onReading((content: string) => {
+        $reply = appendReply(msg.id, content);
+        scrollToBottom();
+      });
+      chatService.onToolCalling((toolName: string) => {
+        debug('Tool calling:', toolName);
+      });
+      chatService.onError((err: any, aborted: boolean) => {
+        console.error(err);
+        if (!aborted) {
+          notifyError(err.message || err);
+        }
       });
 
+      await chatService.chat([
+        {
+          role: 'user',
+          content: actualPrompt,
+        },
+      ]);
       window.electron.ingestEvent([{ app: 'chat' }, { model: model.label }]);
     },
     [

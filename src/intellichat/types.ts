@@ -1,15 +1,20 @@
-import { IChatModel, IServiceProvider } from "providers/types";
-import { ICollection } from "types/knowledge";
+import { IChatModel, IServiceProvider } from 'providers/types';
+import { ICollection } from 'types/knowledge';
 
 export interface IChatResponseMessage {
-  content: string;
+  content?: string;
+  function?: {
+    id: string;
+    name: string;
+    args: any;
+  };
   isEnd?: boolean;
   inputTokens?: number;
   outputTokens?: number;
   context?: string;
   error?: {
     code?: number;
-    type?: string
+    type?: string;
     message: string;
   };
 }
@@ -18,20 +23,19 @@ export interface IChatRequestMessageContent {
   type: 'text' | 'image_url' | 'image' | 'function';
   text?: string;
   image_url?: {
-    url: string
+    url: string;
   };
   function?: {
     name: string;
     description?: string;
     parameters?: any;
   };
-  source?:{
-    type:string,
-    media_type:string,
-    data: string
-  }
+  source?: {
+    type: string;
+    media_type: string;
+    data: string;
+  };
 }
-
 
 export interface IGeminiChatRequestMessageContent {
   text?: string;
@@ -42,10 +46,9 @@ export interface IGeminiChatRequestMessageContent {
 }
 
 export interface IChatRequestMessage {
-  role: string;
-  content?:
-    | string
-    | IChatRequestMessageContent[];
+  role: 'user' | 'assistant' | 'system' | 'tool';
+  content?: string | IChatRequestMessageContent[];
+  tool_call_id?: string;
   parts?: IGeminiChatRequestMessageContent[];
 }
 
@@ -56,7 +59,7 @@ export interface IChatRequestPayload {
   presence_penalty?: number;
   top_p?: number;
   stream?: boolean;
-  prompt?:string; //ollama
+  prompt?: string; //ollama
   context?: number[]; // ollama
   system?: string; // baidu, anthropic, ollama
   options?: {
@@ -65,11 +68,13 @@ export interface IChatRequestPayload {
   };
   messages?: IChatRequestMessage[];
   contents?: IChatRequestMessage[];
-  generationConfig?:{
+  generationConfig?: {
     maxOutputTokens?: number;
     top_p?: number;
     temperature?: number;
-  }
+  };
+  tools?: any;
+  tool_choice?: 'none' | 'auto' | 'required';
 }
 
 export type ModelGroup =
@@ -81,9 +86,9 @@ export type ModelGroup =
   | 'Open Source';
 
 export interface IChatContext {
-  getActiveChat: ()=> IChat;
-  getProvider: ()=> IServiceProvider;
-  getModel: ()=> IChatModel;
+  getActiveChat: () => IChat;
+  getProvider: () => IServiceProvider;
+  getModel: () => IChatModel;
   getSystemMessage: () => string | null;
   getTemperature: () => number;
   getMaxTokens: () => number | null;
@@ -99,11 +104,11 @@ export interface IChat {
   systemMessage?: string | null;
   maxCtxMessages?: number;
   temperature?: number;
-  stream?:boolean;
-  context?: string|null;
+  stream?: boolean;
+  context?: string | null;
   maxTokens?: number | null;
   createdAt: number | null;
-  isPersisted?:boolean
+  isPersisted?: boolean;
 }
 
 export interface IChatMessage {

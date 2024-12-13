@@ -194,5 +194,6 @@
   "Subscription.Placeholder.RedeemCode": "兑换码",
   "Common.GitHub": "GitHub",
   "Common.SelectImage": "选择图片",
-  "Common.Author": "作者"
+  "Common.Author": "作者",
+  "Common.MCPServers": "MCP Servers"
 }

@@ -94,6 +94,7 @@
     "@fluentui/react-datepicker-compat": "^0.4.6",
     "@fluentui/react-icons": "^2.0.223",
     "@herberttn/bytenode-webpack-plugin": "^2.3.1",
+    "@modelcontextprotocol/sdk": "^1.0.3",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@rsdoctor/webpack-plugin": "^0.1.5",
     "@sentry/electron": "^4.7.0",
@@ -248,7 +249,7 @@
       "**/node_modules/textract/lib/extractors/**"
     ],
     "afterPack": ".erb/scripts/remove-useless.js",
-    "afterSign": ".erb/scripts/notarize.js",
+
     "mac": {
       "target": {
         "target": "default",

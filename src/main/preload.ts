@@ -37,6 +37,17 @@ const electronHandler = {
       ipcRenderer.sendSync('set-store', key, val);
     },
   },
+  mcp:{
+    activate(config: {name: string,command: string,args: string[]}){
+      ipcRenderer.invoke('mcp-activate',config)
+    },
+    listTools(name?:string){
+      return ipcRenderer.invoke('mcp-list-tools',name)
+    },
+    callTool({client, name,args}:{client:string, name:string, args:any}){
+      return ipcRenderer.invoke('mcp-call-tool',{client, name, args})
+    }
+  },
   crypto: {
     encrypt(text: string, key: string) {
       return ipcRenderer.invoke('encrypt', text, key);

@@ -34,6 +34,7 @@ import { Embedder } from './embedder';
 import initCrashReporter from '../CrashReporter';
 import { encrypt, decrypt } from './crypt';
 import { MessageBoxOptions } from 'electron';
+import ModuleContext from './mcp';
 
 import Knowledge from './knowledge';
 
@@ -62,6 +63,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
 
+const mcp = new ModuleContext();
 const store = new Store();
 
 class AppUpdater {
@@ -392,6 +394,20 @@ ipcMain.handle('cancel-download', (_, fileName: string) => {
   downloader.cancel(fileName);
 });
 
+/** mcp */
+ipcMain.handle('mcp-activate', async (_, config) => {
+  await mcp.activate(config);
+});
+ipcMain.handle('mcp-list-tools', async (_, name: string) => {
+  return await mcp.listTools(name);
+});
+ipcMain.handle(
+  'mcp-call-tool',
+  async (_, args: { client: string; name: string; args: any }) => {
+    return await mcp.callTool(args);
+  }
+);
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -543,7 +559,7 @@ app.on('window-all-closed', () => {
 
 app
   .whenReady()
-  .then(() => {
+  .then(async () => {
     createWindow();
     // Remove this if your app does not use auto updates
     // eslint-disable-next-line
@@ -553,6 +569,7 @@ app
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
+    await mcp.init();
     axiom.ingest([{ app: 'launch' }]);
   })
   .catch(log.error);

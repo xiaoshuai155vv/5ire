@@ -27,11 +27,7 @@ const EmojiSparkleIcon = bundleIcon(
   EmojiSparkle24Regular
 );
 const ChatAddIcon = bundleIcon(ChatAdd24Filled, ChatAdd24Regular);
-const KnowledgeIcon = bundleIcon(
-  Library24Filled,
-  Library24Regular
-
-);
+const KnowledgeIcon = bundleIcon(Library24Filled, Library24Regular);
 
 const IS_ASSISTANTS_ENABLED = false;
 
@@ -70,16 +66,28 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           </Button>
         </div>
       )}
-      <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
+      {false && (
+        <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
           <Button
             appearance="subtle"
             icon={<KnowledgeIcon />}
             className="w-full justify-start"
             onClick={() => navigate('/knowledge')}
           >
-            {collapsed ? null : t('Common.Knowledge')}
+            {collapsed ? null : t('Common.MCPServers')}
           </Button>
         </div>
+      )}
+      <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
+        <Button
+          appearance="subtle"
+          icon={<KnowledgeIcon />}
+          className="w-full justify-start"
+          onClick={() => navigate('/knowledge')}
+        >
+          {collapsed ? null : t('Common.Knowledge')}
+        </Button>
+      </div>
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
@@ -89,7 +97,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
             navigate('/bookmarks');
           }}
         >
-          {collapsed ? null: t('Common.Bookmarks')}
+          {collapsed ? null : t('Common.Bookmarks')}
         </Button>
       </div>
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
