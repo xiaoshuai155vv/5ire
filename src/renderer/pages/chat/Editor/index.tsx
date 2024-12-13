@@ -79,7 +79,7 @@ export default function Editor({
     let text = '';
     // 遍历剪贴板中的项目
     for (const item of clipboardItems) {
-      if (item.kind === 'string' && item.type === 'text/html') {
+      if (item.kind === 'string' && item.type === 'text/plain') {
         // 获取纯文本
         item.getAsString(function (clipText) {
           let _text = clipText.replace(/&[a-z]+;/gi, ' ');
