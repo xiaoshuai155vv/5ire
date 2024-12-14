@@ -13,6 +13,7 @@ import useSettingsStore from 'stores/useSettingsStore';
 import { raiseError, stripHtmlTags } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:NextChatService');
+const MAX_SPLICE = 3;
 
 export interface ITool {
   id: string;
@@ -32,7 +33,7 @@ export default abstract class NextCharService {
     deploymentId?: string; // azure
   };
   aborted: boolean;
-  private onCompleteCallback: (result: any) => void;
+  private onCompleteCallback: (result: any) => Promise<void>;
   private onReadingCallback: (chunk: string) => void;
   private onToolCallingCallback: (toolName: string) => void;
   private onErrorCallback: (error: any, aborted: boolean) => void;
@@ -88,7 +89,7 @@ export default abstract class NextCharService {
     args: string;
   };
 
-  public onComplete(callback: (result: any) => void) {
+  public onComplete(callback: (result: any) => Promise<void>) {
     this.onCompleteCallback = callback;
   }
   public onReading(callback: (chunk: string) => void) {
@@ -178,6 +179,10 @@ export default abstract class NextCharService {
       const decoder = new TextDecoder('utf-8');
       let isFunction = false;
       let functionArgs: string[] = [];
+      let prevChunk = '';
+      let chunk = '';
+      let splices = 0;
+      let choice = null;
       let index = 0;
       let done = false;
       while (!done) {
@@ -191,70 +196,82 @@ export default abstract class NextCharService {
         if (response.status !== 200) {
           this.onReadingError(value);
         }
-        const chunks = value
+        const lines = value
           .split('\n')
           .map((i) => i.trim())
           .filter((i) => i !== '');
 
-        for (const chunk of chunks) {
-          if (chunk === 'data: [DONE]') {
-            done = true;
-            break;
-          }
-          if (chunk.startsWith('data:')) {
+        for (const line of lines) {
+          const chunks = line
+            .split('data:')
+            .filter((i) => i !== '')
+            .map((i) => i.trim());
+          for (let curChunk of chunks) {
+            if (curChunk === '[DONE]') {
+              done = true;
+              break;
+            }
+            chunk = prevChunk + curChunk;
             try {
-              const data = JSON.parse(chunk.substring(5).trim());
-              if (!data.choices) {
-                continue;
-              }
-              const choice = data.choices[0];
-              if (choice.delta.content === null && !choice.delta.tool_calls) {
-                continue;
-              }
+              choice = JSON.parse(chunk).choices[0];
+              prevChunk = '';
+              splices = 0;
             } catch (error) {
-              console.error('parseReply', error);
-              console.debug('chunk', chunk);
+              if (splices > MAX_SPLICE) {
+                console.error(
+                  'JSON parse failed:',
+                  prevChunk,
+                  '\n\n',
+                  curChunk
+                );
+                prevChunk = '';
+                splices = 0;
+              } else {
+                prevChunk += curChunk;
+                splices++;
+              }
               continue;
             }
-          }
-
-          if (index === 0) {
-            const tool = this.parseTools(chunk);
-            if (tool) {
-              this.tool = {
-                id: tool.id,
-                name: tool.name,
-              };
-              this.onToolCallingCallback(this.tool.name);
-              isFunction = true;
-              context;
+            if (choice.delta.content === null && !choice.delta.tool_calls) {
+              continue;
             }
-          }
-          if (isFunction) {
-            const { index: argIndex, args } = this.parseToolArgs(chunk);
-            if (index >= 0 && functionArgs[argIndex] === undefined) {
-              functionArgs[argIndex] = '';
-            }
-            functionArgs[argIndex] += args;
-          } else {
-            this.tool = null;
-            const message = this.parseReply(chunk);
-            // eslint-disable-next-line no-plus
-            reply += message.content;
-            this.onReadingCallback(message.content || '');
-            if (message.outputTokens) {
-              this.outputTokens += message.outputTokens;
-            }
-            if (message.isEnd) {
-              // inputToken 不会变化，所以只取最后一次的值
-              if (message.inputTokens) {
-                this.inputTokens = message.inputTokens;
+            if (index === 0) {
+              const tool = this.parseTools(chunk);
+              if (tool) {
+                this.tool = {
+                  id: tool.id,
+                  name: tool.name,
+                };
+                this.onToolCallingCallback(this.tool.name);
+                isFunction = true;
+                context;
               }
-              context = message.context || null; // ollama 最后会输出 context 信息
-              done = true;
             }
+            if (isFunction) {
+              const { index: argIndex, args } = this.parseToolArgs(chunk);
+              if (index >= 0 && functionArgs[argIndex] === undefined) {
+                functionArgs[argIndex] = '';
+              }
+              functionArgs[argIndex] += args;
+            } else {
+              this.tool = null;
+              const message = this.parseReply(chunk);
+              reply += message.content;
+              this.onReadingCallback(message.content || '');
+              if (message.outputTokens) {
+                this.outputTokens += message.outputTokens;
+              }
+              if (message.isEnd) {
+                // inputToken 不会变化，所以只取最后一次的值
+                if (message.inputTokens) {
+                  this.inputTokens = message.inputTokens;
+                }
+                context = message.context || null; // ollama 最后会输出 context 信息
+                done = true;
+              }
+            }
+            index++;
           }
-          index++;
         }
       }
 
