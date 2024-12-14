@@ -3,8 +3,6 @@ import log from 'electron-log';
 import pdf from 'pdf-parse';
 import officeParser from 'officeparser';
 
-
-0
 abstract class BaseLoader {
   protected abstract read(filePath: string): Promise<string>;
 
