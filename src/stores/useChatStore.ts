@@ -310,19 +310,15 @@ const useChatStore = create<IChatStore>((set, get) => ({
   },
   appendReply: (msgId: string, reply: string) => {
     let $reply = '';
-    set((state) => {
-      const messages = state.messages.map((msg) => {
-        if (msg.id === msgId) {
-          $reply = msg.reply ? `${msg.reply}${reply}` : reply;
-          console.log('appendReply', msg.reply);
-          msg.reply = $reply;
+    set(
+      produce((state: IChatStore) => {
+        const message = state.messages.find((msg) => msg.id === msgId);
+        if (message) {
+          $reply = message.reply ? `${message.reply}${reply}` : reply;
+          message.reply = $reply;
         }
-        return msg;
-      });
-      return {
-        messages: [...messages],
-      };
-    });
+      })
+    );
     return $reply;
   },
   updateMessage: async (message: { id: string } & Partial<IChatMessage>) => {
