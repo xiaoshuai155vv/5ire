@@ -12,6 +12,7 @@ import { Divider } from '@fluentui/react-components';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useToast from 'hooks/useToast';
 import Spinner from 'renderer/components/Spinner';
+import ToolSpinner from 'renderer/components/ToolSpinner';
 
 export default function Message({ message }: { message: IChatMessage }) {
   const { t } = useTranslation();
@@ -63,7 +64,7 @@ export default function Message({ message }: { message: IChatMessage }) {
           <div className="w-full mt-1.5">
             {states.runningTool && (
               <div className="flex flex-row justify-start items-center gap-1">
-                <Spinner size={14} className="-mb-1" />
+                <ToolSpinner size={20} />
                 <span>{states.runningTool}</span>
               </div>
             )}
