@@ -1,11 +1,13 @@
 import './ToolSpinner.scss';
 
-export default function ToolSpinner({ size = 24 }) {
+export default function ToolSpinner(props: { size?: number } & any) {
+  const { size, ...rest } = props;
   return (
     <svg
-      width={size}
-      height={size}
+      width={size || 24}
+      height={size || 24}
       viewBox="0 0 24 24"
+      {...rest}
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
@@ -21,8 +23,8 @@ export default function ToolSpinner({ size = 24 }) {
         </filter>
       </defs>
       <g filter="url(#spinner-gF00)">
-        <circle className="spinner_mHwL" cx="4" cy="12" r="3" fill='#555' />
-        <circle className="spinner_ote2" cx="15" cy="12" r="8" fill='#555'/>
+        <circle className="spinner_mHwL" cx="4" cy="12" r="3" fill="#555" />
+        <circle className="spinner_ote2" cx="15" cy="12" r="8" fill="#555" />
       </g>
     </svg>
   );
