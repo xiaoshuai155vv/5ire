@@ -1,140 +1,130 @@
 import Debug from 'debug';
-import BaseChatService from './BaseChatService';
-import IChatService from './IChatService';
 import Baidu from '../../providers/Baidu';
-import {
-  IChatContext,
-  IChatMessage,
-  IChatRequestMessage,
-  IChatRequestPayload,
-  IChatResponseMessage,
-} from '../types';
+import { IChatContext, IChatRequestMessage } from '../types';
 import { date2unix } from 'utils/util';
-import { isBlank } from 'utils/validators';
+import INextChatService from './INextCharService';
+import OpenAIChatService from './OpenAIChatService';
+import { timeStamp } from 'console';
 
 const debug = Debug('5ire:intellichat:BaiduChatService');
 
+function formatDateToISO(date:Date):string {
+  return date.toISOString().split('.')[0] + 'Z';
+}
 export interface IBaiduToken {
-  accessToken: string;
-  expiresIn: number;
-  createdAt: number;
+  token: string;
+  userId: string;
+  expiredAt: string;
+  createdAt: string;
 }
 
-export default class BaiduChatService extends BaseChatService implements IChatService {
+export default class BaiduChatService
+  extends OpenAIChatService
+  implements INextChatService
+{
   constructor(context: IChatContext) {
-    super({
-      context,
-      provider: Baidu,
-    });
+    super(context);
+    this.provider = Baidu;
   }
 
-  private composeMessages(message: string): IChatRequestMessage[] {
-    const result = [];
-    this.context.getCtxMessages().forEach((msg: IChatMessage) => {
-      result.push({
-        role: 'user',
-        content: msg.prompt,
-      });
-      result.push({
-        role: 'assistant',
-        content: msg.reply,
-      });
-    });
-    result.push({ role: 'user', content: message });
-    return result as IChatRequestMessage[];
-  }
-
-  protected async makePayload(message: string): Promise<IChatRequestPayload> {
-    const payload: IChatRequestPayload = {
-      messages: this.composeMessages(message),
-      temperature: this.context.getTemperature(),
-      stream: true,
-    };
-    const systemMessage = this.context.getSystemMessage();
-    if (!isBlank(systemMessage)) {
-      payload.system = systemMessage as string;
-    }
-    debug('makePayload: ', payload);
-    return Promise.resolve(payload);
-  }
-
-  protected onMessageError(chunk: string) {
-    console.error(chunk);
-  }
-
-  private async getAccessToken(): Promise<string> {
-    const token = localStorage.getItem('baidu-token');
-    if (!token) {
+  private async geToken(): Promise<string> {
+    const cachedToken = localStorage.getItem('baidu-token');
+    if (!cachedToken) {
       debug('No access token found, requesting...');
-      return (await this.requestAccessToken()).accessToken;
+      return (await this.requestToken()).token;
     }
-    const { expiresIn, createdAt, accessToken } = JSON.parse(token);
-    if (date2unix(new Date()) - createdAt > expiresIn) {
+    const { expiredAt, token } = JSON.parse(cachedToken) as IBaiduToken;
+    if (date2unix(new Date()) > date2unix(new Date(expiredAt))) {
       debug('Access token expired, requesting...');
-      return (await this.requestAccessToken()).accessToken;
+      return (await this.requestToken()).token;
     }
-    return accessToken;
+    debug('Using cached access token:', token);
+    return token;
   }
 
-  private async requestAccessToken(): Promise<IBaiduToken> {
-    const { base, key, secret } = this.apiSettings;
-    const response = await fetch(
-      `${base}/oauth/2.0/token?grant_type=client_credentials&client_id=${key}&client_secret=${secret}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+  private async requestToken(): Promise<IBaiduToken> {
+    const path = '/v1/BCE-BEARER/token?expireInSeconds=2592000';
+    const timeStamp = formatDateToISO(new Date());
+    const authString = await this.createAuthString(path, timeStamp);
+    const response = await fetch(`https://iam.bj.baidubce.com${path}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authString.trim(),
+        'x-bce-date': timeStamp,
+      },
+    });
     const result = await response.json();
-    debug('Got access token: ', result);
     const token = {
-      accessToken: result.access_token,
-      expiresIn: result.expires_in,
-      createdAt: date2unix(new Date()),
+      userId: result.userId,
+      token: result.token,
+      expiredAt: result.expireTime,
+      createdAt: result.createTime,
     };
+    debug('Request Bearer Token: ', token);
     localStorage.setItem('baidu-token', JSON.stringify(token));
     return token;
   }
 
-  protected parseReplyMessage(chunk: string): IChatResponseMessage[] {
-    if (chunk.startsWith('data:')) {
-      const lines = chunk
-        .split('\n')
-        .map((i) => i.trim())
-        .filter((i) => i !== '');
-      return lines.map((line: string) => {
-        const data = JSON.parse(line.substring(5).trim());
-        return {
-          content: data.result as string,
-          isEnd: data.is_end as boolean,
-          inputTokens: data.usage.prompt_tokens,
-          outputTokens: data.usage.completion_tokens,
-        };
-      });
-    } else {
-      debug('Error occurred while generating: ', chunk);
-      // {error_code:'', error_msg:''}
-      const error = JSON.parse(chunk);
-      throw { code: error.error_code, message: error.error_msg };
-    }
+  // /v1/BCE-BEARER/token?expireInSeconds=2592000
+  private async createAuthString(
+    uri: string,
+    timestamp: string
+  ): Promise<string> {
+    const { key, secret } = this.apiSettings;
+    const signedHeaders = 'content-type;host;x-bce-date';
+    const url = new URL('https://iam.bj.baidubce.com');
+    const [path, query] = uri.split('?');
+    const host = encodeURIComponent(url.host);
+    const canonicalURI = encodeURIComponent(path).replace(/%2F/g, '/');
+    const queries = query.split('&');
+    const canonicalQueryString = queries
+      .map((q) => {
+        const [key, val] = q.split('=');
+        return encodeURIComponent(key) + '=' + encodeURIComponent(val);
+      })
+      .join('&');
+    const canonicalRequest = `GET\n${canonicalURI}\n${canonicalQueryString}\ncontent-type:${encodeURIComponent(
+      'application/json'
+    )}\nhost:${host}\nx-bce-date:${encodeURIComponent(timestamp)}`;
+    debug(`canonicalRequest:\n\n${canonicalRequest}`);
+
+    const expirationPeriodInSeconds = 2592000;
+    // authStringPrefix = bce-auth-v1/{accessKeyId}/{timestamp}/{expirationPeriodInSeconds}
+    const authStringPrefix = `bce-auth-v1/${key}/${timestamp}/${expirationPeriodInSeconds}`;
+    debug('authStringPrefix:', authStringPrefix);
+    const signingKey = await window.electron.crypto.hmacSha256Hex(
+      authStringPrefix,
+      secret as string
+    );
+    debug('signingKey:', signingKey);
+    const signature = await window.electron.crypto.hmacSha256Hex(
+      canonicalRequest,
+      signingKey
+    );
+    debug('signature:', signature);
+    // bce-auth-v1/{accessKeyId}/{timestamp}/{expirationPeriodInSeconds }/{signedHeaders}/{signature}
+    return `bce-auth-v1/${key}/${timestamp}/${expirationPeriodInSeconds}/${signedHeaders}/${signature}`;
   }
 
-  protected async makeRequest(message: string): Promise<Response> {
-    const payload = await this.makePayload(message);
+  protected async makeRequest(
+    messages: IChatRequestMessage[]
+  ): Promise<Response> {
+    const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
-    const { base, key } = this.apiSettings;
+    const { base } = this.apiSettings;
 
-    const accessToken = await this.getAccessToken();
-    const model = this.context.getModel()
+    const token = await this.geToken();
+    //payload.model = this.context.getModel().name;
+    payload.model='ernie-4.0-8k'
 
     // TODO 有些 model 的 endpoint 是申请的时候用户自己填写的，这种情况需要用户自己在设置的时候填写
-    const url = `${base}/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/${model.endpoint}?access_token=${accessToken}`;
+    const url = `${base}/v2/chat/completions`;
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
       signal: this.abortController.signal,

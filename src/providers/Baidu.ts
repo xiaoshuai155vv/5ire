@@ -2,7 +2,7 @@ import { IServiceProvider } from './types';
 
 export default {
   name: 'Baidu',
-  apiBase: 'https://aip.baidubce.com',
+  apiBase: 'https://qianfan.baidubce.com',
   currency: 'CNY',
   options: {
     apiBaseCustomizable: false,

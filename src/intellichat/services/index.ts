@@ -28,8 +28,8 @@ export default function createService(
       return new AzureChatService(chatCtx);
     case 'Google':
       return new GoogleChatService(chatCtx);
-    // case 'Baidu':
-    //   return new BaiduChatService(chatCtx);
+    case 'Baidu':
+      return new BaiduChatService(chatCtx);
     case 'Moonshot':
       return new MoonshotChatService(chatCtx);
     // case 'Ollama':

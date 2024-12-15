@@ -13,7 +13,7 @@ import {
   ipcMain,
   nativeTheme,
 } from 'electron';
-
+import crypto from 'crypto';
 dotenv.config({
   path: app.isPackaged
     ? path.join(process.resourcesPath, '.env')
@@ -186,6 +186,10 @@ ipcMain.handle('get-device-info', async () => {
     platform: os.platform(),
     type: os.type(),
   };
+});
+
+ipcMain.handle('hmac-sha256-hex', (_, data: string, key: string) => {
+  return crypto.createHmac('sha256', key).update(data).digest('hex');
 });
 
 ipcMain.handle('get-app-version', () => {

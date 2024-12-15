@@ -55,6 +55,9 @@ const electronHandler = {
     decrypt(encrypted: string, key: string, iv: string) {
       return ipcRenderer.invoke('decrypt', encrypted, key, iv);
     },
+    hmacSha256Hex(data: string, key: string) {
+      return ipcRenderer.invoke('hmac-sha256-hex', data, key);
+    }
   },
   openExternal(url: string) {
     return ipcRenderer.invoke('open-external', url);
