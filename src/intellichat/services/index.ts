@@ -30,12 +30,12 @@ export default function createService(
     //   return new GoogleChatService(chatCtx);
     // case 'Baidu':
     //   return new BaiduChatService(chatCtx);
-    // case 'Moonshot':
-    //   return new MoonshotChatService(chatCtx);
+    case 'Moonshot':
+      return new MoonshotChatService(chatCtx);
     // case 'Ollama':
     //   return new OllamaChatService(chatCtx);
-    // case 'ChatBro':
-    //   return new ChatBroChatService(chatCtx);
+    case 'ChatBro':
+      return new ChatBroChatService(chatCtx);
     case '5ire':
       return new FireChatService(chatCtx);
     case 'Doubao':

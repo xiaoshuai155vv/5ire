@@ -1,12 +1,12 @@
-import IChatService from './IChatService';
 import OpenAIChatService from './OpenAIChatService';
 import Azure from '../../providers/Azure'
-import { IChatContext } from 'intellichat/types';
+import { IChatContext, IChatRequestMessage } from 'intellichat/types';
+import INextChatService from './INextCharService';
 
 
 export default class AzureChatService
   extends OpenAIChatService
-  implements IChatService
+  implements INextChatService
 {
 
   constructor(chatContext: IChatContext) {
@@ -14,7 +14,7 @@ export default class AzureChatService
     this.provider = Azure;
   }
 
-  protected async makeRequest(message: string): Promise<Response> {
+  protected async makeRequest(messages: IChatRequestMessage[]): Promise<Response> {
     const apiVersion = '2023-03-15-preview';
     const { base, deploymentId, key } = this.apiSettings;
     const response = await fetch(
@@ -25,7 +25,7 @@ export default class AzureChatService
           'Content-Type': 'application/json',
           'api-key': key,
         },
-        body: JSON.stringify(await this.makePayload(message)),
+        body: JSON.stringify(await this.makePayload(messages)),
         signal: this.abortController.signal,
       }
     );

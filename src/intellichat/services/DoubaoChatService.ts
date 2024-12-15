@@ -1,28 +1,29 @@
-import IChatService from './IChatService';
 import OpenAIChatService from './OpenAIChatService';
 import Doubao from '../../providers/Doubao';
-import { IChatContext } from 'intellichat/types';
+import { IChatContext, IChatRequestMessage } from 'intellichat/types';
+import INextChatService from './INextCharService';
 
 export default class DoubaoChatService
   extends OpenAIChatService
-  implements IChatService
+  implements INextChatService
 {
   constructor(chatContext: IChatContext) {
     super(chatContext);
     this.provider = Doubao;
   }
 
-
-  protected async makeRequest(message: string): Promise<Response> {
+  protected async makeRequest(
+    messages: IChatRequestMessage[]
+  ): Promise<Response> {
     const { base, deploymentId, key } = this.apiSettings;
-    const payload = await this.makePayload(message)
-    payload.model = deploymentId
-    payload.stream = true
+    const payload = await this.makePayload(messages);
+    payload.model = deploymentId;
+    payload.stream = true;
     const response = await fetch(`${base}/api/v3/chat/completions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${key}`,
+        Authorization: `Bearer ${key}`,
       },
       body: JSON.stringify(payload),
       signal: this.abortController.signal,

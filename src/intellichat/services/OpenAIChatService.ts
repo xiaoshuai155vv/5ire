@@ -105,14 +105,6 @@ export default class OpenAIChatService
       temperature: this.context.getTemperature(),
       stream: true,
     };
-    await window.electron.mcp.activate({
-      name: 'mcp-obsidian',
-      command: 'npx',
-      args: [
-        'mcp-obsidian',
-        '/Users/ironben/Library/Mobile Documents/iCloud~md~obsidian/Documents/Ironben/',
-      ],
-    });
     const tools = await window.electron.mcp.listTools();
     if (tools) {
       const _tools = tools
@@ -185,11 +177,7 @@ export default class OpenAIChatService
   }
 
   protected parseReply(chunk: string): IChatResponseMessage {
-    let data = chunk;
-    if (data.startsWith('data:')) {
-      data = data.substring(5).trim();
-    }
-    if (data === '[DONE]') {
+    if (chunk === '[DONE]') {
       return {
         content: '',
         isEnd: true,
@@ -197,7 +185,7 @@ export default class OpenAIChatService
     }
     try {
       let result = '';
-      const choice = JSON.parse(data).choices[0];
+      const choice = JSON.parse(chunk).choices[0];
       result = choice.delta.content || '';
       return {
         content: result,

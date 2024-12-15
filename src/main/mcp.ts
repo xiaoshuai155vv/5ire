@@ -44,14 +44,14 @@ export default class ModuleContext {
       command,
       args,
     });
-    client.connect(transport);
+    await client.connect(transport);
     this.clients[name] = client;
     return client;
   }
 
   public async deactivate(name: string) {
     if (this.clients[name]) {
-      this.clients[name].close();
+      await this.clients[name].close();
       delete this.clients[name];
     }
   }
@@ -64,7 +64,7 @@ export default class ModuleContext {
       }
       const { tools } = await this.clients[name].listTools();
       allTools = tools.map((tool: any) => {
-        tool.name = `${name}-000-${tool.name}`;
+        tool.name = `${name}--${tool.name}`;
         return tool;
       });
     } else {
@@ -72,7 +72,7 @@ export default class ModuleContext {
         const { tools } = await this.clients[key].listTools();
         allTools = allTools.concat(
           tools.map((tool: any) => {
-            tool.name = `${key}-000-${tool.name}`;
+            tool.name = `${key}--${tool.name}`;
             return tool;
           })
         );

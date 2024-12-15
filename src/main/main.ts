@@ -569,7 +569,17 @@ app
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
-    await mcp.init();
+    mcp.init().then(async () => {
+      await mcp.activate({
+        name: 'mcp-obsidian',
+        command: 'npx',
+        args: [
+          'mcp-obsidian',
+          '/Users/ironben/Documents/',
+        ],
+      });
+      log.info('mcp initialized');
+    });
     axiom.ingest([{ app: 'launch' }]);
   })
   .catch(log.error);

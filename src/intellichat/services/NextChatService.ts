@@ -148,15 +148,123 @@ export default abstract class NextCharService {
     return true;
   }
 
+  protected async read(
+    response: any
+  ): Promise<{ reply: string; context: any }> {
+    // Read the response as a stream of data
+    const reader = response.body?.getReader();
+    if (!reader) {
+      throw new Error('Error occurred while generating.');
+    }
+    const decoder = new TextDecoder('utf-8');
+    let reply = '';
+    let context: any = null;
+    let isFunction = false;
+    let functionArgs: string[] = [];
+    let prevChunk = '';
+    let chunk = '';
+    let splices = 0;
+    let choice = null;
+    let index = 0;
+    let done = false;
+    while (!done) {
+      if (this.aborted) {
+        break;
+      }
+      /* eslint-disable no-await-in-loop */
+      const data = await reader.read();
+      done = data.done || false;
+      const value = decoder.decode(data.value);
+      if (response.status !== 200) {
+        this.onReadingError(value);
+      }
+      const lines = value
+        .split('\n')
+        .map((i) => i.trim())
+        .filter((i) => i !== '');
+
+      for (const line of lines) {
+        console.log('line:', line);
+        const chunks = line
+          .split('data:')
+          .filter((i) => i !== '')
+          .map((i) => i.trim());
+        for (let curChunk of chunks) {
+          if (curChunk === '[DONE]') {
+            done = true;
+            break;
+          }
+          chunk = prevChunk + curChunk;
+          try {
+            choice = JSON.parse(chunk).choices[0];
+            prevChunk = '';
+            splices = 0;
+          } catch (error) {
+            if (splices > MAX_SPLICE) {
+              console.error('JSON parse failed:', prevChunk, '\n\n', curChunk);
+              prevChunk = '';
+              splices = 0;
+            } else {
+              prevChunk += curChunk;
+              splices++;
+            }
+            continue;
+          }
+          if (choice.delta.content === null && !choice.delta.tool_calls) {
+            continue;
+          }
+          if (index === 0) {
+            const tool = this.parseTools(chunk);
+            if (tool) {
+              this.tool = {
+                id: tool.id,
+                name: tool.name,
+              };
+              this.onToolCallingCallback(this.tool.name);
+              isFunction = true;
+            }
+          }
+          if (isFunction) {
+            const { index: argIndex, args } = this.parseToolArgs(chunk);
+            if (index >= 0 && functionArgs[argIndex] === undefined) {
+              functionArgs[argIndex] = '';
+            }
+            functionArgs[argIndex] += args;
+          } else {
+            this.tool = null;
+            const message = this.parseReply(chunk);
+            reply += message.content;
+            this.onReadingCallback(message.content || '');
+            if (message.outputTokens) {
+              this.outputTokens += message.outputTokens;
+            }
+            if (message.isEnd) {
+              // inputToken will not change, so only the last value is taken
+              if (message.inputTokens) {
+                this.inputTokens = message.inputTokens;
+              }
+              context = message.context || null; // ollama will  output context finally
+              done = true;
+            }
+          }
+          index++;
+        }
+      }
+    }
+    if (this.tool) {
+      const args = functionArgs.map((arg) => JSON.parse(arg));
+      this.tool.args = merge({}, ...args);
+      this.usedToolNames.push(this.tool.name);
+    }
+    return { reply, context };
+  }
+
   public async chat(messages: IChatRequestMessage[]) {
     this.abortController = new AbortController();
     this.aborted = false;
-
+    let reply = null;
+    let context = null;
     let signal = null;
-    let reader = null;
-    let reply = '';
-    let context: any = null;
-
     try {
       signal = this.abortController.signal;
       const response = await this.makeRequest(messages);
@@ -171,115 +279,12 @@ export default abstract class NextCharService {
         }
         raiseError(response.status, json, msg);
       }
-      // Read the response as a stream of data
-      reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('Error occurred while generating.');
-      }
-      const decoder = new TextDecoder('utf-8');
-      let isFunction = false;
-      let functionArgs: string[] = [];
-      let prevChunk = '';
-      let chunk = '';
-      let splices = 0;
-      let choice = null;
-      let index = 0;
-      let done = false;
-      while (!done) {
-        if (this.aborted) {
-          break;
-        }
-        /* eslint-disable no-await-in-loop */
-        const data = await reader.read();
-        done = data.done || false;
-        const value = decoder.decode(data.value);
-        if (response.status !== 200) {
-          this.onReadingError(value);
-        }
-        const lines = value
-          .split('\n')
-          .map((i) => i.trim())
-          .filter((i) => i !== '');
 
-        for (const line of lines) {
-          const chunks = line
-            .split('data:')
-            .filter((i) => i !== '')
-            .map((i) => i.trim());
-          for (let curChunk of chunks) {
-            if (curChunk === '[DONE]') {
-              done = true;
-              break;
-            }
-            chunk = prevChunk + curChunk;
-            try {
-              choice = JSON.parse(chunk).choices[0];
-              prevChunk = '';
-              splices = 0;
-            } catch (error) {
-              if (splices > MAX_SPLICE) {
-                console.error(
-                  'JSON parse failed:',
-                  prevChunk,
-                  '\n\n',
-                  curChunk
-                );
-                prevChunk = '';
-                splices = 0;
-              } else {
-                prevChunk += curChunk;
-                splices++;
-              }
-              continue;
-            }
-            if (choice.delta.content === null && !choice.delta.tool_calls) {
-              continue;
-            }
-            if (index === 0) {
-              const tool = this.parseTools(chunk);
-              if (tool) {
-                this.tool = {
-                  id: tool.id,
-                  name: tool.name,
-                };
-                this.onToolCallingCallback(this.tool.name);
-                isFunction = true;
-                context;
-              }
-            }
-            if (isFunction) {
-              const { index: argIndex, args } = this.parseToolArgs(chunk);
-              if (index >= 0 && functionArgs[argIndex] === undefined) {
-                functionArgs[argIndex] = '';
-              }
-              functionArgs[argIndex] += args;
-            } else {
-              this.tool = null;
-              const message = this.parseReply(chunk);
-              reply += message.content;
-              this.onReadingCallback(message.content || '');
-              if (message.outputTokens) {
-                this.outputTokens += message.outputTokens;
-              }
-              if (message.isEnd) {
-                // inputToken 不会变化，所以只取最后一次的值
-                if (message.inputTokens) {
-                  this.inputTokens = message.inputTokens;
-                }
-                context = message.context || null; // ollama 最后会输出 context 信息
-                done = true;
-              }
-            }
-            index++;
-          }
-        }
-      }
-
+      const result = await this.read(response);
+      reply = result.reply;
+      context = result.context;
       if (this.tool) {
-        const args = functionArgs.map((arg) => JSON.parse(arg));
-        this.tool.args = merge({}, ...args);
-        this.usedToolNames.push(this.tool.name);
-        const [client, name] = this.tool.name.split('-000-');
+        const [client, name] = this.tool.name.split('--');
         const result = await window.electron.mcp.callTool({
           client,
           name,

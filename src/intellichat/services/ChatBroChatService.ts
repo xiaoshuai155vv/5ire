@@ -2,57 +2,30 @@ import Debug from 'debug';
 import IChatService from './IChatService';
 import {
   IChatContext,
-  IChatResponseMessage,
   IChatRequestMessage,
   IChatRequestPayload,
-  IChatMessage,
-  IChatRequestMessageContent,
 } from 'intellichat/types';
-import BaseChatService from './BaseChatService';
 import ChatBro from '../../providers/ChatBro';
-import { isBlank } from 'utils/validators';
+import INextChatService from './INextCharService';
+import OpenAIChatService from './OpenAIChatService';
 
 const debug = Debug('5ire:intellichat:ChatBroChatService');
-const MAX_CONCATS = 2;
 
 export default class ChatBroChatService
-  extends BaseChatService
-  implements IChatService
+  extends OpenAIChatService
+  implements INextChatService
 {
   constructor(context: IChatContext) {
-    super({
-      context,
-      provider: ChatBro,
-    });
+    super(context);
+    this.provider = ChatBro;
   }
 
-  private composeMessages(message: string): IChatRequestMessage[] {
-    const result = [];
-    const systemMessage = this.context.getSystemMessage();
-    if (!isBlank(systemMessage)) {
-      result.push({
-        role: 'system',
-        content: systemMessage,
-      });
-    }
-    this.context.getCtxMessages().forEach((msg: IChatMessage) => {
-      result.push({
-        role: 'user',
-        content: msg.prompt,
-      });
-      result.push({
-        role: 'assistant',
-        content: msg.reply,
-      });
-    });
-    result.push({ role: 'user', content: this.composePromptMessage(message) });
-    return result as IChatRequestMessage[];
-  }
-
-  protected async makePayload(message: string): Promise<IChatRequestPayload> {
+  protected async makePayload(
+    messages: IChatRequestMessage[]
+  ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
       model: this.context.getModel().name,
-      messages: this.composeMessages(message),
+      messages: this.composeMessages(messages),
       temperature: this.context.getTemperature(),
       stream: true,
     };
@@ -63,27 +36,10 @@ export default class ChatBroChatService
     return Promise.resolve(payload);
   }
 
-  protected parseReplyMessage(chunk: string): IChatResponseMessage[] {
-    const lines = chunk
-      .split('\n')
-      .map((i) => i.trim())
-      .filter((i) => i !== '');
-    return lines.map((line: string) => {
-      if (line === 'data: [DONE]') {
-        return {
-          content: '',
-          isEnd: true,
-        };
-      }
-      return {
-        content: decodeURIComponent(line.substring(5).trim()),
-        isEnd: false,
-      };
-    });
-  }
-
-  protected async makeRequest(message: string): Promise<Response> {
-    const payload = await this.makePayload(message);
+  protected async makeRequest(
+    messages: IChatRequestMessage[]
+  ): Promise<Response> {
+    const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
     const postResp = await fetch(`${base}/v1/open/azure/chat`, {
