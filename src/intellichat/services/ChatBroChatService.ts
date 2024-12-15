@@ -1,9 +1,9 @@
 import Debug from 'debug';
-import IChatService from './IChatService';
 import {
   IChatContext,
   IChatRequestMessage,
   IChatRequestPayload,
+  IChatResponseMessage,
 } from 'intellichat/types';
 import ChatBro from '../../providers/ChatBro';
 import INextChatService from './INextCharService';
@@ -20,6 +20,64 @@ export default class ChatBroChatService
     this.provider = ChatBro;
   }
 
+  protected parseReply(chunk: string): IChatResponseMessage {
+    if (chunk === '[DONE]') {
+      return {
+        content: '',
+        isEnd: true,
+      };
+    }
+    return {
+      content: chunk,
+      isEnd: false,
+    };
+  }
+
+  protected async read(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+    status: number,
+    decoder: TextDecoder
+  ): Promise<{ reply: string; context: any }> {
+    let reply = '';
+    let context: any = null;
+    let done = false;
+    while (!done) {
+      if (this.aborted) {
+        break;
+      }
+      /* eslint-disable no-await-in-loop */
+      const data = await reader.read();
+      done = data.done || false;
+      const value = decoder.decode(data.value);
+      console.log('value:', value);
+      if (status !== 200) {
+        this.onReadingError(value);
+      }
+      const lines = value
+        .split('\n')
+        .map((i) => i.trim())
+        .filter((i) => i !== '');
+
+      for (const line of lines) {
+        const chunks = line
+          .split('data:')
+          .filter((i) => i !== '')
+          .map((i) => i.trim());
+        for (let curChunk of chunks) {
+          console.log('curChunk:', curChunk);
+          if (curChunk === '[DONE]') {
+            done = true;
+            break;
+          }
+          const message = this.parseReply(curChunk);
+          reply += message.content;
+          this.onReadingCallback(message.content || '');
+        }
+      }
+    }
+    return { reply, context };
+  }
+
   protected async makePayload(
     messages: IChatRequestMessage[]
   ): Promise<IChatRequestPayload> {
@@ -30,7 +88,7 @@ export default class ChatBroChatService
       stream: true,
     };
     if (this.context.getMaxTokens()) {
-      payload.max_tokens = this.context.getMaxTokens();
+      //payload.max_tokens = this.context.getMaxTokens();
     }
     debug('payload', payload);
     return Promise.resolve(payload);

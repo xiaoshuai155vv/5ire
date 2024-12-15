@@ -33,14 +33,14 @@ export default abstract class NextCharService {
     deploymentId?: string; // azure
   };
   aborted: boolean;
-  private onCompleteCallback: (result: any) => Promise<void>;
-  private onReadingCallback: (chunk: string) => void;
-  private onToolCallingCallback: (toolName: string) => void;
-  private onErrorCallback: (error: any, aborted: boolean) => void;
+  protected onCompleteCallback: (result: any) => Promise<void>;
+  protected onReadingCallback: (chunk: string) => void;
+  protected onToolCallingCallback: (toolName: string) => void;
+  protected onErrorCallback: (error: any, aborted: boolean) => void;
   protected usedToolNames: string[] = [];
-  private tool: ITool | null = null;
-  private inputTokens: number = 0;
-  private outputTokens: number = 0;
+  protected tool: ITool | null = null;
+  protected inputTokens: number = 0;
+  protected outputTokens: number = 0;
 
   constructor({
     context,
@@ -149,14 +149,10 @@ export default abstract class NextCharService {
   }
 
   protected async read(
-    response: any
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+    status: number,
+    decoder: TextDecoder
   ): Promise<{ reply: string; context: any }> {
-    // Read the response as a stream of data
-    const reader = response.body?.getReader();
-    if (!reader) {
-      throw new Error('Error occurred while generating.');
-    }
-    const decoder = new TextDecoder('utf-8');
     let reply = '';
     let context: any = null;
     let isFunction = false;
@@ -175,7 +171,7 @@ export default abstract class NextCharService {
       const data = await reader.read();
       done = data.done || false;
       const value = decoder.decode(data.value);
-      if (response.status !== 200) {
+      if (status !== 200) {
         this.onReadingError(value);
       }
       const lines = value
@@ -184,7 +180,6 @@ export default abstract class NextCharService {
         .filter((i) => i !== '');
 
       for (const line of lines) {
-        console.log('line:', line);
         const chunks = line
           .split('data:')
           .filter((i) => i !== '')
@@ -279,8 +274,12 @@ export default abstract class NextCharService {
         }
         raiseError(response.status, json, msg);
       }
-
-      const result = await this.read(response);
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('Error occurred while generating.');
+      }
+      const decoder = new TextDecoder('utf-8');
+      const result = await this.read(reader, response.status, decoder);
       reply = result.reply;
       context = result.context;
       if (this.tool) {

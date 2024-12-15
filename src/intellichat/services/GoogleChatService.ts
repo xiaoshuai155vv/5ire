@@ -1,5 +1,4 @@
 import { IGeminiChatRequestMessageContent } from '../types';
-import { Text } from '@fluentui/react-components';
 import Debug from 'debug';
 import IChatService from './IChatService';
 import {
