@@ -103,6 +103,7 @@ const useAuthStore = create<IAuthStore>((set, get) => ({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user?.id == get().user?.id) return;
       if (callback) callback(event, session);
       set({ session, user: session?.user });
       debug('onAuthStateChange', event, session);

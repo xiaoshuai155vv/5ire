@@ -26,7 +26,7 @@ Sentry.init(
 export default function App() {
   const loadAuthData = useAuthStore((state) => state.load);
   const setSession = useAuthStore((state) => state.setSession);
-  const onAuthStateChange = useAuthStore((state) => state.onAuthStateChange);
+  const { onAuthStateChange } = useAuthStore();
   const { notifyError } = useToast();
   const { t } = useTranslation();
   const { createFile } = useKnowledgeStore();
@@ -70,6 +70,6 @@ export default function App() {
       window.electron.ipcRenderer.unsubscribeAll('knowledge-import-success');
       subscription.unsubscribe()
     };
-  }, []);
+  }, [loadAuthData, onAuthStateChange]);
   return <FluentApp />;
 }
