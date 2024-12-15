@@ -46,7 +46,7 @@ export interface IGeminiChatRequestMessageContent {
 }
 
 export interface IChatRequestMessage {
-  role: 'user' | 'assistant' | 'system' | 'tool';
+  role: 'user' | 'assistant' | 'system' | 'tool' | 'model';
   name?: string;
   content?: string | IChatRequestMessageContent[];
   tool_call_id?: string;

@@ -26,8 +26,8 @@ export default function createService(
       return new OpenAIChatService(chatCtx);
     case 'Azure':
       return new AzureChatService(chatCtx);
-    // case 'Google':
-    //   return new GoogleChatService(chatCtx);
+    case 'Google':
+      return new GoogleChatService(chatCtx);
     // case 'Baidu':
     //   return new BaiduChatService(chatCtx);
     case 'Moonshot':

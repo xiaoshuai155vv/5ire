@@ -1,16 +1,16 @@
 import { IGeminiChatRequestMessageContent } from '../types';
 import Debug from 'debug';
-import IChatService from './IChatService';
 import {
   IChatContext,
   IChatResponseMessage,
   IChatRequestMessage,
   IChatRequestPayload,
 } from 'intellichat/types';
-import BaseChatService from './BaseChatService';
 import { isBlank } from 'utils/validators';
 import Google from 'providers/Google';
 import { getBase64, splitByImg, stripHtmlTags } from 'utils/util';
+import INextChatService from './INextCharService';
+import NextChatService, { ITool } from './NextChatService';
 
 const debug = Debug('5ire:intellichat:GoogleChatService');
 
@@ -23,8 +23,8 @@ const containsImage = (contents: IChatRequestMessage[]): boolean => {
 };
 
 export default class GoogleChatService
-  extends BaseChatService
-  implements IChatService
+  extends NextChatService
+  implements INextChatService
 {
   constructor(context: IChatContext) {
     super({
@@ -33,26 +33,36 @@ export default class GoogleChatService
     });
   }
 
+  protected parseTools(chunk: string): ITool | null {
+    console.warn('parseTools is not implemented');
+    return null;
+  }
+
+  protected parseToolArgs(chunk: string): { index: number; args: string } {
+    console.warn('parseToolArgs is not implemented');
+    return { index: -1, args: '' };
+  }
+
   protected async composePromptMessage(
     content: string
   ): Promise<IGeminiChatRequestMessageContent[]> {
     if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content, true);
       const result: IGeminiChatRequestMessageContent[] = [];
-      for(let item of items){
+      for (let item of items) {
         if (item.type === 'image') {
-          if(item.dataType === 'url'){
+          if (item.dataType === 'url') {
             result.push({
               inline_data: {
                 mimeType: item.mimeType,
                 data: await getBase64(item.data),
               },
             });
-          }else{
+          } else {
             result.push({
               inline_data: {
                 mimeType: item.mimeType as string,
-                data: item.data
+                data: item.data,
               },
             });
           }
@@ -75,19 +85,15 @@ export default class GoogleChatService
    * 由于  gemini-pro-vision  不支持多轮对话，因此如果提示词包含图片，则不包含历史信息。
    */
   private async composeMessages(
-    message: string
+    messages: IChatRequestMessage[]
   ): Promise<IChatRequestMessage[]> {
-    const result = [];
-    const prompt = {
-      role: 'user',
-      parts: await this.composePromptMessage(message),
-    };
-    if (!containsImage([prompt])) {
+    let result: IChatRequestMessage[] = [];
+    if (!containsImage(messages)) {
       const systemMessage = this.context.getSystemMessage();
       if (!isBlank(systemMessage)) {
         result.push({
           role: 'user',
-          parts: [{ text: systemMessage }],
+          parts: [{ text: systemMessage as string }],
         });
       }
       for (let msg of this.context.getCtxMessages()) {
@@ -105,13 +111,54 @@ export default class GoogleChatService
         });
       }
     }
-    result.push(prompt);
+    result = result.concat(messages);
     return result as IChatRequestMessage[];
   }
 
-  protected async makePayload(message: string): Promise<IChatRequestPayload> {
+  protected parseReply(chunk: string): IChatResponseMessage {
+    const matches = /"text": "(.*)"/g.exec(chunk);
+    if (matches) {
+      return { content: matches[1].replace(/\\n/g, '\n') };
+    }
+    return { content: '' };
+  }
+
+  protected async read(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+    status: number,
+    decoder: TextDecoder
+  ): Promise<{ reply: string; context: any }> {
+    let reply = '';
+    let context: any = null;
+    let done = false;
+    while (!done) {
+      if (this.aborted) {
+        break;
+      }
+      /* eslint-disable no-await-in-loop */
+      const data = await reader.read();
+      done = data.done || false;
+      const value = decoder.decode(data.value);
+      if (status !== 200) {
+        this.onReadingError(value);
+      }
+      const message = this.parseReply(value);
+      reply += message.content;
+      this.onReadingCallback(message.content || '');
+    }
+    return { reply, context };
+  }
+
+  protected async makePayload(
+    messages: IChatRequestMessage[]
+  ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
-      contents: await this.composeMessages(message),
+      contents: await this.composeMessages(
+        messages.map((msg) => ({
+          role: msg.role,
+          parts: [{ text: msg.content as string }],
+        }))
+      ),
       generationConfig: {
         temperature: this.context.getTemperature(),
       },
@@ -124,16 +171,10 @@ export default class GoogleChatService
     return payload;
   }
 
-  protected parseReplyMessage(chunk: string): IChatResponseMessage[] {
-    const matches = /"text": "(.*)"/g.exec(chunk);
-    if (matches) {
-      return [{ content: matches[1].replace(/\\n/g, '\n') }];
-    }
-    return [];
-  }
-
-  protected async makeRequest(message: string): Promise<Response> {
-    const payload = await this.makePayload(message);
+  protected async makeRequest(
+    messages: IChatRequestMessage[]
+  ): Promise<Response> {
+    const payload = await this.makePayload(messages);
     const isStream = this.context.isStream();
     debug(
       `About to make a request,stream:${isStream},  payload: ${payload}\r\n`
