@@ -49,7 +49,6 @@ export default class ChatBroChatService
       const data = await reader.read();
       done = data.done || false;
       const value = decoder.decode(data.value);
-      console.log('value:', value);
       if (status !== 200) {
         this.onReadingError(value);
       }
@@ -64,12 +63,12 @@ export default class ChatBroChatService
           .filter((i) => i !== '')
           .map((i) => i.trim());
         for (let curChunk of chunks) {
-          console.log('curChunk:', curChunk);
-          if (curChunk === '[DONE]') {
+          let chunk = decodeURIComponent(curChunk);
+          if (chunk === '[DONE]') {
             done = true;
             break;
           }
-          const message = this.parseReply(curChunk);
+          const message = this.parseReply(chunk);
           reply += message.content;
           this.onReadingCallback(message.content || '');
         }
@@ -88,7 +87,7 @@ export default class ChatBroChatService
       stream: true,
     };
     if (this.context.getMaxTokens()) {
-      //payload.max_tokens = this.context.getMaxTokens();
+      payload.max_tokens = this.context.getMaxTokens();
     }
     debug('payload', payload);
     return Promise.resolve(payload);
