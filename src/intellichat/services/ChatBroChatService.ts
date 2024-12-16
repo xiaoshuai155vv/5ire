@@ -8,7 +8,6 @@ import {
 import ChatBro from '../../providers/ChatBro';
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
-import { on } from 'events';
 
 const debug = Debug('5ire:intellichat:ChatBroChatService');
 
@@ -85,7 +84,7 @@ export default class ChatBroChatService
   ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
       model: this.context.getModel().name,
-      messages: this.composeMessages(messages),
+      messages: await this.makeMessages(messages),
       temperature: this.context.getTemperature(),
       stream: true,
     };
@@ -93,7 +92,7 @@ export default class ChatBroChatService
       payload.max_tokens = this.context.getMaxTokens();
     }
     debug('payload', payload);
-    return Promise.resolve(payload);
+    return payload;
   }
 
   protected async makeRequest(

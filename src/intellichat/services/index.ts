@@ -20,8 +20,8 @@ export default function createService(
   chatCtx: IChatContext
 ): INextChatService {
   switch (providerName) {
-    // case 'Anthropic':
-    //   return new AnthropicChatService(chatCtx);
+    case 'Anthropic':
+      return new AnthropicChatService(chatCtx);
     case 'OpenAI':
       return new OpenAIChatService(chatCtx);
     case 'Azure':

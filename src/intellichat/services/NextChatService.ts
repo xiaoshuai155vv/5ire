@@ -116,19 +116,14 @@ export default abstract class NextCharService {
     }
   }
 
-  protected composePromptMessage(
+  protected async convertPromptContent(
     content: string
-  ):
+  ): Promise<
     | string
     | IChatRequestMessageContent[]
     | IChatRequestMessageContent[]
     | IGeminiChatRequestMessageContent[]
-    | Promise<
-        | string
-        | IChatRequestMessageContent[]
-        | IChatRequestMessageContent[]
-        | IGeminiChatRequestMessageContent[]
-      > {
+  > {
     return stripHtmlTags(content);
   }
 
@@ -176,8 +171,8 @@ export default abstract class NextCharService {
         throw new Error('Error occurred while generating.');
       }
       const decoder = new TextDecoder('utf-8');
-      await this.read(reader, response.status, decoder, (content)=>{
-        reply+=content;
+      await this.read(reader, response.status, decoder, (content) => {
+        reply += content;
       });
       if (this.tool) {
         const [client, name] = this.tool.name.split('--');
@@ -216,6 +211,8 @@ export default abstract class NextCharService {
           inputTokens: this.inputTokens,
           outputTokens: this.outputTokens,
         });
+        this.inputTokens = 0;
+        this.outputTokens = 0;
       }
     } catch (error: any) {
       this.onErrorCallback(error, !!signal?.aborted || !!this.aborted);
@@ -229,6 +226,8 @@ export default abstract class NextCharService {
           message: error.message || error.toString(),
         },
       });
+      this.inputTokens = 0;
+      this.outputTokens = 0;
     }
   }
 }

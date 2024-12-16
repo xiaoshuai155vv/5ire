@@ -28,9 +28,9 @@ export default class OpenAIChatService
     });
   }
 
-  protected composePromptMessage(
+  protected async convertPromptContent(
     content: string
-  ): string | IChatRequestMessageContent[] {
+  ): Promise<string | IChatRequestMessageContent[]> {
     if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content);
       const result: IChatRequestMessageContent[] = [];
@@ -52,14 +52,14 @@ export default class OpenAIChatService
           throw new Error('Unknown message type');
         }
       });
-      return result;
+      return result
     }
-    return stripHtmlTags(content);
+    return stripHtmlTags(content)
   }
 
-  protected composeMessages(
+  protected async makeMessages(
     messages: IChatRequestMessage[]
-  ): IChatRequestMessage[] {
+  ): Promise<IChatRequestMessage[]> {
     const result = [];
     const systemMessage = this.context.getSystemMessage();
     if (!isBlank(systemMessage)) {
@@ -91,11 +91,11 @@ export default class OpenAIChatService
       } else {
         result.push({
           role: 'user',
-          content: this.composePromptMessage(msg.content as string),
+          content: await this.convertPromptContent(msg.content as string),
         });
       }
     }
-    return result as IChatRequestMessage[];
+    return result as IChatRequestMessage[]
   }
 
   protected async makePayload(
@@ -104,7 +104,7 @@ export default class OpenAIChatService
     const model = this.context.getModel();
     const payload: IChatRequestPayload = {
       model: model.name,
-      messages: this.composeMessages(message),
+      messages: await this.makeMessages(message),
       temperature: this.context.getTemperature(),
       stream: true,
     };
@@ -138,11 +138,10 @@ export default class OpenAIChatService
     if (this.context.getMaxTokens()) {
       payload.max_tokens = this.context.getMaxTokens();
     }
-    debug('payload', payload);
-    return Promise.resolve(payload);
+    return payload;
   }
 
-  protected parseTools(respMsg:IChatResponseMessage): ITool | null {
+  protected parseTools(respMsg: IChatResponseMessage): ITool | null {
     if (respMsg.toolCalls) {
       return {
         id: respMsg.toolCalls[0].id,
@@ -152,7 +151,10 @@ export default class OpenAIChatService
     return null;
   }
 
-  protected parseToolArgs(respMsg:IChatResponseMessage): { index: number; args: string } {
+  protected parseToolArgs(respMsg: IChatResponseMessage): {
+    index: number;
+    args: string;
+  } {
     debug('parseToolArgs', JSON.stringify(respMsg));
     try {
       if (respMsg.isEnd || !respMsg.toolCalls) {
@@ -200,7 +202,7 @@ export default class OpenAIChatService
     let response = null;
     let index = 0;
     let done = false;
-    try{
+    try {
       while (!done) {
         if (this.aborted) {
           break;
@@ -234,7 +236,12 @@ export default class OpenAIChatService
               splices = 0;
             } catch (error) {
               if (splices > MAX_SPLICE) {
-                console.error('JSON parse failed:', prevChunk, '\n\n', curChunk);
+                console.error(
+                  'JSON parse failed:',
+                  prevChunk,
+                  '\n\n',
+                  curChunk
+                );
                 prevChunk = '';
                 splices = 0;
               } else {
@@ -288,7 +295,7 @@ export default class OpenAIChatService
         this.tool.args = merge({}, ...args);
         this.usedToolNames.push(this.tool.name);
       }
-    }catch(err){
+    } catch (err) {
       console.error('OpenAIChatService read error:', err);
     }
     return { reply, context };

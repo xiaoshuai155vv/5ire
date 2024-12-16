@@ -1,5 +1,4 @@
 import Debug from 'debug';
-import IChatService from './IChatService';
 import {
   IChatContext,
   IChatResponseMessage,
@@ -8,30 +7,38 @@ import {
   IChatMessage,
   IChatRequestMessageContent,
 } from 'intellichat/types';
-import BaseChatService from './BaseChatService';
 import Anthropic from '../../providers/Anthropic';
 import { isBlank } from 'utils/validators';
 import { getBase64, splitByImg, stripHtmlTags } from 'utils/util';
+import INextChatService from './INextCharService';
+import NextChatService, { ITool } from './NextChatService';
+import OpenAIChatService from './OpenAIChatService';
 
 const debug = Debug('5ire:intellichat:AnthropicChatService');
 
 export default class AnthropicChatService
-  extends BaseChatService
-  implements IChatService
+  extends OpenAIChatService
+  implements INextChatService
 {
-  protected inputTokens: number;
-  protected outputTokens: number;
-
   constructor(context: IChatContext) {
-    super({
-      context,
-      provider: Anthropic,
-    });
-    this.inputTokens = 0;
-    this.outputTokens = 0;
+    super(context);
+    this.provider = Anthropic;
   }
 
-  protected async composePromptMessage(
+  protected parseTools(respMsg: IChatResponseMessage): ITool | null {
+    console.warn('parseTools is not implemented');
+    return null;
+  }
+
+  protected parseToolArgs(respMsg: IChatResponseMessage): {
+    index: number;
+    args: string;
+  } {
+    console.warn('parseToolArgs is not implemented');
+    return { index: -1, args: '' };
+  }
+
+  protected async convertPromptContent(
     content: string
   ): Promise<string | IChatRequestMessageContent[]> {
     if (this.context.getModel().vision?.enabled) {
@@ -68,8 +75,8 @@ export default class AnthropicChatService
     return Promise.resolve(stripHtmlTags(content));
   }
 
-  private async composeMessages(
-    message: string
+  protected async makeMessages(
+    messages: IChatRequestMessage[]
   ): Promise<IChatRequestMessage[]> {
     const result = [];
     this.context.getCtxMessages().forEach((msg: IChatMessage) => {
@@ -82,17 +89,32 @@ export default class AnthropicChatService
         content: msg.reply,
       });
     });
-    result.push({
-      role: 'user',
-      content: await this.composePromptMessage(message),
-    });
+    for (const msg of messages) {
+      if (msg.role === 'tool') {
+        result.push({
+          role: 'tool',
+          content: JSON.stringify(msg.content),
+          name: msg.name,
+          tool_call_id: msg.tool_call_id,
+        });
+      } else if (msg.role === 'assistant' && msg.tool_calls) {
+        result.push(msg);
+      } else {
+        result.push({
+          role: 'user',
+          content: await this.convertPromptContent(msg.content as string),
+        });
+      }
+    }
     return result as IChatRequestMessage[];
   }
 
-  protected async makePayload(message: string): Promise<IChatRequestPayload> {
+  protected async makePayload(
+    messages: IChatRequestMessage[]
+  ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
       model: this.context.getModel().name,
-      messages: await this.composeMessages(message),
+      messages: await this.makeMessages(messages),
       temperature: this.context.getTemperature(),
       stream: true,
     };
@@ -107,63 +129,54 @@ export default class AnthropicChatService
     return Promise.resolve(payload);
   }
 
-  protected parseReplyMessage(chunk: string): IChatResponseMessage[] {
-    const lines = chunk
-      .split('\n')
-      .map((i) => i.trim())
-      .filter((i) => i !== '');
-
-    return lines
-      .filter((line: string) => line.startsWith('data:'))
-      .map((line: string) => {
-        const data = JSON.parse(line.substring(5).trim());
-        if (data.type === 'content_block_delta') {
-          return {
-            content: data.delta.text,
-            isEnd: false,
-          };
-        } else if (data.type === 'message_start') {
-          this.inputTokens = data.message.usage.input_tokens;
-          this.outputTokens = data.message.usage.output_tokens;
-          return {
-            content: '',
-            isEnd: false,
-          };
-        } else if (data.type === 'message_delta') {
-          this.outputTokens += data.usage.output_tokens;
-          return {
-            content: '',
-            isEnd: false,
-          };
-        } else if (data.type === 'message_stop') {
-          return {
-            content: '',
-            inputTokens: this.inputTokens,
-            outputTokens: this.outputTokens,
-            isEnd: true,
-          };
-        } else if (data.type === 'error') {
-          return {
-            content: '',
-            error: {
-              type: data.delta.type,
-              message: data.delta.text,
-            },
-          };
-        } else {
-          console.warn('Unknown message type', data);
-          return {
-            content: '',
-            isEnd: false,
-          };
-        }
-      });
+  protected parseReply(chunk: string): IChatResponseMessage {
+    const data = JSON.parse(chunk);
+    if (data.type === 'content_block_delta') {
+      return {
+        content: data.delta.text,
+        isEnd: false,
+      };
+    } else if (data.type === 'message_start') {
+      this.inputTokens = data.message.usage.input_tokens;
+      this.outputTokens = data.message.usage.output_tokens;
+      return {
+        content: '',
+        isEnd: false,
+      };
+    } else if (data.type === 'message_delta') {
+      this.outputTokens += data.usage.output_tokens;
+      return {
+        content: '',
+        isEnd: false,
+      };
+    } else if (data.type === 'message_stop') {
+      return {
+        content: '',
+        inputTokens: this.inputTokens,
+        outputTokens: this.outputTokens,
+        isEnd: true,
+      };
+    } else if (data.type === 'error') {
+      return {
+        content: '',
+        error: {
+          type: data.delta.type,
+          message: data.delta.text,
+        },
+      };
+    } else {
+      console.warn('Unknown message type', data);
+      return {
+        content: '',
+        isEnd: false,
+      };
+    }
   }
 
-  protected async makeRequest(message: string): Promise<Response> {
-    this.inputTokens = 0;
-    this.outputTokens = 0;
-    const payload = await this.makePayload(message);
+  protected async makeRequest(
+    messages: IChatRequestMessage[]
+  ): Promise<Response> {
+    const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
     const response = await fetch(`${base}/v1/messages`, {

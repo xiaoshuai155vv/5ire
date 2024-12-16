@@ -38,12 +38,15 @@ export default class GoogleChatService
     return null;
   }
 
-  protected parseToolArgs(respMsg: IChatResponseMessage): { index: number; args: string } {
+  protected parseToolArgs(respMsg: IChatResponseMessage): {
+    index: number;
+    args: string;
+  } {
     console.warn('parseToolArgs is not implemented');
     return { index: -1, args: '' };
   }
 
-  protected async composePromptMessage(
+  protected async convertPromptContent(
     content: string
   ): Promise<IGeminiChatRequestMessageContent[]> {
     if (this.context.getModel().vision?.enabled) {
@@ -84,7 +87,7 @@ export default class GoogleChatService
    *
    * 由于  gemini-pro-vision  不支持多轮对话，因此如果提示词包含图片，则不包含历史信息。
    */
-  private async composeMessages(
+  protected async makeMessages(
     messages: IChatRequestMessage[]
   ): Promise<IChatRequestMessage[]> {
     let result: IChatRequestMessage[] = [];
@@ -155,7 +158,7 @@ export default class GoogleChatService
     messages: IChatRequestMessage[]
   ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
-      contents: await this.composeMessages(
+      contents: await this.makeMessages(
         messages.map((msg) => ({
           role: msg.role,
           parts: [{ text: msg.content as string }],

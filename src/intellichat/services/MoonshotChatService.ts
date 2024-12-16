@@ -24,7 +24,7 @@ export default class MoonshotChatService
   ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
       model: this.context.getModel().name,
-      messages: this.composeMessages(messages),
+      messages: await this.makeMessages(messages),
       temperature: this.context.getTemperature(),
       stream: true,
     };
