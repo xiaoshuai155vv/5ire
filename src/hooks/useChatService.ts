@@ -2,7 +2,6 @@ import Debug from 'debug';
 import useSettingsStore from 'stores/useSettingsStore';
 import useChatContext from './useChatContext';
 import createService from '../intellichat/services';
-import IChatService from 'intellichat/services/IChatService';
 import INextChatService from 'intellichat/services/INextCharService';
 
 const debug = Debug('5ire:hooks:useService');

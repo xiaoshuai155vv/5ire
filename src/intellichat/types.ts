@@ -19,6 +19,42 @@ export interface IChatResponseMessage {
   };
 }
 
+export interface IMCPTool{
+  name:string,
+  description:string,
+  inputSchema:{
+    type:string,
+    properties:any,
+    required:any,
+    additionalProperties:any
+  }
+}
+
+export interface IOpenAITool{
+  type:string,
+  function:{
+    name:string,
+    description:string
+    parameters:{
+      type:string,
+      properties:any,
+      required:any,
+      additionalProperties:any
+    }
+  }
+}
+
+export interface IAnthropicTool{
+  name:string,
+  description:string,
+  input_schema:{
+    type:string,
+    properties:any,
+    required:any,
+    additionalProperties:any
+  }
+}
+
 export interface IChatRequestMessageContent {
   type: 'text' | 'image_url' | 'image' | 'function';
   text?: string;
