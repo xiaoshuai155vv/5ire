@@ -1,4 +1,4 @@
-import { IChat, IChatContext } from '../types';
+import {  IChatContext } from '../types';
 import { ProviderType } from '../../providers/types';
 import AnthropicChatService from './AnthropicChatService';
 import AzureChatService from './AzureChatService';
@@ -12,7 +12,6 @@ import FireChatService from './FireChatService';
 import DoubaoChatService from './DoubaoChatService';
 import GrokChatService from './GrokChatService';
 import DeepSeekChatService from './DeepSeekChatService';
-import IChatService from './IChatService';
 import INextChatService from './INextCharService';
 
 export default function createService(
