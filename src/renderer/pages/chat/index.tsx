@@ -239,12 +239,6 @@ ${prompt}
             inputTokens,
             outputTokens,
           });
-          if (result.context) {
-            await updateChat({
-              id: $chatId,
-              context: JSON.stringify(result.context),
-            });
-          }
         }
         updateStates($chatId, { loading: false, runningTool: null });
         navigate(`/chats/${$chatId}`);

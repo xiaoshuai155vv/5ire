@@ -4,7 +4,6 @@ import { IChatContext, IChatRequestMessage } from '../types';
 import { date2unix } from 'utils/util';
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
-import { timeStamp } from 'console';
 
 const debug = Debug('5ire:intellichat:BaiduChatService');
 

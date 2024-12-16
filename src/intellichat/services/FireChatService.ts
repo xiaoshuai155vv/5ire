@@ -1,5 +1,9 @@
 import Debug from 'debug';
-import { IChatContext, IChatRequestMessage, IChatResponseMessage } from 'intellichat/types';
+import {
+  IChatContext,
+  IChatRequestMessage,
+  IChatResponseMessage,
+} from 'intellichat/types';
 
 import OpenAIChatService from './OpenAIChatService';
 import Fire from 'providers/Fire';
@@ -18,12 +22,6 @@ export default class FireChatService
   }
 
   protected parseReply(chunk: string): IChatResponseMessage {
-    if (chunk === '[DONE]') {
-      return {
-        content: '',
-        isEnd: true,
-      };
-    }
     return {
       content: chunk,
       isEnd: false,
@@ -33,7 +31,8 @@ export default class FireChatService
   protected async read(
     reader: ReadableStreamDefaultReader<Uint8Array>,
     status: number,
-    decoder: TextDecoder
+    decoder: TextDecoder,
+    onProgress: (content: string) => void
   ): Promise<{ reply: string; context: any }> {
     let reply = '';
     let context: any = null;
@@ -49,26 +48,17 @@ export default class FireChatService
       if (status !== 200) {
         this.onReadingError(value);
       }
-      const lines = value
-        .split('\n')
-        .map((i) => i.trim())
-        .filter((i) => i !== '');
 
-      for (const line of lines) {
-        const chunks = line
-          .split('data:')
-          .filter((i) => i !== '')
-          .map((i) => i.trim());
-        for (let curChunk of chunks) {
-          console.log('curChunk:', curChunk);
-          if (curChunk === '[DONE]') {
-            done = true;
-            break;
-          }
-          const message = this.parseReply(curChunk);
-          reply += message.content;
-          this.onReadingCallback(message.content || '');
+      const chunks = value.split('data:').map(i=>i.replace('\r\n','')).filter((i) => i !== '')
+      for (let curChunk of chunks) {
+        if (curChunk === '[DONE]') {
+          done = true;
+          break;
         }
+        const message = this.parseReply(curChunk);
+        reply += message.content;
+        onProgress(message.content||'');
+        this.onReadingCallback(message.content || '');
       }
     }
     return { reply, context };

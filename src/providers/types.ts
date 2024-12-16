@@ -54,6 +54,7 @@ export interface IChatModel {
   inputPrice: number;
   outputPrice: number;
   jsonModelEnabled?: boolean;
+  toolEnabled?: boolean;
   vision?: IChatModelVision;
   endpoint?: string;
   group: ChatModelGroup;

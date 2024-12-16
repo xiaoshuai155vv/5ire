@@ -33,12 +33,12 @@ export default class GoogleChatService
     });
   }
 
-  protected parseTools(chunk: string): ITool | null {
+  protected parseTools(respMsg: IChatResponseMessage): ITool | null {
     console.warn('parseTools is not implemented');
     return null;
   }
 
-  protected parseToolArgs(chunk: string): { index: number; args: string } {
+  protected parseToolArgs(respMsg: IChatResponseMessage): { index: number; args: string } {
     console.warn('parseToolArgs is not implemented');
     return { index: -1, args: '' };
   }
@@ -126,7 +126,8 @@ export default class GoogleChatService
   protected async read(
     reader: ReadableStreamDefaultReader<Uint8Array>,
     status: number,
-    decoder: TextDecoder
+    decoder: TextDecoder,
+    onProgress: (content: string) => void
   ): Promise<{ reply: string; context: any }> {
     let reply = '';
     let context: any = null;
@@ -144,6 +145,7 @@ export default class GoogleChatService
       }
       const message = this.parseReply(value);
       reply += message.content;
+      onProgress(message.content || '');
       this.onReadingCallback(message.content || '');
     }
     return { reply, context };

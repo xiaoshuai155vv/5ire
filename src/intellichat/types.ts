@@ -11,7 +11,7 @@ export interface IChatResponseMessage {
   isEnd?: boolean;
   inputTokens?: number;
   outputTokens?: number;
-  context?: string;
+  toolCalls?:any,
   error?: {
     code?: number;
     type?: string;

@@ -8,6 +8,7 @@ import {
 import ChatBro from '../../providers/ChatBro';
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
+import { on } from 'events';
 
 const debug = Debug('5ire:intellichat:ChatBroChatService');
 
@@ -36,7 +37,8 @@ export default class ChatBroChatService
   protected async read(
     reader: ReadableStreamDefaultReader<Uint8Array>,
     status: number,
-    decoder: TextDecoder
+    decoder: TextDecoder,
+    onProgress: (content: string) => void
   ): Promise<{ reply: string; context: any }> {
     let reply = '';
     let context: any = null;
@@ -70,6 +72,7 @@ export default class ChatBroChatService
           }
           const message = this.parseReply(chunk);
           reply += message.content;
+          onProgress(message.content || '');
           this.onReadingCallback(message.content || '');
         }
       }

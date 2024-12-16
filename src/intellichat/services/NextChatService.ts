@@ -7,13 +7,11 @@ import {
   IChatResponseMessage,
   IGeminiChatRequestMessageContent,
 } from 'intellichat/types';
-import { merge } from 'lodash';
 import { IServiceProvider } from 'providers/types';
 import useSettingsStore from 'stores/useSettingsStore';
 import { raiseError, stripHtmlTags } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:NextChatService');
-const MAX_SPLICE = 3;
 
 export interface ITool {
   id: string;
@@ -76,15 +74,20 @@ export default abstract class NextCharService {
     messages: IChatRequestMessage[]
   ): Promise<Response>;
 
+  protected abstract read(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+    status: number,
+    decoder: TextDecoder,
+    onProgress: (content: string) => void
+  ): Promise<{ reply: string; context: any }>;
   /**
    * 由于可能出现一条 message 实际上是多条回复，所以返回数组
    * @param message
    * @return parsedMessages IParsedMessage[]
    */
   protected abstract parseReply(message: string): IChatResponseMessage;
-
-  protected abstract parseTools(chunk: string): ITool | null;
-  protected abstract parseToolArgs(chunk: string): {
+  protected abstract parseTools(respMsg: IChatResponseMessage): ITool | null;
+  protected abstract parseToolArgs(respMsg: IChatResponseMessage): {
     index: number;
     args: string;
   };
@@ -148,116 +151,10 @@ export default abstract class NextCharService {
     return true;
   }
 
-  protected async read(
-    reader: ReadableStreamDefaultReader<Uint8Array>,
-    status: number,
-    decoder: TextDecoder
-  ): Promise<{ reply: string; context: any }> {
-    let reply = '';
-    let context: any = null;
-    let isFunction = false;
-    let functionArgs: string[] = [];
-    let prevChunk = '';
-    let chunk = '';
-    let splices = 0;
-    let choice = null;
-    let index = 0;
-    let done = false;
-    while (!done) {
-      if (this.aborted) {
-        break;
-      }
-      /* eslint-disable no-await-in-loop */
-      const data = await reader.read();
-      done = data.done || false;
-      const value = decoder.decode(data.value);
-      if (status !== 200) {
-        this.onReadingError(value);
-      }
-      const lines = value
-        .split('\n')
-        .map((i) => i.trim())
-        .filter((i) => i !== '');
-
-      for (const line of lines) {
-        const chunks = line
-          .split('data:')
-          .filter((i) => i !== '')
-          .map((i) => i.trim());
-        for (let curChunk of chunks) {
-          if (curChunk === '[DONE]') {
-            done = true;
-            break;
-          }
-          chunk = prevChunk + curChunk;
-          try {
-            choice = JSON.parse(chunk).choices[0];
-            prevChunk = '';
-            splices = 0;
-          } catch (error) {
-            if (splices > MAX_SPLICE) {
-              console.error('JSON parse failed:', prevChunk, '\n\n', curChunk);
-              prevChunk = '';
-              splices = 0;
-            } else {
-              prevChunk += curChunk;
-              splices++;
-            }
-            continue;
-          }
-          if (choice.delta.content === null && !choice.delta.tool_calls) {
-            continue;
-          }
-          if (index === 0) {
-            const tool = this.parseTools(chunk);
-            if (tool) {
-              this.tool = {
-                id: tool.id,
-                name: tool.name,
-              };
-              this.onToolCallingCallback(this.tool.name);
-              isFunction = true;
-            }
-          }
-          if (isFunction) {
-            const { index: argIndex, args } = this.parseToolArgs(chunk);
-            if (index >= 0 && functionArgs[argIndex] === undefined) {
-              functionArgs[argIndex] = '';
-            }
-            functionArgs[argIndex] += args;
-          } else {
-            this.tool = null;
-            const message = this.parseReply(chunk);
-            reply += message.content;
-            this.onReadingCallback(message.content || '');
-            if (message.outputTokens) {
-              this.outputTokens += message.outputTokens;
-            }
-            if (message.isEnd) {
-              // inputToken will not change, so only the last value is taken
-              if (message.inputTokens) {
-                this.inputTokens = message.inputTokens;
-              }
-              context = message.context || null; // ollama will  output context finally
-              done = true;
-            }
-          }
-          index++;
-        }
-      }
-    }
-    if (this.tool) {
-      const args = functionArgs.map((arg) => JSON.parse(arg));
-      this.tool.args = merge({}, ...args);
-      this.usedToolNames.push(this.tool.name);
-    }
-    return { reply, context };
-  }
-
   public async chat(messages: IChatRequestMessage[]) {
     this.abortController = new AbortController();
     this.aborted = false;
-    let reply = null;
+    let reply = '';
     let context = null;
     let signal = null;
     try {
@@ -279,9 +176,9 @@ export default abstract class NextCharService {
         throw new Error('Error occurred while generating.');
       }
       const decoder = new TextDecoder('utf-8');
-      const result = await this.read(reader, response.status, decoder);
-      reply = result.reply;
-      context = result.context;
+      await this.read(reader, response.status, decoder, (content)=>{
+        reply+=content;
+      });
       if (this.tool) {
         const [client, name] = this.tool.name.split('--');
         const result = await window.electron.mcp.callTool({
@@ -316,7 +213,7 @@ export default abstract class NextCharService {
         await this.onCompleteCallback({
           content: reply,
           context: context,
-          inputTokens: this.outputTokens,
+          inputTokens: this.inputTokens,
           outputTokens: this.outputTokens,
         });
       }
@@ -325,7 +222,7 @@ export default abstract class NextCharService {
       await this.onCompleteCallback({
         content: reply,
         context: context,
-        inputTokens: this.outputTokens,
+        inputTokens: this.inputTokens,
         outputTokens: this.outputTokens,
         error: {
           code: error.code || 500,

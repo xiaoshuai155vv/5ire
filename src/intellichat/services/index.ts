@@ -32,8 +32,8 @@ export default function createService(
       return new BaiduChatService(chatCtx);
     case 'Moonshot':
       return new MoonshotChatService(chatCtx);
-    // case 'Ollama':
-    //   return new OllamaChatService(chatCtx);
+    case 'Ollama':
+      return new OllamaChatService(chatCtx);
     case 'ChatBro':
       return new ChatBroChatService(chatCtx);
     case '5ire':

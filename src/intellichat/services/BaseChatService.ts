@@ -7,7 +7,7 @@ import {
   IChatRequestMessageContent,
   IGeminiChatRequestMessageContent,
 } from '../types';
-import { IServiceProvider, IChatModel } from '../../providers/types';
+import { IServiceProvider } from '../../providers/types';
 import useSettingsStore from '../../stores/useSettingsStore';
 import { raiseError, stripHtmlTags } from 'utils/util';
 

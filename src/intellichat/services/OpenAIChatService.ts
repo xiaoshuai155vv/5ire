@@ -12,8 +12,10 @@ import { isBlank } from 'utils/validators';
 import { splitByImg, stripHtmlTags } from 'utils/util';
 import NextChatService, { ITool } from './NextChatService';
 import INextChatService from './INextCharService';
+import { merge } from 'lodash';
 
 const debug = Debug('5ire:intellichat:OpenAIChatService');
+const MAX_SPLICE = 3;
 
 export default class OpenAIChatService
   extends NextChatService
@@ -99,34 +101,38 @@ export default class OpenAIChatService
   protected async makePayload(
     message: IChatRequestMessage[]
   ): Promise<IChatRequestPayload> {
+    const model = this.context.getModel();
     const payload: IChatRequestPayload = {
-      model: this.context.getModel().name,
+      model: model.name,
       messages: this.composeMessages(message),
       temperature: this.context.getTemperature(),
       stream: true,
     };
-    const tools = await window.electron.mcp.listTools();
-    if (tools) {
-      const _tools = tools
-        .filter((tool: any) => !this.usedToolNames.includes(tool.name))
-        .map((tool: any) => {
-          return {
-            type: 'function',
-            function: {
-              name: tool.name,
-              description: tool.description,
-              parameters: {
-                type: tool.inputSchema.type,
-                properties: tool.inputSchema.properties,
-                required: tool.inputSchema.required,
-                additionalProperties: tool.inputSchema.additionalProperties,
+    if (model.toolEnabled) {
+      const tools = await window.electron.mcp.listTools();
+      debug('tools', tools);
+      if (tools) {
+        const _tools = tools
+          .filter((tool: any) => !this.usedToolNames.includes(tool.name))
+          .map((tool: any) => {
+            return {
+              type: 'function',
+              function: {
+                name: tool.name,
+                description: tool.description,
+                parameters: {
+                  type: tool.inputSchema.type,
+                  properties: tool.inputSchema.properties,
+                  required: tool.inputSchema.required,
+                  additionalProperties: tool.inputSchema.additionalProperties,
+                },
               },
-            },
-          };
-        });
-      if (_tools.length > 0) {
-        payload.tools = _tools;
-        payload.tool_choice = 'auto';
+            };
+          });
+        if (_tools.length > 0) {
+          payload.tools = _tools;
+          payload.tool_choice = 'auto';
+        }
       }
     }
     if (this.context.getMaxTokens()) {
@@ -136,40 +142,27 @@ export default class OpenAIChatService
     return Promise.resolve(payload);
   }
 
-  protected parseTools(chunk: string): ITool | null {
-    let data = chunk;
-    if (chunk.startsWith('data:')) {
-      data = chunk.substring(5).trim();
-    }
-    const choice = JSON.parse(data).choices[0];
-    let tool = null;
-    if (choice.delta.tool_calls) {
-      tool = {
-        id: choice.delta.tool_calls[0].id,
-        name: choice.delta.tool_calls[0].function.name,
+  protected parseTools(respMsg:IChatResponseMessage): ITool | null {
+    if (respMsg.toolCalls) {
+      return {
+        id: respMsg.toolCalls[0].id,
+        name: respMsg.toolCalls[0].function.name,
       };
     }
-    return tool;
+    return null;
   }
 
-  protected parseToolArgs(chunk: string): { index: number; args: string } {
-    let data = chunk;
-    if (chunk.startsWith('data:')) {
-      data = chunk.substring(5).trim();
-    }
+  protected parseToolArgs(respMsg:IChatResponseMessage): { index: number; args: string } {
+    debug('parseToolArgs', JSON.stringify(respMsg));
     try {
-      const { choices } = JSON.parse(data);
-      if (choices) {
-        const choice = choices[0];
-        if (choice.finish_reason) {
-          return { index: -1, args: '' };
-        }
-        const toolCalls = choice.delta.tool_calls[0];
-        return {
-          index: toolCalls.index,
-          args: toolCalls.function.arguments,
-        };
+      if (respMsg.isEnd || !respMsg.toolCalls) {
+        return { index: -1, args: '' };
       }
+      const toolCalls = respMsg.toolCalls[0];
+      return {
+        index: toolCalls.index,
+        args: toolCalls.function.arguments,
+      };
     } catch (err) {
       console.error('parseToolArgs', err);
     }
@@ -183,21 +176,122 @@ export default class OpenAIChatService
         isEnd: true,
       };
     }
-    try {
-      let result = '';
-      const choice = JSON.parse(chunk).choices[0];
-      result = choice.delta.content || '';
-      return {
-        content: result,
-        isEnd: false,
-      };
-    } catch (err) {
-      debug(err);
-      return {
-        content: '',
-        isEnd: false,
-      };
+    const choice = JSON.parse(chunk).choices[0];
+    return {
+      content: choice.delta.content || '',
+      isEnd: false,
+      toolCalls: choice.delta.tool_calls,
+    };
+  }
+
+  protected async read(
+    reader: ReadableStreamDefaultReader<Uint8Array>,
+    status: number,
+    decoder: TextDecoder,
+    onProgress: (content: string) => void
+  ): Promise<{ reply: string; context: any }> {
+    let reply = '';
+    let context: any = null;
+    let isFunction = false;
+    let functionArgs: string[] = [];
+    let prevChunk = '';
+    let chunk = '';
+    let splices = 0;
+    let response = null;
+    let index = 0;
+    let done = false;
+    try{
+      while (!done) {
+        if (this.aborted) {
+          break;
+        }
+        /* eslint-disable no-await-in-loop */
+        const data = await reader.read();
+        done = data.done || false;
+        const value = decoder.decode(data.value);
+        if (status !== 200) {
+          this.onReadingError(value);
+        }
+        const lines = value
+          .split('\n')
+          .map((i) => i.trim())
+          .filter((i) => i !== '');
+
+        for (const line of lines) {
+          const chunks = line
+            .split('data:')
+            .filter((i) => i !== '')
+            .map((i) => i.trim());
+          for (let curChunk of chunks) {
+            if (curChunk === '[DONE]') {
+              done = true;
+              break;
+            }
+            chunk = prevChunk + curChunk;
+            try {
+              response = this.parseReply(chunk);
+              prevChunk = '';
+              splices = 0;
+            } catch (error) {
+              if (splices > MAX_SPLICE) {
+                console.error('JSON parse failed:', prevChunk, '\n\n', curChunk);
+                prevChunk = '';
+                splices = 0;
+              } else {
+                prevChunk += curChunk;
+                splices++;
+              }
+              continue;
+            }
+            if (response.content === null && !response.toolCalls) {
+              continue;
+            }
+            if (index === 0) {
+              const tool = this.parseTools(response);
+              if (tool) {
+                this.tool = {
+                  id: tool.id,
+                  name: tool.name,
+                };
+                this.onToolCallingCallback(this.tool.name);
+                isFunction = true;
+              }
+            }
+            if (isFunction) {
+              const { index: argIndex, args } = this.parseToolArgs(response);
+              if (index >= 0 && functionArgs[argIndex] === undefined) {
+                functionArgs[argIndex] = '';
+              }
+              functionArgs[argIndex] += args;
+            } else {
+              this.tool = null;
+              reply += response.content;
+              onProgress(response.content || '');
+              this.onReadingCallback(response.content || '');
+              if (response.outputTokens) {
+                this.outputTokens += response.outputTokens;
+              }
+              if (response.isEnd) {
+                // inputToken will not change, so only the last value is taken
+                if (response.inputTokens) {
+                  this.inputTokens = response.inputTokens;
+                }
+                done = true;
+              }
+            }
+            index++;
+          }
+        }
+      }
+      if (this.tool) {
+        const args = functionArgs.map((arg) => JSON.parse(arg));
+        this.tool.args = merge({}, ...args);
+        this.usedToolNames.push(this.tool.name);
+      }
+    }catch(err){
+      console.error('OpenAIChatService read error:', err);
     }
+    return { reply, context };
   }
 
   protected async makeRequest(

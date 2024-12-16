@@ -1,84 +1,48 @@
 import Debug from 'debug';
-import IChatService from './IChatService';
 import Ollama from '../../providers/Ollama';
 import {
   IChatContext,
-  IChatRequestPayload,
+  IChatRequestMessage,
   IChatResponseMessage,
 } from 'intellichat/types';
-import BaseChatService from './BaseChatService';
-import { isBlank } from 'utils/validators';
+import INextChatService from './INextCharService';
+import OpenAIChatService from './OpenAIChatService';
 
 const debug = Debug('5ire:intellichat:OllamaChatService');
-
 export default class OllamaChatService
-  extends BaseChatService
-  implements IChatService
+  extends OpenAIChatService
+  implements INextChatService
 {
   constructor(context: IChatContext) {
-    super({ context, provider: Ollama });
+    super(context);
+    this.provider = Ollama;
   }
 
-  protected async makePayload(message: string): Promise<IChatRequestPayload> {
-    const payload: IChatRequestPayload = {
-      model: this.context.getModel().name,
-      prompt: this.composePromptMessage(message) as string,
-      options: {
-        temperature: this.context.getTemperature(),
-      },
-      stream: true,
+  protected parseReply(chunk: string): IChatResponseMessage {
+    const data = JSON.parse(chunk);
+    if (data.done) {
+      return {
+        content: data.message.content,
+        isEnd: true,
+        inputTokens: data.prompt_eval_count,
+        outputTokens: data.eval_count,
+      };
+    }
+    return {
+      content: data.message.content,
+      isEnd: false,
+      toolCalls: data.tool_calls,
     };
-    const systemMessage = this.context.getSystemMessage();
-    if (!isBlank(systemMessage)) {
-      payload.system = systemMessage as string;
-    }
-    const chatCtx = this.context.getChatContext();
-    if (chatCtx) {
-      payload.context = JSON.parse(chatCtx);
-    }
-    const maxTokens = this.context.getMaxTokens();
-    if (maxTokens) {
-      payload.max_tokens = maxTokens;
-    }
-    return Promise.resolve(payload);
   }
 
-  protected parseReplyMessage(chunk: string): IChatResponseMessage[] {
-    try {
-      const data = JSON.parse(chunk);
-      if (!!data.done) {
-        return [
-          {
-            content: data.response,
-            isEnd: true,
-            inputTokens: data.prompt_eval_count,
-            outputTokens: data.eval_count,
-            context: data.context,
-          },
-        ];
-      }
-      return [
-        {
-          content: data.response,
-          isEnd: false,
-        },
-      ];
-    } catch (error) {
-      console.error(error, chunk);
-      return [
-        {
-          content: '',
-          isEnd: false,
-        },
-      ];
-    }
-  }
 
-  protected async makeRequest(message: string): Promise<Response> {
-    const payload = await this.makePayload(message);
+  protected async makeRequest(
+    messages: IChatRequestMessage[]
+  ): Promise<Response> {
+    const payload = await this.makePayload(messages);
     debug('Send Request, payload:\r\n', payload);
     const { base } = this.apiSettings;
-    const response = await fetch(`${base}/api/generate`, {
+    const response = await fetch(`${base}/api/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

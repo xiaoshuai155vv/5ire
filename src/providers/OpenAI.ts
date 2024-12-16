@@ -28,6 +28,7 @@ export default {
           allowBase64: true,
           allowUrl: true,
         },
+        toolEnabled: true,
         isDefault: true,
         description: `GPT-4o it's most advanced multimodal model of OpenAI that’s faster and cheaper than GPT-4 Turbo with stronger vision capabilities`,
         group: 'GPT-4',
@@ -43,6 +44,7 @@ export default {
           allowBase64: true,
           allowUrl: true,
         },
+        toolEnabled: true,
         description: `GPT-4o mini (“o” for “omni”) is OpenAI's advanced model in the small models category, and it's cheapest model yet. It is multimodal (accepting text or image inputs and outputting text), has higher intelligence than gpt-3.5-turbo but is just as fast. It is meant to be used for smaller tasks, including vision tasks.`,
         group: 'GPT-4',
       },
@@ -58,6 +60,7 @@ export default {
           allowBase64: true,
           allowUrl: true,
         },
+        toolEnabled: true,
         description: `The latest GPT-4 Turbo model with vision capabilities.
         Vision requests can now use JSON mode and function calling.
         Currently points to gpt-4-turbo-2024-04-09.`,
@@ -70,6 +73,7 @@ export default {
         inputPrice: 0.01,
         outputPrice: 0.03,
         jsonModelEnabled: true,
+        toolEnabled: true,
         vision: {
           enabled: true,
           allowBase64: true,
@@ -87,6 +91,7 @@ export default {
         inputPrice: 0.01,
         outputPrice: 0.03,
         jsonModelEnabled: true,
+        toolEnabled: true,
         description: `The latest GPT-4 model with improved instruction following,
         JSON mode, reproducible outputs, parallel function calling,
         and more. Returns a maximum of 4,096 output tokens.
@@ -99,6 +104,7 @@ export default {
         maxTokens: 8129,
         inputPrice: 0.03,
         outputPrice: 0.06,
+        toolEnabled: true,
         description: `Snapshot of gpt-4 from June 13th 2023 with improved function calling support`,
         group: 'GPT-4',
       },
