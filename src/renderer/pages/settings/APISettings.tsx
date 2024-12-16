@@ -6,9 +6,8 @@ import {
   InputOnChangeData,
   Label,
   Option,
-  Tooltip,
 } from '@fluentui/react-components';
-import {  Premium16Regular } from '@fluentui/react-icons';
+import { Premium16Regular } from '@fluentui/react-icons';
 import useSettingsStore from '../../../stores/useSettingsStore';
 import ModelField from './ModelField';
 import { IServiceProvider } from '../../../providers/types';
@@ -125,7 +124,7 @@ export default function APISettings() {
           <div className="my-3.5">
             <div className="flex justify-start items-center mb-1.5">
               <Label htmlFor="apiBase">{t('Common.APIBase')}</Label>
-              <TooltipIcon tip={provider.chat.docs?.base}/>
+              <TooltipIcon tip={provider.chat.docs?.base} />
             </div>
             <div>
               <Input
@@ -141,9 +140,12 @@ export default function APISettings() {
         )}
         {provider.options.apiKeyCustomizable && (
           <div className="my-3.5">
-            <Label htmlFor="apiKey" className="block mb-1.5">
-              {t('Common.APIKey')}
-            </Label>
+            <div className="flex justify-start items-center mb-1.5">
+              <Label htmlFor="apiKey" className="block">
+                {t('Common.APIKey')}
+              </Label>
+              <TooltipIcon tip={provider.chat.docs?.key} />
+            </div>
             <div>
               <MaskableInput
                 id="apiKey"
@@ -161,7 +163,7 @@ export default function APISettings() {
               <Label htmlFor="deploymentId">
                 {t(`${provider.name}.DeploymentID`)}
               </Label>
-              <TooltipIcon tip={provider.chat.docs?.deploymentId}/>
+              <TooltipIcon tip={provider.chat.docs?.deploymentId} />
             </div>
             <Input
               value={api.deploymentId || ''}
@@ -175,7 +177,7 @@ export default function APISettings() {
           <div className="my-3.5">
             <div className="flex justify-start items-center mb-1.5">
               <Label htmlFor="apiSecret">{t('Common.SecretKey')}</Label>
-              <TooltipIcon tip={provider.chat.docs?.apiSecret}/>
+              <TooltipIcon tip={provider.chat.docs?.key} />
             </div>
             <MaskableInput
               id="apiSecret"
@@ -187,6 +189,11 @@ export default function APISettings() {
           </div>
         ) : null}
         <ModelField provider={provider} />
+        {provider.description && (
+          <div className="tips">
+            {provider.description}
+          </div>
+        )}
       </div>
     </div>
   );

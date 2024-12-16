@@ -8,7 +8,7 @@ import { timeStamp } from 'console';
 
 const debug = Debug('5ire:intellichat:BaiduChatService');
 
-function formatDateToISO(date:Date):string {
+function formatDateToISO(date: Date): string {
   return date.toISOString().split('.')[0] + 'Z';
 }
 export interface IBaiduToken {
@@ -34,7 +34,7 @@ export default class BaiduChatService
       return (await this.requestToken()).token;
     }
     const { expiredAt, token } = JSON.parse(cachedToken) as IBaiduToken;
-    if (date2unix(new Date()) > date2unix(new Date(expiredAt))) {
+    if (date2unix(new Date()) >= date2unix(new Date(expiredAt))) {
       debug('Access token expired, requesting...');
       return (await this.requestToken()).token;
     }
@@ -87,22 +87,22 @@ export default class BaiduChatService
     const canonicalRequest = `GET\n${canonicalURI}\n${canonicalQueryString}\ncontent-type:${encodeURIComponent(
       'application/json'
     )}\nhost:${host}\nx-bce-date:${encodeURIComponent(timestamp)}`;
-    debug(`canonicalRequest:\n\n${canonicalRequest}`);
+    // debug(`canonicalRequest:\n\n${canonicalRequest}`);
 
     const expirationPeriodInSeconds = 2592000;
     // authStringPrefix = bce-auth-v1/{accessKeyId}/{timestamp}/{expirationPeriodInSeconds}
     const authStringPrefix = `bce-auth-v1/${key}/${timestamp}/${expirationPeriodInSeconds}`;
-    debug('authStringPrefix:', authStringPrefix);
+    // debug('authStringPrefix:', authStringPrefix);
     const signingKey = await window.electron.crypto.hmacSha256Hex(
       authStringPrefix,
       secret as string
     );
-    debug('signingKey:', signingKey);
+    // debug('signingKey:', signingKey);
     const signature = await window.electron.crypto.hmacSha256Hex(
       canonicalRequest,
       signingKey
     );
-    debug('signature:', signature);
+    // debug('signature:', signature);
     // bce-auth-v1/{accessKeyId}/{timestamp}/{expirationPeriodInSeconds }/{signedHeaders}/{signature}
     return `bce-auth-v1/${key}/${timestamp}/${expirationPeriodInSeconds}/${signedHeaders}/${signature}`;
   }
@@ -115,10 +115,8 @@ export default class BaiduChatService
     const { base } = this.apiSettings;
 
     const token = await this.geToken();
-    //payload.model = this.context.getModel().name;
-    payload.model='ernie-4.0-8k'
+    payload.model = this.context.getModel().name.toLowerCase();
 
-    // TODO 有些 model 的 endpoint 是申请的时候用户自己填写的，这种情况需要用户自己在设置的时候填写
     const url = `${base}/v2/chat/completions`;
     const response = await fetch(url, {
       method: 'POST',
