@@ -148,6 +148,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "file-loader": "^6.2.0",
     "file-type": "16.5.3",
+    "fix-path": "^4.0.0",
     "highlight.js": "^11.8.0",
     "html-webpack-plugin": "^5.5.1",
     "i18next": "^23.2.3",
@@ -245,7 +246,6 @@
       "**/node_modules/textract/lib/extractors/**"
     ],
     "afterPack": ".erb/scripts/remove-useless.js",
-
     "mac": {
       "target": {
         "target": "default",

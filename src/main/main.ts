@@ -574,6 +574,9 @@ app
       if (mainWindow === null) createWindow();
     });
     mcp.init().then(async () => {
+      // https://github.com/sindresorhus/fix-path
+      const fixPath = (await import('fix-path')).default;
+      fixPath();
       await mcp.activate({
         name: 'mcp-obsidian',
         command: 'uvx',
