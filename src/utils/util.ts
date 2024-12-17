@@ -285,7 +285,7 @@ export function splitByImg(html: string, base64Only: boolean = false) {
     if (matches) {
       let data = matches.map((match) => match.replace(srcRegex, '$1'))[0];
       const dataType = data.startsWith('data:') ? 'base64' : 'URL';
-      let mimeType = 'unknown';
+      let mimeType = 'image/jpeg';
       if (dataType === 'base64') {
         mimeType = data.split(';')[0].split(':')[1];
       } else {

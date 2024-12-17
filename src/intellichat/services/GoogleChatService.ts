@@ -16,8 +16,9 @@ import Google from 'providers/Google';
 import { getBase64, splitByImg, stripHtmlTags } from 'utils/util';
 import INextChatService from './INextCharService';
 import NextChatService from './NextChatService';
-import BaseReader, { ITool } from 'intellichat/readers/BaseReader';
+import BaseReader from 'intellichat/readers/BaseReader';
 import GoogleReader from 'intellichat/readers/GoogleReader';
+import { ITool } from 'intellichat/readers/IChatReader';
 
 const debug = Debug('5ire:intellichat:GoogleChatService');
 
@@ -97,11 +98,11 @@ export default class GoogleChatService
     content: string
   ): Promise<IGeminiChatRequestMessagePart[]> {
     if (this.context.getModel().vision?.enabled) {
-      const items = splitByImg(content, true);
+      const items = splitByImg(content, false);
       const result: IGeminiChatRequestMessagePart[] = [];
       for (let item of items) {
         if (item.type === 'image') {
-          if (item.dataType === 'url') {
+          if (item.dataType === 'URL') {
             result.push({
               inline_data: {
                 mimeType: item.mimeType,
@@ -112,7 +113,7 @@ export default class GoogleChatService
             result.push({
               inline_data: {
                 mimeType: item.mimeType as string,
-                data: item.data,
+                data: item.data.split('base64,')[1], // remove data:image/png;base64,
               },
             });
           }

@@ -1,6 +1,6 @@
 import Debug from 'debug';
 import { IChatResponseMessage } from 'intellichat/types';
-import BaseReader, { IReadResult, ITool } from './BaseReader';
+import BaseReader from './BaseReader';
 import { extractFirstLevelBrackets } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:GoogleReader');
