@@ -1,7 +1,7 @@
 import Debug from 'debug';
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { debounce, set } from 'lodash';
+import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import SplitPane, { Pane } from 'split-pane-react';
 import useChatStore from 'stores/useChatStore';
@@ -248,7 +248,7 @@ ${prompt}
         $reply = appendReply(msg.id, content);
         scrollToBottom();
       });
-      chatService.onToolCalling((toolName: string) => {
+      chatService.onToolCalls((toolName: string) => {
         updateStates($chatId, { runningTool: toolName });
       });
       chatService.onError((err: any, aborted: boolean) => {

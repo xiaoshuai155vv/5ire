@@ -1,23 +1,21 @@
 import Debug from 'debug';
+import BaseReader from 'intellichat/readers/BaseReader';
 import {
+  IAnthropicTool,
   IChatContext,
   IChatRequestMessage,
   IChatRequestMessageContent,
   IChatRequestPayload,
-  IChatResponseMessage,
   IGeminiChatRequestMessageContent,
+  IGoogleTool,
+  IMCPTool,
+  IOpenAITool,
 } from 'intellichat/types';
 import { IServiceProvider } from 'providers/types';
 import useSettingsStore from 'stores/useSettingsStore';
 import { raiseError, stripHtmlTags } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:NextChatService');
-
-export interface ITool {
-  id: string;
-  name: string;
-  args?: any;
-}
 
 export default abstract class NextCharService {
   abortController: AbortController;
@@ -30,13 +28,14 @@ export default abstract class NextCharService {
     secret?: string; // baidu
     deploymentId?: string; // azure
   };
-  aborted: boolean;
+  protected abstract getReaderType(): new (
+    reader: ReadableStreamDefaultReader<Uint8Array>
+  ) => BaseReader;
   protected onCompleteCallback: (result: any) => Promise<void>;
   protected onReadingCallback: (chunk: string) => void;
-  protected onToolCallingCallback: (toolName: string) => void;
+  protected onToolCallsCallback: (toolName: string) => void;
   protected onErrorCallback: (error: any, aborted: boolean) => void;
   protected usedToolNames: string[] = [];
-  protected tool: ITool | null = null;
   protected inputTokens: number = 0;
   protected outputTokens: number = 0;
 
@@ -51,12 +50,11 @@ export default abstract class NextCharService {
     this.provider = provider;
     this.context = context;
     this.abortController = new AbortController();
-    this.aborted = false;
 
     this.onCompleteCallback = () => {
       throw new Error('onCompleteCallback is not set');
     };
-    this.onToolCallingCallback = () => {
+    this.onToolCallsCallback = () => {
       throw new Error('onToolCallingCallback is not set');
     };
     this.onReadingCallback = () => {
@@ -67,30 +65,21 @@ export default abstract class NextCharService {
     };
   }
 
+  protected createReader(
+    reader: ReadableStreamDefaultReader<Uint8Array>
+  ): BaseReader {
+    const ReaderType = this.getReaderType();
+    return new ReaderType(reader);
+  }
+  protected abstract makeTool(
+    tool: IMCPTool
+  ): IOpenAITool | IAnthropicTool | IGoogleTool;
   protected abstract makePayload(
     messages: IChatRequestMessage[]
   ): Promise<IChatRequestPayload>;
   protected abstract makeRequest(
     messages: IChatRequestMessage[]
   ): Promise<Response>;
-
-  protected abstract read(
-    reader: ReadableStreamDefaultReader<Uint8Array>,
-    status: number,
-    decoder: TextDecoder,
-    onProgress: (content: string) => void
-  ): Promise<{ reply: string; context: any }>;
-  /**
-   * 由于可能出现一条 message 实际上是多条回复，所以返回数组
-   * @param message
-   * @return parsedMessages IParsedMessage[]
-   */
-  protected abstract parseReply(message: string): IChatResponseMessage;
-  protected abstract parseTools(respMsg: IChatResponseMessage): ITool | null;
-  protected abstract parseToolArgs(respMsg: IChatResponseMessage): {
-    index: number;
-    args: string;
-  };
 
   public onComplete(callback: (result: any) => Promise<void>) {
     this.onCompleteCallback = callback;
@@ -99,8 +88,8 @@ export default abstract class NextCharService {
     this.onReadingCallback = callback;
   }
 
-  public onToolCalling(callback: (toolName: string) => void) {
-    this.onToolCallingCallback = callback;
+  public onToolCalls(callback: (toolName: string) => void) {
+    this.onToolCallsCallback = callback;
   }
 
   public onError(callback: (error: any, aborted: boolean) => void) {
@@ -129,7 +118,6 @@ export default abstract class NextCharService {
 
   public abort() {
     this.abortController?.abort();
-    this.aborted = true;
   }
 
   public isReady(): boolean {
@@ -148,9 +136,7 @@ export default abstract class NextCharService {
 
   public async chat(messages: IChatRequestMessage[]) {
     this.abortController = new AbortController();
-    this.aborted = false;
     let reply = '';
-    let context = null;
     let signal = null;
     try {
       signal = this.abortController.signal;
@@ -168,18 +154,24 @@ export default abstract class NextCharService {
       }
       const reader = response.body?.getReader();
       if (!reader) {
-        throw new Error('Error occurred while generating.');
+        this.onErrorCallback(new Error('No reader'), false);
+        return;
       }
-      const decoder = new TextDecoder('utf-8');
-      await this.read(reader, response.status, decoder, (content) => {
-        reply += content;
+      const chatReader = this.createReader(reader);
+      const readResult = await chatReader.read({
+        onError: (err: any) => this.onErrorCallback(err, false),
+        onProgress: (chunk: string) => {
+          reply += chunk;
+          this.onReadingCallback(chunk);
+        },
+        onToolCalls: this.onToolCallsCallback,
       });
-      if (this.tool) {
-        const [client, name] = this.tool.name.split('--');
-        const result = await window.electron.mcp.callTool({
+      if (readResult.tool) {
+        const [client, name] = readResult.tool.name.split('--');
+        const toolCallsResult = await window.electron.mcp.callTool({
           client,
           name,
-          args: this.tool.args,
+          args: readResult.tool.args,
         });
         const _messages = [
           ...messages,
@@ -187,27 +179,28 @@ export default abstract class NextCharService {
             role: 'assistant',
             tool_calls: [
               {
-                id: this.tool.id,
+                id: readResult.tool.id,
                 type: 'function',
                 function: {
-                  arguments: JSON.stringify(this.tool.args),
-                  name: this.tool.name,
+                  arguments: JSON.stringify(readResult.tool.args),
+                  name: readResult.tool.name,
                 },
               },
             ],
           },
           {
             role: 'tool',
-            name: this.tool.name,
-            content: result.content,
-            tool_call_id: this.tool.id,
+            name: readResult.tool.name,
+            content: toolCallsResult.content,
+            tool_call_id: readResult.tool.id,
           },
         ] as IChatRequestMessage[];
+        this.inputTokens += readResult?.inputTokens || 0;
+        this.outputTokens += readResult?.outputTokens || 0;
         await this.chat(_messages);
       } else {
         await this.onCompleteCallback({
           content: reply,
-          context: context,
           inputTokens: this.inputTokens,
           outputTokens: this.outputTokens,
         });
@@ -215,10 +208,9 @@ export default abstract class NextCharService {
         this.outputTokens = 0;
       }
     } catch (error: any) {
-      this.onErrorCallback(error, !!signal?.aborted || !!this.aborted);
+      this.onErrorCallback(error, !!signal?.aborted);
       await this.onCompleteCallback({
         content: reply,
-        context: context,
         inputTokens: this.inputTokens,
         outputTokens: this.outputTokens,
         error: {

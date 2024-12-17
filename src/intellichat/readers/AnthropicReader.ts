@@ -2,9 +2,10 @@ import Debug from 'debug';
 import { IChatResponseMessage } from 'intellichat/types';
 import BaseReader, { ITool } from './BaseReader';
 
-const debug = Debug('5ire:intellichat:OpenAIReader');
+const debug = Debug('5ire:intellichat:AnthropicReader');
 
 export default class AnthropicReader extends BaseReader {
+
   protected parseReply(chunk: string): IChatResponseMessage {
     const data = JSON.parse(chunk);
     if (data.type === 'content_block_start') {

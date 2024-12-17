@@ -11,32 +11,16 @@ export interface ITool {
 
 export interface IReadResult {
   content: string;
-  tool: ITool;
-  inputTokens: number;
-  outputTokens: number;
+  tool?: ITool | null;
+  inputTokens?: number;
+  outputTokens?: number;
 }
 
 export default abstract class BaseReader {
   protected reader: ReadableStreamDefaultReader<Uint8Array>;
-  protected onError: (error: any) => void;
-  protected onProgress: (chunk: string) => void;
-  protected onToolCalls: (toolName: string) => void;
 
-  constructor({
-    reader,
-    onError,
-    onProgress,
-    onToolCalls,
-  }: {
-    reader: ReadableStreamDefaultReader<Uint8Array>;
-    onError: (error: any) => void;
-    onProgress: (chunk: string) => void;
-    onToolCalls: (toolCalls: any) => void;
-  }) {
+  constructor(reader: ReadableStreamDefaultReader<Uint8Array>) {
     this.reader = reader;
-    this.onError = onError;
-    this.onProgress = onProgress;
-    this.onToolCalls = onToolCalls;
   }
 
   protected abstract parseTools(respMsg: IChatResponseMessage): ITool | null;
@@ -46,7 +30,15 @@ export default abstract class BaseReader {
   } | null;
   protected abstract parseReply(chunk: string): IChatResponseMessage;
 
-  public async read(): Promise<IReadResult> {
+  public async read({
+    onError,
+    onProgress,
+    onToolCalls,
+  }: {
+    onError: (error: any) => void;
+    onProgress: (chunk: string) => void;
+    onToolCalls?: (toolCalls: any) => void;
+  }): Promise<IReadResult> {
     const decoder = new TextDecoder('utf-8');
     let content = '';
     let inputTokens = 0;
@@ -108,7 +100,7 @@ export default abstract class BaseReader {
             if (tool === null) {
               tool = this.parseTools(response);
               if (tool) {
-                this.onToolCalls(tool.name);
+                onToolCalls && onToolCalls(tool.name);
                 continue;
               }
             }
@@ -123,7 +115,7 @@ export default abstract class BaseReader {
             } else {
               tool = null;
               content += response.content;
-              this.onProgress(response.content || '');
+              onProgress(response.content || '');
             }
             if (response.outputTokens) {
               outputTokens += response.outputTokens;
@@ -145,7 +137,7 @@ export default abstract class BaseReader {
       }
     } catch (err) {
       console.error('Read error:', err);
-      this.onError(err);
+      onError(err);
     }
     return { content, tool, inputTokens, outputTokens };
   }

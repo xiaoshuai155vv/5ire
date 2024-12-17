@@ -11,7 +11,7 @@ export interface IChatResponseMessage {
   isEnd?: boolean;
   inputTokens?: number;
   outputTokens?: number;
-  toolCalls?:any,
+  toolCalls?: any;
   error?: {
     code?: number;
     type?: string;
@@ -19,40 +19,52 @@ export interface IChatResponseMessage {
   };
 }
 
-export interface IMCPTool{
-  name:string,
-  description:string,
-  inputSchema:{
-    type:string,
-    properties:any,
-    required:any,
-    additionalProperties:any
-  }
+export interface IMCPTool {
+  name: string;
+  description: string;
+  inputSchema: {
+    type: string;
+    properties: any;
+    required: any;
+    additionalProperties: any;
+  };
 }
 
-export interface IOpenAITool{
-  type:string,
-  function:{
-    name:string,
-    description:string
-    parameters:{
-      type:string,
-      properties:any,
-      required:any,
-      additionalProperties:any
-    }
-  }
+export interface IOpenAITool {
+  type: string;
+  function: {
+    name: string;
+    description: string;
+    parameters: {
+      type: string;
+      properties: any;
+      required: any;
+      additionalProperties: any;
+    };
+  };
 }
 
-export interface IAnthropicTool{
-  name:string,
-  description:string,
-  input_schema:{
-    type:string,
-    properties:any,
-    required:any,
-    additionalProperties:any
-  }
+export interface IAnthropicTool {
+  name: string;
+  description: string;
+  input_schema: {
+    type: string;
+    properties: any;
+    required: any;
+    additionalProperties: any;
+  };
+}
+
+export interface IGoogleTool {
+  function_declarations: {
+    name: string;
+    description: string;
+    parameters: {
+      type: string;
+      properties: any;
+      required: any;
+    };
+  };
 }
 
 export interface IChatRequestMessageContent {
@@ -119,7 +131,8 @@ export interface IChatRequestPayload {
     temperature?: number;
   };
   tools?: any;
-  tool_choice?: 'none' | 'auto' | 'required';
+  tool_choice?: any;
+  parallel_tool_calls?: boolean;
 }
 
 export type ModelGroup =

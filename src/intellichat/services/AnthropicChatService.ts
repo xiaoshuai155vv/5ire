@@ -1,41 +1,49 @@
 import Debug from 'debug';
 import {
   IChatContext,
-  IChatResponseMessage,
   IChatRequestMessage,
   IChatRequestPayload,
   IChatMessage,
   IChatRequestMessageContent,
+  IAnthropicTool,
+  IMCPTool,
+  IOpenAITool,
 } from 'intellichat/types';
 import Anthropic from '../../providers/Anthropic';
 import { isBlank } from 'utils/validators';
 import { getBase64, splitByImg, stripHtmlTags } from 'utils/util';
 import INextChatService from './INextCharService';
-import NextChatService, { ITool } from './NextChatService';
-import OpenAIChatService from './OpenAIChatService';
+import AnthropicReader from 'intellichat/readers/AnthropicReader';
+import NextChatService from './NextChatService';
 
 const debug = Debug('5ire:intellichat:AnthropicChatService');
 
 export default class AnthropicChatService
-  extends OpenAIChatService
+  extends NextChatService
   implements INextChatService
 {
   constructor(context: IChatContext) {
-    super(context);
-    this.provider = Anthropic;
+    super({
+      context,
+      provider: Anthropic,
+    });
   }
 
-  protected parseTools(respMsg: IChatResponseMessage): ITool | null {
-    console.warn('parseTools is not implemented');
-    return null;
+  protected makeTool(tool: IMCPTool): IOpenAITool | IAnthropicTool {
+    return {
+      name: tool.name,
+      description: tool.description,
+      input_schema: {
+        type: tool.inputSchema.type,
+        properties: tool.inputSchema.properties,
+        required: tool.inputSchema.required,
+        additionalProperties: tool.inputSchema.additionalProperties,
+      },
+    };
   }
 
-  protected parseToolArgs(respMsg: IChatResponseMessage): {
-    index: number;
-    args: string;
-  } {
-    console.warn('parseToolArgs is not implemented');
-    return { index: -1, args: '' };
+  protected getReaderType() {
+    return AnthropicReader;
   }
 
   protected async convertPromptContent(
@@ -72,7 +80,7 @@ export default class AnthropicChatService
       }
       return result;
     }
-    return Promise.resolve(stripHtmlTags(content));
+    return stripHtmlTags(content);
   }
 
   protected async makeMessages(
@@ -92,10 +100,9 @@ export default class AnthropicChatService
     for (const msg of messages) {
       if (msg.role === 'tool') {
         result.push({
-          role: 'tool',
           content: JSON.stringify(msg.content),
-          name: msg.name,
-          tool_call_id: msg.tool_call_id,
+          type: 'tool_result',
+          tool_use_id: msg.tool_call_id,
         });
       } else if (msg.role === 'assistant' && msg.tool_calls) {
         result.push(msg);
@@ -112,8 +119,9 @@ export default class AnthropicChatService
   protected async makePayload(
     messages: IChatRequestMessage[]
   ): Promise<IChatRequestPayload> {
+    const model = this.context.getModel();
     const payload: IChatRequestPayload = {
-      model: this.context.getModel().name,
+      model: model.name,
       messages: await this.makeMessages(messages),
       temperature: this.context.getTemperature(),
       stream: true,
@@ -125,52 +133,28 @@ export default class AnthropicChatService
     if (this.context.getMaxTokens()) {
       payload.max_tokens = this.context.getMaxTokens();
     }
-    debug('payload', payload);
-    return Promise.resolve(payload);
-  }
-
-  protected parseReply(chunk: string): IChatResponseMessage {
-    const data = JSON.parse(chunk);
-    if (data.type === 'content_block_delta') {
-      return {
-        content: data.delta.text,
-        isEnd: false,
-      };
-    } else if (data.type === 'message_start') {
-      this.inputTokens = data.message.usage.input_tokens;
-      this.outputTokens = data.message.usage.output_tokens;
-      return {
-        content: '',
-        isEnd: false,
-      };
-    } else if (data.type === 'message_delta') {
-      this.outputTokens += data.usage.output_tokens;
-      return {
-        content: '',
-        isEnd: false,
-      };
-    } else if (data.type === 'message_stop') {
-      return {
-        content: '',
-        inputTokens: this.inputTokens,
-        outputTokens: this.outputTokens,
-        isEnd: true,
-      };
-    } else if (data.type === 'error') {
-      return {
-        content: '',
-        error: {
-          type: data.delta.type,
-          message: data.delta.text,
-        },
-      };
-    } else {
-      console.warn('Unknown message type', data);
-      return {
-        content: '',
-        isEnd: false,
-      };
+    if (model.toolEnabled) {
+      const tools = await window.electron.mcp.listTools();
+      debug('tools', tools);
+      if (tools) {
+        const _tools = tools
+          .filter((tool: any) => !this.usedToolNames.includes(tool.name))
+          .map((tool: any) => {
+            return this.makeTool(tool);
+          });
+        if (_tools.length > 0) {
+          payload.tools = _tools;
+          payload.tool_choice ={
+            type:'auto',
+            disable_parallel_tool_use: true
+          }
+        }
+      }
     }
+    if (this.context.getMaxTokens()) {
+      payload.max_tokens = this.context.getMaxTokens();
+    }
+    return payload;
   }
 
   protected async makeRequest(

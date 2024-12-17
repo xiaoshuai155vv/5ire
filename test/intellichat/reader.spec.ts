@@ -98,8 +98,8 @@ describe('intellichat/readers/OpenAIReader', () => {
       openAIResponse
     ) as unknown as ReadableStreamDefaultReader<Uint8Array>;
     let toolName: null|string = null;
-    const openAIReader = new OpenAIReader({
-      reader: mockReader,
+    const openAIReader = new OpenAIReader(mockReader);
+    const result = await openAIReader.read({
       onProgress: (content: string) => {
         console.log(content);
       },
@@ -110,7 +110,6 @@ describe('intellichat/readers/OpenAIReader', () => {
         toolName = tool;
       },
     });
-    const result = await openAIReader.read();
     expect(result.content).toEqual('Hello World!');
     expect(toolName).toBeNull();
   });
@@ -119,8 +118,8 @@ describe('intellichat/readers/OpenAIReader', () => {
       openAIResponseTools
     ) as unknown as ReadableStreamDefaultReader<Uint8Array>;
     let toolName: null | string = null;
-    const openAIReader = new OpenAIReader({
-      reader: mockReader,
+    const openAIReader = new OpenAIReader(mockReader);
+    const result = await openAIReader.read({
       onProgress: (content: string) => {
         // console.log(content);
       },
@@ -131,7 +130,6 @@ describe('intellichat/readers/OpenAIReader', () => {
         toolName = tool;
       },
     });
-    const result = await openAIReader.read();
     expect(result.content).toEqual('');
     expect(toolName).toEqual('search_notes');
     expect(result.tool).toEqual({
@@ -149,8 +147,8 @@ describe('intellichat/readers/AnthropicReader', () => {
       anthropicResponse
     ) as unknown as ReadableStreamDefaultReader<Uint8Array>;
     let toolName = null;
-    const anthropicReader = new AnthropicReader({
-      reader: mockReader,
+    const anthropicReader = new AnthropicReader(mockReader);
+    const result = await anthropicReader.read({
       onProgress: (content: string) => {
         console.log(content);
       },
@@ -161,7 +159,6 @@ describe('intellichat/readers/AnthropicReader', () => {
         toolName = toolName;
       },
     });
-    const result = await anthropicReader.read();
     expect(result.content).toEqual('Hello!');
     expect(toolName).toBeNull();
     expect(result.tool).toBeNull();
@@ -174,8 +171,8 @@ describe('intellichat/readers/AnthropicReader', () => {
       anthropicResponseTools
     ) as unknown as ReadableStreamDefaultReader<Uint8Array>;
     let toolName: null|string = null;
-    const anthropicReader = new AnthropicReader({
-      reader: mockReader,
+    const anthropicReader = new AnthropicReader(mockReader);
+    const result = await anthropicReader.read({
       onProgress: (content: string) => {
         //console.log(content);
       },
@@ -184,9 +181,8 @@ describe('intellichat/readers/AnthropicReader', () => {
       },
       onToolCalls: (tool: string) => {
         toolName = tool;
-      },
+      }
     });
-    const result = await anthropicReader.read();
     expect(result.content).toEqual('Okay, let\'s check the weather for San Francisco, CA:');
     expect(toolName).toEqual('get_weather');
     expect(result.tool).toEqual({
