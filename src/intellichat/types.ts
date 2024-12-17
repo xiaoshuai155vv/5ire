@@ -66,8 +66,19 @@ export interface IGoogleTool {
 }
 
 export interface IChatRequestMessageContent {
-  type: 'text' | 'image_url' | 'image' | 'function';
+  type:
+    | 'text'
+    | 'image_url'
+    | 'image'
+    | 'function'
+    | 'tool_result'
+    | 'tool_use';
+  id?: string;
+  name?: string;
+  input?:any;
+  tool_use_id?: string;
   text?: string;
+  content?: any;
   image_url?: {
     url: string;
   };
@@ -89,8 +100,8 @@ export interface IGeminiChatRequestMessagePart {
     mimeType: string;
     data: string;
   };
-  functionCall?:any
-  functionResponse?:any
+  functionCall?: any;
+  functionResponse?: any;
 }
 
 export interface IChatRequestMessage {

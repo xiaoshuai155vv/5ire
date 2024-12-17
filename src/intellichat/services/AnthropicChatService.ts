@@ -15,6 +15,7 @@ import { getBase64, splitByImg, stripHtmlTags } from 'utils/util';
 import INextChatService from './INextCharService';
 import AnthropicReader from 'intellichat/readers/AnthropicReader';
 import NextChatService from './NextChatService';
+import { ITool } from 'intellichat/readers/BaseReader';
 
 const debug = Debug('5ire:intellichat:AnthropicChatService');
 
@@ -27,6 +28,35 @@ export default class AnthropicChatService
       context,
       provider: Anthropic,
     });
+  }
+
+  protected makeToolMessages(
+    tool: ITool,
+    toolResult: any
+  ): IChatRequestMessage[] {
+    return [
+      {
+        role: 'assistant',
+        content: [
+          {
+            type: 'tool_use',
+            id: tool.id,
+            name: tool.name,
+            input: tool.args,
+          },
+        ],
+      },
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'tool_result',
+            tool_use_id: tool.id,
+            content: toolResult.content,
+          },
+        ],
+      },
+    ];
   }
 
   protected makeTool(tool: IMCPTool): IOpenAITool | IAnthropicTool {
@@ -135,7 +165,6 @@ export default class AnthropicChatService
     }
     if (model.toolEnabled) {
       const tools = await window.electron.mcp.listTools();
-      debug('tools', tools);
       if (tools) {
         const _tools = tools
           .filter((tool: any) => !this.usedToolNames.includes(tool.name))
@@ -144,10 +173,10 @@ export default class AnthropicChatService
           });
         if (_tools.length > 0) {
           payload.tools = _tools;
-          payload.tool_choice ={
-            type:'auto',
-            disable_parallel_tool_use: true
-          }
+          payload.tool_choice = {
+            type: 'auto',
+            disable_parallel_tool_use: true,
+          };
         }
       }
     }
