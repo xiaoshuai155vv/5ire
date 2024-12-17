@@ -1,10 +1,11 @@
 import Debug from 'debug';
 import { IChatResponseMessage } from 'intellichat/types';
-import BaseReader, { ITool } from './BaseReader';
+import BaseReader from './BaseReader';
+import IChatReader, { ITool } from './IChatReader';
 
 const debug = Debug('5ire:intellichat:OpenAIReader');
 
-export default class OpenAIReader extends BaseReader {
+export default class OpenAIReader extends BaseReader implements IChatReader {
   protected parseReply(chunk: string): IChatResponseMessage {
     const choice = JSON.parse(chunk).choices[0];
     return {

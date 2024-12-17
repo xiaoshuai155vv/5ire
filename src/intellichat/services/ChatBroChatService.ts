@@ -3,11 +3,11 @@ import {
   IChatContext,
   IChatRequestMessage,
   IChatRequestPayload,
-  IChatResponseMessage,
 } from 'intellichat/types';
 import ChatBro from '../../providers/ChatBro';
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
+import ChatBroReader from 'intellichat/readers/ChatBroReader';
 
 const debug = Debug('5ire:intellichat:ChatBroChatService');
 
@@ -20,63 +20,8 @@ export default class ChatBroChatService
     this.provider = ChatBro;
   }
 
-  protected parseReply(chunk: string): IChatResponseMessage {
-    if (chunk === '[DONE]') {
-      return {
-        content: '',
-        isEnd: true,
-      };
-    }
-    return {
-      content: chunk,
-      isEnd: false,
-    };
-  }
-
-  protected async read(
-    reader: ReadableStreamDefaultReader<Uint8Array>,
-    status: number,
-    decoder: TextDecoder,
-    onProgress: (content: string) => void
-  ): Promise<{ reply: string; context: any }> {
-    let reply = '';
-    let context: any = null;
-    let done = false;
-    while (!done) {
-      if (this.aborted) {
-        break;
-      }
-      /* eslint-disable no-await-in-loop */
-      const data = await reader.read();
-      done = data.done || false;
-      const value = decoder.decode(data.value);
-      if (status !== 200) {
-        this.onReadingError(value);
-      }
-      const lines = value
-        .split('\n')
-        .map((i) => i.trim())
-        .filter((i) => i !== '');
-
-      for (const line of lines) {
-        const chunks = line
-          .split('data:')
-          .filter((i) => i !== '')
-          .map((i) => i.trim());
-        for (let curChunk of chunks) {
-          let chunk = decodeURIComponent(curChunk);
-          if (chunk === '[DONE]') {
-            done = true;
-            break;
-          }
-          const message = this.parseReply(chunk);
-          reply += message.content;
-          onProgress(message.content || '');
-          this.onReadingCallback(message.content || '');
-        }
-      }
-    }
-    return { reply, context };
+  protected getReaderType() {
+    return ChatBroReader;
   }
 
   protected async makePayload(

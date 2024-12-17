@@ -1,5 +1,6 @@
 import Debug from 'debug';
 import BaseReader, { ITool } from 'intellichat/readers/BaseReader';
+import IChatReader from 'intellichat/readers/IChatReader';
 import {
   IAnthropicTool,
   IChatContext,
@@ -30,7 +31,7 @@ export default abstract class NextCharService {
   };
   protected abstract getReaderType(): new (
     reader: ReadableStreamDefaultReader<Uint8Array>
-  ) => BaseReader;
+  ) => IChatReader;
   protected onCompleteCallback: (result: any) => Promise<void>;
   protected onReadingCallback: (chunk: string) => void;
   protected onToolCallsCallback: (toolName: string) => void;

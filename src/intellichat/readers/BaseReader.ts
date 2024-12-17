@@ -1,22 +1,10 @@
 import { IChatResponseMessage } from 'intellichat/types';
 import { merge } from 'lodash';
+import IChatReader, { IReadResult, ITool } from './IChatReader';
 
 const MAX_SPLICE = 3;
 
-export interface ITool {
-  id: string;
-  name: string;
-  args?: any;
-}
-
-export interface IReadResult {
-  content: string;
-  tool?: ITool | null;
-  inputTokens?: number;
-  outputTokens?: number;
-}
-
-export default abstract class BaseReader {
+export default abstract class BaseReader implements IChatReader {
   protected reader: ReadableStreamDefaultReader<Uint8Array>;
 
   constructor(reader: ReadableStreamDefaultReader<Uint8Array>) {

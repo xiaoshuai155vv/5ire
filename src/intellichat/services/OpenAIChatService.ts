@@ -16,7 +16,7 @@ import { splitByImg, stripHtmlTags } from 'utils/util';
 import NextChatService from './NextChatService';
 import INextChatService from './INextCharService';
 import OpenAIReader from 'intellichat/readers/OpenAIReader';
-import { ITool } from 'intellichat/readers/BaseReader';
+import { ITool } from 'intellichat/readers/IChatReader';
 
 const debug = Debug('5ire:intellichat:OpenAIChatService');
 

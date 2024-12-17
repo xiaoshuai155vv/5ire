@@ -15,7 +15,7 @@ import { getBase64, splitByImg, stripHtmlTags } from 'utils/util';
 import INextChatService from './INextCharService';
 import AnthropicReader from 'intellichat/readers/AnthropicReader';
 import NextChatService from './NextChatService';
-import { ITool } from 'intellichat/readers/BaseReader';
+import { ITool } from 'intellichat/readers/IChatReader';
 
 const debug = Debug('5ire:intellichat:AnthropicChatService');
 

@@ -9,6 +9,7 @@ import OpenAIChatService from './OpenAIChatService';
 import Fire from 'providers/Fire';
 import useAuthStore from 'stores/useAuthStore';
 import INextChatService from './INextCharService';
+import FireReader from 'intellichat/readers/FireReader';
 
 const debug = Debug('5ire:intellichat:FireChatService');
 
@@ -21,47 +22,8 @@ export default class FireChatService
     this.provider = Fire;
   }
 
-  protected parseReply(chunk: string): IChatResponseMessage {
-    return {
-      content: chunk,
-      isEnd: false,
-    };
-  }
-
-  protected async read(
-    reader: ReadableStreamDefaultReader<Uint8Array>,
-    status: number,
-    decoder: TextDecoder,
-    onProgress: (content: string) => void
-  ): Promise<{ reply: string; context: any }> {
-    let reply = '';
-    let context: any = null;
-    let done = false;
-    while (!done) {
-      if (this.aborted) {
-        break;
-      }
-      /* eslint-disable no-await-in-loop */
-      const data = await reader.read();
-      done = data.done || false;
-      const value = decoder.decode(data.value);
-      if (status !== 200) {
-        this.onReadingError(value);
-      }
-
-      const chunks = value.split('data:').map(i=>i.replace('\r\n','')).filter((i) => i !== '')
-      for (let curChunk of chunks) {
-        if (curChunk === '[DONE]') {
-          done = true;
-          break;
-        }
-        const message = this.parseReply(curChunk);
-        reply += message.content;
-        onProgress(message.content||'');
-        this.onReadingCallback(message.content || '');
-      }
-    }
-    return { reply, context };
+  protected getReaderType() {
+    return FireReader;
   }
 
   private getUserId() {

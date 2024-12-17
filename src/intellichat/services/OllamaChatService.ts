@@ -3,10 +3,10 @@ import Ollama from '../../providers/Ollama';
 import {
   IChatContext,
   IChatRequestMessage,
-  IChatResponseMessage,
 } from 'intellichat/types';
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
+import OllamaReader from 'intellichat/readers/OllamaChatReader';
 
 const debug = Debug('5ire:intellichat:OllamaChatService');
 export default class OllamaChatService
@@ -18,23 +18,9 @@ export default class OllamaChatService
     this.provider = Ollama;
   }
 
-  protected parseReply(chunk: string): IChatResponseMessage {
-    const data = JSON.parse(chunk);
-    if (data.done) {
-      return {
-        content: data.message.content,
-        isEnd: true,
-        inputTokens: data.prompt_eval_count,
-        outputTokens: data.eval_count,
-      };
-    }
-    return {
-      content: data.message.content,
-      isEnd: false,
-      toolCalls: data.tool_calls,
-    };
+  protected getReaderType() {
+    return OllamaReader;
   }
-
 
   protected async makeRequest(
     messages: IChatRequestMessage[]
