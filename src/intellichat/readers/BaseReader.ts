@@ -37,7 +37,7 @@ export default abstract class BaseReader {
   }: {
     onError: (error: any) => void;
     onProgress: (chunk: string) => void;
-    onToolCalls?: (toolCalls: any) => void;
+    onToolCalls: (toolCalls: any) => void;
   }): Promise<IReadResult> {
     const decoder = new TextDecoder('utf-8');
     let content = '';

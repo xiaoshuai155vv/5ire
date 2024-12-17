@@ -579,7 +579,7 @@ app
         command: 'npx',
         args: [
           'mcp-obsidian',
-          '/Users/ironben/Documents/',
+          '/Users/ironben/Library/Mobile Documents/iCloud~md~obsidian/Documents/Ironben/',
         ],
       });
       log.info('mcp initialized');

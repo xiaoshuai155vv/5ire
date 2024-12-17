@@ -8,6 +8,7 @@ import {
   IAnthropicTool,
   IOpenAITool,
   IMCPTool,
+  IGoogleTool,
 } from 'intellichat/types';
 import OpenAI from '../../providers/OpenAI';
 import { isBlank } from 'utils/validators';
@@ -15,6 +16,7 @@ import { splitByImg, stripHtmlTags } from 'utils/util';
 import NextChatService from './NextChatService';
 import INextChatService from './INextCharService';
 import OpenAIReader from 'intellichat/readers/OpenAIReader';
+import { ITool } from 'intellichat/readers/BaseReader';
 
 const debug = Debug('5ire:intellichat:OpenAIChatService');
 
@@ -119,6 +121,33 @@ export default class OpenAIChatService
         },
       },
     };
+  }
+
+  protected makeToolMessages(
+    tool: ITool,
+    toolResult: any
+  ): IChatRequestMessage[] {
+    return [
+      {
+        role: 'assistant',
+        tool_calls: [
+          {
+            id: tool.id,
+            type: 'function',
+            function: {
+              arguments: JSON.stringify(tool.args),
+              name: tool.name,
+            },
+          },
+        ],
+      },
+      {
+        role: 'tool',
+        name: tool.name,
+        content: toolResult.content,
+        tool_call_id: tool.id,
+      },
+    ];
   }
 
   protected async makePayload(

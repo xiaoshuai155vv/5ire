@@ -133,8 +133,8 @@ export function isGPT(model: string) {
   return isGPT35(model) || isGPT4(model);
 }
 
-export function isDoubao(model:string){
-  return model.toLowerCase().startsWith('doubao')
+export function isDoubao(model: string) {
+  return model.toLowerCase().startsWith('doubao');
 }
 
 export function isGrok(model: string) {
@@ -335,4 +335,38 @@ export function extractCitationIds(text: string): string[] {
   // 使用matchAll返回所有匹配结果
   const matches = text.matchAll(regex);
   return [...matches].map((match) => match[1]);
+}
+
+export function extractFirstLevelBrackets(text:string): string[] {
+  const results = [];
+  const stack = [];
+  let current = '';
+  let firstLevelCapture = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (char === '{') {
+      if (stack.length === 0) {
+        firstLevelCapture = true;
+        current = ''; // start capturing a new section
+      }
+      stack.push('{');
+    }
+
+    if (firstLevelCapture) {
+      current += char;
+    }
+
+    if (char === '}') {
+      stack.pop();
+      if (stack.length === 0) {
+        firstLevelCapture = false;
+        results.push(current); // end of a section
+        current = ''; // reset current for the next possible section
+      }
+    }
+  }
+
+  return results;
 }

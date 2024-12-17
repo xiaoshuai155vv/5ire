@@ -56,14 +56,12 @@ export interface IAnthropicTool {
 }
 
 export interface IGoogleTool {
-  function_declarations: {
-    name: string;
-    description: string;
-    parameters: {
-      type: string;
-      properties: any;
-      required: any;
-    };
+  name: string;
+  description: string;
+  parameters: {
+    type: string;
+    properties: any;
+    required: any;
   };
 }
 
@@ -85,12 +83,14 @@ export interface IChatRequestMessageContent {
   };
 }
 
-export interface IGeminiChatRequestMessageContent {
+export interface IGeminiChatRequestMessagePart {
   text?: string;
   inline_data?: {
     mimeType: string;
     data: string;
   };
+  functionCall?:any
+  functionResponse?:any
 }
 
 export interface IChatRequestMessage {
@@ -98,15 +98,8 @@ export interface IChatRequestMessage {
   name?: string;
   content?: string | IChatRequestMessageContent[];
   tool_call_id?: string;
-  parts?: IGeminiChatRequestMessageContent[];
-  tool_calls?: {
-    id: string;
-    type: string;
-    function: {
-      arguments: string;
-      name: string;
-    };
-  };
+  parts?: IGeminiChatRequestMessagePart[];
+  tool_calls?: any;
 }
 
 export interface IChatRequestPayload {

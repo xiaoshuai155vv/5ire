@@ -1,12 +1,12 @@
 import Debug from 'debug';
-import BaseReader from 'intellichat/readers/BaseReader';
+import BaseReader, { ITool } from 'intellichat/readers/BaseReader';
 import {
   IAnthropicTool,
   IChatContext,
   IChatRequestMessage,
   IChatRequestMessageContent,
   IChatRequestPayload,
-  IGeminiChatRequestMessageContent,
+  IGeminiChatRequestMessagePart,
   IGoogleTool,
   IMCPTool,
   IOpenAITool,
@@ -71,6 +71,10 @@ export default abstract class NextCharService {
     const ReaderType = this.getReaderType();
     return new ReaderType(reader);
   }
+  protected abstract makeToolMessages(
+    tool: ITool,
+    toolResult: any
+  ): IChatRequestMessage[];
   protected abstract makeTool(
     tool: IMCPTool
   ): IOpenAITool | IAnthropicTool | IGoogleTool;
@@ -111,7 +115,7 @@ export default abstract class NextCharService {
     | string
     | IChatRequestMessageContent[]
     | IChatRequestMessageContent[]
-    | IGeminiChatRequestMessageContent[]
+    | IGeminiChatRequestMessagePart[]
   > {
     return stripHtmlTags(content);
   }
@@ -141,7 +145,7 @@ export default abstract class NextCharService {
     try {
       signal = this.abortController.signal;
       const response = await this.makeRequest(messages);
-      debug(response, response.status, response.statusText);
+      debug('Start Reading:', response.status, response.statusText);
       if (response.status !== 200) {
         const contentType = response.headers.get('content-type');
         let msg, json;
@@ -166,6 +170,12 @@ export default abstract class NextCharService {
         },
         onToolCalls: this.onToolCallsCallback,
       });
+      if (readResult?.inputTokens) {
+        this.inputTokens += readResult.inputTokens;
+      }
+      if (readResult?.outputTokens) {
+        this.outputTokens += readResult.outputTokens;
+      }
       if (readResult.tool) {
         const [client, name] = readResult.tool.name.split('--');
         const toolCallsResult = await window.electron.mcp.callTool({
@@ -175,28 +185,8 @@ export default abstract class NextCharService {
         });
         const _messages = [
           ...messages,
-          {
-            role: 'assistant',
-            tool_calls: [
-              {
-                id: readResult.tool.id,
-                type: 'function',
-                function: {
-                  arguments: JSON.stringify(readResult.tool.args),
-                  name: readResult.tool.name,
-                },
-              },
-            ],
-          },
-          {
-            role: 'tool',
-            name: readResult.tool.name,
-            content: toolCallsResult.content,
-            tool_call_id: readResult.tool.id,
-          },
+          ...this.makeToolMessages(readResult.tool, toolCallsResult),
         ] as IChatRequestMessage[];
-        this.inputTokens += readResult?.inputTokens || 0;
-        this.outputTokens += readResult?.outputTokens || 0;
         await this.chat(_messages);
       } else {
         await this.onCompleteCallback({

@@ -25,6 +25,7 @@ export default {
         inputPrice: 0.00035,
         outputPrice: 0.0105,
         jsonModelEnabled: true,
+        toolEnabled: true,
         vision:{
           enabled:true,
         },
@@ -39,6 +40,7 @@ export default {
         inputPrice: 0.00035,
         outputPrice: 0.00105,
         jsonModelEnabled: true,
+        toolEnabled: true,
         vision:{
           enabled:true,
         },
@@ -52,6 +54,7 @@ export default {
         inputPrice: 0.0000375,
         outputPrice: 0.00015,
         jsonModelEnabled: true,
+        toolEnabled: true,
         vision:{
           enabled:true,
         },
@@ -65,6 +68,7 @@ export default {
         inputPrice: 0.0000375,
         outputPrice: 0.00015,
         jsonModelEnabled: true,
+        toolEnabled: true,
         vision:{
           enabled:true,
         },
@@ -78,6 +82,7 @@ export default {
         inputPrice: 0.0000375,
         outputPrice: 0.00015,
         jsonModelEnabled: true,
+        toolEnabled: true,
         vision:{
           enabled:true,
         },
