@@ -194,6 +194,7 @@ export default class GoogleChatService
               function_declarations: [_tools],
             },
           ];
+          payload.tool_config = { function_calling_config:{mode: 'AUTO' }};
         }
       }
     }

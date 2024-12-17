@@ -126,6 +126,7 @@ export interface IChatRequestPayload {
   tools?: any;
   tool_choice?: any;
   parallel_tool_calls?: boolean;
+  tool_config?: any;
 }
 
 export type ModelGroup =
