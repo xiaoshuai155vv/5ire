@@ -260,6 +260,7 @@ export function stripHtmlTags(html: string): string {
 }
 
 export function splitByImg(html: string, base64Only: boolean = false) {
+  const defaultMimeType = 'image/jpeg';
   const mimeTypes: { [key: string]: string } = {
     '.jpg': 'image/jpeg',
     '.jpeg': 'image/jpeg',
@@ -285,12 +286,12 @@ export function splitByImg(html: string, base64Only: boolean = false) {
     if (matches) {
       let data = matches.map((match) => match.replace(srcRegex, '$1'))[0];
       const dataType = data.startsWith('data:') ? 'base64' : 'URL';
-      let mimeType = 'image/jpeg';
+      let mimeType = defaultMimeType;
       if (dataType === 'base64') {
         mimeType = data.split(';')[0].split(':')[1];
       } else {
         const ext = '.' + data.split('.').pop()?.toLowerCase();
-        mimeType = ext ? mimeTypes[ext] || 'unknown' : 'unknown';
+        mimeType = ext ? mimeTypes[ext] || defaultMimeType : defaultMimeType;
       }
       return {
         type: 'image',
@@ -337,7 +338,7 @@ export function extractCitationIds(text: string): string[] {
   return [...matches].map((match) => match[1]);
 }
 
-export function extractFirstLevelBrackets(text:string): string[] {
+export function extractFirstLevelBrackets(text: string): string[] {
   const results = [];
   const stack = [];
   let current = '';
