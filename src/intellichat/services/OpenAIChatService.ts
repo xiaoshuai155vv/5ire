@@ -162,7 +162,6 @@ export default class OpenAIChatService
     };
     if (model.toolEnabled) {
       const tools = await window.electron.mcp.listTools();
-      debug('tools', tools);
       if (tools) {
         const _tools = tools
           .filter((tool: any) => !this.usedToolNames.includes(tool.name))

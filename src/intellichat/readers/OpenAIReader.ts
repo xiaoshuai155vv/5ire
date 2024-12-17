@@ -29,7 +29,6 @@ export default class OpenAIReader extends BaseReader implements IChatReader {
     index: number;
     args: string;
   } | null {
-    debug('parseToolArgs', JSON.stringify(respMsg));
     try {
       if (respMsg.isEnd || !respMsg.toolCalls) {
         return null;

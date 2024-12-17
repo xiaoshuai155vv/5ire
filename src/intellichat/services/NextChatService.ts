@@ -68,7 +68,7 @@ export default abstract class NextCharService {
 
   protected createReader(
     reader: ReadableStreamDefaultReader<Uint8Array>
-  ): BaseReader {
+  ): IChatReader {
     const ReaderType = this.getReaderType();
     return new ReaderType(reader);
   }

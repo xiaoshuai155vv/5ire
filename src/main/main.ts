@@ -576,10 +576,11 @@ app
     mcp.init().then(async () => {
       await mcp.activate({
         name: 'mcp-obsidian',
-        command: 'npx',
+        command: 'uvx',
         args: [
-          'mcp-obsidian',
-          '/Users/ironben/Library/Mobile Documents/iCloud~md~obsidian/Documents/Ironben/',
+          'mcp-server-sqlite',
+          '--db-path',
+          '/Users/ironben/Workspace/Experiments/mcp/test.db',
         ],
       });
       log.info('mcp initialized');
