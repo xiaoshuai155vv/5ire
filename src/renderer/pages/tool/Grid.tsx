@@ -21,20 +21,33 @@ import {
   useScrollbarWidth,
 } from '@fluentui/react-components';
 import { CheckmarkCircle20Filled, Info16Regular } from '@fluentui/react-icons';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useToast from 'hooks/useToast';
 import useMCPStore, { IMCPServer } from 'stores/useMCPStore';
+import * as mcpUtils from 'utils/mcp';
+import ParamsDialog from './ParamsDialog';
 
 export default function Grid({ servers }: { servers: IMCPServer[] }) {
   const { t } = useTranslation();
-  const { notifyInfo } = useToast();
   const { activateServer, deactivateServer } = useMCPStore((state) => state);
+  const [open, setOpen] = useState(false);
+  const [selectedServer, setSelectedServer] = useState<IMCPServer | null>(null);
+  const [params, setParams] = useState<string[]>([]);
 
   type Item = {
     key: string;
     description: string;
     args: string[];
     isActive: boolean;
+  };
+
+  const activateServerWithParams = async (params: {
+    [key: string]: string;
+  }) => {
+    const server = { ...(selectedServer as IMCPServer) };
+    const args = mcpUtils.setParameters(server.args, params);
+    await activateServer(server.key, args);
+    setOpen(false);
   };
 
   const columns: TableColumnDefinition<Item>[] = [
@@ -79,7 +92,15 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
                 aria-label={t('Common.State')}
                 onChange={async (ev: any, data: any) => {
                   if (data.checked) {
-                    activateServer(item.key);
+                    const params = mcpUtils.getParameters(item.args);
+                    setParams(params);
+                    if (params.length > 0) {
+                      setSelectedServer(item as IMCPServer);
+                      setOpen(true);
+                      console.log(params);
+                    } else {
+                      activateServer(item.key);
+                    }
                   } else {
                     deactivateServer(item.key);
                   }
@@ -123,6 +144,13 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
           {renderRow}
         </DataGridBody>
       </DataGrid>
+      <ParamsDialog
+        title={selectedServer?.key || ''}
+        open={open}
+        setOpen={setOpen}
+        params={params}
+        onSubmit={activateServerWithParams}
+      />
     </div>
   );
 }

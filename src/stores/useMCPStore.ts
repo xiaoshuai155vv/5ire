@@ -24,7 +24,7 @@ export interface IMCPStore {
   fetchConfig: (refresh?: boolean) => Promise<IMCPConfig>;
   getConfig: () => Promise<IMCPConfig>;
   setConfig: (config: IMCPConfig) => Promise<boolean>;
-  activateServer: (key: string) => Promise<boolean>;
+  activateServer: (key: string, args?: string[]) => Promise<boolean>;
   deactivateServer: (key: string) => Promise<boolean>;
 }
 
@@ -73,13 +73,16 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
       return false;
     }
   },
-  activateServer: async (key: string) => {
+  activateServer: async (key: string, args?: string[]) => {
     const { servers } = { ...get().remoteConfig };
     const oldConfig = { ...get().config };
     const newConfig = { ...oldConfig };
     const server = servers.find((s) => s.key === key);
     if (server) {
       const activeServer = { ...server, isActive: true };
+      if(args) {
+        activeServer.args = args;
+      }
       const index = newConfig.servers.findIndex((s) => s.key === key);
       if (index > -1) {
         newConfig.servers[index] = activeServer;
