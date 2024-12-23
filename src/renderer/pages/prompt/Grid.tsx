@@ -33,8 +33,6 @@ import {
   DeleteRegular,
   EditFilled,
   EditRegular,
-  MoreHorizontalFilled,
-  MoreHorizontalRegular,
   OptionsFilled,
   OptionsRegular,
 } from '@fluentui/react-icons';
@@ -52,10 +50,7 @@ const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 const PinIcon = bundleIcon(PinFilled, PinRegular);
 const PinOffIcon = bundleIcon(PinOffFilled, PinOffRegular);
 
-const OptionsIcon = bundleIcon(
-  OptionsFilled,
-  OptionsRegular
-);
+const OptionsIcon = bundleIcon(OptionsFilled, OptionsRegular);
 
 export default function Grid({
   prompts,

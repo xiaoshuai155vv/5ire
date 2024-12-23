@@ -37,16 +37,33 @@ const electronHandler = {
       ipcRenderer.sendSync('set-store', key, val);
     },
   },
-  mcp:{
-    activate(config: {name: string,command: string,args: string[]}){
-      ipcRenderer.invoke('mcp-activate',config)
+  mcp: {
+    activate(config: { name: string; command: string; args: string[] }) {
+      ipcRenderer.invoke('mcp-activate', config);
     },
-    listTools(name?:string){
-      return ipcRenderer.invoke('mcp-list-tools',name)
+    listTools(name?: string) {
+      return ipcRenderer.invoke('mcp-list-tools', name);
     },
-    callTool({client, name,args}:{client:string, name:string, args:any}){
-      return ipcRenderer.invoke('mcp-call-tool',{client, name, args})
-    }
+    callTool({
+      client,
+      name,
+      args,
+    }: {
+      client: string;
+      name: string;
+      args: any;
+    }) {
+      return ipcRenderer.invoke('mcp-call-tool', { client, name, args });
+    },
+    fetchConfig() {
+      return ipcRenderer.invoke('mcp-fetch-config');
+    },
+    getConfig(): Promise<any> {
+      return ipcRenderer.invoke('mcp-get-config');
+    },
+    setConfig(config: any): Promise<boolean> {
+      return ipcRenderer.invoke('mcp-set-config', config);
+    },
   },
   crypto: {
     encrypt(text: string, key: string) {
@@ -57,7 +74,7 @@ const electronHandler = {
     },
     hmacSha256Hex(data: string, key: string) {
       return ipcRenderer.invoke('hmac-sha256-hex', data, key);
-    }
+    },
   },
   openExternal(url: string) {
     return ipcRenderer.invoke('open-external', url);

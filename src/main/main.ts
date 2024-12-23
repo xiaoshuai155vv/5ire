@@ -43,6 +43,7 @@ import {
   MAX_FILE_SIZE,
   SUPPORTED_IMAGE_TYPES,
 } from '../consts';
+import { IMCPConfig } from 'stores/useMCPStore';
 
 log.info('Main process start...');
 
@@ -411,6 +412,65 @@ ipcMain.handle(
     return await mcp.callTool(args);
   }
 );
+ipcMain.handle('mcp-fetch-config', async () => {
+  let config: IMCPConfig = {
+    servers: [],
+  };
+  try {
+    //const resp  = await fetch('https://api.5ire.app/mcp/config');
+    config = {
+      servers: [
+        {
+          key: 'obsidian',
+          command: 'npx',
+          description:
+            'This is a connector to allow Claude Desktop (or any MCP client) to read and search any directory containing Markdown notes (such as an Obsidian vault).',
+          args: ['mcp-obsidian','<vaultPath>'],
+          isActive: false,
+        },
+        {
+          key: 'sqlite',
+          command: 'uvx',
+          description:
+            'A Model Context Protocol (MCP) server implementation that provides database interaction and business intelligence capabilities through SQLite. This server enables running SQL queries, analyzing business data, and automatically generating business insight memos.',
+          args: ['mcp-server-sqlite', '--db-path', '<dbPath>'],
+          isActive: false,
+        },
+      ],
+    };
+  } catch (error) {
+    log.error(error);
+    Sentry.captureException(error);
+  }
+  return config;
+});
+ipcMain.handle('mcp-get-config', async () => {
+  const defaultConfig = { servers: [] };
+  try{
+    const mcpConfigPath = path.join(app.getPath('userData'), 'mcp.json');
+    if (!fs.existsSync(mcpConfigPath)) {
+      fs.writeFileSync(mcpConfigPath, JSON.stringify(defaultConfig, null, 2));
+    }
+    const config = JSON.parse(fs.readFileSync(mcpConfigPath, 'utf-8'));
+    return config;
+  }catch(error){
+    log.error(error);
+    Sentry.captureException(error);
+    return defaultConfig;
+  }
+});
+
+ipcMain.handle('mcp-set-config', async (_, config) => {
+ try{
+  const mcpConfigPath = path.join(app.getPath('userData'), 'mcp.json');
+  fs.writeFileSync(mcpConfigPath, JSON.stringify(config, null, 2));
+  return true;
+ }catch(error){
+   log.error(error);
+   Sentry.captureException(error);
+   return false
+ }
+});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -577,15 +637,6 @@ app
       // https://github.com/sindresorhus/fix-path
       const fixPath = (await import('fix-path')).default;
       fixPath();
-      await mcp.activate({
-        name: 'mcp-obsidian',
-        command: 'uvx',
-        args: [
-          'mcp-server-sqlite',
-          '--db-path',
-          '/Users/ironben/Workspace/Experiments/mcp/test.db',
-        ],
-      });
       log.info('mcp initialized');
     });
     axiom.ingest([{ app: 'launch' }]);
