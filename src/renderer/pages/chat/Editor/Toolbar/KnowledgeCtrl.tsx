@@ -29,10 +29,7 @@ import useChatKnowledgeStore from 'stores/useChatKnowledgeStore';
 
 const debug = Debug('5ire:pages:chat:Editor:Toolbar:KnowledgeCtrl');
 
-const KnowledgeIcon = bundleIcon(
-  Library20Filled,
-  Library20Regular
-);
+const KnowledgeIcon = bundleIcon(Library20Filled, Library20Regular);
 
 export default function KnowledgeCtrl({
   ctx,
@@ -57,13 +54,6 @@ export default function KnowledgeCtrl({
   useEffect(() => {
     setSelectedCollectionIds([]);
     setSelectedCollections([]);
-    listCollections().then(async (collections) => {
-      setCollections(collections);
-      const chatCollections = await listChatCollections(chat.id);
-      if(!chatCollections) return;
-      setSelectedCollections(chatCollections);
-      setSelectedCollectionIds(chatCollections.map((c) => c.id));
-    });
   }, [chat.id]);
 
   const onCollectionSelect: ComboboxProps['onOptionSelect'] = async (
@@ -101,9 +91,20 @@ export default function KnowledgeCtrl({
             className="justify-start text-color-secondary"
             style={{ padding: 1, minWidth: 20 }}
             appearance="subtle"
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              listCollections().then(async (collections) => {
+                setCollections(collections);
+                const chatCollections = await listChatCollections(chat.id);
+                if (!chatCollections) return;
+                setSelectedCollections(chatCollections);
+                setSelectedCollectionIds(chatCollections.map((c) => c.id));
+              });
+              setOpen(true);
+            }}
             icon={<KnowledgeIcon />}
-          >{selectedCollections.length > 0 && selectedCollections.length}</Button>
+          >
+            {selectedCollections.length > 0 && selectedCollections.length}
+          </Button>
         </DialogTrigger>
         <DialogSurface>
           <DialogBody>

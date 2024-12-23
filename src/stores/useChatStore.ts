@@ -430,6 +430,10 @@ const useChatStore = create<IChatStore>((set, get) => ({
     offset?: number;
     keyword?: string;
   }) => {
+    if (chatId === tempChatId) {
+      set({ messages: [] });
+      return [];
+    }
     let sql = `SELECT messages.*, bookmarks.id bookmarkId
     FROM messages
     LEFT JOIN bookmarks ON bookmarks.msgId = messages.id

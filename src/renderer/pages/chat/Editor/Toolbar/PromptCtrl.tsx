@@ -28,12 +28,15 @@ import { isNull, pick } from 'lodash';
 import PromptVariableDialog from '../PromptVariableDialog';
 import { IChat, IChatContext, IPrompt } from 'intellichat/types';
 
-const PromptIcon = bundleIcon(
-  Prompt20Filled,
-  Prompt20Regular
-);
+const PromptIcon = bundleIcon(Prompt20Filled, Prompt20Regular);
 
-export default function PromptCtrl({ ctx, chat}: { ctx: IChatContext, chat:IChat }) {
+export default function PromptCtrl({
+  ctx,
+  chat,
+}: {
+  ctx: IChatContext;
+  chat: IChat;
+}) {
   const { t } = useTranslation();
   const [open, setOpen] = useState<boolean>(false);
   const [keyword, setKeyword] = useState<string>('');
@@ -47,12 +50,6 @@ export default function PromptCtrl({ ctx, chat}: { ctx: IChatContext, chat:IChat
   const getPrompt = usePromptStore((state) => state.getPrompt);
   const stagePrompts = useStageStore((state) => state.prompts);
   const editStage = useStageStore((state) => state.editStage);
-
-  useEffect(() => {
-    if (allPrompts.length === 0) {
-      fetchPrompts({});
-    }
-  }, [allPrompts.length, fetchPrompts]);
 
   const appliedPrompt = useMemo(
     () => stagePrompts[chat.id] || null,
@@ -98,9 +95,9 @@ export default function PromptCtrl({ ctx, chat}: { ctx: IChatContext, chat:IChat
         editStage(chat.id, { prompt: $prompt, input });
       }
     }
-    const editor = document.querySelector('#editor') as HTMLTextAreaElement
+    const editor = document.querySelector('#editor') as HTMLTextAreaElement;
     editor.focus();
-    window.electron.ingestEvent([{app: 'apply-prompt'}])
+    window.electron.ingestEvent([{ app: 'apply-prompt' }]);
   };
 
   const removePrompt = () => {
@@ -149,7 +146,10 @@ export default function PromptCtrl({ ctx, chat}: { ctx: IChatContext, chat:IChat
             aria-label={t('Common.Prompts')}
             appearance="subtle"
             className="justify-start text-color-secondary"
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              fetchPrompts({});
+              setOpen(true);
+            }}
             icon={<PromptIcon />}
           >
             {appliedPrompt?.name || ''}
@@ -213,7 +213,9 @@ export default function PromptCtrl({ ctx, chat}: { ctx: IChatContext, chat:IChat
                   {appliedPrompt?.systemMessage ? (
                     <div>
                       <div>
-                        <span className="mr-1">{t('Common.SystemMessage')}: </span>
+                        <span className="mr-1">
+                          {t('Common.SystemMessage')}:{' '}
+                        </span>
                         <span
                           className="leading-6"
                           dangerouslySetInnerHTML={{
