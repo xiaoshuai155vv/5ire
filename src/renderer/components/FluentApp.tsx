@@ -17,7 +17,7 @@ import AppSidebar from './layout/aside/AppSidebar';
 import Chat from '../pages/chat';
 import Knowledge from '../pages/knowledge';
 import KnowledgeCollectionForm from '../pages/knowledge/CollectionForm';
-import Apps from '../pages/apps';
+import Tools from '../pages/tool';
 import Bookmarks from '../pages/bookmark';
 import Bookmark from '../pages/bookmark/Bookmark';
 import Usage from '../pages/usage';
@@ -78,8 +78,6 @@ export default function FluentApp() {
     };
   }, [themeSettings, setTheme]);
 
-
-
   useEffect(() => {
     if (themeSettings === 'system') {
       window.electron
@@ -113,7 +111,7 @@ export default function FluentApp() {
                 path="/knowledge/collection-form/:id?"
                 element={<KnowledgeCollectionForm />}
               />
-              <Route path="/apps" element={<Apps />} />
+              <Route path="/tool" element={<Tools />} />
               <Route path="/apps/:key" element={<AppLoader />} />
               <Route path="/bookmarks" element={<Bookmarks />} />
               <Route path="/bookmarks/:id" element={<Bookmark />} />

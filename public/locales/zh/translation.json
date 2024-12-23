@@ -195,5 +195,9 @@
   "Common.GitHub": "GitHub",
   "Common.SelectImage": "选择图片",
   "Common.Author": "作者",
-  "Common.MCPServers": "MCP Servers"
+  "Common.MCPServers": "遵循模型上下文协议（MCP）的服务",
+  "Common.Tools": "工具",
+  "Tools.Description": "这里是可以扩展AI模型功能的一系列工具，目的是为了让AI模型能够执行特定的任务或访问外部资源，从而增强其能力和应用范围，比如访问数据库、本地或网络文件等。支持工具特性的大模型会自行决定是否使用这里已启用的工具。",
+  "Common.MCPDescription": "模型上下文协议（Model Context Protocol）是一个开放协议，由 Anthropic开源的，能实现大型语言模型（LLM）应用与外部数据源和工具之间的无缝集成。",
+  "Tool.Info.Empty": "推荐在  mcp-get.com 获取工具"
 }

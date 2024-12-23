@@ -11,6 +11,8 @@ import {
   Library24Regular,
   Library24Filled,
   bundleIcon,
+  Wand24Filled,
+  Wand24Regular,
 } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
 import useNav from 'hooks/useNav';
@@ -28,6 +30,7 @@ const EmojiSparkleIcon = bundleIcon(
 );
 const ChatAddIcon = bundleIcon(ChatAdd24Filled, ChatAdd24Regular);
 const KnowledgeIcon = bundleIcon(Library24Filled, Library24Regular);
+const WandIcon = bundleIcon(Wand24Filled, Wand24Regular);
 
 const IS_ASSISTANTS_ENABLED = false;
 
@@ -66,18 +69,16 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           </Button>
         </div>
       )}
-      {false && (
-        <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
-          <Button
-            appearance="subtle"
-            icon={<KnowledgeIcon />}
-            className="w-full justify-start"
-            onClick={() => navigate('/knowledge')}
-          >
-            {collapsed ? null : t('Common.MCPServers')}
-          </Button>
-        </div>
-      )}
+      <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
+        <Button
+          appearance="subtle"
+          icon={<WandIcon />}
+          className="w-full justify-start"
+          onClick={() => navigate('/tool')}
+        >
+          {collapsed ? null : t('Common.Tools')}
+        </Button>
+      </div>
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
