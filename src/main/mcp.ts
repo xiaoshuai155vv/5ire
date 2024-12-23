@@ -1,3 +1,4 @@
+import log from 'electron-log';
 export interface ClientConfig {
   name: string;
   command: string;
@@ -56,6 +57,14 @@ export default class ModuleContext {
     }
   }
 
+  public async close() {
+    for (const key in this.clients) {
+      log.info(`Closing MCP Client ${key}`);
+      await this.clients[key].close();
+      delete this.clients[key];
+    }
+  }
+
   public async listTools(name?: string) {
     let allTools: any = [];
     if (name) {
@@ -97,7 +106,7 @@ export default class ModuleContext {
       name,
       arguments: args,
     });
-    return result
+    return result;
   }
 
   public getClient(name: string) {

@@ -9,7 +9,7 @@ import Grid from './Grid';
 export default function Tools() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const  remoteConfig = useMCPStore((state) => state.remoteConfig);
+  const remoteConfig = useMCPStore((state) => state.remoteConfig);
   const config = useMCPStore((state) => state.config);
 
   const loadConfig = async () => {
@@ -52,9 +52,6 @@ export default function Tools() {
         <div className="flex flex-col items-start w-full">
           <div className="flex justify-between items-baseline w-full">
             <h1 className="text-2xl flex-shrink-0 mr-6">{t('Common.Tools')}</h1>
-            <div className="flex justify-end w-full items-center gap-2">
-              <Button appearance="primary">{t('Common.New')}</Button>
-            </div>
           </div>
           <div className="tips flex justify-start items-center">
             {t('Common.MCPServers')}

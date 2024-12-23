@@ -425,7 +425,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           command: 'npx',
           description:
             'This is a connector to allow Claude Desktop (or any MCP client) to read and search any directory containing Markdown notes (such as an Obsidian vault).',
-          args: ['mcp-obsidian','<vaultPath>'],
+          args: ['mcp-obsidian', '<vaultPath>'],
           isActive: false,
         },
         {
@@ -446,14 +446,14 @@ ipcMain.handle('mcp-fetch-config', async () => {
 });
 ipcMain.handle('mcp-get-config', async () => {
   const defaultConfig = { servers: [] };
-  try{
+  try {
     const mcpConfigPath = path.join(app.getPath('userData'), 'mcp.json');
     if (!fs.existsSync(mcpConfigPath)) {
       fs.writeFileSync(mcpConfigPath, JSON.stringify(defaultConfig, null, 2));
     }
     const config = JSON.parse(fs.readFileSync(mcpConfigPath, 'utf-8'));
     return config;
-  }catch(error){
+  } catch (error) {
     log.error(error);
     Sentry.captureException(error);
     return defaultConfig;
@@ -461,15 +461,15 @@ ipcMain.handle('mcp-get-config', async () => {
 });
 
 ipcMain.handle('mcp-set-config', async (_, config) => {
- try{
-  const mcpConfigPath = path.join(app.getPath('userData'), 'mcp.json');
-  fs.writeFileSync(mcpConfigPath, JSON.stringify(config, null, 2));
-  return true;
- }catch(error){
-   log.error(error);
-   Sentry.captureException(error);
-   return false
- }
+  try {
+    const mcpConfigPath = path.join(app.getPath('userData'), 'mcp.json');
+    fs.writeFileSync(mcpConfigPath, JSON.stringify(config, null, 2));
+    return true;
+  } catch (error) {
+    log.error(error);
+    Sentry.captureException(error);
+    return false;
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -604,23 +604,6 @@ if (app.dock) {
 
 app.setName('5ire');
 
-/**
- * Add event listeners...
- */
-
-app.on('will-finish-launching', () => {
-  initCrashReporter();
-});
-
-app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-  axiom.flush();
-});
-
 app
   .whenReady()
   .then(async () => {
@@ -633,6 +616,34 @@ app
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
+
+    app.on('will-finish-launching', () => {
+      initCrashReporter();
+    });
+
+    app.on('window-all-closed', () => {
+      // Respect the OSX convention of having the application in memory even
+      // after all windows have been closed
+      if (process.platform !== 'darwin') {
+        app.quit();
+      }
+      axiom.flush();
+    });
+
+    app.on('before-quit', () => {
+      ipcMain.removeAllListeners();
+      mcp.close();
+    });
+
+    app.on(
+      'certificate-error',
+      (event, _webContents, _url, _error, _certificate, callback) => {
+        // 允许私有证书
+        event.preventDefault();
+        callback(true);
+      }
+    );
+
     mcp.init().then(async () => {
       // https://github.com/sindresorhus/fix-path
       const fixPath = (await import('fix-path')).default;
@@ -642,15 +653,6 @@ app
     axiom.ingest([{ app: 'launch' }]);
   })
   .catch(log.error);
-
-app.on(
-  'certificate-error',
-  (event, _webContents, _url, _error, _certificate, callback) => {
-    // 允许私有证书
-    event.preventDefault();
-    callback(true);
-  }
-);
 
 /**
  * Register deeplink
@@ -682,10 +684,10 @@ deeplink.on('received', (link: string) => {
 
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
-  // 记录错误信息到日志文件
+  Sentry.captureException(error);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection:', reason);
-  // 记录错误信息到日志文件
+  Sentry.captureException(reason);
 });
