@@ -1,6 +1,7 @@
 import Debug from 'debug';
 import { IChatResponseMessage } from 'intellichat/types';
-import BaseReader, { ITool } from './BaseReader';
+import BaseReader from './BaseReader';
+import { ITool } from './IChatReader';
 
 const debug = Debug('5ire:intellichat:AnthropicReader');
 
