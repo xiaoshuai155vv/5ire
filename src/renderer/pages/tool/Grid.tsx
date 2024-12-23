@@ -10,6 +10,9 @@ import {
 } from '@fluentui-contrib/react-data-grid-react-window';
 import {
   Button,
+  Popover,
+  PopoverSurface,
+  PopoverTrigger,
   Switch,
   TableCell,
   TableCellActions,
@@ -20,12 +23,24 @@ import {
   useFluent,
   useScrollbarWidth,
 } from '@fluentui/react-components';
-import { CheckmarkCircle20Filled, Info16Regular } from '@fluentui/react-icons';
+import {
+  BracesVariable20Filled,
+  BracesVariable20Regular,
+  bundleIcon,
+  Circle16Filled,
+  CircleOff16Regular,
+  Info16Regular,
+} from '@fluentui/react-icons';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useMCPStore, { IMCPServer } from 'stores/useMCPStore';
 import * as mcpUtils from 'utils/mcp';
 import ParamsDialog from './ParamsDialog';
+
+const BracesVariableIcon = bundleIcon(
+  BracesVariable20Filled,
+  BracesVariable20Regular
+);
 
 export default function Grid({ servers }: { servers: IMCPServer[] }) {
   const { t } = useTranslation();
@@ -64,7 +79,12 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
           <TableCell>
             <TableCellLayout truncate>
               <div className="flex flex-start items-center flex-grow">
-                <div>{item.key}</div>
+                {item.isActive ? (
+                  <Circle16Filled className="text-green-500 -mb-0.5" />
+                ) : (
+                  <CircleOff16Regular className="text-gray-400 dark:text-gray-600 -mb-0.5" />
+                )}
+                <div className="ml-1.5">{item.key}</div>
                 {item.description && (
                   <div className="-mb-0.5">
                     <Tooltip
@@ -81,8 +101,19 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
                     </Tooltip>
                   </div>
                 )}
-                {item.isActive && (
-                  <CheckmarkCircle20Filled className="text-green-500 -mb-0.5" />
+                {item.isActive && item.args.length > 0 && (
+                  <Popover withArrow>
+                    <PopoverTrigger disableButtonEnhancement>
+                      <Button
+                        icon={<BracesVariableIcon className="-mb-0.5" />}
+                        size="small"
+                        appearance="subtle"
+                      />
+                    </PopoverTrigger>
+                    <PopoverSurface tabIndex={-1}>
+                      <pre>{JSON.stringify(item.args, null, 2)}</pre>
+                    </PopoverSurface>
+                  </Popover>
                 )}
               </div>
             </TableCellLayout>
