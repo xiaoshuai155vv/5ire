@@ -11,10 +11,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const fetchChat = useChatStore((state: any) => state.fetchChat);
 
   useEffect(() => {
-    async function fetchData() {
-      await fetchChat();
-    }
-    fetchData();
+    fetchChat();
   }, [fetchChat]);
 
   const navigate = useNav();
