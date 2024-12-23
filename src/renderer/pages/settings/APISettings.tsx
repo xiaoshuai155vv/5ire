@@ -124,7 +124,7 @@ export default function APISettings() {
           <div className="my-3.5">
             <div className="flex justify-start items-center mb-1.5">
               <Label htmlFor="apiBase">{t('Common.APIBase')}</Label>
-              <TooltipIcon tip={provider.chat.docs?.base} />
+              <TooltipIcon tip={t(provider.chat.docs?.base||'')} />
             </div>
             <div>
               <Input
@@ -144,7 +144,7 @@ export default function APISettings() {
               <Label htmlFor="apiKey" className="block">
                 {t('Common.APIKey')}
               </Label>
-              <TooltipIcon tip={provider.chat.docs?.key} />
+              <TooltipIcon tip={t(provider.chat.docs?.key||'')} />
             </div>
             <div>
               <MaskableInput
@@ -163,7 +163,7 @@ export default function APISettings() {
               <Label htmlFor="deploymentId">
                 {t(`${provider.name}.DeploymentID`)}
               </Label>
-              <TooltipIcon tip={provider.chat.docs?.deploymentId} />
+              <TooltipIcon tip={t(provider.chat.docs?.deploymentId||'')} />
             </div>
             <Input
               value={api.deploymentId || ''}
@@ -177,7 +177,7 @@ export default function APISettings() {
           <div className="my-3.5">
             <div className="flex justify-start items-center mb-1.5">
               <Label htmlFor="apiSecret">{t('Common.SecretKey')}</Label>
-              <TooltipIcon tip={provider.chat.docs?.key} />
+              <TooltipIcon tip={t(provider.chat.docs?.key||'')} />
             </div>
             <MaskableInput
               id="apiSecret"

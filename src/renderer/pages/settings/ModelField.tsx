@@ -45,7 +45,7 @@ export default function ModelField({
     <div className="my-3.5">
       <div className="flex justify-start items-center mb-1.5">
         <Label htmlFor="model">{t('Common.Model')}</Label>
-        <TooltipIcon tip={provider.chat.docs?.model}/>
+        <TooltipIcon tip={t(provider.chat.docs?.model||'')}/>
       </div>
       {}
       <div>

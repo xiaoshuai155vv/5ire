@@ -1,12 +1,15 @@
-import { Tooltip } from "@fluentui/react-components";
-import { Info16Regular } from "@fluentui/react-icons";
-import { t } from "i18next";
+import { Tooltip } from '@fluentui/react-components';
+import { Info16Regular } from '@fluentui/react-icons';
 
-export default function TooltipIcon({tip}:{tip: string | undefined | null}) {
+export default function TooltipIcon({
+  tip,
+}: {
+  tip: string | undefined | null;
+}) {
   return tip ? (
     <Tooltip
       content={{
-        children: t(tip),
+        children: tip,
       }}
       positioning="above-start"
       withArrow
