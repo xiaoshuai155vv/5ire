@@ -138,21 +138,29 @@ export default function PromptCtrl({
   );
 
   return (
-    <div>
+    <>
       <Dialog open={open} onOpenChange={() => setPromptPickerOpen(false)}>
         <DialogTrigger disableButtonEnhancement>
           <Button
             size="small"
             aria-label={t('Common.Prompts')}
             appearance="subtle"
-            className="justify-start text-color-secondary"
+            className="flex justify-start items-center text-color-secondary gap-1"
             onClick={() => {
               fetchPrompts({});
               setOpen(true);
             }}
-            icon={<PromptIcon />}
+            icon={<PromptIcon className="flex-shrink-0" />}
           >
-            {appliedPrompt?.name || ''}
+            {appliedPrompt?.name && (
+              <span
+                className={`flex-shrink overflow-hidden whitespace-nowrap text-ellipsis ${
+                  appliedPrompt?.name ? 'min-w-8' : 'w-0'
+                } `}
+              >
+                {appliedPrompt?.name}
+              </span>
+            )}
           </Button>
         </DialogTrigger>
         <DialogSurface>
@@ -253,6 +261,6 @@ export default function PromptCtrl({
         onCancel={onVariablesCancel}
         onConfirm={onVariablesConfirm}
       />
-    </div>
+    </>
   );
 }

@@ -80,7 +80,7 @@ export default function MaxTokens({
           aria-label={t('Common.MaxTokens')}
           appearance="subtle"
           icon={<NumberSymbolSquareIcon />}
-          className="justify-start text-color-secondary"
+          className="justify-start text-color-secondary flex-shrink-0"
           style={{ padding: 1, minWidth: 20 }}
         >
           {maxTokens || null}

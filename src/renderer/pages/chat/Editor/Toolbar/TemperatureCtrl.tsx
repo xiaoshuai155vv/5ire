@@ -64,7 +64,7 @@ export default function TemperatureCtrl({ ctx, chat }: { ctx: IChatContext, chat
           aria-label={t('Common.Temperature')}
           appearance="subtle"
           icon={<TemperatureIcon className='mr-0' />}
-          className="justify-start text-color-secondary"
+          className="justify-start text-color-secondary flex-shrink-0"
           style={{ padding: 1, minWidth: 30 }}
         >
           <span className='latin'>{temperature}</span>

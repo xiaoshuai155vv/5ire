@@ -19,7 +19,13 @@ import { IChatModel, ProviderType } from 'providers/types';
 import useProvider from 'hooks/useProvider';
 import useAuthStore from 'stores/useAuthStore';
 
-export default function ModelCtrl({ ctx, chat }: { ctx: IChatContext, chat: IChat}) {
+export default function ModelCtrl({
+  ctx,
+  chat,
+}: {
+  ctx: IChatContext;
+  chat: IChat;
+}) {
   const { t } = useTranslation();
   const api = useSettingsStore((state) => state.api);
   const session = useAuthStore((state) => state.session);
@@ -27,7 +33,6 @@ export default function ModelCtrl({ ctx, chat }: { ctx: IChatContext, chat: ICha
   const [providerName, setProviderName] = useState<ProviderType>(api.provider);
   const updateChat = useChatStore((state) => state.updateChat);
   const editChat = useChatStore((state) => state.editChat);
-
 
   const models = useMemo<IChatModel[]>(() => {
     if (!api.provider || api.provider === 'Azure') return [];
@@ -74,19 +79,26 @@ export default function ModelCtrl({ ctx, chat }: { ctx: IChatContext, chat: ICha
           className="text-color-secondary flex justify-start items-center"
           style={{ padding: 1 }}
         >
-          <Cube16Regular className='mr-1' /> {' '}
-          {providerName}{' '}/
-          {models.map((mod: IChatModel) => mod.label).includes(modelName) ? (
-            <span>{modelName}</span>
-          ) : (
-            <span className="text-gray-400">{modelName}</span>
-          )}
+          <Cube16Regular className="mr-1 flex-shrink-0" />{' '}
+          <div className="flex-shrink overflow-hidden whitespace-nowrap text-ellipsis min-w-12">
+            {providerName} /
+            {models.map((mod: IChatModel) => mod.label).includes(modelName) ? (
+              <span>{modelName}</span>
+            ) : (
+              <span className="text-gray-400">{modelName}</span>
+            )}
+          </div>
         </Button>
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
           {models.map((item) => (
-            <MenuItemRadio name="model" value={item.label as string} key={item.label} className='latin'>
+            <MenuItemRadio
+              name="model"
+              value={item.label as string}
+              key={item.label}
+              className="latin"
+            >
               {item.label}
             </MenuItemRadio>
           ))}
@@ -96,9 +108,7 @@ export default function ModelCtrl({ ctx, chat }: { ctx: IChatContext, chat: ICha
   ) : (
     <Text size={200}>
       <span className="latin flex justify-start items-center gap-1">
-        <Cube16Regular />
-        {' '}
-        {api.provider} / {modelName}
+        <Cube16Regular /> {api.provider} / {modelName}
       </span>
     </Text>
   );
