@@ -1,8 +1,10 @@
 import log from 'electron-log';
-export interface ClientConfig {
-  name: string;
-  command: string;
+import * as Sentry from '@sentry/electron/main';
+export interface IClientConfig {
+  key: string;
+  command: 'npx' | 'uvx';
   args: string[];
+  env?: Record<string, string>;
 }
 
 export default class ModuleContext {
@@ -30,30 +32,43 @@ export default class ModuleContext {
     return StdioClientTransport;
   }
 
-  public async activate(config: ClientConfig) {
-    const { name, command, args } = config;
-    const client = new this.Client(
-      {
-        name: name,
-        version: '1.0.0',
-      },
-      {
-        capabilities: {},
-      }
-    );
-    const transport = new this.Transport({
-      command,
-      args,
-    });
-    await client.connect(transport);
-    this.clients[name] = client;
-    return client;
+  public async activate(config: IClientConfig): Promise<boolean> {
+    try {
+      const { key, command, args } = config;
+      const client = new this.Client(
+        {
+          name: key,
+          version: '1.0.0',
+        },
+        {
+          capabilities: {},
+        }
+      );
+      const transport = new this.Transport({
+        command,
+        args,
+      });
+      await client.connect(transport);
+      this.clients[key] = client;
+      return true;
+    } catch (err) {
+      log.error(err);
+      Sentry.captureException(err);
+      return false;
+    }
   }
 
-  public async deactivate(name: string) {
-    if (this.clients[name]) {
-      await this.clients[name].close();
-      delete this.clients[name];
+  public async deactivate(key: string) {
+    try {
+      if (this.clients[key]) {
+        await this.clients[key].close();
+        delete this.clients[key];
+      }
+      return true;
+    } catch (err) {
+      log.error(err);
+      Sentry.captureException(err);
+      return false;
     }
   }
 
@@ -65,15 +80,15 @@ export default class ModuleContext {
     }
   }
 
-  public async listTools(name?: string) {
+  public async listTools(key?: string) {
     let allTools: any = [];
-    if (name) {
-      if (!this.clients[name]) {
-        throw new Error(`MCP Client ${name} not found`);
+    if (key) {
+      if (!this.clients[key]) {
+        throw new Error(`MCP Client ${key} not found`);
       }
-      const { tools } = await this.clients[name].listTools();
+      const { tools } = await this.clients[key].listTools();
       allTools = tools.map((tool: any) => {
-        tool.name = `${name}--${tool.name}`;
+        tool.name = `${key}--${tool.name}`;
         return tool;
       });
     } else {
@@ -87,6 +102,7 @@ export default class ModuleContext {
         );
       }
     }
+    log.debug('All Tools:', JSON.stringify(allTools, null, 2));
     return allTools;
   }
 

@@ -401,7 +401,10 @@ ipcMain.handle('cancel-download', (_, fileName: string) => {
 
 /** mcp */
 ipcMain.handle('mcp-activate', async (_, config) => {
-  await mcp.activate(config);
+  return await mcp.activate(config);
+});
+ipcMain.handle('mcp-deactivate', async (_, clientName: string) => {
+  return await mcp.deactivate(clientName);
 });
 ipcMain.handle('mcp-list-tools', async (_, name: string) => {
   return await mcp.listTools(name);
@@ -434,6 +437,14 @@ ipcMain.handle('mcp-fetch-config', async () => {
           description:
             'A Model Context Protocol (MCP) server implementation that provides database interaction and business intelligence capabilities through SQLite. This server enables running SQL queries, analyzing business data, and automatically generating business insight memos.',
           args: ['mcp-server-sqlite', '--db-path', '<dbPath>'],
+          isActive: false,
+        },
+        {
+          key: 'macos',
+          command: 'npx',
+          description:
+            'A Model Context Protocol server that provides macOS-specific system information and operations.',
+          args: ['-y', '@mcp-get-community/server-macos'],
           isActive: false,
         },
       ],

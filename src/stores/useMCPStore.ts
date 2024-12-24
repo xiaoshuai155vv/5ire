@@ -80,7 +80,7 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
     const server = servers.find((s) => s.key === key);
     if (server) {
       const activeServer = { ...server, isActive: true };
-      if(args) {
+      if (args) {
         activeServer.args = args;
       }
       const index = newConfig.servers.findIndex((s) => s.key === key);
@@ -90,32 +90,46 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
         newConfig.servers.push(activeServer);
       }
       set({ config: newConfig });
-      const ok = await window.electron.mcp.setConfig(newConfig);
+      let ok = await window.electron.mcp.activate({
+        key: activeServer.key,
+        command: activeServer.command,
+        args: activeServer.args,
+        env: activeServer.env,
+      });
       if (ok) {
+        ok = await window.electron.mcp.setConfig(newConfig);
         return true;
       }
+      await window.electron.mcp.deactivated(activeServer.key); // rollback
+      return false;
     } else {
       console.error('Server not found:', key);
+      return false;
     }
-    set({ config: oldConfig }); // rollback
-    return false;
   },
   deactivateServer: async (key: string) => {
     const oldConfig = { ...get().config };
     const newConfig = { ...oldConfig };
     const index = newConfig.servers.findIndex((s) => s.key === key);
     if (index > -1) {
-      newConfig.servers.splice(index, 1);
+      const server = newConfig.servers.splice(index, 1)[0];
       set({ config: newConfig });
-      const ok = await window.electron.mcp.setConfig(newConfig);
+      let ok = await window.electron.mcp.deactivated(server.key);
       if (ok) {
+        ok = await window.electron.mcp.setConfig(newConfig);
         return true;
       }
+      await window.electron.mcp.activate({
+        key: server.key,
+        command: server.command,
+        args: server.args,
+        env: server.env,
+      }); // rollback
+      return false;
     } else {
       console.error('Server not found:', key);
+      return false;
     }
-    set({ config: oldConfig }); // rollback
-    return false;
   },
 }));
 

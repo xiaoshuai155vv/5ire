@@ -38,8 +38,16 @@ const electronHandler = {
     },
   },
   mcp: {
-    activate(config: { name: string; command: string; args: string[] }) {
-      ipcRenderer.invoke('mcp-activate', config);
+    activate(config: {
+      key: string;
+      command: string;
+      args: string[];
+      env?: Record<string, string>;
+    }): Promise<boolean> {
+      return ipcRenderer.invoke('mcp-activate', config);
+    },
+    deactivated(clientName: string): Promise<boolean> {
+      return ipcRenderer.invoke('mcp-deactivate', clientName);
     },
     listTools(name?: string) {
       return ipcRenderer.invoke('mcp-list-tools', name);
