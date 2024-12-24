@@ -111,7 +111,9 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
                       />
                     </PopoverTrigger>
                     <PopoverSurface tabIndex={-1}>
-                      <pre>{JSON.stringify(item.args, null, 2)}</pre>
+                      <pre>
+                        <div>{JSON.stringify(item.args, null, 2)}</div>
+                      </pre>
                     </PopoverSurface>
                   </Popover>
                 )}
