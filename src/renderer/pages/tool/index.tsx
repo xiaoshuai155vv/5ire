@@ -1,4 +1,3 @@
-import { Button } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Empty from 'renderer/components/Empty';
@@ -11,6 +10,7 @@ export default function Tools() {
   const [loading, setLoading] = useState(false);
   const remoteConfig = useMCPStore((state) => state.remoteConfig);
   const config = useMCPStore((state) => state.config);
+  const activeServerNames = useMCPStore((state) => state.activeServerNames);
 
   const loadConfig = async () => {
     setLoading(true);
@@ -18,6 +18,7 @@ export default function Tools() {
       await Promise.all([
         useMCPStore.getState().fetchConfig(),
         useMCPStore.getState().getConfig(),
+        useMCPStore.getState().getActiveServerNames(),
       ]);
     } catch (error) {
       console.error(error);
@@ -29,6 +30,11 @@ export default function Tools() {
   const servers = useMemo(() => {
     const mergedServers = [...remoteConfig.servers];
     config.servers.forEach((configServer) => {
+      if (activeServerNames.includes(configServer.key)) {
+        configServer.isActive = true;
+      } else {
+        configServer.isActive = false;
+      }
       const index = mergedServers.findIndex(
         (remoteServer) => remoteServer.key === configServer.key
       );
@@ -39,7 +45,7 @@ export default function Tools() {
       }
     });
     return mergedServers;
-  }, [remoteConfig, config]);
+  }, [remoteConfig, config, activeServerNames]);
 
   useEffect(() => {
     loadConfig();

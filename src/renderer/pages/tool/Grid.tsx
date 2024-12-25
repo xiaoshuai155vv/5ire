@@ -28,6 +28,7 @@ import {
   BracesVariable20Regular,
   bundleIcon,
   Circle16Filled,
+  CircleHintHalfVertical16Filled,
   CircleOff16Regular,
   Info16Regular,
 } from '@fluentui/react-icons';
@@ -36,6 +37,7 @@ import { useTranslation } from 'react-i18next';
 import useMCPStore, { IMCPServer } from 'stores/useMCPStore';
 import * as mcpUtils from 'utils/mcp';
 import ParamsDialog from './ParamsDialog';
+import useToast from 'hooks/useToast';
 
 const BracesVariableIcon = bundleIcon(
   BracesVariable20Filled,
@@ -44,7 +46,9 @@ const BracesVariableIcon = bundleIcon(
 
 export default function Grid({ servers }: { servers: IMCPServer[] }) {
   const { t } = useTranslation();
+  const { notifyError } = useToast();
   const { activateServer, deactivateServer } = useMCPStore((state) => state);
+  const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
   const [open, setOpen] = useState(false);
   const [selectedServer, setSelectedServer] = useState<IMCPServer | null>(null);
   const [params, setParams] = useState<string[]>([]);
@@ -53,6 +57,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
     key: string;
     description: string;
     args: string[];
+    env?: Record<string, string>;
     isActive: boolean;
   };
 
@@ -61,7 +66,15 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
   }) => {
     const server = { ...(selectedServer as IMCPServer) };
     const args = mcpUtils.setParameters(server.args, params);
-    await activateServer(server.key, args);
+    const env = mcpUtils.setEnv(server.env, params);
+    try {
+      setLoading((prev) => ({ ...prev, [server.key]: true }));
+      await activateServer(server.key, args, env);
+    } catch (error: any) {
+      notifyError(error.message || t('MCP.ServerActivationFailed'));
+    } finally {
+      setLoading((prev) => ({ ...prev, [server.key]: false }));
+    }
     setOpen(false);
   };
 
@@ -79,7 +92,9 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
           <TableCell>
             <TableCellLayout truncate>
               <div className="flex flex-start items-center flex-grow">
-                {item.isActive ? (
+                {loading[item.key] ? (
+                  <CircleHintHalfVertical16Filled className="animate-spin -mb-1" />
+                ) : item.isActive ? (
                   <Circle16Filled className="text-green-500 -mb-0.5" />
                 ) : (
                   <CircleOff16Regular className="text-gray-400 dark:text-gray-600 -mb-0.5" />
@@ -121,18 +136,32 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
             </TableCellLayout>
             <TableCellActions>
               <Switch
+                disabled={loading[item.key]}
                 checked={item.isActive}
                 aria-label={t('Common.State')}
                 onChange={async (ev: any, data: any) => {
                   if (data.checked) {
-                    const params = mcpUtils.getParameters(item.args);
+                    console.log(item);
+                    const args = mcpUtils.getParameters(item.args);
+                    const env = mcpUtils.getParameters(
+                      Object.values(item.env || {})
+                    );
+                    const params = [...args, ...env];
                     setParams(params);
                     if (params.length > 0) {
                       setSelectedServer(item as IMCPServer);
                       setOpen(true);
-                      console.log(params);
                     } else {
-                      activateServer(item.key);
+                      try {
+                        setLoading((prev) => ({ ...prev, [item.key]: true }));
+                        await activateServer(item.key);
+                      } catch (error: any) {
+                        notifyError(
+                          error.message || t('MCP.ServerActivationFailed')
+                        );
+                      } finally {
+                        setLoading((prev) => ({ ...prev, [item.key]: false }));
+                      }
                     }
                   } else {
                     deactivateServer(item.key);

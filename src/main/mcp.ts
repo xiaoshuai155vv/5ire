@@ -1,5 +1,8 @@
 import log from 'electron-log';
 import * as Sentry from '@sentry/electron/main';
+import path from 'path';
+import fs from 'node:fs';
+import { app } from 'electron';
 export interface IClientConfig {
   key: string;
   command: 'npx' | 'uvx';
@@ -11,7 +14,10 @@ export default class ModuleContext {
   private clients: { [key: string]: any } = {};
   private Client: any;
   private Transport: any;
-  constructor() {}
+  private cfgPath: string;
+  constructor() {
+    this.cfgPath = path.join(app.getPath('userData'), 'mcp.json');
+  }
 
   public async init() {
     this.Client = await this.importClient();
@@ -32,9 +38,45 @@ export default class ModuleContext {
     return StdioClientTransport;
   }
 
-  public async activate(config: IClientConfig): Promise<boolean> {
+  public async getConfig() {
+    const defaultConfig = { servers: [] };
     try {
-      const { key, command, args } = config;
+      if (!fs.existsSync(this.cfgPath)) {
+        fs.writeFileSync(this.cfgPath, JSON.stringify(defaultConfig, null, 2));
+      }
+      const config = JSON.parse(fs.readFileSync(this.cfgPath, 'utf-8'));
+      return config;
+    } catch (error) {
+      log.error(error);
+      Sentry.captureException(error);
+      return defaultConfig;
+    }
+  }
+
+  public async putConfig(config: any) {
+    try {
+      fs.writeFileSync(this.cfgPath, JSON.stringify(config, null, 2));
+      return true;
+    } catch (error) {
+      log.error(error);
+      Sentry.captureException(error);
+      return false;
+    }
+  }
+
+  public async load() {
+    const { servers } = await this.getConfig();
+    for (const server of servers) {
+      log.debug('Activating server:', server.key);
+      const { error } = await this.activate(server);
+      if (error) {
+      }
+    }
+  }
+
+  public async activate(config: IClientConfig): Promise<{ error: any }> {
+    try {
+      const { key, command, args, env } = config;
       const client = new this.Client(
         {
           name: key,
@@ -47,14 +89,15 @@ export default class ModuleContext {
       const transport = new this.Transport({
         command,
         args,
+        env,
       });
       await client.connect(transport);
       this.clients[key] = client;
-      return true;
+      return { error: null };
     } catch (err) {
       log.error(err);
       Sentry.captureException(err);
-      return false;
+      return { error: err };
     }
   }
 
@@ -102,7 +145,7 @@ export default class ModuleContext {
         );
       }
     }
-    log.debug('All Tools:', JSON.stringify(allTools, null, 2));
+    //log.debug('All Tools:', JSON.stringify(allTools, null, 2));
     return allTools;
   }
 
@@ -118,14 +161,20 @@ export default class ModuleContext {
     if (!this.clients[client]) {
       throw new Error(`MCP Client ${client} not found`);
     }
+    log.debug('Calling:', client, name, args);
     const result = await this.clients[client].callTool({
       name,
       arguments: args,
     });
+    log.debug('Result:', JSON.stringify(result, null, 2));
     return result;
   }
 
   public getClient(name: string) {
     return this.clients[name];
+  }
+
+  public getClientNames() {
+    return Object.keys(this.clients);
   }
 }

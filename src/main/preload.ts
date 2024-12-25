@@ -43,7 +43,7 @@ const electronHandler = {
       command: string;
       args: string[];
       env?: Record<string, string>;
-    }): Promise<boolean> {
+    }): Promise<{ error: any }> {
       return ipcRenderer.invoke('mcp-activate', config);
     },
     deactivated(clientName: string): Promise<boolean> {
@@ -69,8 +69,11 @@ const electronHandler = {
     getConfig(): Promise<any> {
       return ipcRenderer.invoke('mcp-get-config');
     },
-    setConfig(config: any): Promise<boolean> {
-      return ipcRenderer.invoke('mcp-set-config', config);
+    putConfig(config: any): Promise<boolean> {
+      return ipcRenderer.invoke('mcp-put-config', config);
+    },
+    getActiveServers(): Promise<string[]> {
+      return ipcRenderer.invoke('mcp-get-active-servers');
     },
   },
   crypto: {

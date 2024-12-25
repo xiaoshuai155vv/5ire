@@ -424,6 +424,30 @@ ipcMain.handle('mcp-fetch-config', async () => {
     config = {
       servers: [
         {
+          key: 'cloudflare',
+          command: 'npx',
+          description:
+            'A Model Context Protocol server that provides macOS-specific system information and operations.',
+          args: ['@cloudflare/mcp-server-cloudflare', 'run', '<accountId>'],
+          isActive: false,
+        },
+        {
+          key: 'git',
+          command: 'uvx',
+          description:
+            'A Model Context Protocol (MCP) server implementation that provides database interaction and business intelligence capabilities through SQLite. This server enables running SQL queries, analyzing business data, and automatically generating business insight memos.',
+          args: ['mcp-server-git', '--repository', '<repoPath>'],
+          isActive: false,
+        },
+        {
+          key: 'macos',
+          command: 'npx',
+          description:
+            'A Model Context Protocol server that provides macOS-specific system information and operations.',
+          args: ['-y', '@mcp-get-community/server-macos'],
+          isActive: false,
+        },
+        {
           key: 'obsidian',
           command: 'npx',
           description:
@@ -431,6 +455,19 @@ ipcMain.handle('mcp-fetch-config', async () => {
           args: ['mcp-obsidian', '<vaultPath>'],
           isActive: false,
         },
+        /**  occurs spawn npx ENOENT
+        {
+          key: 'search1api',
+          command: 'npx',
+          description:
+            'A Model Context Protocol (MCP) server that provides search and crawl functionality using Search1API.',
+          args: ['-y', 'search1api-mcp'],
+          env: {
+            SEARCH1API_KEY: '<apiKey>',
+          },
+          isActive: false,
+        },
+         */
         {
           key: 'sqlite',
           command: 'uvx',
@@ -440,11 +477,11 @@ ipcMain.handle('mcp-fetch-config', async () => {
           isActive: false,
         },
         {
-          key: 'macos',
-          command: 'npx',
+          key: 'time',
+          command: 'uvx',
           description:
-            'A Model Context Protocol server that provides macOS-specific system information and operations.',
-          args: ['-y', '@mcp-get-community/server-macos'],
+            'A Model Context Protocol server providing tools for time queries and timezone conversions for LLMs',
+          args: ['mcp-server-time', '--local-timezone=<timezone>'],
           isActive: false,
         },
       ],
@@ -456,31 +493,14 @@ ipcMain.handle('mcp-fetch-config', async () => {
   return config;
 });
 ipcMain.handle('mcp-get-config', async () => {
-  const defaultConfig = { servers: [] };
-  try {
-    const mcpConfigPath = path.join(app.getPath('userData'), 'mcp.json');
-    if (!fs.existsSync(mcpConfigPath)) {
-      fs.writeFileSync(mcpConfigPath, JSON.stringify(defaultConfig, null, 2));
-    }
-    const config = JSON.parse(fs.readFileSync(mcpConfigPath, 'utf-8'));
-    return config;
-  } catch (error) {
-    log.error(error);
-    Sentry.captureException(error);
-    return defaultConfig;
-  }
+  return await mcp.getConfig();
 });
 
-ipcMain.handle('mcp-set-config', async (_, config) => {
-  try {
-    const mcpConfigPath = path.join(app.getPath('userData'), 'mcp.json');
-    fs.writeFileSync(mcpConfigPath, JSON.stringify(config, null, 2));
-    return true;
-  } catch (error) {
-    log.error(error);
-    Sentry.captureException(error);
-    return false;
-  }
+ipcMain.handle('mcp-put-config', async (_, config) => {
+  return await mcp.putConfig(config);
+});
+ipcMain.handle('mcp-get-active-servers', () => {
+  return mcp.getClientNames();
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -660,6 +680,7 @@ app
       const fixPath = (await import('fix-path')).default;
       fixPath();
       log.info('mcp initialized');
+      mcp.load();
     });
     axiom.ingest([{ app: 'launch' }]);
   })
