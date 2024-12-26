@@ -60,9 +60,11 @@ if (!gotTheLock) {
 }
 */
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-});
+if (process.env.SENTRY_DSN && process.env.NODE_ENV !== 'development') {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+  });
+}
 
 const mcp = new ModuleContext();
 const store = new Store();
@@ -455,7 +457,6 @@ ipcMain.handle('mcp-fetch-config', async () => {
           args: ['mcp-obsidian', '<vaultPath>'],
           isActive: false,
         },
-        /**  occurs spawn npx ENOENT
         {
           key: 'search1api',
           command: 'npx',
@@ -467,7 +468,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           },
           isActive: false,
         },
-         */
+
         {
           key: 'sqlite',
           command: 'uvx',
