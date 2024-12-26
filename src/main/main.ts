@@ -423,7 +423,24 @@ ipcMain.handle('mcp-fetch-config', async () => {
           command: 'npx',
           description:
             'A Model Context Protocol server that provides macOS-specific system information and operations.',
-          args: ['@cloudflare/mcp-server-cloudflare', 'run', '<accountId>'],
+          args: [
+            '-y',
+            '@cloudflare/mcp-server-cloudflare',
+            'run',
+            '<accountId>',
+          ],
+          isActive: false,
+        },
+        {
+          key: 'filesystem',
+          command: 'npx',
+          description:
+            'The server will only allow operations within directories specified via args',
+          args: [
+            '-y',
+            '@modelcontextprotocol/server-filesystem',
+            '<dirs:list: directories you about to access>',
+          ],
           isActive: false,
         },
         {
@@ -431,7 +448,11 @@ ipcMain.handle('mcp-fetch-config', async () => {
           command: 'uvx',
           description:
             'A Model Context Protocol (MCP) server implementation that provides database interaction and business intelligence capabilities through SQLite. This server enables running SQL queries, analyzing business data, and automatically generating business insight memos.',
-          args: ['mcp-server-git', '--repository', '<repoPath>'],
+          args: [
+            'mcp-server-git',
+            '--repository',
+            '<repoPath:string:Git Repository Path>',
+          ],
           isActive: false,
         },
         {
@@ -447,7 +468,11 @@ ipcMain.handle('mcp-fetch-config', async () => {
           command: 'npx',
           description:
             'This is a connector to allow Claude Desktop (or any MCP client) to read and search any directory containing Markdown notes (such as an Obsidian vault).',
-          args: ['mcp-obsidian', '<vaultPath>'],
+          args: [
+            '-y',
+            'mcp-obsidian',
+            '<vaultPath:string:Folder where md files are stored>',
+          ],
           isActive: false,
         },
         {
@@ -457,7 +482,8 @@ ipcMain.handle('mcp-fetch-config', async () => {
             'A Model Context Protocol (MCP) server that provides search and crawl functionality using Search1API.',
           args: ['-y', 'search1api-mcp'],
           env: {
-            SEARCH1API_KEY: '<apiKey>',
+            SEARCH1API_KEY:
+              '<apiKey:string:Get the api key from www.search1api.com>',
           },
           isActive: false,
         },
@@ -467,7 +493,11 @@ ipcMain.handle('mcp-fetch-config', async () => {
           command: 'uvx',
           description:
             'A Model Context Protocol (MCP) server implementation that provides database interaction and business intelligence capabilities through SQLite. This server enables running SQL queries, analyzing business data, and automatically generating business insight memos.',
-          args: ['mcp-server-sqlite', '--db-path', '<dbPath>'],
+          args: [
+            'mcp-server-sqlite',
+            '--db-path',
+            '<dbPath:string: Sqlite database file path>',
+          ],
           isActive: false,
         },
         {
@@ -475,7 +505,10 @@ ipcMain.handle('mcp-fetch-config', async () => {
           command: 'uvx',
           description:
             'A Model Context Protocol server providing tools for time queries and timezone conversions for LLMs',
-          args: ['mcp-server-time', '--local-timezone=<timezone>'],
+          args: [
+            'mcp-server-time',
+            '--local-timezone=<timezone:string:like Asia/Shaihang.Wrong time zone will cause server failure>',
+          ],
           isActive: false,
         },
       ],

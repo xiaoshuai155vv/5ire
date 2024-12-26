@@ -1,12 +1,40 @@
 /**
  * ['--db-path',<dbPath>] => dbPath
  */
-export function getParameters(args: string[]): string[] {
+
+export interface IMCPServerParameter {
+  name: string;
+  type: string;
+  description: string;
+}
+
+function replaceParamInBrackets(
+  params: { [key: string]: any },
+  template: string
+) {
+  // 使用正则表达式匹配 <key:...> 的模式
+  return template.replace(/<([^:>]+):[^>]*>/g, (match, key) => {
+    // 检查 params 中是否存在对应的 key
+    if (params.hasOwnProperty(key)) {
+      // 如果存在，则返回 params 中对应 key 的值
+      return params[key];
+    }
+    // 如果不存在，则返回原始匹配项
+    return match;
+  });
+}
+
+export function getParameters(args: string[]): IMCPServerParameter[] {
   const paramRegex = /<([^>]+)>/g;
-  const params: string[] = [];
+  const params: IMCPServerParameter[] = [];
   let match;
   while ((match = paramRegex.exec(args.join(' '))) !== null) {
-    params.push(match[1]);
+    const [name, type, description] = match[1].split(':');
+    params.push({
+      name,
+      type: type || 'string',
+      description: description || '',
+    });
   }
   return params;
 }
@@ -17,8 +45,9 @@ export function setParameters(
 ): string[] {
   let _args = [...args];
   for (const key in params) {
-    const regex = new RegExp('<' + key + '>', 'g');
-    _args = _args.map((arg) => arg.replace(regex, params[key]));
+    _args = _args.map((arg) =>
+      replaceParamInBrackets({ [key]: params[key] }, arg)
+    );
   }
   return _args;
 }
@@ -34,7 +63,10 @@ export function setEnv(
   for (const key in params) {
     const regex = new RegExp('<' + key + '>', 'g');
     for (const envKey in _env) {
-      _env[envKey] = _env[envKey].replace(regex, params[key]);
+      _env[envKey] = replaceParamInBrackets(
+        { [key]: params[key] },
+        _env[envKey]
+      );
     }
   }
   return _env;

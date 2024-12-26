@@ -9,11 +9,11 @@ import {
   Button,
   Input,
   Label,
-  makeStyles,
 } from '@fluentui/react-components';
 import useToast from 'hooks/useToast';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IMCPServerParameter } from 'utils/mcp';
 
 export default function ParamsDialog({
   title,
@@ -25,7 +25,7 @@ export default function ParamsDialog({
   title: string;
   open: boolean;
   setOpen: (open: boolean) => void;
-  params: string[];
+  params: IMCPServerParameter[];
   onSubmit: (values: { [key: string]: string }) => void;
 }) {
   const { t } = useTranslation();
@@ -35,7 +35,7 @@ export default function ParamsDialog({
   const handleSubmit = (ev: React.FormEvent) => {
     ev.preventDefault();
     for (const param of params) {
-      if (!paramValues[param]) {
+      if (!paramValues[param.name]) {
         notifyInfo(`${params} ${t('Common.Required')}`);
         return false;
       }
@@ -56,17 +56,18 @@ export default function ParamsDialog({
           <DialogBody>
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
-              <div className='mb-6'>
+              <div className="mb-6">
                 <div className="mb-6">{t('MCP.EditParamsTip')}</div>
                 {params.map((param) => (
-                  <div key={param} className="my-1.5">
+                  <div key={param.name} className="my-1.5">
                     <div className="mb-1">
-                      <Label>{param}</Label>
+                      <Label>{param.name}</Label>
                     </div>
                     <Input
                       onInput={(ev: any) =>
-                        setValue(param, ev.target?.value || '')
+                        setValue(param.name, ev.target?.value || '')
                       }
+                      placeholder={param.description}
                       className="w-full"
                     />
                   </div>
