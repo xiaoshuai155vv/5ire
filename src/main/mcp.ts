@@ -89,7 +89,7 @@ export default class ModuleContext {
       const transport = new this.Transport({
         command,
         args,
-        env,
+        env: {...env,PATH: process.env.PATH},
       });
       await client.connect(transport);
       this.clients[key] = client;
