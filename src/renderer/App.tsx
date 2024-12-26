@@ -1,5 +1,4 @@
-import * as Sentry from '@sentry/electron/renderer';
-import { init as reactInit } from '@sentry/react';
+import * as logging from './logging';
 import Debug from 'debug';
 import FluentApp from './components/FluentApp';
 import './App.scss';
@@ -10,18 +9,13 @@ import useToast from 'hooks/useToast';
 import { useTranslation } from 'react-i18next';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 
-if (process.env.NODE_ENV === 'development') {
+if (window.envVars.NODE_ENV === 'development') {
   Debug.enable('5ire:*');
 }
 
 const debug = Debug('5ire:App');
 
-Sentry.init(
-  {
-    dsn: 'https://fd227cb30ce44d3e9ca51bbb815b509c@o4505482377363456.ingest.sentry.io/4505482393157632',
-  },
-  reactInit
-);
+logging.init();
 
 export default function App() {
   const loadAuthData = useAuthStore((state) => state.load);

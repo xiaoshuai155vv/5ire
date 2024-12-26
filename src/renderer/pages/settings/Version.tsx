@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/react';
+import { captureException } from '../../logging';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Spinner from 'renderer/components/Spinner';

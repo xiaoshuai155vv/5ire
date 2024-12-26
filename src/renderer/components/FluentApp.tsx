@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import Debug from 'debug';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import { captureException } from '@sentry/electron/renderer';
+import {captureException} from '../logging'
 import {
   FluentProvider,
   Toaster,

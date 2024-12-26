@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import StateButton from 'renderer/components/StateButton';
 import supabase from 'vendors/supa';
 import useSettingsStore from 'stores/useSettingsStore';
-import { captureException } from '@sentry/electron/renderer';
+import { captureException } from '../../logging';
 import {
   MessageBar,
   MessageBarBody,

@@ -181,6 +181,8 @@ contextBridge.exposeInMainWorld('electron', electronHandler);
 const envVars = {
   SUPA_PROJECT_ID: process.env.SUPA_PROJECT_ID,
   SUPA_KEY: process.env.SUPA_KEY,
+  SENTRY_DSN: process.env.SENTRY_DSN,
+  NODE_ENV: process.env.NODE_ENV,
 };
 contextBridge.exposeInMainWorld('envVars', envVars);
 

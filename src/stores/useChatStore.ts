@@ -4,7 +4,7 @@ import { typeid } from 'typeid-js';
 import { produce } from 'immer';
 import { isNil, isNumber, isString } from 'lodash';
 import { NUM_CTX_MESSAGES, tempChatId } from 'consts';
-import { captureException } from '@sentry/electron/renderer';
+import { captureException } from '../renderer/logging';
 import { date2unix } from 'utils/util';
 import { isBlank, isNotBlank } from 'utils/validators';
 import useSettingsStore from './useSettingsStore';

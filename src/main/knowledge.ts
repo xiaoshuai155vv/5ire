@@ -2,7 +2,7 @@ import path from 'path';
 import { app } from 'electron';
 import log from 'electron-log';
 import { Schema, Field, FixedSizeList, Utf8, Float16 } from 'apache-arrow';
-import { captureException } from '@sentry/electron/main';
+import { captureException } from '../main/logging';
 import { Data } from '@lancedb/lancedb';
 import { loadDocument } from './docloader';
 import { randomId, smartChunk } from './util';
@@ -30,9 +30,8 @@ export default class Knowledge {
     if (!this.db) {
       try {
         this.db = await this.init();
-      } catch (error) {
-        log.error(error);
-        captureException(error);
+      } catch (err: any) {
+        captureException(err);
       }
     }
     return this.db;
@@ -64,7 +63,13 @@ export default class Knowledge {
     onProgress,
     onSuccess,
   }: {
-    file: { id: string; path: string; name: string; size: number, type:string };
+    file: {
+      id: string;
+      path: string;
+      name: string;
+      size: number;
+      type: string;
+    };
     collectionId: string;
     onProgress?: (filePath: string, total: number, done: number) => void;
     onSuccess?: (data: any) => void;
@@ -176,9 +181,8 @@ export default class Knowledge {
       }
 
       return true;
-    } catch (error) {
-      log.error(error);
-      captureException(error);
+    } catch (err: any) {
+      captureException(err);
       return false;
     } finally {
       if (table && !options?.stayOpen) {

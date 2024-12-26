@@ -1,7 +1,7 @@
 import useAuthStore from 'stores/useAuthStore';
 import Debug from 'debug';
 import { createClient } from '@supabase/supabase-js';
-import { captureException } from '@sentry/electron/renderer';
+import { captureException } from '../renderer/logging';
 
 const debug = Debug('5ire:vendors:supa');
 

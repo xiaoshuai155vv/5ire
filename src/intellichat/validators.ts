@@ -1,5 +1,5 @@
-import { captureMessage } from '@sentry/react';
-import { isNil, isNull, isNumber } from 'lodash';
+import { captureException } from '../renderer/logging';
+import { isNull, isNumber } from 'lodash';
 import { isBlank } from 'utils/validators';
 import { ProviderType } from '../providers/types';
 import { getChatModel, getProvider } from '../providers';
@@ -17,7 +17,7 @@ export function isValidMaxTokens(
 
   const model = getChatModel(providerName, modelName);
   if (!model.name) {
-    captureMessage(
+    captureException(
       `Could find model:${modelName} for provider:${providerName}`
     );
   }
