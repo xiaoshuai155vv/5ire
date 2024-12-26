@@ -18,6 +18,8 @@ import { useTranslation } from 'react-i18next';
 import useNav from 'hooks/useNav';
 import { tempChatId } from 'consts';
 import WorkspaceMenu from './WorkspaceMenu';
+import useMCPStore from 'stores/useMCPStore';
+import { useEffect, useState } from 'react';
 
 const AppsIcon = bundleIcon(Apps24Filled, Apps24Regular);
 const BookmarkMultipleIcon = bundleIcon(
@@ -37,6 +39,15 @@ const IS_ASSISTANTS_ENABLED = false;
 export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
   const { t } = useTranslation();
   const navigate = useNav();
+  const [activeServerNumber, setActiveServerNumber] = useState<number>(0);
+
+  useEffect(() => {
+    window.electron.mcp.getActiveServers().then((servers) => {
+      setActiveServerNumber(servers.length);
+    }),
+      [];
+  });
+
   return (
     <div
       className={`relative ${
@@ -76,7 +87,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           className="w-full justify-start"
           onClick={() => navigate('/tool')}
         >
-          {collapsed ? null : t('Common.Tools')}
+          {collapsed ? null : t('Common.Tools') + `(${activeServerNumber})`}
         </Button>
       </div>
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>

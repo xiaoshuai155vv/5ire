@@ -422,7 +422,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           key: 'cloudflare',
           command: 'npx',
           description:
-            'A Model Context Protocol server that provides macOS-specific system information and operations.',
+            'MCP server for interacting with Cloudflare API',
           args: [
             '-y',
             '@cloudflare/mcp-server-cloudflare',
@@ -472,6 +472,18 @@ ipcMain.handle('mcp-fetch-config', async () => {
             '-y',
             'mcp-obsidian',
             '<vaultPath:string:Folder where md files are stored>',
+          ],
+          isActive: false,
+        },
+        {
+          key: 'postgres',
+          command: 'npx',
+          description:
+            'A Model Context Protocol server that provides read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.',
+          args: [
+            '-y',
+            '@modelcontextprotocol/server-postgres',
+            '<connectionString:string:like postgresql://localhost/db>',
           ],
           isActive: false,
         },
