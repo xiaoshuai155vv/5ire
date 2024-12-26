@@ -487,7 +487,14 @@ ipcMain.handle('mcp-fetch-config', async () => {
           },
           isActive: false,
         },
-
+        {
+          key: 'shell',
+          command: 'npx',
+          description:
+            'A Node.js implementation of the Model Context Protocol (MCP) that provides secure shell command execution capabilities. This server allows AI models to execute shell commands in a controlled environment with built-in security measures.',
+          args: ['-y', 'mcp-shell'],
+          isActive: false,
+        },
         {
           key: 'sqlite',
           command: 'uvx',
