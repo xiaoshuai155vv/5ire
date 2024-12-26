@@ -51,7 +51,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
   const [open, setOpen] = useState(false);
   const [selectedServer, setSelectedServer] = useState<IMCPServer | null>(null);
-  const [params, setParams] = useState<string[]>([]);
+  const [params, setParams] = useState<mcpUtils.IMCPServerParameter[]>([]);
 
   type Item = {
     key: string;
@@ -141,7 +141,6 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
                 aria-label={t('Common.State')}
                 onChange={async (ev: any, data: any) => {
                   if (data.checked) {
-                    console.log(item);
                     const args = mcpUtils.getParameters(item.args);
                     const env = mcpUtils.getParameters(
                       Object.values(item.env || {})
