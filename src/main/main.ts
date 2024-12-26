@@ -23,8 +23,7 @@ dotenv.config({
 import { autoUpdater } from 'electron-updater';
 import { Deeplink } from 'electron-deeplink';
 import Store from 'electron-store';
-import log from 'electron-log';
-import * as Sentry from '@sentry/electron/main';
+import * as logging from './logging';
 import axiom from '../vendors/axiom';
 import MenuBuilder from './menu';
 import { getFileInfo, getFileType, resolveHtmlPath } from './util';
@@ -35,9 +34,7 @@ import initCrashReporter from '../CrashReporter';
 import { encrypt, decrypt } from './crypt';
 import { MessageBoxOptions } from 'electron';
 import ModuleContext from './mcp';
-
 import Knowledge from './knowledge';
-
 import {
   SUPPORTED_FILE_TYPES,
   MAX_FILE_SIZE,
@@ -45,7 +42,9 @@ import {
 } from '../consts';
 import { IMCPConfig } from 'stores/useMCPStore';
 
-log.info('Main process start...');
+logging.init();
+
+logging.info('Main process start...');
 
 /**
  * 每次打开一个协议 URL，系统都会启动一个新的应用，需要应用自己去判断，把 URL 当做参数传给已有的应用，还是自己直接处理
@@ -59,12 +58,6 @@ if (!gotTheLock) {
   app.quit();
 }
 */
-
-if (process.env.SENTRY_DSN && process.env.NODE_ENV !== 'development') {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-  });
-}
 
 const mcp = new ModuleContext();
 const store = new Store();
@@ -89,7 +82,7 @@ class AppUpdater {
     autoUpdater.on(
       'update-downloaded' as any,
       (event: Event, releaseNotes: string, releaseName: string) => {
-        log.info(event, releaseNotes, releaseName);
+        logging.info(event, releaseNotes, releaseName);
         store.set('updateInfo', {
           version: releaseName,
           releaseNotes,
@@ -127,7 +120,7 @@ class AppUpdater {
           shell.openExternal('https://5ire.app');
         }
       });
-      log.error(message);
+      logging.captureException(message);
     });
     if (process.env.NODE_ENV === 'production') {
       autoUpdater.checkForUpdates();
@@ -314,10 +307,10 @@ ipcMain.handle('select-knowledge-files', async () => {
       fileInfo.type = fileType;
       files.push(fileInfo);
     }
-    log.debug(files);
+    logging.debug(files);
     return JSON.stringify(files);
-  } catch (err) {
-    Sentry.captureException(err);
+  } catch (err: any) {
+    logging.captureException(err);
   }
 });
 
@@ -370,8 +363,8 @@ ipcMain.handle('select-image-with-base64', async () => {
       type: fileInfo.type,
       base64: `data:image/${fileType};base64,${base64}`,
     });
-  } catch (err) {
-    Sentry.captureException(err);
+  } catch (err: any) {
+    logging.captureException(err);
   }
 });
 
@@ -487,9 +480,8 @@ ipcMain.handle('mcp-fetch-config', async () => {
         },
       ],
     };
-  } catch (error) {
-    log.error(error);
-    Sentry.captureException(error);
+  } catch (err: any) {
+    logging.captureException(err);
   }
   return config;
 });
@@ -526,7 +518,7 @@ const installExtensions = async () => {
       extensions.map((name) => installer[name]),
       forceDownload
     )
-    .catch(log.info);
+    .catch(logging.info);
 };
 
 const createWindow = async () => {
@@ -680,12 +672,12 @@ app
       // https://github.com/sindresorhus/fix-path
       const fixPath = (await import('fix-path')).default;
       fixPath();
-      log.info('mcp initialized');
+      logging.info('mcp initialized');
       mcp.load();
     });
     axiom.ingest([{ app: 'launch' }]);
   })
-  .catch(log.error);
+  .catch(logging.captureException);
 
 /**
  * Register deeplink
@@ -693,7 +685,7 @@ app
  * 待观察
  */
 
-log.info(`Registering protocol:`, protocol);
+logging.info(`Registering protocol:`, protocol);
 const deeplink = new Deeplink({
   app,
   // @ts-ignore 虽然这时mainWindow为null,但由于是传入的引用，调用时已实例化
@@ -711,16 +703,14 @@ deeplink.on('received', (link: string) => {
       refreshToken: params.get('refresh_token'),
     });
   } else {
-    Sentry.captureException(`Invalid deeplink, ${link}`);
+    logging.captureException(`Invalid deeplink, ${link}`);
   }
 });
 
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  Sentry.captureException(error);
+  logging.captureException(error);
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection:', reason);
-  Sentry.captureException(reason);
+process.on('unhandledRejection', (reason: any, promise) => {
+  logging.captureException(reason);
 });

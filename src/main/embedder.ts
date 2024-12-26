@@ -2,7 +2,7 @@ import { app } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import url from 'url'
-import log from 'electron-log';
+import * as logging from './logging';
 
 const BASE_DIR = path.join(app.getPath('userData'), 'transformers-models');
 
@@ -48,7 +48,7 @@ export class Embedder {
       fs.unlinkSync(modelPath);
     } else {
       if (!fs.existsSync(modelDir)) {
-        log.debug(`${modelDir} doesn't exist, create it now.`);
+        logging.debug(`${modelDir} doesn't exist, create it now.`);
         fs.mkdirSync(modelDir, { recursive: true });
       }
     }
@@ -71,7 +71,7 @@ export class Embedder {
           'transformers.js'
         );
         const modelUrl = url.pathToFileURL(modelPath).href.replace(/\\/g, '/');
-        log.debug(`Import transformers.js from ${modelUrl}`)
+        logging.debug(`Import transformers.js from ${modelUrl}`)
         const dynamicImport = Function(`return import("${modelUrl}")`);
         transformers = await dynamicImport();
       } else {

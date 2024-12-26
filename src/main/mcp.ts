@@ -1,5 +1,4 @@
-import log from 'electron-log';
-import * as Sentry from '@sentry/electron/main';
+import * as logging from './logging';
 import path from 'path';
 import fs from 'node:fs';
 import { app } from 'electron';
@@ -46,9 +45,8 @@ export default class ModuleContext {
       }
       const config = JSON.parse(fs.readFileSync(this.cfgPath, 'utf-8'));
       return config;
-    } catch (error) {
-      log.error(error);
-      Sentry.captureException(error);
+    } catch (err: any) {
+      logging.captureException(err);
       return defaultConfig;
     }
   }
@@ -57,9 +55,8 @@ export default class ModuleContext {
     try {
       fs.writeFileSync(this.cfgPath, JSON.stringify(config, null, 2));
       return true;
-    } catch (error) {
-      log.error(error);
-      Sentry.captureException(error);
+    } catch (err: any) {
+      logging.captureException(err);
       return false;
     }
   }
@@ -67,7 +64,7 @@ export default class ModuleContext {
   public async load() {
     const { servers } = await this.getConfig();
     for (const server of servers) {
-      log.debug('Activating server:', server.key);
+      logging.debug('Activating server:', server.key);
       const { error } = await this.activate(server);
       if (error) {
       }
@@ -89,14 +86,13 @@ export default class ModuleContext {
       const transport = new this.Transport({
         command,
         args,
-        env: {...env,PATH: process.env.PATH},
+        env: { ...env, PATH: process.env.PATH },
       });
       await client.connect(transport);
       this.clients[key] = client;
       return { error: null };
-    } catch (err) {
-      log.error(err);
-      Sentry.captureException(err);
+    } catch (err: any) {
+      logging.captureException(err);
       return { error: err };
     }
   }
@@ -108,16 +104,15 @@ export default class ModuleContext {
         delete this.clients[key];
       }
       return true;
-    } catch (err) {
-      log.error(err);
-      Sentry.captureException(err);
+    } catch (err: any) {
+      logging.captureException(err);
       return false;
     }
   }
 
   public async close() {
     for (const key in this.clients) {
-      log.info(`Closing MCP Client ${key}`);
+      logging.info(`Closing MCP Client ${key}`);
       await this.clients[key].close();
       delete this.clients[key];
     }
@@ -161,12 +156,11 @@ export default class ModuleContext {
     if (!this.clients[client]) {
       throw new Error(`MCP Client ${client} not found`);
     }
-    log.debug('Calling:', client, name, args);
+    logging.debug('Calling:', client, name, args);
     const result = await this.clients[client].callTool({
       name,
       arguments: args,
     });
-    log.debug('Result:', JSON.stringify(result, null, 2));
     return result;
   }
 

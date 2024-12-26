@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 import Database, { Statement } from 'better-sqlite3';
 import { app, ipcMain } from 'electron';
-import { captureException } from '@sentry/electron/main';
-import log from 'electron-log';
+import * as logging from './logging';
 import path from 'path';
 import { isOneDimensionalArray } from '../utils/util';
 
@@ -169,7 +168,7 @@ function createTableChatKnowledgeRels() {
 }
 
 const initDatabase = database.transaction(() => {
-  log.debug('Init database...');
+  logging.debug('Init database...');
 
   database.pragma('foreign_keys = ON');
   createTableChats();
@@ -180,7 +179,7 @@ const initDatabase = database.transaction(() => {
   createTableKnowledgeCollections();
   createTableKnowledgeFiles();
   createTableChatKnowledgeRels();
-  log.info('Database initialized.');
+  logging.info('Database initialized.');
 });
 
 database.pragma('journal_mode = WAL'); // performance reason
@@ -188,30 +187,28 @@ initDatabase();
 
 ipcMain.handle('db-all', (event, data) => {
   const { sql, params } = data;
-  log.debug('db-all', sql, params);
+  logging.debug('db-all', sql, params);
   try {
     return database.prepare(sql).all(params);
-  } catch (err) {
-    log.error(err);
-    captureException(err);
+  } catch (err: any) {
+    logging.captureException(err);
   }
 });
 
 ipcMain.handle('db-run', (_, data) => {
   const { sql, params } = data;
-  log.debug('db-run', sql, params);
+  logging.debug('db-run', sql, params);
   try {
     database.prepare(sql).run(params);
     return true;
-  } catch (err) {
-    log.error(err);
-    captureException(err);
+  } catch (err: any) {
+    logging.captureException(err);
     return false;
   }
 });
 
 ipcMain.handle('db-transaction', (_, data: any[]) => {
-  log.debug('db-transaction', JSON.stringify(data, null, 2));
+  logging.debug('db-transaction', JSON.stringify(data, null, 2));
   const tasks: { statement: Statement; params: any[] }[] = [];
   for (const { sql, params } of data) {
     tasks.push({
@@ -233,9 +230,8 @@ ipcMain.handle('db-transaction', (_, data: any[]) => {
         }
       })();
       resolve(true);
-    } catch (error) {
-      log.error(error);
-      captureException(error);
+    } catch (err: any) {
+      logging.captureException(err);
       resolve(false);
     }
   });
@@ -243,11 +239,10 @@ ipcMain.handle('db-transaction', (_, data: any[]) => {
 
 ipcMain.handle('db-get', (_, data) => {
   const { sql, id } = data;
-  log.debug('db-get', sql, id);
+  logging.debug('db-get', sql, id);
   try {
     return database.prepare(sql).get(id);
-  } catch (err) {
-    log.error(err);
-    captureException(err);
+  } catch (err: any) {
+    logging.captureException(err);
   }
 });

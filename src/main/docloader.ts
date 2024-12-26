@@ -1,5 +1,5 @@
 import fs from 'fs';
-import log from 'electron-log';
+import * as logging from './logging';
 import pdf from 'pdf-parse';
 import officeParser from 'officeparser';
 
@@ -48,7 +48,7 @@ export async function loadDocument(
   filePath: string,
   fileType: string
 ): Promise<string> {
-  log.info(`load file from  ${filePath} on ${process.platform}`);
+  logging.info(`load file from  ${filePath} on ${process.platform}`);
   let Loader: new () => BaseLoader;
   switch (fileType) {
     case 'txt':
