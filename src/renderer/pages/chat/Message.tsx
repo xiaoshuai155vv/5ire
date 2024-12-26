@@ -74,7 +74,7 @@ export default function Message({ message }: { message: IChatMessage }) {
       }
       return (
         <div
-          className="mt-1"
+          className="mt-1 break-all"
           dangerouslySetInnerHTML={{
             __html: render(
               `${
@@ -88,6 +88,7 @@ export default function Message({ message }: { message: IChatMessage }) {
     return (
       <div className="mt-1">
         <div
+          className='break-all'
           dangerouslySetInnerHTML={{
             __html: render(`${highlight(message.reply, keyword)}` || ''),
           }}
