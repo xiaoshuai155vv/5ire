@@ -66,7 +66,7 @@ export default function Tools() {
               tip={t('Tools.Description') + '\n' + t('Common.MCPDescription')}
             />
           </div>
-          <div className="tip mt-0.5">{t('Tools.RequirementDescription')}</div>
+          <div className="tip mt-0.5">{t('Tools.PrerequisiteDescription')}</div>
         </div>
       </div>
       <div className="mt-2.5 pb-12 h-full -mr-5 overflow-y-auto">

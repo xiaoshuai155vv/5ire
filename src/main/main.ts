@@ -535,7 +535,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
             'A Model Context Protocol server providing tools for time queries and timezone conversions for LLMs',
           args: [
             'mcp-server-time',
-            '--local-timezone=<timezone:string:like Asia/Shaihang.Wrong time zone will cause server failure>',
+            '--local-timezone=<timezone:string:like Asia/Shaihang. You may need install tzdata first>',
           ],
           isActive: false,
         },
