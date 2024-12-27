@@ -101,7 +101,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
         return (
           <TableCell>
             <TableCellLayout truncate>
-              <div className="flex flex-start items-center flex-grow">
+              <div className="flex flex-start items-center flex-grow overflow-y-hidden">
                 {loading[item.key] ? (
                   <CircleHintHalfVertical16Filled className="animate-spin -mb-1" />
                 ) : item.isActive ? (
