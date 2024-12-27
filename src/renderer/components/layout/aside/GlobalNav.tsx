@@ -19,7 +19,7 @@ import useNav from 'hooks/useNav';
 import { tempChatId } from 'consts';
 import WorkspaceMenu from './WorkspaceMenu';
 import useMCPStore from 'stores/useMCPStore';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const AppsIcon = bundleIcon(Apps24Filled, Apps24Regular);
 const BookmarkMultipleIcon = bundleIcon(
@@ -39,14 +39,23 @@ const IS_ASSISTANTS_ENABLED = false;
 export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
   const { t } = useTranslation();
   const navigate = useNav();
-  const [activeServerNumber, setActiveServerNumber] = useState<number>(0);
+  const setActiveServerNames = useMCPStore(
+    (store) => store.setActiveServerNames
+  );
+  const activeServerNames = useMCPStore((state) => state.activeServerNames);
+
+  const numOfActiveServers = useMemo(
+    () => activeServerNames.length,
+    [activeServerNames]
+  );
 
   useEffect(() => {
-    window.electron.mcp.getActiveServers().then((servers) => {
-      setActiveServerNumber(servers.length);
-    }),
-      [];
-  });
+    if (numOfActiveServers === 0) {
+      window.electron.mcp.getActiveServers().then((serverNames: string[]) => {
+        setActiveServerNames(serverNames);
+      });
+    }
+  }, []);
 
   return (
     <div
@@ -87,7 +96,10 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           className="w-full justify-start"
           onClick={() => navigate('/tool')}
         >
-          {collapsed ? null : t('Common.Tools') + `(${activeServerNumber})`}
+          {collapsed
+            ? null
+            : t('Common.Tools') +
+              (numOfActiveServers ? `(${numOfActiveServers})` : '')}
         </Button>
       </div>
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>

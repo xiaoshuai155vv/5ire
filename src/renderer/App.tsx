@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import useToast from 'hooks/useToast';
 import { useTranslation } from 'react-i18next';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
+import useMCPStore from 'stores/useMCPStore';
 
 if (window.envVars.NODE_ENV === 'development') {
   Debug.enable('5ire:*');
@@ -20,6 +21,7 @@ logging.init();
 export default function App() {
   const loadAuthData = useAuthStore((state) => state.load);
   const setSession = useAuthStore((state) => state.setSession);
+  const {setActiveServerNames} = useMCPStore();
   const { onAuthStateChange } = useAuthStore();
   const { notifyError } = useToast();
   const { t } = useTranslation();
@@ -28,6 +30,11 @@ export default function App() {
   useEffect(() => {
     loadAuthData();
     const subscription = onAuthStateChange();
+
+    window.electron.ipcRenderer.on('mcp-server-loaded', async (serverNames: any) => {
+      debug('🚩 MCP Server Loaded:', serverNames);
+      setActiveServerNames(serverNames);
+    });
 
     window.electron.ipcRenderer.on('sign-in', async (authData: any) => {
       if (authData.accessToken && authData.refreshToken) {
@@ -60,6 +67,7 @@ export default function App() {
     );
 
     return () => {
+      window.electron.ipcRenderer.unsubscribeAll('mcp-server-loaded');
       window.electron.ipcRenderer.unsubscribeAll('sign-in');
       window.electron.ipcRenderer.unsubscribeAll('knowledge-import-success');
       subscription.unsubscribe()

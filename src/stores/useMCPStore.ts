@@ -25,6 +25,7 @@ export interface IMCPStore {
   fetchConfig: (refresh?: boolean) => Promise<IMCPConfig>;
   getConfig: () => Promise<IMCPConfig>;
   setConfig: (config: IMCPConfig) => Promise<boolean>;
+  setActiveServerNames: (activeServerNames: string[]) => void;
   getActiveServerNames: () => Promise<string[]>;
   activateServer: (key: string, args?: string[],env?:Record<string,string>) => Promise<boolean>;
   deactivateServer: (key: string) => Promise<boolean>;
@@ -73,6 +74,9 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
       set({ config }); // rollback
       return false;
     }
+  },
+  setActiveServerNames: (activeServerNames: string[]) => {
+    set({ activeServerNames });
   },
   getActiveServerNames: async () => {
     const activeServerNames = await window.electron.mcp.getActiveServers();

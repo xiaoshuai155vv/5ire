@@ -26,7 +26,8 @@ export type Channels =
   | 'get-embedding-model-file-status'
   | 'save-embedding-model-file'
   | 'remove-embedding-model'
-  | 'close-app';
+  | 'close-app'
+  | 'mcp-server-loaded';
 
 const electronHandler = {
   store: {

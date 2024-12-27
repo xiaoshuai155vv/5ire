@@ -725,7 +725,8 @@ app
       const fixPath = (await import('fix-path')).default;
       fixPath();
       logging.info('mcp initialized');
-      mcp.load();
+      await mcp.load();
+      mainWindow?.webContents.send('mcp-server-loaded', mcp.getClientNames());
     });
     axiom.ingest([{ app: 'launch' }]);
   })
