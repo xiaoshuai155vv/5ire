@@ -246,6 +246,7 @@
       "**/node_modules/textract/lib/extractors/**"
     ],
     "afterPack": ".erb/scripts/remove-useless.js",
+    "afterSign": ".erb/scripts/notarize.js",
     "mac": {
       "target": {
         "target": "default",

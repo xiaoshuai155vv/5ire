@@ -83,12 +83,21 @@ export default class GoogleChatService
   protected makeTool(
     tool: IMCPTool
   ): IOpenAITool | IAnthropicTool | IGoogleTool {
+    const properties: any = {};
+    for (const key in tool.inputSchema.properties) {
+      const prop = tool.inputSchema.properties[key]
+      properties[key] = {
+        type: prop.type,
+        description: prop.description,
+      };
+    }
+
     return {
       name: tool.name,
       description: tool.description,
       parameters: {
         type: tool.inputSchema.type,
-        properties: tool.inputSchema.properties,
+        properties: properties,
         required: tool.inputSchema.required,
       },
     };
@@ -195,7 +204,7 @@ export default class GoogleChatService
               function_declarations: [_tools],
             },
           ];
-          payload.tool_config = { function_calling_config:{mode: 'AUTO' }};
+          payload.tool_config = { function_calling_config: { mode: 'AUTO' } };
         }
       }
     }
