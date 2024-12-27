@@ -83,12 +83,19 @@ export default class GoogleChatService
   protected makeTool(
     tool: IMCPTool
   ): IOpenAITool | IAnthropicTool | IGoogleTool {
+    if(Object.keys(tool.inputSchema.properties).length===0){
+      return {
+        name: tool.name,
+        description: tool.description
+      };
+    }
     const properties: any = {};
     for (const key in tool.inputSchema.properties) {
       const prop = tool.inputSchema.properties[key]
       properties[key] = {
         type: prop.type,
         description: prop.description,
+        items: prop.items,
       };
     }
 

@@ -58,10 +58,10 @@ export interface IAnthropicTool {
 export interface IGoogleTool {
   name: string;
   description: string;
-  parameters: {
+  parameters?: {
     type: string;
-    properties: any;
-    required: any;
+    properties?: any;
+    required?: any;
   };
 }
 
