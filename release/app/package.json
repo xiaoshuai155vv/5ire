@@ -1,7 +1,7 @@
 {
   "name": "5ire",
-  "version": "0.8.4",
-  "description": "An Open Source LLMs Desktop Client",
+  "version": "0.9.0",
+  "description": "An Open Source Cross-Platform LLMs Desktop Client",
   "license": "GPL-3.0-only",
   "author": {
     "name": "Ironben",

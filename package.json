@@ -1,8 +1,8 @@
 {
   "name": "5ire",
   "productName": "5ire",
-  "version": "0.8.4",
-  "description": "An Open Source LLMs Desktop Client",
+  "version": "0.9.0",
+  "description": "An Open Source Cross-Platform LLMs Desktop Client",
   "main": "src/main/main.ts",
   "repository": "https://github.com/nanbingxyz/5ire.git",
   "author": {
