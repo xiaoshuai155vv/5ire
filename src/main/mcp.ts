@@ -9,6 +9,42 @@ export interface IClientConfig {
   env?: Record<string, string>;
 }
 
+export const DEFAULT_INHERITED_ENV_VARS =
+  process.platform === 'win32'
+    ? [
+        'APPDATA',
+        'HOMEDRIVE',
+        'HOMEPATH',
+        'LOCALAPPDATA',
+        'PATH',
+        'PROCESSOR_ARCHITECTURE',
+        'SYSTEMDRIVE',
+        'SYSTEMROOT',
+        'TEMP',
+        'USERNAME',
+        'USERPROFILE',
+      ]
+    : /* list inspired by the default env inheritance of sudo */
+      ['HOME', 'LOGNAME', 'PATH', 'SHELL', 'TERM', 'USER'];
+/**
+ * Returns a default environment object including only environment variables deemed safe to inherit.
+ */
+export function getDefaultEnvironment() {
+  const env: Record<string, string> = {};
+  for (const key of DEFAULT_INHERITED_ENV_VARS) {
+    const value = process.env[key];
+    if (value === undefined) {
+      continue;
+    }
+    if (value.startsWith('()')) {
+      // Skip functions, which are a security risk.
+      continue;
+    }
+    env[key] = value;
+  }
+  return env;
+}
+
 export default class ModuleContext {
   private clients: { [key: string]: any } = {};
   private Client: any;
@@ -74,6 +110,12 @@ export default class ModuleContext {
   public async activate(config: IClientConfig): Promise<{ error: any }> {
     try {
       const { key, command, args, env } = config;
+      const cmd = process.platform === 'win32' ? `${command}.cmd` : command;
+      const mergedEnv = {
+        ...getDefaultEnvironment(),
+        ...env,
+        PATH: process.env.PATH,
+      };
       const client = new this.Client(
         {
           name: key,
@@ -84,9 +126,9 @@ export default class ModuleContext {
         }
       );
       const transport = new this.Transport({
-        command,
+        command: cmd,
         args,
-        env: { ...env, PATH: process.env.PATH },
+        env: mergedEnv,
       });
       await client.connect(transport);
       this.clients[key] = client;
