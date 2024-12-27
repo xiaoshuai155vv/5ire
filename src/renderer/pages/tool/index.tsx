@@ -4,6 +4,7 @@ import Empty from 'renderer/components/Empty';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import useMCPStore, { IMCPServer } from 'stores/useMCPStore';
 import Grid from './Grid';
+import { MessageBar, MessageBarBody } from '@fluentui/react-components';
 
 export default function Tools() {
   const { t } = useTranslation();
@@ -65,6 +66,7 @@ export default function Tools() {
               tip={t('Tools.Description') + '\n' + t('Common.MCPDescription')}
             />
           </div>
+          <div className="tip mt-0.5">{t('Tools.RequirementDescription')}</div>
         </div>
       </div>
       <div className="mt-2.5 pb-12 h-full -mr-5 overflow-y-auto">
