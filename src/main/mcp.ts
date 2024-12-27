@@ -110,7 +110,7 @@ export default class ModuleContext {
   public async activate(config: IClientConfig): Promise<{ error: any }> {
     try {
       const { key, command, args, env } = config;
-      const cmd = process.platform === 'win32' ? `${command}.cmd` : command;
+      const cmd = command ==='npx' ?( process.platform === 'win32' ? `${command}.cmd` : command): command;
       const mergedEnv = {
         ...getDefaultEnvironment(),
         ...env,
@@ -128,6 +128,7 @@ export default class ModuleContext {
       const transport = new this.Transport({
         command: cmd,
         args,
+        stderr: process.platform === 'win32' ? 'pipe' : 'inherit',
         env: mergedEnv,
       });
       await client.connect(transport);
@@ -182,7 +183,7 @@ export default class ModuleContext {
         );
       }
     }
-    //log.debug('All Tools:', JSON.stringify(allTools, null, 2));
+    // logging.debug('All Tools:', JSON.stringify(allTools, null, 2));
     return allTools;
   }
 
