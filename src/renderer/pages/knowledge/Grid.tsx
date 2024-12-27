@@ -42,7 +42,7 @@ import {
 } from '@fluentui/react-icons';
 import ConfirmDialog from 'renderer/components/ConfirmDialog';
 import useNav from 'hooks/useNav';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fmtDateTime, unix2date,  date2unix } from 'utils/util';
 import useToast from 'hooks/useToast';
@@ -67,6 +67,7 @@ export default function Grid({ collections }: { collections: any[] }) {
   const [activeCollection, setActiveCollection] = useState<any>(null);
   const [fileDrawerOpen, setFileDrawerOpen] = useState<boolean>(false);
   const {updateCollection, deleteCollection} = useKnowledgeStore()
+  const [innerHeight, setInnerHeight] = useState(window.innerHeight);
   const { notifySuccess } = useToast();
   const navigate = useNav();
   const pin = (id: string) => {
@@ -75,6 +76,15 @@ export default function Grid({ collections }: { collections: any[] }) {
   const unpin = (id: string) => {
     updateCollection({ id, pinedAt: null });
   };
+
+  useEffect(() => {
+    window.onresize = () => {
+      setInnerHeight(window.innerHeight);
+    };
+    return () => {
+      window.onresize = null;
+    };
+  }, []);
 
   const items = useMemo(
     () =>
@@ -239,7 +249,6 @@ export default function Grid({ collections }: { collections: any[] }) {
         focusMode="cell"
         sortable
         size="small"
-        style={{ height: 400 }}
         className="w-full"
         getRowId={(item) => item.id}
       >
@@ -250,7 +259,7 @@ export default function Grid({ collections }: { collections: any[] }) {
             )}
           </DataGridRow>
         </DataGridHeader>
-        <DataGridBody<Item> itemSize={50} height={400}>
+        <DataGridBody<Item> itemSize={50} height={innerHeight-140}>
           {renderRow}
         </DataGridBody>
       </DataGrid>

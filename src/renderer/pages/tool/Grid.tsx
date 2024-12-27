@@ -32,7 +32,7 @@ import {
   CircleOff16Regular,
   Info16Regular,
 } from '@fluentui/react-icons';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useMCPStore, { IMCPServer } from 'stores/useMCPStore';
 import * as mcpUtils from 'utils/mcp';
@@ -52,6 +52,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
   const [open, setOpen] = useState(false);
   const [selectedServer, setSelectedServer] = useState<IMCPServer | null>(null);
   const [params, setParams] = useState<mcpUtils.IMCPServerParameter[]>([]);
+  const [innerHeight, setInnerHeight] = useState(window.innerHeight);
 
   type Item = {
     key: string;
@@ -60,6 +61,15 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
     env?: Record<string, string>;
     isActive: boolean;
   };
+
+  useEffect(() => {
+    window.onresize = () => {
+      setInnerHeight(window.innerHeight);
+    };
+    return () => {
+      window.onresize = null;
+    };
+  }, []);
 
   const activateServerWithParams = async (params: {
     [key: string]: string;
@@ -190,7 +200,6 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
         focusMode="cell"
         sortable
         size="small"
-        style={{ height: 400 }}
         className="w-full"
         getRowId={(item) => item.id}
       >
@@ -201,7 +210,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
             )}
           </DataGridRow>
         </DataGridHeader>
-        <DataGridBody<Item> itemSize={50} height={400}>
+        <DataGridBody<Item> itemSize={50} height={innerHeight - 190}>
           {renderRow}
         </DataGridBody>
       </DataGrid>

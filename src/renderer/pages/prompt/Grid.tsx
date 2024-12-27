@@ -38,7 +38,7 @@ import {
 } from '@fluentui/react-icons';
 import ConfirmDialog from 'renderer/components/ConfirmDialog';
 import useNav from 'hooks/useNav';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IPromptDef } from '../../../intellichat/types';
 import { fmtDateTime, unix2date, highlight, date2unix } from 'utils/util';
@@ -62,6 +62,7 @@ export default function Grid({
   const { t } = useTranslation();
   const [delConfirmDialogOpen, setDelConfirmDialogOpen] =
     useState<boolean>(false);
+  const [innerHeight, setInnerHeight] = useState(window.innerHeight);
   const [activePromptId, setActivePromptId] = useState<string | null>(null);
   const deletePrompt = usePromptStore((state) => state.deletePrompt);
   const updatePrompt = usePromptStore((state) => state.updatePrompt);
@@ -73,6 +74,15 @@ export default function Grid({
   const unpinPrompt = (id: string) => {
     updatePrompt({ id, pinedAt: null });
   };
+
+  useEffect(() => {
+    window.onresize = () => {
+      setInnerHeight(window.innerHeight)
+    };
+    return () => {
+      window.onresize = null;
+    };
+  }, []);
 
   const items = useMemo(
     () =>
@@ -232,7 +242,6 @@ export default function Grid({
         focusMode="cell"
         sortable
         size="small"
-        style={{ height: 400 }}
         className="w-full"
         getRowId={(item) => item.id}
       >
@@ -243,7 +252,7 @@ export default function Grid({
             )}
           </DataGridRow>
         </DataGridHeader>
-        <DataGridBody<Item> itemSize={50} height={400}>
+        <DataGridBody<Item> itemSize={50} height={innerHeight-140}>
           {renderRow}
         </DataGridBody>
       </DataGrid>
