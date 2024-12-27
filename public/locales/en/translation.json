@@ -203,5 +203,6 @@
   "Common.State": "State",
   "MCP.EditParamsTip": "Parameters cannot be modified directly once set, but can be reset by disabling and re-enabling the server",
   "MCP.ServerActivationFailed": "Failed to activate server",
-  "Tools.RequirementDescription": "Before enabling the tool, install the Python and Node runtime  environments on this machine."
+  "Tools.RequirementDescription": "Before enabling the tool, install the Python and Node runtime  environments on this machine.",
+  "MCP.ParameterDescription": "Incorrect parameters will cause the tool to execute abnormally."
 }

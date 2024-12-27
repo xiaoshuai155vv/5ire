@@ -418,21 +418,30 @@ ipcMain.handle('mcp-fetch-config', async () => {
     //const resp  = await fetch('https://api.5ire.app/mcp/config');
     config = {
       servers: [
+        /** not working, no clues
         {
-          key: 'cloudflare',
+          key: 'Cloudflare',
           command: 'npx',
-          description:
-            'MCP server for interacting with Cloudflare API',
+          description: 'MCP server for interacting with Cloudflare API',
           args: [
             '-y',
             '@cloudflare/mcp-server-cloudflare',
             'run',
-            '<accountId>',
+            '<accountId:string:You can find your AccountID on the right side of the "Workers and Pages" page.>',
           ],
           isActive: false,
         },
+         */
         {
-          key: 'filesystem',
+          key: 'Web',
+          command: 'uvx',
+          description:
+            'A Model Context Protocol server that provides web content fetching capabilities',
+          args: ['mcp-server-fetch'],
+          isActive: false,
+        },
+        {
+          key: 'FileSystem',
           command: 'npx',
           description:
             'The server will only allow operations within directories specified via args',
@@ -444,7 +453,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           isActive: false,
         },
         {
-          key: 'git',
+          key: 'Git',
           command: 'uvx',
           description:
             'A Model Context Protocol (MCP) server implementation that provides database interaction and business intelligence capabilities through SQLite. This server enables running SQL queries, analyzing business data, and automatically generating business insight memos.',
@@ -456,7 +465,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           isActive: false,
         },
         {
-          key: 'macos',
+          key: 'MacOs',
           command: 'npx',
           description:
             'A Model Context Protocol server that provides macOS-specific system information and operations.',
@@ -464,7 +473,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           isActive: false,
         },
         {
-          key: 'obsidian',
+          key: 'Obsidian',
           command: 'npx',
           description:
             'This is a connector to allow Claude Desktop (or any MCP client) to read and search any directory containing Markdown notes (such as an Obsidian vault).',
@@ -476,7 +485,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           isActive: false,
         },
         {
-          key: 'postgres',
+          key: 'Postgres',
           command: 'npx',
           description:
             'A Model Context Protocol server that provides read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.',
@@ -488,7 +497,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           isActive: false,
         },
         {
-          key: 'search1api',
+          key: 'Search1api',
           command: 'npx',
           description:
             'A Model Context Protocol (MCP) server that provides search and crawl functionality using Search1API.',
@@ -500,7 +509,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           isActive: false,
         },
         {
-          key: 'shell',
+          key: 'Shell',
           command: 'npx',
           description:
             'A Node.js implementation of the Model Context Protocol (MCP) that provides secure shell command execution capabilities. This server allows AI models to execute shell commands in a controlled environment with built-in security measures.',
@@ -508,7 +517,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           isActive: false,
         },
         {
-          key: 'sqlite',
+          key: 'Sqlite',
           command: 'uvx',
           description:
             'A Model Context Protocol (MCP) server implementation that provides database interaction and business intelligence capabilities through SQLite. This server enables running SQL queries, analyzing business data, and automatically generating business insight memos.',
@@ -520,7 +529,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
           isActive: false,
         },
         {
-          key: 'time',
+          key: 'Time',
           command: 'uvx',
           description:
             'A Model Context Protocol server providing tools for time queries and timezone conversions for LLMs',
@@ -528,6 +537,14 @@ ipcMain.handle('mcp-fetch-config', async () => {
             'mcp-server-time',
             '--local-timezone=<timezone:string:like Asia/Shaihang.Wrong time zone will cause server failure>',
           ],
+          isActive: false,
+        },
+        {
+          key: 'Sequential Thinking',
+          command: 'npx',
+          description:
+            'An MCP server implementation that provides a tool for dynamic and reflective problem-solving through a structured thinking process.',
+          args: ['-y', '@modelcontextprotocol/server-sequential-thinking'],
           isActive: false,
         },
       ],

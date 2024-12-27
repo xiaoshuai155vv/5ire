@@ -56,6 +56,9 @@ export default function ParamsDialog({
           <DialogBody>
             <DialogTitle>{title}</DialogTitle>
             <DialogContent>
+              <div>
+                {t('MCP.ParameterDescription')}
+              </div>
               <div className="mb-6">
                 <div className="mb-6">{t('MCP.EditParamsTip')}</div>
                 {params.map((param) => (

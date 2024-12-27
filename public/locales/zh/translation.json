@@ -203,5 +203,6 @@
   "Common.State": "状态",
   "MCP.EditParamsTip": "参数设置后不支持直接修改，但可以停用再启用服务重新设置",
   "MCP.ServerActivationFailed": "启用服务失败",
-  "Tools.RequirementDescription": "在启用工具前，请在本机安装 python 和 node 运行环境"
+  "Tools.RequirementDescription": "在启用工具前，请在本机安装 python 和 node 运行环境",
+  "MCP.ParameterDescription": "错误的参数会导致工具执行异常"
 }
