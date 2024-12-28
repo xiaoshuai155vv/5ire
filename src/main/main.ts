@@ -736,14 +736,16 @@ app
       }
     );
 
-    mcp.init().then(async () => {
-      // https://github.com/sindresorhus/fix-path
-      const fixPath = (await import('fix-path')).default;
-      fixPath();
-      logging.info('mcp initialized');
-      await mcp.load();
-      mainWindow?.webContents.send('mcp-server-loaded', mcp.getClientNames());
-    });
+    setTimeout(()=>{
+      mcp.init().then(async () => {
+        // https://github.com/sindresorhus/fix-path
+        const fixPath = (await import('fix-path')).default;
+        fixPath();
+        logging.info('mcp initialized');
+        await mcp.load();
+        mainWindow?.webContents.send('mcp-server-loaded', mcp.getClientNames());
+      });
+    },500)
     axiom.ingest([{ app: 'launch' }]);
   })
   .catch(logging.captureException);
