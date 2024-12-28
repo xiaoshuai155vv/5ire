@@ -103,6 +103,7 @@ export default class ModuleContext {
       logging.debug('Activating server:', server.key);
       const { error } = await this.activate(server);
       if (error) {
+        logging.error('Failed to activate server:', server.key, error);
       }
     }
   }
@@ -110,7 +111,12 @@ export default class ModuleContext {
   public async activate(config: IClientConfig): Promise<{ error: any }> {
     try {
       const { key, command, args, env } = config;
-      const cmd = command ==='npx' ?( process.platform === 'win32' ? `${command}.cmd` : command): command;
+      const cmd =
+        command === 'npx'
+          ? process.platform === 'win32'
+            ? `${command}.cmd`
+            : command
+          : command;
       const mergedEnv = {
         ...getDefaultEnvironment(),
         ...env,

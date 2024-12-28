@@ -34,3 +34,7 @@ export function info(...messages: any[]) {
 export function warn(...messages: any[]) {
   log.warn(...messages);
 }
+
+export function error(...messages: any[]) {
+  log.error(...messages);
+}

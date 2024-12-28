@@ -4,7 +4,7 @@
 
 import webpack from 'webpack';
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
-import webpackPaths from './webpack.paths.ts';
+import webpackPaths from './webpack.paths';
 import { RsdoctorWebpackPlugin } from '@rsdoctor/webpack-plugin';
 import { dependencies as externals } from '../../release/app/package.json';
 

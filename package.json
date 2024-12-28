@@ -13,17 +13,17 @@
   "license": "GPL-3.0-only",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
-    "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts",
-    "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
-    "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
+    "build:main": "cross-env NODE_ENV=production webpack --config ./.erb/configs/webpack.config.main.prod.ts",
+    "build:renderer": "cross-env NODE_ENV=production  webpack --config ./.erb/configs/webpack.config.renderer.prod.ts",
+    "postinstall": "tsx .erb/scripts/check-native-dep.js && electron-builder install-app-deps && cross-env NODE_ENV=development webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
-    "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
+    "package": "tsx ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
     "electron:build": "electron-builder build --publish never",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
-    "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
-    "start:main": "cross-env NODE_ENV=development DEBUG=5ire:* electronmon -r ts-node/register/transpile-only .",
-    "start:preload": "cross-env NODE_ENV=development DEBUG=5ire:* TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
-    "start:renderer": "cross-env NODE_ENV=development DEBUG=5ire:* TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
+    "start": "tsx ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
+    "start:main": "cross-env NODE_ENV=development DEBUG=5ire:* NODE_OPTIONS=\"--import tsx\" electronmon .",
+    "start:preload": "cross-env NODE_ENV=development DEBUG=5ire:* webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
+    "start:renderer": "cross-env NODE_ENV=development DEBUG=5ire:* webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest"
   },
   "browserslist": [],
@@ -126,7 +126,7 @@
     "debug": "^4.3.4",
     "detect-port": "^1.5.1",
     "dotenv": "^16.4.5",
-    "electron": "^25.0.1",
+    "electron": "31.7.1",
     "electron-builder": "^24.6.3",
     "electron-debug": "^3.2.0",
     "electron-devtools-installer": "^3.2.0",
@@ -190,8 +190,8 @@
     "ts-jest": "^29.1.0",
     "ts-key-enum": "^2.0.12",
     "ts-loader": "^9.4.3",
-    "ts-node": "^10.9.1",
     "tsconfig-paths-webpack-plugin": "^4.0.1",
+    "tsx": "^4.19.2",
     "typeid-js": "^0.3.0",
     "typescript": "^5.1.3",
     "update-electron-app": "^3.0.0",
@@ -251,7 +251,7 @@
       "target": {
         "target": "default",
         "arch": [
-          "arm64"
+          "x64"
         ]
       },
       "notarize": false,
