@@ -19,7 +19,6 @@ dotenv.config({
     ? path.join(process.resourcesPath, '.env')
     : path.resolve(process.cwd(), '.env'),
 });
-
 import { autoUpdater } from 'electron-updater';
 import { Deeplink } from 'electron-deeplink';
 import Store from 'electron-store';
@@ -535,7 +534,7 @@ ipcMain.handle('mcp-fetch-config', async () => {
             'A Model Context Protocol server providing tools for time queries and timezone conversions for LLMs',
           args: [
             'mcp-server-time',
-            '--local-timezone=<timezone:string:like Asia/Shaihang. You may need install tzdata first>',
+            '--local-timezone=<timezone:string:like Asia/Shanghai. You may need install tzdata first>',
           ],
           isActive: false,
         },
@@ -592,7 +591,7 @@ const installExtensions = async () => {
 
 const createWindow = async () => {
   if (isDebug) {
-    await installExtensions();
+    // await installExtensions();
   }
 
   const RESOURCES_PATH = app.isPackaged
