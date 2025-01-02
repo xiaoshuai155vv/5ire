@@ -5,9 +5,13 @@
     <img src="https://5ire.app/logo.png" alt="Logo" width="120">
   </a>
   <div>
-    
   <img src="https://glitch-art.vercel.app/api/simple?word=Simplicity%20Unlocks%20Power%20of%20AI&width=600&height=70&fontSize=26&font=Barlow"/>
   </div>
+  <div align="center">
+    <img src="https://badge.mcpx.dev/?type=client" />&nbsp;
+    <img src="https://badge.mcpx.dev/?type=client&features=tools" />
+  </div>
+  <br />
   <img src="https://github.com/user-attachments/assets/36ba3c32-6ebb-46d8-810f-df648243fbcc" style="width:100%"/>
   <p>
     <br />
