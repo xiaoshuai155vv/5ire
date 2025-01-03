@@ -11,7 +11,7 @@ import useSettingsStore from '../../../stores/useSettingsStore';
 import { useEffect, useMemo } from 'react';
 import { IChatModel, IServiceProvider } from '../../../providers/types';
 import useProvider from 'hooks/useProvider';
-import {  Info16Regular } from '@fluentui/react-icons';
+import { Info16Regular, Wand16Regular } from '@fluentui/react-icons';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 
 export default function ModelField({
@@ -45,13 +45,28 @@ export default function ModelField({
     <div className="my-3.5">
       <div className="flex justify-start items-center mb-1.5">
         <Label htmlFor="model">{t('Common.Model')}</Label>
-        <TooltipIcon tip={t(provider.chat.docs?.model||'')}/>
+        <TooltipIcon tip={t(provider.chat.docs?.model || '')} />
       </div>
       {}
       <div>
         {models.length > 0 ? (
           models.length === 1 ? (
-            <div className="font-barlow">{models[0].label}</div>
+            <div className="flex flex-row justify-start items-center gap-1">
+              <span className="latin">{models[0].label}</span>
+              {models[0].toolEnabled && <Wand16Regular />}
+              {models[0].description && (
+                <Tooltip
+                  content={models[0].description as string}
+                  relationship="label"
+                >
+                  <Button
+                    icon={<Info16Regular />}
+                    size="small"
+                    appearance="subtle"
+                  />
+                </Tooltip>
+              )}
+            </div>
           ) : (
             <Dropdown
               aria-labelledby="model"
@@ -65,7 +80,10 @@ export default function ModelField({
                   text={model.label as string}
                 >
                   <div className="flex justify-start items-center latin">
-                    <span className="latin">{model.label as string}</span>
+                    <div className="flex justify-start items-center gap-1">
+                      <span className="latin">{model.label as string}</span>
+                      {model.toolEnabled && <Wand16Regular />}
+                    </div>
                     {model.description && (
                       <Tooltip
                         content={model.description as string}
