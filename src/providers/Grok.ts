@@ -25,6 +25,7 @@ export default {
         outputPrice: 0.015,
         isDefault: true,
         description: `Comparable performance to Grok 2 but with improved efficiency, speed and capabilities.`,
+        toolEnabled: true,
         group: 'Grok',
       }
     },

@@ -25,6 +25,7 @@ export default {
         outputPrice: 0.001,
         isDefault: true,
         description: ``,
+        toolEnabled: true,
         group: 'DeepSeek',
       }
     },

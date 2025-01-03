@@ -19,21 +19,6 @@ export default class MoonshotChatService
     this.provider = Moonshot;
   }
 
-  protected async makePayload(
-    messages: IChatRequestMessage[]
-  ): Promise<IChatRequestPayload> {
-    const payload: IChatRequestPayload = {
-      model: this.context.getModel().name,
-      messages: await this.makeMessages(messages),
-      temperature: this.context.getTemperature(),
-      stream: true,
-    };
-    if (this.context.getMaxTokens()) {
-      payload.max_tokens = this.context.getMaxTokens();
-    }
-    debug('payload', payload);
-    return Promise.resolve(payload);
-  }
 
   protected async makeRequest(
     messages: IChatRequestMessage[]

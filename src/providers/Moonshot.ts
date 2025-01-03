@@ -24,6 +24,7 @@ export default {
         inputPrice: 0.012,
         outputPrice: 0.012,
         isDefault: true,
+        toolEnabled: true,
         group: 'Moonshot',
       },
       'moonshot-v1-32k': {
@@ -32,6 +33,7 @@ export default {
         maxTokens: 1024,
         inputPrice: 0.024,
         outputPrice: 0.024,
+        toolEnabled: true,
         group: 'Moonshot',
       },
       'moonshot-v1-128k': {
@@ -40,6 +42,7 @@ export default {
         maxTokens: 1024,
         inputPrice: 0.06,
         outputPrice: 0.06,
+        toolEnabled: true,
         group: 'Moonshot',
       },
     },
