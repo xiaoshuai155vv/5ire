@@ -13,6 +13,7 @@ import { IChatModel, IServiceProvider } from '../../../providers/types';
 import useProvider from 'hooks/useProvider';
 import { Info16Regular, Wand16Regular } from '@fluentui/react-icons';
 import TooltipIcon from 'renderer/components/TooltipIcon';
+import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
 
 export default function ModelField({
   provider,
@@ -52,8 +53,11 @@ export default function ModelField({
         {models.length > 0 ? (
           models.length === 1 ? (
             <div className="flex flex-row justify-start items-center gap-1">
+              <ToolStatusIndicator
+                enabled={models[0].toolEnabled}
+                withTooltip={true}
+              />
               <span className="latin">{models[0].label}</span>
-              {models[0].toolEnabled && <Wand16Regular />}
               {models[0].description && (
                 <Tooltip
                   content={models[0].description as string}
@@ -80,9 +84,9 @@ export default function ModelField({
                   text={model.label as string}
                 >
                   <div className="flex justify-start items-center latin">
-                    <div className="flex justify-start items-center gap-1">
+                    <div className="flex justify-start items-baseline gap-1">
+                      <ToolStatusIndicator enabled={model.toolEnabled} />
                       <span className="latin">{model.label as string}</span>
-                      {model.toolEnabled && <Wand16Regular />}
                     </div>
                     {model.description && (
                       <Tooltip

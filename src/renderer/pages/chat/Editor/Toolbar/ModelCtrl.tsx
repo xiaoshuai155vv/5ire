@@ -9,15 +9,20 @@ import {
   MenuTrigger,
   Text,
 } from '@fluentui/react-components';
-import { ChevronDown16Regular, Cube16Regular } from '@fluentui/react-icons';
+import {
+  ChevronDown16Regular,
+  Cube16Regular,
+  Wand16Regular,
+} from '@fluentui/react-icons';
 import { IChat, IChatContext } from 'intellichat/types';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useChatStore from 'stores/useChatStore';
 import useSettingsStore from 'stores/useSettingsStore';
 import { IChatModel, ProviderType } from 'providers/types';
 import useProvider from 'hooks/useProvider';
 import useAuthStore from 'stores/useAuthStore';
+import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
 
 export default function ModelCtrl({
   ctx,
@@ -29,7 +34,7 @@ export default function ModelCtrl({
   const { t } = useTranslation();
   const api = useSettingsStore((state) => state.api);
   const session = useAuthStore((state) => state.session);
-  const { getProvider, getChatModel, getChatModels } = useProvider();
+  const { getProvider, getChatModels } = useProvider();
   const [providerName, setProviderName] = useState<ProviderType>(api.provider);
   const updateChat = useChatStore((state) => state.updateChat);
   const editChat = useChatStore((state) => state.editChat);
@@ -44,12 +49,7 @@ export default function ModelCtrl({
     return [];
   }, [api.provider, session]);
 
-  const [modelName, setModelName] = useState<string>('');
-
-  useEffect(() => {
-    const model = ctx.getModel();
-    setModelName(model.label as string);
-  }, [chat]);
+  const activeModel = useMemo(() => ctx.getModel(), [chat.model]);
 
   const onModelChange = (
     _: MenuCheckedValueChangeEvent,
@@ -67,7 +67,7 @@ export default function ModelCtrl({
     <Menu
       hasCheckmarks
       onCheckedValueChange={onModelChange}
-      checkedValues={{ model: [modelName] }}
+      checkedValues={{ model: [activeModel.label as string] }}
     >
       <MenuTrigger disableButtonEnhancement>
         <Button
@@ -79,13 +79,22 @@ export default function ModelCtrl({
           className="text-color-secondary flex justify-start items-center"
           style={{ padding: 1 }}
         >
-          <Cube16Regular className="mr-1 flex-shrink-0" />{' '}
+          <div className="flex flex-row justify-start items-center mr-1">
+            <ToolStatusIndicator
+              enabled={activeModel.toolEnabled}
+              withTooltip={true}
+            />
+          </div>
           <div className="flex-shrink overflow-hidden whitespace-nowrap text-ellipsis min-w-12">
             {providerName} /
-            {models.map((mod: IChatModel) => mod.label).includes(modelName) ? (
-              <span>{modelName}</span>
+            {models
+              .map((mod: IChatModel) => mod.label)
+              .includes(activeModel.label) ? (
+              <span>{activeModel.label}</span>
             ) : (
-              <span className="text-gray-400">{modelName}</span>
+              <span className="text-gray-300 dark:text-gray-600">
+                {activeModel.label}
+              </span>
             )}
           </div>
         </Button>
@@ -97,9 +106,11 @@ export default function ModelCtrl({
               name="model"
               value={item.label as string}
               key={item.label}
-              className="latin"
             >
-              {item.label}
+              <div className="flex justify-start items-baseline gap-1">
+                <ToolStatusIndicator enabled={activeModel.toolEnabled} />
+                <span className="latin">{item.label}</span>
+              </div>
             </MenuItemRadio>
           ))}
         </MenuList>
@@ -107,8 +118,13 @@ export default function ModelCtrl({
     </Menu>
   ) : (
     <Text size={200}>
-      <span className="latin flex justify-start items-center gap-1">
-        <Cube16Regular /> {api.provider} / {modelName}
+      <span className="flex justify-start items-center gap-1">
+        <div>
+          <ToolStatusIndicator enabled={activeModel.toolEnabled} />
+        </div>
+        <span className="latin">
+          {api.provider} / {activeModel.label}
+        </span>
       </span>
     </Text>
   );
