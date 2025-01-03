@@ -274,7 +274,7 @@ ipcMain.handle('select-knowledge-files', async () => {
             'txt',
             'csv',
             'pptx',
-            'pptx',
+            'xlsx',
           ],
         },
       ],
