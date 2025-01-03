@@ -313,16 +313,6 @@ ipcMain.handle('select-knowledge-files', async () => {
   }
 });
 
-const imgToBase64 = (file: File) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = function (e: any) {
-      resolve(e.target.result);
-    };
-    reader.readAsDataURL(file);
-  });
-};
-
 ipcMain.handle('select-image-with-base64', async () => {
   try {
     const result = await dialog.showOpenDialog({
