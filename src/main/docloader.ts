@@ -18,14 +18,13 @@ class TextDocumentLoader extends BaseLoader {
 }
 
 class OfficeLoader extends BaseLoader {
-
   constructor() {
     super();
   }
 
   async read(filePath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      officeParser.parseOffice(filePath, function (text:string, error:any) {
+      officeParser.parseOffice(filePath, function (text: string, error: any) {
         if (error) {
           reject(error);
         } else {
