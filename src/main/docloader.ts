@@ -38,8 +38,8 @@ class OfficeLoader extends BaseLoader {
 
 class PdfLoader extends BaseLoader {
   async read(filePath: fs.PathLike): Promise<string> {
-    // @ts-ignore
-    const data = await pdf(filePath);
+    const dataBuffer = fs.readFileSync(filePath);
+    const data = await pdf(dataBuffer);
     return data.text;
   }
 }
