@@ -37,7 +37,10 @@ export interface IChatStore {
   // chat
   initChat: (chat: Partial<IChat>) => IChat;
   editChat: (chat: Partial<IChat>) => IChat;
-  createChat: (chat: Partial<IChat>) => Promise<IChat>;
+  createChat: (
+    chat: Partial<IChat>,
+    beforeSetCallback?: (chat: IChat) => Promise<void>
+  ) => Promise<IChat>;
   updateChat: (chat: { id: string } & Partial<IChat>) => Promise<boolean>;
   deleteChat: () => Promise<boolean>;
   fetchChat: (limit?: number) => Promise<IChat[]>;
@@ -136,7 +139,10 @@ const useChatStore = create<IChatStore>((set, get) => ({
     set({ chat: { ...$chat } });
     return $chat;
   },
-  createChat: async (chat: Partial<IChat>) => {
+  createChat: async (
+    chat: Partial<IChat>,
+    beforeSetCallback?: (chat: IChat) => Promise<void>
+  ) => {
     const $chat = {
       ...get().chat,
       ...chat,
@@ -163,6 +169,9 @@ const useChatStore = create<IChatStore>((set, get) => ({
     );
     if (!ok) {
       throw new Error('Write the chat into database failed');
+    }
+    if (beforeSetCallback) {
+      await beforeSetCallback($chat);
     }
     set(
       produce((state: IChatStore) => {
@@ -281,8 +290,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
       }
       initChat({});
       return true;
-    } catch (err) {
-      debug(err);
+    } catch (err: any) {
       captureException(err);
       return false;
     }
@@ -381,13 +389,14 @@ const useChatStore = create<IChatStore>((set, get) => ({
         `UPDATE messages SET ${stats.join(', ')} WHERE id = ?`,
         params
       );
-      const updatedMessages = get().messages.map((m: IChatMessage) => {
-        if (m.id === msg.id) {
-          return { ...m, ...msg };
-        }
-        return m;
-      });
-      set({ messages: updatedMessages });
+      set(
+        produce((state: IChatStore) => {
+          const index = state.messages.findIndex((m) => m.id === msg.id);
+          if (index !== -1) {
+            state.messages[index] = { ...state.messages[index], ...msg };
+          }
+        })
+      );
       debug('Update message ', msg);
       return true;
     }

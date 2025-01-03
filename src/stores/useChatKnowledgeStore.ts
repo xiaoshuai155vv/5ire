@@ -30,14 +30,13 @@ const useKnowledgeStore = create<IChatKnowledgeStore>((set, get) => ({
   chatCollections: {},
   moveChatCollections: (fromChatId: string, targetChatId: string) => {
     set((state) => {
-      state.chatCollections[targetChatId] = union(
-        state.chatCollections[targetChatId],
-        state.chatCollections[fromChatId]
-      );
+      const fromCollections = state.chatCollections[fromChatId] || [];
+      const targetCollections = state.chatCollections[targetChatId] || [];
+      state.chatCollections[targetChatId] = union(targetCollections, fromCollections);
       state.chatCollections[fromChatId] = [];
       debug(
-        `move collections from ${fromChatId} to ${targetChatId}`,
-        state.chatCollections[targetChatId]
+      `move collections from ${fromChatId} to ${targetChatId}`,
+      state.chatCollections[targetChatId]
       );
       return state;
     });
@@ -92,10 +91,12 @@ ORDER BY kc.updatedAt DESC`,
       }
     }
     if (ok) {
-      set((state) => {
-        state.chatCollections[chatId] = collections;
-        return state;
-      });
+      set((state) => ({
+        chatCollections: {
+          ...state.chatCollections,
+          [chatId]: collections,
+        },
+      }));
     }
     return ok;
   },

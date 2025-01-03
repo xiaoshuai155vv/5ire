@@ -18,7 +18,7 @@ import Editor from './Editor';
 
 import './Chat.scss';
 import 'split-pane-react/esm/themes/default.css';
-import { IChatResponseMessage } from 'intellichat/types';
+import { IChat, IChatResponseMessage } from 'intellichat/types';
 import { isBlank } from 'utils/validators';
 import useChatKnowledgeStore from 'stores/useChatKnowledgeStore';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
@@ -114,7 +114,7 @@ export default function Chat() {
   const updateMessage = useChatStore((state) => state.updateMessage);
   const appendReply = useChatStore((state) => state.appendReply);
 
-  const { moveChatCollections, setChatCollections } =
+  const { moveChatCollections, listChatCollections, setChatCollections } =
     useChatKnowledgeStore.getState();
 
   const onSubmit = useCallback(
@@ -122,13 +122,20 @@ export default function Chat() {
       const model = chatService.context.getModel();
       let $chatId = activeChatId;
       if (activeChatId === tempChatId) {
-        const $chat = await createChat({
-          summary: prompt.substring(0, 50),
-        });
+        const $chat = await createChat(
+          {
+            summary: prompt.substring(0, 50),
+          },
+          async (newChat: IChat) => {
+            const knowledgeCollections = moveChatCollections(
+              tempChatId,
+              newChat.id
+            );
+            await setChatCollections(newChat.id, knowledgeCollections);
+          }
+        );
         $chatId = $chat.id;
         setActiveChatId($chatId);
-        const knowledgeCollections = moveChatCollections(tempChatId, $chatId);
-        await setChatCollections($chatId, knowledgeCollections);
       } else {
         await updateChat({
           id: activeChatId,
@@ -143,9 +150,8 @@ export default function Chat() {
       let knowledgeChunks = [];
       let files: ICollectionFile[] = [];
       let actualPrompt = prompt;
-      const chatCollections = await useChatKnowledgeStore
-        .getState()
-        .listChatCollections($chatId);
+      const chatCollections = await listChatCollections($chatId);
+      debug('Chat collections:', JSON.stringify(chatCollections));
       if (chatCollections.length) {
         const knowledgeString = await window.electron.knowledge.search(
           chatCollections.map((c) => c.id),
