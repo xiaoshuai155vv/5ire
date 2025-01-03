@@ -15,14 +15,14 @@ export function init() {
 
 export function captureException(error: Error | string) {
   console.error(error);
-  if (process.env.SENTRY_DSN && process.env.NODE_ENV !== 'development') {
+  if (window.envVars.SENTRY_DSN && window.envVars.NODE_ENV !== 'development') {
     Sentry.captureException(error);
   }
 }
 
 export function captureWarning(warning: any) {
   console.warn(warning);
-  if (process.env.SENTRY_DSN && process.env.NODE_ENV !== 'development') {
+  if (window.envVars.SENTRY_DSN && window.envVars.NODE_ENV !== 'development') {
     Sentry.captureMessage(warning, 'warning');
   }
 }
