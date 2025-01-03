@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 /* eslint-disable react/no-danger */
-// @ts-ignore
+
+import Debug from 'debug';
 import useChatStore from 'stores/useChatStore';
 import { useCallback, useEffect, useMemo } from 'react';
 import useMarkdown from 'hooks/useMarkdown';
@@ -12,6 +13,8 @@ import { Divider } from '@fluentui/react-components';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useToast from 'hooks/useToast';
 import ToolSpinner from 'renderer/components/ToolSpinner';
+
+const debug = Debug('5ire:pages:chat:Message');
 
 export default function Message({ message }: { message: IChatMessage }) {
   const { t } = useTranslation();
@@ -28,6 +31,7 @@ export default function Message({ message }: { message: IChatMessage }) {
     [message.citedFiles]
   );
   const { render } = useMarkdown();
+
   const onCitationClick = async (event: any) => {
     const url = new URL(event.target?.href);
     if (url.pathname === '/citation' || url.protocol.startsWith('file:')) {
@@ -85,10 +89,16 @@ export default function Message({ message }: { message: IChatMessage }) {
         />
       );
     }
+    if (message.isActive && !states.loading) {
+      const links = document.querySelectorAll(`.msg-reply a`);
+      links.forEach((link) => {
+        link.addEventListener('click', onCitationClick);
+      });
+    }
     return (
       <div className="mt-1">
         <div
-          className='break-all'
+          className="break-all"
           dangerouslySetInnerHTML={{
             __html: render(`${highlight(message.reply, keyword)}` || ''),
           }}
@@ -98,7 +108,7 @@ export default function Message({ message }: { message: IChatMessage }) {
   }, [message, keyword, states]);
 
   return (
-    <div className="leading-6 message">
+    <div className="leading-6 message" id={message.id}>
       <div>
         <a
           id={`prompt-${message.id}`}
