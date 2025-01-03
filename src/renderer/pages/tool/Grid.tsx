@@ -63,11 +63,12 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
   };
 
   useEffect(() => {
-    window.onresize = () => {
+    const handleResize = () => {
       setInnerHeight(window.innerHeight);
     };
+    window.addEventListener('resize', handleResize);
     return () => {
-      window.onresize = null;
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 

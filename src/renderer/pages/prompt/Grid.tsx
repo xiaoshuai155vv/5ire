@@ -76,11 +76,12 @@ export default function Grid({
   };
 
   useEffect(() => {
-    window.onresize = () => {
-      setInnerHeight(window.innerHeight)
+    const handleResize = () => {
+      setInnerHeight(window.innerHeight);
     };
+    window.addEventListener('resize', handleResize);
     return () => {
-      window.onresize = null;
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -252,7 +253,7 @@ export default function Grid({
             )}
           </DataGridRow>
         </DataGridHeader>
-        <DataGridBody<Item> itemSize={50} height={innerHeight-140}>
+        <DataGridBody<Item> itemSize={50} height={innerHeight - 140}>
           {renderRow}
         </DataGridBody>
       </DataGrid>

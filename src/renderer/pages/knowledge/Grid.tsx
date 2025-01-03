@@ -78,11 +78,12 @@ export default function Grid({ collections }: { collections: any[] }) {
   };
 
   useEffect(() => {
-    window.onresize = () => {
+    const handleResize = () => {
       setInnerHeight(window.innerHeight);
     };
+    window.addEventListener('resize', handleResize);
     return () => {
-      window.onresize = null;
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
