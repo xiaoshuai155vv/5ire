@@ -138,7 +138,7 @@ export default function Grid({
       renderCell: (item) => {
         return (
           <TableCell>
-            <TableCellLayout>
+            <TableCellLayout truncate>
               <div className="flex flex-start items-center">
                 <div
                   dangerouslySetInnerHTML={{
@@ -203,7 +203,7 @@ export default function Grid({
       },
       renderCell: (item) => {
         return (
-          <TableCellLayout>
+          <TableCellLayout truncate>
             <span className="latin">{item.models.value.join(', ')}</span>
           </TableCellLayout>
         );
@@ -245,6 +245,12 @@ export default function Grid({
         size="small"
         className="w-full"
         getRowId={(item) => item.id}
+        resizableColumns
+        columnSizingOptions={{
+          name: {  minWidth: 200},
+          updatedAt: { autoFitColumns: true, minWidth: 140, idealWidth: 160 },
+          models: { autoFitColumns: true, minWidth: 140, idealWidth: 240 },
+        }}
       >
         <DataGridHeader style={{ paddingRight: scrollbarWidth }}>
           <DataGridRow>

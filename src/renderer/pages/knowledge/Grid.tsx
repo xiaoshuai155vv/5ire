@@ -44,7 +44,7 @@ import ConfirmDialog from 'renderer/components/ConfirmDialog';
 import useNav from 'hooks/useNav';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fmtDateTime, unix2date,  date2unix } from 'utils/util';
+import { fmtDateTime, unix2date, date2unix } from 'utils/util';
 import useToast from 'hooks/useToast';
 import FileDrawer from './FileDrawer';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
@@ -66,7 +66,7 @@ export default function Grid({ collections }: { collections: any[] }) {
     useState<boolean>(false);
   const [activeCollection, setActiveCollection] = useState<any>(null);
   const [fileDrawerOpen, setFileDrawerOpen] = useState<boolean>(false);
-  const {updateCollection, deleteCollection} = useKnowledgeStore()
+  const { updateCollection, deleteCollection } = useKnowledgeStore();
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
   const { notifySuccess } = useToast();
   const navigate = useNav();
@@ -89,24 +89,26 @@ export default function Grid({ collections }: { collections: any[] }) {
 
   const items = useMemo(
     () =>
-      collections.map((collection) => {
-        collection.updatedAt = {
-          value: fmtDateTime(unix2date(collection.updatedAt as number)),
-          timestamp: collection.updatedAt,
-        };
-        return collection;
-      }).sort((a, b) => {
-        if (a.pinedAt && b.pinedAt) {
-          return b.pinedAt - a.pinedAt;
-        }
-        if (a.pinedAt) {
-          return -1;
-        }
-        if (b.pinedAt) {
-          return 1;
-        }
-        return b.id.localeCompare(a.id);
-      }),
+      collections
+        .map((collection) => {
+          collection.updatedAt = {
+            value: fmtDateTime(unix2date(collection.updatedAt as number)),
+            timestamp: collection.updatedAt,
+          };
+          return collection;
+        })
+        .sort((a, b) => {
+          if (a.pinedAt && b.pinedAt) {
+            return b.pinedAt - a.pinedAt;
+          }
+          if (a.pinedAt) {
+            return -1;
+          }
+          if (b.pinedAt) {
+            return 1;
+          }
+          return b.id.localeCompare(a.id);
+        }),
     [collections]
   );
 
@@ -120,7 +122,7 @@ export default function Grid({ collections }: { collections: any[] }) {
     memo: string;
     updatedAt: UpdatedCell;
     numOfFiles: number;
-    pinedAt: number|null;
+    pinedAt: number | null;
   };
 
   const columns: TableColumnDefinition<Item>[] = [
@@ -135,13 +137,22 @@ export default function Grid({ collections }: { collections: any[] }) {
       renderCell: (item) => {
         return (
           <TableCell>
-            <TableCellLayout>
+            <TableCellLayout truncate>
               <div className="flex flex-start items-center gap-1">
-                <div>{item.name}</div>
-                { item.memo && (
-                   <Tooltip content={item.memo} relationship="label" withArrow appearance='inverted'>
-                   <Button icon={<Info16Regular />} size="small" appearance='subtle'/>
-                 </Tooltip>
+                <div className="-mt-0.5">{item.name}</div>
+                {item.memo && (
+                  <Tooltip
+                    content={item.memo}
+                    relationship="label"
+                    withArrow
+                    appearance="inverted"
+                  >
+                    <Button
+                      icon={<Info16Regular />}
+                      size="small"
+                      appearance="subtle"
+                    />
+                  </Tooltip>
                 )}
                 {item.pinedAt ? <PinFilled className="ml-1" /> : null}
               </div>
@@ -155,7 +166,9 @@ export default function Grid({ collections }: { collections: any[] }) {
                   <MenuList>
                     <MenuItem
                       icon={<EditIcon />}
-                      onClick={() => navigate(`/knowledge/collection-form/${item.id}`)}
+                      onClick={() =>
+                        navigate(`/knowledge/collection-form/${item.id}`)
+                      }
                     >
                       {t('Common.Edit')}
                     </MenuItem>
@@ -185,11 +198,8 @@ export default function Grid({ collections }: { collections: any[] }) {
                         {t('Common.Unpin')}{' '}
                       </MenuItem>
                     ) : (
-                      <MenuItem
-                        icon={<PinIcon />}
-                        onClick={() => pin(item.id)}
-                      >
-                     {t('Common.Pin')}{' '}
+                      <MenuItem icon={<PinIcon />} onClick={() => pin(item.id)}>
+                        {t('Common.Pin')}{' '}
                       </MenuItem>
                     )}
                   </MenuList>
@@ -252,6 +262,12 @@ export default function Grid({ collections }: { collections: any[] }) {
         size="small"
         className="w-full"
         getRowId={(item) => item.id}
+        resizableColumns
+        columnSizingOptions={{
+          name: {  minWidth: 260, idealWidth: 400 },
+          updatedAt: { autoFitColumns: true, minWidth: 160, idealWidth: 160 },
+          numOfFiles: { autoFitColumns: true, minWidth: 70, idealWidth: 70 },
+        }}
       >
         <DataGridHeader style={{ paddingRight: scrollbarWidth }}>
           <DataGridRow>
@@ -260,7 +276,7 @@ export default function Grid({ collections }: { collections: any[] }) {
             )}
           </DataGridRow>
         </DataGridHeader>
-        <DataGridBody<Item> itemSize={50} height={innerHeight-140}>
+        <DataGridBody<Item> itemSize={50} height={innerHeight - 140}>
           {renderRow}
         </DataGridBody>
       </DataGrid>
@@ -269,13 +285,13 @@ export default function Grid({ collections }: { collections: any[] }) {
         setOpen={setDelConfirmDialogOpen}
         message={t('Knowledge.Confirmation.DeleteCollection')}
         onConfirm={async () => {
-          await deleteCollection(activeCollection.id)
+          await deleteCollection(activeCollection.id);
           setActiveCollection(null);
           notifySuccess(t('Knowledge.Notification.CollectionDeleted'));
         }}
       />
       <FileDrawer
-        collection={activeCollection||{}}
+        collection={activeCollection || {}}
         open={fileDrawerOpen}
         setOpen={(open: boolean) => setFileDrawerOpen(open)}
       />
