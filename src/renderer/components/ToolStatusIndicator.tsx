@@ -17,7 +17,7 @@ export default function ToolStatusIndicator(
       relationship="label"
     >
       {enabled ? (
-        <span className="text-xs text-green-400 dark:text-green-500" {...rest}>
+        <span className="text-xs text-green-400 dark:text-green-600" {...rest}>
           ●
         </span>
       ) : (
@@ -27,7 +27,7 @@ export default function ToolStatusIndicator(
       )}
     </Tooltip>
   ) : enabled ? (
-    <span className="text-xs text-green-400 dark:text-green-500" {...rest}>
+    <span className="text-xs text-green-400 dark:text-green-600" {...rest}>
       ●
     </span>
   ) : (
