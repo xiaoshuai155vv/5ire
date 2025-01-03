@@ -52,8 +52,14 @@ export default function KnowledgeCtrl({
   );
 
   useEffect(() => {
-    setSelectedCollectionIds([]);
+    listChatCollections(chat.id).then((chatCollections) => {
+      setSelectedCollections(chatCollections);
+      setSelectedCollectionIds(chatCollections.map((c) => c.id));
+    }).catch((err:any) => {
+      setSelectedCollectionIds([]);
     setSelectedCollections([]);
+      debug(err);
+    });
   }, [chat.id]);
 
   const onCollectionSelect: ComboboxProps['onOptionSelect'] = async (
