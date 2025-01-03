@@ -88,6 +88,7 @@ export default {
         contextWindow: 4000,
         inputPrice: 0.0015,
         outputPrice: 0.002,
+        toolEnabled: true,
         group: 'GPT-3.5',
       },
       'gpt-3.5-turbo-16k': {
@@ -95,6 +96,7 @@ export default {
         contextWindow: 16000,
         inputPrice: 0.003,
         outputPrice: 0.004,
+        toolEnabled: true,
         group: 'GPT-3.5',
       },
     },

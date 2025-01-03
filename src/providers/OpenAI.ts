@@ -114,6 +114,7 @@ export default {
         maxTokens: 4096,
         inputPrice: 0.001,
         outputPrice: 0.002,
+        toolEnabled: true,
         description: `GPT-3.5 Turbo model with improved instruction following, JSON mode, reproducible outputs, parallel function calling, and more`,
         group: 'GPT-3.5',
       },
@@ -122,6 +123,7 @@ export default {
         contextWindow: 16385,
         inputPrice: 0.0005,
         outputPrice: 0.0015,
+        toolEnabled: true,
         description: `The latest GPT-3.5 Turbo model with higher accuracy at responding in requested formats
         and a fix for a bug which caused a text encoding issue for non-English language function calls`,
         group: 'GPT-3.5',

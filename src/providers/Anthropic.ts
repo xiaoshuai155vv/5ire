@@ -22,6 +22,7 @@ export default {
         maxTokens: 8192,
         inputPrice: 0.003,
         outputPrice: 0.015,
+        toolEnabled: true,
         vision: {
           enabled: true,
           allowBase64: true,
@@ -41,6 +42,7 @@ export default {
         maxTokens: 8192,
         inputPrice: 0.003,
         outputPrice: 0.015,
+        toolEnabled: true,
         vision: {
           enabled: true,
           allowBase64: true,
@@ -62,6 +64,7 @@ export default {
         inputPrice: 0.001,
         outputPrice: 0.005,
         description: `The fastest model of Anthropic, Intelligence at blazing speeds`,
+        toolEnabled: true,
         group: 'Claude-3.5',
       },
       'claude-3-opus': {
@@ -70,6 +73,7 @@ export default {
         maxTokens: 4096,
         inputPrice: 0.015,
         outputPrice: 0.075,
+        toolEnabled: true,
         vision: {
           enabled: true,
           allowBase64: true,
@@ -89,6 +93,7 @@ export default {
         maxTokens: 4096,
         inputPrice: 0.003,
         outputPrice: 0.015,
+        toolEnabled: true,
         vision: {
           enabled: true,
           allowBase64: true,
@@ -109,6 +114,7 @@ export default {
         maxTokens: 4096,
         inputPrice: 0.000025,
         outputPrice: 0.00125,
+        toolEnabled: true,
         vision: {
           enabled: true,
           allowBase64: true,
