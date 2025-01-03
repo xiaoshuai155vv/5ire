@@ -1,6 +1,5 @@
 import Debug from 'debug';
-import BaseReader, { ITool } from 'intellichat/readers/BaseReader';
-import IChatReader from 'intellichat/readers/IChatReader';
+import IChatReader, { ITool } from 'intellichat/readers/IChatReader';
 import {
   IAnthropicTool,
   IChatContext,
