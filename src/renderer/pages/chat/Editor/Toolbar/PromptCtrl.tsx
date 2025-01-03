@@ -15,11 +15,9 @@ import {
   Dismiss24Regular,
   Prompt20Regular,
   Prompt20Filled,
-  ReceiptSparkles20Filled,
-  ReceiptSparkles20Regular,
   Search20Regular,
 } from '@fluentui/react-icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePromptStore from 'stores/usePromptStore';
 import { fillVariables, highlight, insertAtCursor } from 'utils/util';
