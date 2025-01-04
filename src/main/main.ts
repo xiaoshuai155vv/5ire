@@ -491,6 +491,14 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+    mcp.init().then(async () => {
+      // https://github.com/sindresorhus/fix-path
+      const fixPath = (await import('fix-path')).default;
+      fixPath();
+      logging.info('mcp initialized');
+      await mcp.load();
+      mainWindow?.webContents.send('mcp-server-loaded', mcp.getClientNames());
+    });
   });
 
   mainWindow.on('closed', () => {
@@ -594,17 +602,6 @@ app
         callback(true);
       }
     );
-
-    setTimeout(()=>{
-      mcp.init().then(async () => {
-        // https://github.com/sindresorhus/fix-path
-        const fixPath = (await import('fix-path')).default;
-        fixPath();
-        logging.info('mcp initialized');
-        await mcp.load();
-        mainWindow?.webContents.send('mcp-server-loaded', mcp.getClientNames());
-      });
-    },0)
     axiom.ingest([{ app: 'launch' }]);
   })
   .catch(logging.captureException);
