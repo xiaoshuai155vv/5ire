@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-has-content */
 /* eslint-disable react/no-danger */
-
 import Debug from 'debug';
 import useChatStore from 'stores/useChatStore';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -30,35 +29,46 @@ export default function Message({ message }: { message: IChatMessage }) {
     () => JSON.parse(message.citedFiles || '[]'),
     [message.citedFiles]
   );
+
+  const citedChunks = useMemo(() => {
+    return JSON.parse(message.citedChunks || '[]');
+  }, [message.citedChunks]);
+
   const { render } = useMarkdown();
 
-  const onCitationClick = async (event: any) => {
-    const url = new URL(event.target?.href);
-    if (url.pathname === '/citation' || url.protocol.startsWith('file:')) {
-      event.preventDefault();
-      const chunkId = url.hash.replace('#', '');
-      const chunk = JSON.parse(message.citedChunks || '[]').find(
-        (chunk: any) => chunk.id === chunkId
-      );
-      if (chunk) {
-        showCitation(chunk.content);
-      } else {
-        notifyInfo(t('Knowledge.Notification.CitationNotFound'));
+  const onCitationClick = useCallback(
+    (event: any) => {
+      const url = new URL(event.target?.href);
+      if (url.pathname === '/citation' || url.protocol.startsWith('file:')) {
+        event.preventDefault();
+        const chunkId = url.hash.replace('#', '');
+        const chunk = citedChunks.find((chunk: any) => chunk.id === chunkId);
+        if (chunk) {
+          showCitation(chunk.content);
+        } else {
+          notifyInfo(t('Knowledge.Notification.CitationNotFound'));
+        }
       }
-    }
-  };
+    },
+    [citedChunks, showCitation]
+  );
 
-  useEffect(() => {
+  const registerCitationClick = useCallback(() => {
     const links = document.querySelectorAll('.msg-reply a');
     links.forEach((link) => {
       link.addEventListener('click', onCitationClick);
     });
+  }, [onCitationClick]);
+
+  useEffect(() => {
+    registerCitationClick();
     return () => {
+      const links = document.querySelectorAll('.msg-reply a');
       links.forEach((link) => {
         link.removeEventListener('click', onCitationClick);
       });
     };
-  }, []);
+  }, [message.isActive, registerCitationClick]);
 
   const replyNode = useCallback(() => {
     if (message.isActive && states.loading) {
@@ -88,12 +98,6 @@ export default function Message({ message }: { message: IChatMessage }) {
           }}
         />
       );
-    }
-    if (message.isActive && !states.loading) {
-      const links = document.querySelectorAll(`.msg-reply a`);
-      links.forEach((link) => {
-        link.addEventListener('click', onCitationClick);
-      });
     }
     return (
       <div className="mt-1">

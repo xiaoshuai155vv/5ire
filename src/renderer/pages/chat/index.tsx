@@ -136,6 +136,7 @@ export default function Chat() {
         );
         $chatId = $chat.id;
         setActiveChatId($chatId);
+        navigate(`/chats/${$chatId}`);
       } else {
         await updateChat({
           id: activeChatId,
@@ -208,7 +209,7 @@ ${prompt}
          * 异常且没有输出，则只更新 isActive 为 0
          */
         if (result.error && isBlank(result.content)) {
-          updateMessage({
+          await updateMessage({
             id: msg.id,
             isActive: 0,
           });
@@ -224,7 +225,7 @@ ${prompt}
             ...new Set(citedChunks.map((k: any) => k.fileId)),
           ];
           const citedFiles = files.filter((f) => citedFileIds.includes(f.id));
-          updateMessage({
+          await updateMessage({
             id: msg.id,
             reply: result.content,
             inputTokens,
@@ -247,7 +248,6 @@ ${prompt}
           });
         }
         updateStates($chatId, { loading: false, runningTool: null });
-        navigate(`/chats/${$chatId}`);
       };
       chatService.onComplete(onChatComplete);
       chatService.onReading((content: string) => {
