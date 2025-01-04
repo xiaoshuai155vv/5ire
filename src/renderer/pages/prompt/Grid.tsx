@@ -247,7 +247,7 @@ export default function Grid({
         getRowId={(item) => item.id}
         resizableColumns
         columnSizingOptions={{
-          name: {  minWidth: 200},
+          name: {  minWidth: 200, idealWidth:400,},
           updatedAt: { autoFitColumns: true, minWidth: 140, idealWidth: 160 },
           models: { autoFitColumns: true, minWidth: 140, idealWidth: 240 },
         }}
