@@ -164,7 +164,7 @@
   "Settings.Notification.RestoreFromCloudFailed": "Restoring your settings from cloud failed.",
   "Knowledge.Action.ManageFiles": "Manage files",
   "Common.LastUpdated": "Last Updated",
-  "Common.NumberOfFiles": "Number of files",
+  "Common.NumberOfFiles": "Files",
   "Knowledge.Notification.CitationNotFound": "The citation was not found and may have been deleted",
   "Knowledge.Notification.CollectionCreated": "Knowledge collection created",
   "Knowledge.Notification.CollectionUpdated": "Knowledge collection updated",
