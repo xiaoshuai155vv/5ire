@@ -1,4 +1,4 @@
-import { IMCPConfig } from "stores/useMCPStore";
+import { IMCPConfig } from 'stores/useMCPStore';
 
 export default {
   servers: [
@@ -109,6 +109,18 @@ export default {
       description:
         'A Node.js implementation of the Model Context Protocol (MCP) that provides secure shell command execution capabilities. This server allows AI models to execute shell commands in a controlled environment with built-in security measures.',
       args: ['-y', 'mcp-shell'],
+      isActive: false,
+    },
+    {
+      key: 'Slack',
+      command: 'npx',
+      description:
+        'MCP Server for the Slack API, enabling Claude to interact with Slack workspaces.',
+      args: ['-y', '@modelcontextprotocol/server-slack'],
+      env: {
+        SLACK_BOT_TOKEN: '<botToken:string:Your slack bot token>',
+        SLACK_TEAM_ID: '<teamId:string:Your slack team id>',
+      },
       isActive: false,
     },
     {
