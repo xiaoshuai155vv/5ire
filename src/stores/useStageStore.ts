@@ -1,7 +1,10 @@
+import Debug from 'debug';
 import { produce } from 'immer';
 import { IPrompt, IStage } from 'intellichat/types';
-import { isNull, isUndefined, pickBy } from 'lodash';
+import { isNull, isUndefined } from 'lodash';
 import { create } from 'zustand';
+
+const debug = Debug('5ire:stores:useStageStore');
 
 export interface IStageStore {
   prompts: { [key: string]: IPrompt | null };
@@ -10,6 +13,7 @@ export interface IStageStore {
   getInput: (chatId: string) => string;
   editStage: (chatId: string, stage: Partial<IStage>) => void;
   deleteStage: (chatId: string) => void;
+  restoreStage: () => Promise<void>;
 }
 
 const useStageStore = create<IStageStore>((set, get) => ({
@@ -36,6 +40,8 @@ const useStageStore = create<IStageStore>((set, get) => ({
         }
       })
     );
+    const { prompts, inputs } = get();
+    window.electron.store.set('stage', JSON.stringify({ prompts, inputs }));
   },
   deleteStage: (chatId: string) => {
     set(
@@ -44,6 +50,29 @@ const useStageStore = create<IStageStore>((set, get) => ({
         delete state.inputs[chatId];
       })
     );
+    window.electron.store.set(
+      'stage',
+      JSON.stringify({
+        prompts: {},
+        inputs: {},
+      })
+    );
+  },
+  restoreStage: async () => {
+    const state = await window.electron.store.get('stage');
+    if (state) {
+      try {
+        const { prompts, inputs } = JSON.parse(state);
+        set(
+          produce((state: IStageStore): void => {
+            state.prompts = prompts;
+            state.inputs = inputs;
+          })
+        );
+      } catch (err) {
+        debug('🚩 Restore Stage Error:', err);
+      }
+    }
   },
 }));
 
