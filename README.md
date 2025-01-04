@@ -44,8 +44,8 @@ MCP is an open protocol that standardizes how applications provide context to LL
 
 With tools, you can access the file system, obtain system information, interact with databases, access remote data, and more, rather than just having a simple conversation.
 
-> [!NOTE]  
-> Support for MCP Servers is still in its early stages, some tools perform abnormally on Windows, and some models may fail to call tools.
+> [!TIP]
+> 5ire is currently in the early stage, so custom MCP Servers are not open yet. However, you can add servers by modifying the `{userData}/5ire/mcp.json` configuration file (It should be  `~/Library/Application Support/5ire/mcp.json` on Mac). If there's any error, just delete the file, and 5ire will reset automatically. Feel free to explore!
 
 ### 2.Local Knowledge Base
 We have integrated the bge-m3 as our local embedding model, which excels in multilingual vectorization. 5ire now supports parsing and vectorization of docx, xlsx, pptx, pdf, txt, and csv documents, enabling storage of these vectors to power robust Retrieval-Augmented Generation (RAG) capabilities locally.
