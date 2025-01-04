@@ -263,11 +263,6 @@ export default function Grid({ collections }: { collections: any[] }) {
         className="w-full"
         getRowId={(item) => item.id}
         resizableColumns
-        columnSizingOptions={{
-          name: {  minWidth: 260, idealWidth: 400 },
-          updatedAt: { autoFitColumns: true, minWidth: 160, idealWidth: 160 },
-          numOfFiles: { autoFitColumns: true, minWidth: 70, idealWidth: 70 },
-        }}
       >
         <DataGridHeader style={{ paddingRight: scrollbarWidth }}>
           <DataGridRow>
