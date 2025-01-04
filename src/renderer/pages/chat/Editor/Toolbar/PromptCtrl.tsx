@@ -57,7 +57,9 @@ export default function PromptCtrl({
   const prompts = useMemo(() => {
     return allPrompts.filter((prompt) => {
       if (keyword && keyword.trim() !== '') {
-        return prompt.name.indexOf(keyword.trim()) >= 0;
+        return (
+          prompt.name.toLowerCase().indexOf(keyword.trim().toLowerCase()) >= 0
+        );
       }
       return true;
     });
