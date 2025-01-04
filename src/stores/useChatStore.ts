@@ -48,7 +48,9 @@ export interface IChatStore {
   // message
   createMessage: (message: Partial<IChatMessage>) => Promise<IChatMessage>;
   appendReply: (chatId: string, reply: string) => string;
-  updateMessage: (message: { id: string } & Partial<IChatMessage>) => void;
+  updateMessage: (
+    message: { id: string } & Partial<IChatMessage>
+  ) => Promise<boolean>;
   bookmarkMessage: (id: string, bookmarkId: string | null) => void;
   deleteMessage: (id: string) => Promise<boolean>;
   getCurState: () => { loading: boolean; runningTool: string };
@@ -397,7 +399,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
           }
         })
       );
-      debug('Update message ', msg);
+      debug('Update message ', JSON.stringify(msg));
       return true;
     }
     return false;
@@ -419,12 +421,14 @@ const useChatStore = create<IChatStore>((set, get) => ({
     if (!ok) {
       throw new Error('Delete message failed');
     }
-    const { messages } = get();
-    const index = messages.findIndex((msg) => msg.id === id);
-    if (index > -1) {
-      debug(`remove msg(${id}) from index: ${index})`);
-      messages.splice(index, 1);
-      set({ messages: [...messages] });
+    const messages = [...get().messages];
+    if (messages && messages.length) {
+      const index = messages.findIndex((msg) => msg.id === id);
+      if (index > -1) {
+        debug(`remove msg(${id}) from index: ${index})`);
+        messages.splice(index, 1);
+        set({ messages: [...messages] });
+      }
     }
     return true;
   },
