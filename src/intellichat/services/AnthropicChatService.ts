@@ -42,7 +42,7 @@ export default class AnthropicChatService
             type: 'tool_use',
             id: tool.id,
             name: tool.name,
-            input: tool.args,
+            input: tool.args ?? {},
           },
         ],
       },
@@ -137,10 +137,18 @@ export default class AnthropicChatService
       } else if (msg.role === 'assistant' && msg.tool_calls) {
         result.push(msg);
       } else {
-        result.push({
-          role: 'user',
-          content: await this.convertPromptContent(msg.content as string),
-        });
+        const content = msg.content;
+        if (typeof content === 'string') {
+          result.push({
+            role: msg.role,
+            content: await this.convertPromptContent(content),
+          });
+        } else {
+          result.push({
+            role: msg.role,
+            content,
+          });
+        }
       }
     }
     return result as IChatRequestMessage[];

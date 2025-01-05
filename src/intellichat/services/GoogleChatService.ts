@@ -177,12 +177,17 @@ export default class GoogleChatService
       });
     }
     for (const msg of messages) {
-      result.push({
-        role: msg.role,
-        parts: msg.content
-          ? await this.convertPromptContent(msg.content as string)
-          : msg.parts,
-      });
+      if (typeof msg.content === 'string') {
+        result.push({
+          role: msg.role,
+          parts: await this.convertPromptContent(msg.content),
+        });
+      } else {
+        result.push({
+          role: msg.role,
+          parts: msg.parts,
+        });
+      }
     }
     return result;
   }
