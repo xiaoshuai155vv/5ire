@@ -66,7 +66,7 @@ export default abstract class BaseReader implements IChatReader {
         content: chunk,
         toolCalls: [],
         inputTokens: 0,
-        outputTokens: chunk.length, // Rough estimate
+        outputTokens: chunk.length / 4, // Rough estimate
       };
     }
   }
@@ -75,12 +75,84 @@ export default abstract class BaseReader implements IChatReader {
    * Process a chunk of data and determine if it completes a message.
    * Base implementation treats each chunk as a complete message.
    * Override this method for streaming or multi-part messages.
+   *
+   * Different providers have different streaming formats:
+   * - Anthropic: Each chunk is a complete JSON message with different types
+   * - OpenAI: Each chunk is a complete JSON message with choices[0].delta
+   * - Fire: Raw text chunks that don't need JSON parsing
+   *
+   * Some providers may split JSON messages across chunks, requiring combination
+   * before parsing. Override shouldCombineChunks() and getCombinedChunk() to
+   * implement custom combining logic.
+   *
+   * @param chunk The current chunk of data to process
+   * @returns A complete message if one is ready, null otherwise
    */
   protected processChunk(chunk: string): IChatResponseMessage | null {
     if (!chunk || chunk.trim() === '') {
       return null;
     }
+
+    // Default implementation treats each chunk as a complete message
+    // Subclasses should override this to handle their specific streaming format
     return this.parseReply(chunk);
+  }
+
+  /**
+   * Determine if chunks should be combined before parsing.
+   * Base implementation returns false.
+   * Override this to enable chunk combining for providers that split messages.
+   */
+  private incompleteChunks: string[] = [];
+
+  /**
+   * Check if a chunk can be parsed as valid JSON.
+   * Returns true if parsing fails, indicating chunks need to be combined.
+   *
+   * @param chunk The chunk to check
+   */
+  protected shouldCombineChunks(chunk: string): boolean {
+    try {
+      JSON.parse(chunk);
+      return false;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  /**
+   * Combine chunks until we have valid JSON or reach max attempts.
+   * Returns the combined chunk and whether it forms valid JSON.
+   *
+   * @param chunk Current chunk to process
+   */
+  protected getCombinedChunk(chunk: string): {
+    combinedChunk: string;
+    isComplete: boolean;
+  } {
+    this.incompleteChunks.push(chunk);
+    
+    // Keep only last 5 chunks
+    if (this.incompleteChunks.length > 5) {
+      this.incompleteChunks = this.incompleteChunks.slice(-5);
+    }
+
+    const combined = this.incompleteChunks.join('');
+    
+    try {
+      JSON.parse(combined);
+      // Clear chunks if we successfully parsed
+      this.incompleteChunks = [];
+      return {
+        combinedChunk: combined,
+        isComplete: true
+      };
+    } catch (e) {
+      return {
+        combinedChunk: combined,
+        isComplete: false
+      };
+    }
   }
 
   public async read({
@@ -161,10 +233,18 @@ export default abstract class BaseReader implements IChatReader {
             break;
           }
 
-          // Let the child class process the chunk and determine if it completes a message
-          const completeMessage = this.processChunk(chunk);
-          if (completeMessage) {
-            await this.processResponse(completeMessage, state, callbacks);
+          // Handle chunk combining if needed
+          const shouldCombine = this.shouldCombineChunks(chunk);
+          const { combinedChunk, isComplete } = shouldCombine
+            ? this.getCombinedChunk(chunk)
+            : { combinedChunk: chunk, isComplete: true };
+
+          // Only process the chunk if we have a complete message
+          if (isComplete) {
+            const completeMessage = this.processChunk(combinedChunk);
+            if (completeMessage) {
+              await this.processResponse(completeMessage, state, callbacks);
+            }
           }
         }
       }
