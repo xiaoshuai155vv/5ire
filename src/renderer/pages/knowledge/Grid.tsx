@@ -262,7 +262,6 @@ export default function Grid({ collections }: { collections: any[] }) {
         size="small"
         className="w-full"
         getRowId={(item) => item.id}
-        resizableColumns
       >
         <DataGridHeader style={{ paddingRight: scrollbarWidth }}>
           <DataGridRow>
