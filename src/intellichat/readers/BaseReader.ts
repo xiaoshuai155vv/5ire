@@ -254,7 +254,7 @@ export default abstract class BaseReader implements IChatReader {
   private splitIntoLines(value: string): string[] {
     return value
       .split('\n')
-      .filter(line => line.includes('data:'))
+      .filter(line => !line.includes('event:'))
       .map(line => line.trim())
       .filter(line => line !== '');
   }

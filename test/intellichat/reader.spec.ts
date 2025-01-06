@@ -100,13 +100,16 @@ describe('intellichat/readers/OpenAIReader', () => {
 });
 
 const anthropicResponse = `data: {"type": "message_start", "message": {"id": "msg_1nZdL29xx5MUA1yADyHTEsnR8uuvGzszyY", "type": "message", "role": "assist
-ant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "stop_sequence": null, "usage": {"input_tokens": 25, "output_tokens": 1}}}
+data: ant", "content": [], "model": "claude-3-5-sonnet-20241022", "stop_reason": null, "stop_sequence": null, "usage": {"input_tokens": 25, "output_tokens": 1}}}
 data: {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}}data: {"type": "ping"}
 data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "He
-llo"}}data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
+data: llo"}}data: {"type": "content_block_delta", "index": 0, "delta": {"type": "text_delta", "text": "!"}}
 data: {"type": "content_block_stop", "index": 0}
 data: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "stop_se
-quence":null}, "usage": {"output_tokens": 15}}data: {"type": "message_stop"}`;
+event: ping
+data: {"type":"ping"}
+data: quence":null}, "usage": {"output_tokens": 15}}
+data: {"type": "message_stop"}`;
 
 const anthropicResponseTools = `data: {"type":"message_start","message":{"id":"msg_014p7gG3wDgGV9EUtLvnow3U","type":"message","role":"assistant","model":"claude-3-haiku-20240307","stop_sequence":null,"usage":{"input_tokens":472,"output_tokens":2},"content":[],"stop_reason":null}}
 data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
@@ -114,8 +117,8 @@ data: {"type": "ping"}
 data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Okay"}}
 data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":","}}
 data: {"type":"cont
-ent_block_delta","index":0,"del
-ta":{"type":"text_delta","text":" let"}}
+data: ent_block_delta","index":0,"del
+data: ta":{"type":"text_delta","text":" let"}}
 data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"'s"}}
 data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" check"}}
 data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the"}}
@@ -123,24 +126,25 @@ data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text
 data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" San"}}
 data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Francisco"}}
 data: {"type":"content_block_delta","inde
-x":0,"delta":{"type":"text_delta","text":","}}data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" CA"}}
+data: x":0,"delta":{"type":"text_delta","text":","}}data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" CA"}}
 data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":":"}}
 data: {"type":"content_block_stop","index":0}
 data: {"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01T1x1fJ34qAmk2tNTrN7Up6","name":"get_weather","input":{}}}
 data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}}
 data: {"type":"content_block_delta","index":1,"delta":{"type":"input_
-json_delta","partial_json":"{\\"location\\":"}}
+data: json_delta","partial_json":"{\\"location\\":"}}
 data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" \\"San"}}
 data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" Francisc"}}
 data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"o,"}}
 data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","par
-tial_json":" CA\\""}}data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", "}}
+data: tial_json":" CA\\""}}data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", "}}
 data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\\"unit\\": \\"fah"}}
 data: {"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partia
-l_json":"renheit\\"}"}}
+data: l_json":"renheit\\"}"}}
 data: {"type":"content_block_stop","index":1}
 data: {"type":"message_delta","delta":{"stop_reason":"tool_use","stop_se
-quence":null},"usage":{"output_tokens":89}}data: {"type":"message_stop"}`;
+data: quence":null},"usage":{"output_tokens":89}}
+data: {"type":"message_stop"}`;
 
 describe('intellichat/readers/AnthropicReader', () => {
   test('read ', async () => {

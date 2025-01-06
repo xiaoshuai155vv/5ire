@@ -41,7 +41,7 @@ export default class FireReader extends BaseReader implements IChatReader {
     try {
       while (!done) {
         /* eslint-disable no-await-in-loop */
-        const data = await this.reader.read();
+        const data = await this.streamReader.read();
         done = data.done || false;
         const value = decoder.decode(data.value);
         const chunks = value
