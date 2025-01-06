@@ -4,6 +4,12 @@
   </a>
   <br />
    <h1>A Well-Designed AI assistant and MCP Client</h1>
+   <div>
+    <img src="https://badge.mcpx.dev/?type=client" />&nbsp;
+    <img src="https://badge.mcpx.dev/?type=client&features=tools" />
+     <img src="https://img.shields.io/badge/license-GNUv3-brightgreen.svg?style=flat"/>
+     <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"/>
+  </div>
    <br />
   <img src="https://github.com/user-attachments/assets/36ba3c32-6ebb-46d8-810f-df648243fbcc" style="width:100%"/>
   <br />
@@ -32,10 +38,6 @@
 <br />
 
 # Features
- <div>
-    <img src="https://badge.mcpx.dev/?type=client" />&nbsp;
-    <img src="https://badge.mcpx.dev/?type=client&features=tools" />
-  </div>
 
 ## ⚒️ Support Tools via MCP Servers
 MCP is an open protocol that standardizes how applications provide context to LLMs. Think of MCP like a USB-C port for AI applications. Just as USB-C provides a standardized way to connect your devices to various peripherals and accessories, MCP provides a standardized way to connect AI models to different data sources and tools.
