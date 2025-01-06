@@ -6,6 +6,15 @@ import { ITool } from './IChatReader';
 const debug = Debug('5ire:intellichat:AnthropicReader');
 
 export default class AnthropicReader extends BaseReader {
+  protected processChunk(chunk: string): IChatResponseMessage | null {
+    try {
+      // Each chunk is a complete JSON message in Anthropic's format
+      return this.parseReply(chunk);
+    } catch (error) {
+      debug('Failed to process chunk:', error);
+      return null;
+    }
+  }
 
   protected parseReply(chunk: string): IChatResponseMessage {
     const data = JSON.parse(chunk);
@@ -67,6 +76,11 @@ export default class AnthropicReader extends BaseReader {
           type: data.delta.type,
           message: data.delta.text,
         },
+      };
+    } else if (data.type === 'ping') {
+      return {
+        content: '',
+        isEnd: false,
       };
     } else {
       console.warn('Unknown message type', data);
