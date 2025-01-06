@@ -3,7 +3,7 @@
     <img src="https://5ire.app/logo.png" alt="Logo" width="120">
   </a>
   <br />
-   <h1>A Well-Designed AI assistant and MCP Client</h1>
+   <h1>A Sleek AI assistant and MCP Client</h1>
    <div>
     <img src="https://badge.mcpx.dev/?type=client" />&nbsp;
     <img src="https://badge.mcpx.dev/?type=client&features=tools" />
