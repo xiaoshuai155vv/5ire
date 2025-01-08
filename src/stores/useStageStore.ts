@@ -1,10 +1,22 @@
+import { tempChatId } from 'consts';
 import Debug from 'debug';
 import { produce } from 'immer';
 import { IPrompt, IStage } from 'intellichat/types';
-import { isNull, isUndefined } from 'lodash';
+import { isNull, isPlainObject, isUndefined } from 'lodash';
 import { create } from 'zustand';
 
 const debug = Debug('5ire:stores:useStageStore');
+
+const defaultStage = {
+  prompts: {},
+  inputs: { },
+};
+let stage = window.electron.store.get('stage', defaultStage);
+if (!isPlainObject(stage)) {
+  stage = defaultStage;
+}
+
+debug('stage', typeof stage);
 
 export interface IStageStore {
   prompts: { [key: string]: IPrompt | null };
@@ -13,12 +25,11 @@ export interface IStageStore {
   getInput: (chatId: string) => string;
   editStage: (chatId: string, stage: Partial<IStage>) => void;
   deleteStage: (chatId: string) => void;
-  restoreStage: () => Promise<void>;
 }
 
 const useStageStore = create<IStageStore>((set, get) => ({
-  prompts: {},
-  inputs: {},
+  prompts: stage.prompts,
+  inputs: stage.inputs,
   getPrompt: (chatId: string) => {
     return get().prompts[chatId];
   },
@@ -41,7 +52,7 @@ const useStageStore = create<IStageStore>((set, get) => ({
       })
     );
     const { prompts, inputs } = get();
-    window.electron.store.set('stage', JSON.stringify({ prompts, inputs }));
+    window.electron.store.set('stage', { prompts, inputs });
   },
   deleteStage: (chatId: string) => {
     set(
@@ -50,29 +61,10 @@ const useStageStore = create<IStageStore>((set, get) => ({
         delete state.inputs[chatId];
       })
     );
-    window.electron.store.set(
-      'stage',
-      JSON.stringify({
-        prompts: {},
-        inputs: {},
-      })
-    );
-  },
-  restoreStage: async () => {
-    const state = await window.electron.store.get('stage');
-    if (state) {
-      try {
-        const { prompts, inputs } = JSON.parse(state);
-        set(
-          produce((state: IStageStore): void => {
-            state.prompts = prompts;
-            state.inputs = inputs;
-          })
-        );
-      } catch (err) {
-        debug('🚩 Restore Stage Error:', err);
-      }
-    }
+    window.electron.store.set('stage', {
+      prompts: {},
+      inputs: {},
+    });
   },
 }));
 

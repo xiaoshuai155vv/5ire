@@ -103,7 +103,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
   },
   initChat: (chat: Partial<IChat>) => {
     const { api } = useSettingsStore.getState();
-    const { restoreStage, editStage } = useStageStore.getState();
+    const { editStage } = useStageStore.getState();
     const $chat = {
       model: api.model,
       temperature: getProvider(api.provider).chat.temperature.default,
@@ -112,7 +112,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
       ...chat,
       id: tempChatId,
     } as IChat;
-    restoreStage().then(() => editStage($chat.id, { input: '', prompt: null }));
+    editStage($chat.id, { input: '', prompt: null });
     debug('Init a chat', $chat);
     set({ chat: $chat, messages: [] });
     return $chat;
