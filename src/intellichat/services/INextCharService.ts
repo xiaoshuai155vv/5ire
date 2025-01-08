@@ -11,6 +11,7 @@ export default interface INextChatService {
     secret?:string; // baidu
     deploymentId?:string; // azure
   };
+  modelMapping: Record<string, string>;
   chat(message:IChatRequestMessage[]):void;
   abort():void;
   isReady(): boolean;

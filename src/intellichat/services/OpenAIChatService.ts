@@ -163,7 +163,7 @@ export default class OpenAIChatService
   ): Promise<IChatRequestPayload> {
     const model = this.context.getModel();
     const payload: IChatRequestPayload = {
-      model: model.name,
+      model: this.getModelName(),
       messages: await this.makeMessages(message),
       temperature: this.context.getTemperature(),
       stream: true,

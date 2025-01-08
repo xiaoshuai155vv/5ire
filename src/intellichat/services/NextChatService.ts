@@ -21,6 +21,7 @@ export default abstract class NextCharService {
   abortController: AbortController;
   context: IChatContext;
   provider: IServiceProvider;
+  modelMapping: Record<string, string>;
   apiSettings: {
     base: string;
     key: string;
@@ -47,6 +48,7 @@ export default abstract class NextCharService {
     provider: IServiceProvider;
   }) {
     this.apiSettings = useSettingsStore.getState().api;
+    this.modelMapping = useSettingsStore.getState().modelMapping;
     this.provider = provider;
     this.context = context;
     this.abortController = new AbortController();
@@ -84,6 +86,11 @@ export default abstract class NextCharService {
   protected abstract makeRequest(
     messages: IChatRequestMessage[]
   ): Promise<Response>;
+
+  protected getModelName() {
+    const model = this.context.getModel();
+    return this.modelMapping[model.name] || model.name;
+  }
 
   public onComplete(callback: (result: any) => Promise<void>) {
     this.onCompleteCallback = callback;

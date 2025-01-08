@@ -28,7 +28,7 @@ export default class ChatBroChatService
     messages: IChatRequestMessage[]
   ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
-      model: this.context.getModel().name,
+      model: this.getModelName(),
       messages: await this.makeMessages(messages),
       temperature: this.context.getTemperature(),
       stream: true,

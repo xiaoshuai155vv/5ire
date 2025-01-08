@@ -159,7 +159,7 @@ export default class AnthropicChatService
   ): Promise<IChatRequestPayload> {
     const model = this.context.getModel();
     const payload: IChatRequestPayload = {
-      model: model.name,
+      model: this.getModelName(),
       messages: await this.makeMessages(messages),
       temperature: this.context.getTemperature(),
       stream: true,

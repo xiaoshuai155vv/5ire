@@ -33,6 +33,7 @@ export default function ModelCtrl({
 }) {
   const { t } = useTranslation();
   const api = useSettingsStore((state) => state.api);
+  const modelMapping = useSettingsStore((state) => state.modelMapping);
   const session = useAuthStore((state) => state.session);
   const { getProvider, getChatModels } = useProvider();
   const [providerName, setProviderName] = useState<ProviderType>(api.provider);
@@ -96,6 +97,11 @@ export default function ModelCtrl({
                 {activeModel.label}
               </span>
             )}
+            {modelMapping[activeModel.label || ''] && (
+              <span className="text-gray-300 dark:text-gray-600">
+                ‣{modelMapping[activeModel.label || '']}
+              </span>
+            )}
           </div>
         </Button>
       </MenuTrigger>
@@ -110,6 +116,11 @@ export default function ModelCtrl({
               <div className="flex justify-start items-baseline gap-1">
                 <ToolStatusIndicator enabled={activeModel.toolEnabled} />
                 <span className="latin">{item.label}</span>
+                {modelMapping[item.label || ''] && (
+                  <span className="text-gray-300 dark:text-gray-600 -ml-1">
+                    ‣{modelMapping[item.label || '']}
+                  </span>
+                )}
               </div>
             </MenuItemRadio>
           ))}
@@ -125,6 +136,11 @@ export default function ModelCtrl({
         <span className="latin">
           {api.provider} / {activeModel.label}
         </span>
+        {modelMapping[activeModel.label || ''] && (
+          <span className="text-gray-300 dark:text-gray-600 -ml-1">
+            ‣{modelMapping[activeModel.label || '']}
+          </span>
+        )}
       </span>
     </Text>
   );

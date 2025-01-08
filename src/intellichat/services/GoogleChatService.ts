@@ -239,13 +239,8 @@ export default class GoogleChatService
       )}\r\n`
     );
     const { base, key } = this.apiSettings;
-    /**
-     * 特殊处理，因为如果选用vision模型，但内容中没有图片会出现异常
-     * 所以如果选用 vision 模型，但没有提供图片内容，则调用 gemini-pro
-     */
-    const model = this.context.getModel().name;
     const response = await fetch(
-      `${base}/v1beta/models/${model}:${
+      `${base}/v1beta/models/${this.getModelName()}:${
         isStream ? 'streamGenerateContent' : 'generateContent'
       }?key=${key}`,
       {
