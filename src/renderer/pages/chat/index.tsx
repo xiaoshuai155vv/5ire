@@ -26,6 +26,7 @@ import CitationDialog from './CitationDialog';
 import { ICollectionFile } from 'types/knowledge';
 import { extractCitationIds } from 'utils/util';
 import INextChatService from 'intellichat/services/INextCharService';
+import useSettingsStore from 'stores/useSettingsStore';
 
 const debug = Debug('5ire:pages:chat');
 
@@ -51,7 +52,7 @@ export default function Chat() {
   const getChat = useChatStore((state) => state.getChat);
   const updateChat = useChatStore((state) => state.updateChat);
   const updateStates = useChatStore((state) => state.updateStates);
-
+  const modelMapping = useSettingsStore((state) => state.modelMapping);
   const [chatService] = useState<INextChatService>(useChatService());
 
   const { notifyError } = useToast();
@@ -195,7 +196,7 @@ ${prompt}
         prompt,
         reply: '',
         chatId: $chatId,
-        model: model.label,
+        model: modelMapping[model.label || ''] || model.label,
         temperature: chatService.context.getTemperature(),
         maxTokens: chatService.context.getMaxTokens(),
         isActive: 1,
@@ -242,7 +243,7 @@ ${prompt}
           });
           useUsageStore.getState().create({
             provider: chatService.provider.name,
-            model: model.label,
+            model: modelMapping[model.label || ''] || model.label,
             inputTokens,
             outputTokens,
           });
