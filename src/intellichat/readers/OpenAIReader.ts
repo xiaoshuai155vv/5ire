@@ -16,7 +16,7 @@ export default class OpenAIReader extends BaseReader implements IChatReader {
   }
 
   protected parseTools(respMsg: IChatResponseMessage): ITool | null {
-    if (respMsg.toolCalls) {
+    if (respMsg.toolCalls && respMsg.toolCalls.length > 0) {
       return {
         id: respMsg.toolCalls[0].id,
         name: respMsg.toolCalls[0].function.name,
