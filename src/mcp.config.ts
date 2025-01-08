@@ -57,6 +57,21 @@ export default {
       isActive: false,
     },
     {
+      key: 'MySQL',
+      command: 'npx',
+      description:
+        'An MCP server gives LLMs read - only access to MySQL databases for schema inspection and query execution.',
+      args: ['-y', '@benborla29/mcp-server-mysql'],
+      env: {
+        MYSQL_HOST: '<host:string:database host>',
+        MYSQL_PORT: '<port:string:database port>',
+        MYSQL_USER: '<user:string:database user>',
+        MYSQL_PASS: '<pass:string:database password>',
+        MYSQL_DB: '<db:string:database name>',
+      },
+      isActive: false,
+    },
+    {
       key: 'Obsidian',
       command: 'npx',
       description:
