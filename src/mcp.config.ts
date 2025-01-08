@@ -40,7 +40,7 @@ export default {
       key: 'Git',
       command: 'uvx',
       description:
-        'A Model Context Protocol (MCP) server implementation that provides database interaction and business intelligence capabilities through SQLite. This server enables running SQL queries, analyzing business data, and automatically generating business insight memos.',
+        'Tools to read, search, and manipulate Git repositories',
       args: [
         'mcp-server-git',
         '--repository',
@@ -60,7 +60,7 @@ export default {
       key: 'Obsidian',
       command: 'npx',
       description:
-        'This is a connector to allow Claude Desktop (or any MCP client) to read and search any directory containing Markdown notes (such as an Obsidian vault).',
+        'Read and search through your Obsidian vault or any directory containing Markdown notes.',
       args: [
         '-y',
         'mcp-obsidian',
@@ -72,7 +72,7 @@ export default {
       key: 'Postgres',
       command: 'npx',
       description:
-        'A Model Context Protocol server that provides read-only access to PostgreSQL databases. This server enables LLMs to inspect database schemas and execute read-only queries.',
+        'Read-only database access with schema inspection.',
       args: [
         '-y',
         '@modelcontextprotocol/server-postgres',
@@ -84,7 +84,7 @@ export default {
       key: 'Linear',
       command: 'npx',
       description:
-        "This server provides integration with Linear's issue tracking system through MCP, allowing LLMs to interact with Linear issues.",
+        "This server allowing LLMs to interact with Linear issues.",
       args: ['-y', 'mcp-linear'],
       env: {
         LINEAR_API_KEY: '<apiKey:string:Get the api key from linear.app>',
@@ -107,7 +107,7 @@ export default {
       key: 'Shell',
       command: 'npx',
       description:
-        'A Node.js implementation of the Model Context Protocol (MCP) that provides secure shell command execution capabilities. This server allows AI models to execute shell commands in a controlled environment with built-in security measures.',
+        'A Node.js MCP implementation enables secure shell command execution for AI models.',
       args: ['-y', 'mcp-shell'],
       isActive: false,
     },
@@ -127,7 +127,7 @@ export default {
       key: 'Sqlite',
       command: 'uvx',
       description:
-        'A Model Context Protocol (MCP) server implementation that provides database interaction and business intelligence capabilities through SQLite. This server enables running SQL queries, analyzing business data, and automatically generating business insight memos.',
+        'An MCP server using SQLite allows SQL querying, business data analysis, and automatic memo generation.',
       args: [
         'mcp-server-sqlite',
         '--db-path',
@@ -147,10 +147,10 @@ export default {
       isActive: false,
     },
     {
-      key: 'Sequential Thinking',
+      key: 'SequentialThinking',
       command: 'npx',
       description:
-        'An MCP server implementation that provides a tool for dynamic and reflective problem-solving through a structured thinking process.',
+        'An MCP server tool for dynamic problem-solving with structured thinking.',
       args: ['-y', '@modelcontextprotocol/server-sequential-thinking'],
       isActive: false,
     },

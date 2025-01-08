@@ -10,7 +10,6 @@ export default class GoogleReader extends BaseReader {
   protected parseReply(chunk: string): IChatResponseMessage {
     let _chunk = chunk.trim();
     try {
-      // TODO: tool use
       const data = JSON.parse(_chunk);
       if (data.candidates) {
         const firstCandidate = data.candidates[0];
