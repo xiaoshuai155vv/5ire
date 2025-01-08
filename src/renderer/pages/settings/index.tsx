@@ -77,7 +77,7 @@ export default function Settings() {
         }
       } catch (error) {
         debug(error);
-        captureException(error);
+        captureException(error as Error);
       }
     })();
   }, [user, updated]);
