@@ -20,4 +20,9 @@ export interface ISettings {
       [key: string]: IAPISettings;
     };
   };
+  modelMapping: IModelMapping;
+}
+
+export interface IModelMapping {
+  [key: string]: string;
 }

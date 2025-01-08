@@ -206,5 +206,10 @@
   "MCP.EditParamsTip": "Parameters cannot be modified directly once set, but can be reset by disabling and re-enabling the server",
   "MCP.ServerActivationFailed": "Failed to activate server",
   "MCP.ParameterDescription": "Incorrect parameters will cause the tool to execute abnormally.",
-  "Tools.PrerequisiteDescription": "Before enabling the tool, please install Python and Node.js runtime environments on your local machine, and ensure that the npx and uvx commands can be executed normally (you may need to manually set environment variables on Windows systems)."
+  "Tools.PrerequisiteDescription": "Before enabling the tool, please install Python and Node.js runtime environments on your local machine, and ensure that the npx and uvx commands can be executed normally (you may need to manually set environment variables on Windows systems).",
+  "settings.modelMapping": "Model Mapping",
+  "settings.modelMappingDescription": "The purpose of model mapping is to map models to their corresponding names when a request is made. The configuration uses JSON, where the key is the original model name and the value is the mapped model name.",
+  "Common.SaveFailed": "Save failed",
+  "Common.InvalidJson": "Incorrect JSON format.",
+  "settings.modelMappingSaved": "Model Mapping Saved."
 }

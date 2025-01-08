@@ -206,5 +206,10 @@
   "Tool.Supported": "支持 Tools",
   "Tool.NotSupported": "不支持 Tools",
   "MCP.ParameterDescription": "错误的参数会导致工具执行异常",
-  "Tools.PrerequisiteDescription": "在启用工具前，请在本机安装 python 和 node 运行环境, 并确保 npx 和 uvx 命令能正常执行 (Windows 系统可能需要手动设置环境变量）"
+  "Tools.PrerequisiteDescription": "在启用工具前，请在本机安装 python 和 node 运行环境, 并确保 npx 和 uvx 命令能正常执行 (Windows 系统可能需要手动设置环境变量）",
+  "settings.modelMapping": "模型映射",
+  "settings.modelMappingDescription": "模型映射的作用是在请求时将模型映射为对应名称。配置采用的 JSON, key 为原模型名称，value是映射后模型名称。",
+  "Common.SaveFailed": "保存失败",
+  "Common.InvalidJson": "错误的 JSON 格式",
+  "settings.modelMappingSaved": "模型映射已保存。"
 }

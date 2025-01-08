@@ -1,7 +1,8 @@
+import { IModelMapping } from './../types/settings.d';
 /* eslint-disable no-console */
 import Debug from 'debug';
 import { create } from 'zustand';
-import { isNil, isNull, pick } from 'lodash';
+import { isNil, pick } from 'lodash';
 
 import { ThemeType } from '../types/appearance';
 import { IAPISettings, ISettings } from '../types/settings';
@@ -18,11 +19,15 @@ const defaultAPI: IAPISettings = {
   model: '',
 };
 
+const defualtModelMapping: IModelMapping = {};
+
 export interface ISettingStore {
   theme: ThemeType;
   api: IAPISettings;
+  modelMapping: IModelMapping;
   setTheme: (theme: ThemeType) => void;
   setAPI: (api: Partial<IAPISettings>) => void;
+  setModelMapping: (modelMapping: IModelMapping) => void;
 }
 
 const settings = window.electron.store.get('settings', {}) as ISettings;
@@ -31,10 +36,15 @@ if (settings.api?.activeProvider) {
   apiSettings =
     settings.api.providers[settings.api.activeProvider] || defaultAPI;
 }
+let modelMappingSettings = defualtModelMapping;
+if (settings.modelMapping) {
+  modelMappingSettings = settings.modelMapping;
+}
 
 const useSettingsStore = create<ISettingStore>((set, get) => ({
   theme: settings?.theme || defaultTheme,
   api: apiSettings,
+  modelMapping: modelMappingSettings,
   setTheme: async (theme: ThemeType) => {
     set({ theme });
     window.electron.store.set('settings.theme', theme);
@@ -45,7 +55,7 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
       const base = isNil(api.base) ? state.api.base : api.base;
       const key = isNil(api.key) ? state.api.key : api.key;
       const secret = isNil(api.secret) ? state.api.secret : api.secret;
-      const model = isNil(api.model) ? state.api.model: api.model;
+      const model = isNil(api.model) ? state.api.model : api.model;
       const deploymentId = isNil(api.deploymentId)
         ? state.api.deploymentId
         : api.deploymentId;
@@ -65,6 +75,11 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
       );
       return { api: newAPI };
     });
+  },
+  setModelMapping: (modelMapping: IModelMapping) => {
+    set({ modelMapping });
+    console.log(modelMapping);
+    window.electron.store.set('settings.modelMapping', modelMapping);
   },
 }));
 

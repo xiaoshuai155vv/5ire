@@ -15,6 +15,7 @@ import MaskableInput from 'renderer/components/MaskableInput';
 import useProvider from 'hooks/useProvider';
 import useAuthStore from 'stores/useAuthStore';
 import TooltipIcon from 'renderer/components/TooltipIcon';
+import ModelMappingButton from './ModelMappingButton';
 
 export default function APISettings() {
   const { t } = useTranslation();
@@ -194,6 +195,7 @@ export default function APISettings() {
             {provider.description}
           </div>
         )}
+        <ModelMappingButton />
       </div>
     </div>
   );
