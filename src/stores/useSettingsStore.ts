@@ -21,7 +21,7 @@ const defaultAPI: IAPISettings = {
   model: '',
 };
 
-const defualtModelMapping: IModelMapping = {};
+const defaultModelMapping: IModelMapping = {};
 
 export interface ISettingStore {
   theme: ThemeType;
@@ -40,7 +40,7 @@ if (settings.api?.activeProvider) {
   apiSettings =
     settings.api.providers[settings.api.activeProvider] || defaultAPI;
 }
-let modelMappingSettings = defualtModelMapping;
+let modelMappingSettings = defaultModelMapping;
 if (settings.modelMapping) {
   modelMappingSettings = settings.modelMapping;
 }
