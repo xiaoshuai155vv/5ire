@@ -121,6 +121,7 @@ export default function KnowledgeCtrl({
         <DialogTrigger disableButtonEnhancement>
           <Button
             size="small"
+            title="Mod+Shift+k"
             aria-label={t('Common.Knowledge')}
             className="justify-start text-color-secondary"
             style={{ padding: 1, minWidth: 20,borderColor: 'transparent', boxShadow: 'none' }}

@@ -97,6 +97,7 @@ export default function ModelCtrl({
           appearance="subtle"
           iconPosition="after"
           icon={<ChevronDown16Regular />}
+          title="Mod+Shift+m"
           onClick={openDialog}
           style={{borderColor: 'transparent', boxShadow: 'none',padding: 1}}
           className="text-color-secondary flex justify-start items-center"
