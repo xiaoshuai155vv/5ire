@@ -14,20 +14,31 @@ export default {
     topP: { min: 0, max: 1, default: 1 },
     temperature: { min: 0, max: 2, default: 1 },
     options: {
-      modelCustomizable: false,
+      modelCustomizable: true,
     },
     models: {
       'deepseek-chat': {
         name: 'deepseek-chat',
-        contextWindow: 128000,
-        maxTokens: 4096,
-        inputPrice: 0.0001,
-        outputPrice: 0.001,
+        contextWindow: 65536,
+        maxTokens: 8192,
+        inputPrice: 0.0006,
+        outputPrice: 0.002,
         isDefault: true,
-        description: ``,
+        description: `60 tokens/second, Enhanced capabilities，API compatibility intact`,
         toolEnabled: true,
         group: 'DeepSeek',
-      }
+      },
+      'deepseek-reasoner': {
+        name: 'deepseek-reasoner',
+        contextWindow: 65536,
+        maxTokens: 8192,
+        inputPrice: 0.003,
+        outputPrice: 0.016,
+        isDefault: true,
+        description: `Performance on par with OpenAI-o1`,
+        toolEnabled: false,
+        group: 'DeepSeek',
+      },
     },
   },
 } as IServiceProvider;
