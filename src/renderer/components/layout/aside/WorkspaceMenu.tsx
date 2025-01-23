@@ -74,7 +74,8 @@ export default function WorkspaceMenu({ collapsed }: { collapsed: boolean }) {
             <MenuButton
               icon={<FireIcon />}
               appearance="subtle"
-              className="w-full justify-start"
+              style={{borderColor: 'transparent', boxShadow: 'none'}}
+              className="w-full justify-start outline-none"
               onClick={() => setOpen(true)}
             >
               {collapsed ? null : t('Common.Workspace')}
