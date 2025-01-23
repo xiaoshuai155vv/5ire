@@ -83,7 +83,6 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
   },
   setModelMapping: (modelMapping: IModelMapping) => {
     set({ modelMapping });
-    console.log(modelMapping);
     window.electron.store.set('settings.modelMapping', modelMapping);
   },
   setLanguage: (language: 'en' | 'zh' | 'system') => {
