@@ -10,6 +10,7 @@ import {
   Input,
   DialogActions,
 } from '@fluentui/react-components';
+import Mousetrap from 'mousetrap';
 import {
   bundleIcon,
   Dismiss24Regular,
@@ -17,7 +18,7 @@ import {
   Prompt20Filled,
   Search20Regular,
 } from '@fluentui/react-icons';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePromptStore from 'stores/usePromptStore';
 import { fillVariables, highlight, insertAtCursor } from 'utils/util';
@@ -48,6 +49,21 @@ export default function PromptCtrl({
   const getPrompt = usePromptStore((state) => state.getPrompt);
   const stagePrompts = useStageStore((state) => state.prompts);
   const editStage = useStageStore((state) => state.editStage);
+
+  const openDialog = () => {
+    fetchPrompts({});
+    setOpen(true);
+    setTimeout(
+      () => document.querySelector<HTMLInputElement>('#prompt-search')?.focus(),
+      500
+    );
+    Mousetrap.bind('esc', closeDialog);
+  };
+
+  const closeDialog = () => {
+    setOpen(false);
+    Mousetrap.unbind('esc');
+  };
 
   const appliedPrompt = useMemo(
     () => stagePrompts[chat.id] || null,
@@ -137,6 +153,13 @@ export default function PromptCtrl({
     [pickedPrompt, editStage, chat.id]
   );
 
+  useEffect(() => {
+    Mousetrap.bind('mod+shift+p', openDialog);
+    return () => {
+      Mousetrap.unbind('mod+shift+p');
+    };
+  }, [open]);
+
   return (
     <>
       <Dialog open={open} onOpenChange={() => setPromptPickerOpen(false)}>
@@ -145,11 +168,9 @@ export default function PromptCtrl({
             size="small"
             aria-label={t('Common.Prompts')}
             appearance="subtle"
+            style={{borderColor: 'transparent', boxShadow: 'none'}}
             className="flex justify-start items-center text-color-secondary gap-1"
-            onClick={() => {
-              fetchPrompts({});
-              setOpen(true);
-            }}
+            onClick={openDialog}
             icon={<PromptIcon className="flex-shrink-0" />}
           >
             {appliedPrompt?.name && (
@@ -171,7 +192,7 @@ export default function PromptCtrl({
                   <Button
                     appearance="subtle"
                     aria-label="close"
-                    onClick={() => setOpen(false)}
+                    onClick={closeDialog}
                     icon={<Dismiss24Regular />}
                   />
                 </DialogTrigger>
@@ -184,7 +205,7 @@ export default function PromptCtrl({
                 <div>
                   <div className="mb-2.5">
                     <Input
-                      id="inchat-search"
+                      id="prompt-search"
                       contentBefore={<Search20Regular />}
                       placeholder={t('Common.Search')}
                       className="w-full"

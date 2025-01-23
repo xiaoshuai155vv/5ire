@@ -11,6 +11,7 @@ import {
   ComboboxProps,
   Divider,
 } from '@fluentui/react-components';
+import Mousetrap from 'mousetrap';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Debug from 'debug';
@@ -26,6 +27,7 @@ import {
 import { ICollection } from 'types/knowledge';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useChatKnowledgeStore from 'stores/useChatKnowledgeStore';
+import React from 'react';
 
 const debug = Debug('5ire:pages:chat:Editor:Toolbar:KnowledgeCtrl');
 
@@ -51,7 +53,28 @@ export default function KnowledgeCtrl({
     []
   );
 
+  const openDialog = () => {
+    listCollections().then(async (collections) => {
+      setCollections(collections);
+      const chatCollections = await listChatCollections(chat.id);
+      if (!chatCollections) return;
+      setSelectedCollections(chatCollections);
+      setSelectedCollectionIds(chatCollections.map((c) => c.id));
+      document
+        .querySelector<HTMLInputElement>('input[role="combobox"]')
+        ?.focus();
+    });
+    setOpen(true);
+    Mousetrap.bind('esc', closeDialog);
+  };
+
+  const closeDialog = () => {
+    setOpen(false);
+    Mousetrap.unbind('esc');
+  };
+
   useEffect(() => {
+    Mousetrap.bind('mod+shift+k', openDialog);
     listChatCollections(chat.id)
       .then((chatCollections) => {
         setSelectedCollections(chatCollections);
@@ -62,6 +85,9 @@ export default function KnowledgeCtrl({
         setSelectedCollections([]);
         debug(err);
       });
+    return () => {
+      Mousetrap.unbind('mod+shift+k');
+    };
   }, [chat.id]);
 
   const onCollectionSelect: ComboboxProps['onOptionSelect'] = async (
@@ -97,18 +123,9 @@ export default function KnowledgeCtrl({
             size="small"
             aria-label={t('Common.Knowledge')}
             className="justify-start text-color-secondary"
-            style={{ padding: 1, minWidth: 20 }}
+            style={{ padding: 1, minWidth: 20,borderColor: 'transparent', boxShadow: 'none' }}
             appearance="subtle"
-            onClick={() => {
-              listCollections().then(async (collections) => {
-                setCollections(collections);
-                const chatCollections = await listChatCollections(chat.id);
-                if (!chatCollections) return;
-                setSelectedCollections(chatCollections);
-                setSelectedCollectionIds(chatCollections.map((c) => c.id));
-              });
-              setOpen(true);
-            }}
+            onClick={openDialog}
             icon={<KnowledgeIcon />}
           >
             {selectedCollections.length > 0 && selectedCollections.length}
@@ -122,7 +139,7 @@ export default function KnowledgeCtrl({
                   <Button
                     appearance="subtle"
                     aria-label="close"
-                    onClick={() => setOpen(false)}
+                    onClick={closeDialog}
                     icon={<Dismiss24Regular />}
                   />
                 </DialogTrigger>

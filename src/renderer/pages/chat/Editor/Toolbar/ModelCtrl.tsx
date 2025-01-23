@@ -9,13 +9,10 @@ import {
   MenuTrigger,
   Text,
 } from '@fluentui/react-components';
-import {
-  ChevronDown16Regular,
-  Cube16Regular,
-  Wand16Regular,
-} from '@fluentui/react-icons';
+import { ChevronDown16Regular } from '@fluentui/react-icons';
+import Mousetrap from 'mousetrap';
 import { IChat, IChatContext } from 'intellichat/types';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useChatStore from 'stores/useChatStore';
 import useSettingsStore from 'stores/useSettingsStore';
@@ -32,6 +29,7 @@ export default function ModelCtrl({
   chat: IChat;
 }) {
   const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
   const api = useSettingsStore((state) => state.api);
   const modelMapping = useSettingsStore((state) => state.modelMapping);
   const session = useAuthStore((state) => state.session);
@@ -63,10 +61,32 @@ export default function ModelCtrl({
       editChat({ model: $model });
     }
     window.electron.ingestEvent([{ app: 'switch-model' }, { model: $model }]);
+    closeDialog();
   };
+
+  const openDialog = () => {
+    setOpen(true);
+    Mousetrap.bind('esc',closeDialog);
+  }
+
+  const closeDialog = () => {
+    setOpen(false);
+    Mousetrap.unbind('esc');
+  }
+
+  useEffect(() => {
+    if (models.length > 0) {
+      Mousetrap.bind('mod+shift+m', openDialog);
+    }
+    return () => {
+      Mousetrap.unbind('mod+shift+m');
+    };
+  }, [models]);
+
   return models && models.length ? (
     <Menu
       hasCheckmarks
+      open={open}
       onCheckedValueChange={onModelChange}
       checkedValues={{ model: [activeModel.label as string] }}
     >
@@ -77,8 +97,9 @@ export default function ModelCtrl({
           appearance="subtle"
           iconPosition="after"
           icon={<ChevronDown16Regular />}
+          onClick={openDialog}
+          style={{borderColor: 'transparent', boxShadow: 'none',padding: 1}}
           className="text-color-secondary flex justify-start items-center"
-          style={{ padding: 1 }}
         >
           <div className="flex flex-row justify-start items-center mr-1">
             <ToolStatusIndicator
