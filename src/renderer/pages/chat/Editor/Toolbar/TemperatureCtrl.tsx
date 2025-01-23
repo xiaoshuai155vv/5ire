@@ -7,6 +7,7 @@ import {
   Label,
   Slider,
   SliderOnChangeData,
+  PopoverProps,
 } from '@fluentui/react-components';
 import {
   bundleIcon,
@@ -19,13 +20,21 @@ import useChatStore from 'stores/useChatStore';
 import Debug from 'debug';
 import { IChat, IChatContext } from 'intellichat/types';
 import useSettingsStore from 'stores/useSettingsStore';
+import Mousetrap from 'mousetrap';
 
 const debug = Debug('5ire:pages:chat:Editor:Toolbar:TemperatureCtrl');
 
 const TemperatureIcon = bundleIcon(Temperature20Filled, Temperature20Regular);
 
-export default function TemperatureCtrl({ ctx, chat }: { ctx: IChatContext, chat:IChat }) {
+export default function TemperatureCtrl({
+  ctx,
+  chat,
+}: {
+  ctx: IChatContext;
+  chat: IChat;
+}) {
   const { t } = useTranslation();
+  const [open, setOpen] = useState<boolean>(false);
   const providerName = useSettingsStore((state) => state.api).provider;
   const updateChat = useChatStore((state) => state.updateChat);
   const editChat = useChatStore((state) => state.editChat);
@@ -33,11 +42,22 @@ export default function TemperatureCtrl({ ctx, chat }: { ctx: IChatContext, chat
   const [minTemperature, setMinTemperature] = useState<number>(0);
   const [temperature, setTemperature] = useState<number>(0);
 
+  const handleOpenChange: PopoverProps['onOpenChange'] = (e, data) =>
+    setOpen(data.open || false);
+
   useEffect(() => {
-    const provider = ctx.getProvider()
+    Mousetrap.bind('mod+shift+5', () =>
+      setOpen((prevOpen) => {
+        return !prevOpen;
+      })
+    );
+    const provider = ctx.getProvider();
     setMinTemperature(provider.chat.temperature.min);
     setMaxTemperature(provider.chat.temperature.max);
     setTemperature(ctx.getTemperature());
+    return () => {
+      Mousetrap.unbind('mod+shift+5');
+    };
   }, [providerName, chat.id]);
 
   const updateTemperature = (
@@ -57,17 +77,23 @@ export default function TemperatureCtrl({ ctx, chat }: { ctx: IChatContext, chat
   };
 
   return (
-    <Popover trapFocus withArrow>
+    <Popover trapFocus withArrow open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger disableButtonEnhancement>
         <Button
           size="small"
+          title="Mod+Shift+5"
           aria-label={t('Common.Temperature')}
           appearance="subtle"
-          icon={<TemperatureIcon className='mr-0' />}
+          icon={<TemperatureIcon className="mr-0" />}
           className="justify-start text-color-secondary flex-shrink-0"
-          style={{ padding: 1, minWidth: 30 }}
+          style={{
+            padding: 1,
+            minWidth: 30,
+            borderColor: 'transparent',
+            boxShadow: 'none',
+          }}
         >
-          <span className='latin'>{temperature}</span>
+          <span className="latin">{temperature}</span>
         </Button>
       </PopoverTrigger>
       <PopoverSurface aria-labelledby="temperature">
@@ -76,7 +102,7 @@ export default function TemperatureCtrl({ ctx, chat }: { ctx: IChatContext, chat
             <div className="flex items-center p-1.5">
               <Label aria-hidden>{minTemperature}</Label>
               <Slider
-                id="chat-max-context"
+                id="chat-temperature"
                 step={0.1}
                 min={minTemperature}
                 max={maxTemperature}
@@ -84,9 +110,9 @@ export default function TemperatureCtrl({ ctx, chat }: { ctx: IChatContext, chat
                 className="flex-grow"
                 onChange={updateTemperature}
               />
-              {maxTemperature}
+              <span>{maxTemperature}</span>
             </div>
-            <div className='tips text-sm'>
+            <div className="tips text-xs">
               {t(
                 `Higher values like ${
                   maxTemperature - 0.2

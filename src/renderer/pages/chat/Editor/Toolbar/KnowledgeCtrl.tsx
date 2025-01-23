@@ -74,7 +74,7 @@ export default function KnowledgeCtrl({
   };
 
   useEffect(() => {
-    Mousetrap.bind('mod+shift+k', openDialog);
+    Mousetrap.bind('mod+shift+3', openDialog);
     listChatCollections(chat.id)
       .then((chatCollections) => {
         setSelectedCollections(chatCollections);
@@ -86,7 +86,7 @@ export default function KnowledgeCtrl({
         debug(err);
       });
     return () => {
-      Mousetrap.unbind('mod+shift+k');
+      Mousetrap.unbind('mod+shift+3');
     };
   }, [chat.id]);
 
@@ -121,7 +121,7 @@ export default function KnowledgeCtrl({
         <DialogTrigger disableButtonEnhancement>
           <Button
             size="small"
-            title="Mod+Shift+k"
+            title="Mod+Shift+3"
             aria-label={t('Common.Knowledge')}
             className="justify-start text-color-secondary"
             style={{ padding: 1, minWidth: 20,borderColor: 'transparent', boxShadow: 'none' }}

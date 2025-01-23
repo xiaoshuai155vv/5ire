@@ -151,6 +151,7 @@ export default function Footer({ collapsed }: { collapsed: boolean }) {
 
       <button
         type="button"
+        title="Mod+t"
         className={`hidden items-center gap-3 rounded-md px-2 py-2 text-xs font-medium outline-none hover:bg-brand-surface-1 hover:text-brand-base md:flex ${
           collapsed ? 'w-full justify-center' : ''
         }`}

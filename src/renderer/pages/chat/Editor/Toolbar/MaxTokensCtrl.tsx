@@ -9,6 +9,7 @@ import {
   SpinButtonOnChangeData,
   PopoverProps,
 } from '@fluentui/react-components';
+import Mousetrap from 'mousetrap';
 import {
   bundleIcon,
   NumberSymbolSquare20Filled,
@@ -38,16 +39,25 @@ export default function MaxTokens({
   onConfirm: () => void;
 }) {
   const { t } = useTranslation();
-
+  const [open, setOpen] = useState<boolean>(false);
   const updateChat = useChatStore((state) => state.updateChat);
   const editChat = useChatStore((state) => state.editChat);
 
   const [maxTokens, setMaxTokens] = useState<number | null>(null);
-  useEffect(() => {
-    setMaxTokens(ctx.getMaxTokens());
-  }, [ctx]);
 
-  const [open, setOpen] = useState<boolean>(false);
+  useEffect(() => {
+    Mousetrap.bind('mod+shift+4', () => {
+      setOpen(prevOpen => {
+        return !prevOpen;
+      });
+    });
+    setMaxTokens(ctx.getMaxTokens());
+    return () => {
+      Mousetrap.unbind('mod+shift+4');
+    };
+  }, [chat.id]);
+
+
 
   const handleOpenChange: PopoverProps['onOpenChange'] = (e, data) =>
     setOpen(data.open || false);
@@ -72,23 +82,25 @@ export default function MaxTokens({
     window.electron.ingestEvent([{ app: 'modify-max-tokens' }]);
   };
 
+
   return (
     <Popover open={open} trapFocus withArrow onOpenChange={handleOpenChange}>
       <PopoverTrigger disableButtonEnhancement>
         <Button
           size="small"
+          title="Mod+Shift+4"
           aria-label={t('Common.MaxTokens')}
           appearance="subtle"
           icon={<NumberSymbolSquareIcon />}
           className="justify-start text-color-secondary flex-shrink-0"
-          style={{ padding: 1, minWidth: 20 }}
+          style={{ padding: 1, minWidth: 20, borderColor:'transparent', boxShadow:'none' }}
         >
           {maxTokens || null}
         </Button>
       </PopoverTrigger>
       <PopoverSurface aria-labelledby="temperature">
         <div className="w-64">
-          <Field label={t('Common.MaxTokens')}>
+          <Field label={t('Common.MaxTokens')} style={{borderColor: 'transparent', boxShadow: 'none'}}>
             <SpinButton
               precision={9}
               step={10}

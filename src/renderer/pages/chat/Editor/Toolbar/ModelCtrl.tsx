@@ -76,10 +76,10 @@ export default function ModelCtrl({
 
   useEffect(() => {
     if (models.length > 0) {
-      Mousetrap.bind('mod+shift+m', openDialog);
+      Mousetrap.bind('mod+shift+1', openDialog);
     }
     return () => {
-      Mousetrap.unbind('mod+shift+m');
+      Mousetrap.unbind('mod+shift+1');
     };
   }, [models]);
 
@@ -97,7 +97,7 @@ export default function ModelCtrl({
           appearance="subtle"
           iconPosition="after"
           icon={<ChevronDown16Regular />}
-          title="Mod+Shift+m"
+          title="Mod+Shift+1"
           onClick={openDialog}
           style={{borderColor: 'transparent', boxShadow: 'none',padding: 1}}
           className="text-color-secondary flex justify-start items-center"

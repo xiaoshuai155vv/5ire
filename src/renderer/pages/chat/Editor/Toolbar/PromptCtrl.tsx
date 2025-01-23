@@ -154,9 +154,9 @@ export default function PromptCtrl({
   );
 
   useEffect(() => {
-    Mousetrap.bind('mod+shift+p', openDialog);
+    Mousetrap.bind('mod+shift+2', openDialog);
     return () => {
-      Mousetrap.unbind('mod+shift+p');
+      Mousetrap.unbind('mod+shift+2');
     };
   }, [open]);
 
@@ -166,7 +166,7 @@ export default function PromptCtrl({
         <DialogTrigger disableButtonEnhancement>
           <Button
             size="small"
-            title="Mod+Shift+p"
+            title="Mod+Shift+2"
             aria-label={t('Common.Prompts')}
             appearance="subtle"
             style={{borderColor: 'transparent', boxShadow: 'none'}}

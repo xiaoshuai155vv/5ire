@@ -54,6 +54,7 @@
     Hiragino Sans GB, Roboto, helvetica neue, helvetica, segoe ui, Arial,
     sans-serif;
 }
+
 body {
   position: relative;
   height: 100vh;
@@ -111,8 +112,9 @@ button {
 }
 button:focus {
   outline: 0 !important;
-  -webkit-appearance: none;
+  appearance: none;
 }
+
 .file-button {
   font-family: Barlow;
   padding: 0.2em 0.4em;
@@ -217,11 +219,10 @@ main {
   color: rgba(var(--color-text-secondary), var(--tw-text-opacity)) !important;
 }
 
-.text-color-tertiary{
+.text-color-tertiary {
   --tw-text-opacity: 0.5;
   color: rgba(var(--color-text-secondary), var(--tw-text-opacity)) !important;
 }
-
 
 .text-color-success {
   --tw-text-opacity: 1;
@@ -351,9 +352,9 @@ mark {
   .img-dark-compatible {
     filter: invert(50%);
   }
-  .svg-icon{
+  .svg-icon {
     color: #eee;
-    stroke:  #eee;
+    stroke: #eee;
   }
 }
 
@@ -364,8 +365,8 @@ mark {
   .tag-variable {
     color: rgb(20, 20, 20);
   }
-  .svg-icon{
+  .svg-icon {
     color: #171717;
-    stroke:  #171717;
+    stroke: #171717;
   }
 }

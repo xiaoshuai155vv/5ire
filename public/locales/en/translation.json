@@ -214,5 +214,6 @@
   "settings.modelMappingSaved": "Model Mapping Saved.",
   "Common.English": "English",
   "Common.SimpleChinese": "Simple Chinese",
-  "Common.Language": "Language"
+  "Common.Language": "Language",
+  "Common.Image": "Image"
 }

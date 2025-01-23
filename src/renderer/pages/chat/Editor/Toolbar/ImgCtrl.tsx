@@ -13,6 +13,7 @@ import {
   Radio,
   RadioGroup,
 } from '@fluentui/react-components';
+import Mousetrap from 'mousetrap';
 import {
   bundleIcon,
   ImageAdd20Regular,
@@ -50,14 +51,37 @@ export default function ImgCtrl({
   const [open, setOpen] = useState<boolean>(false);
   const model = ctx.getModel();
 
+  const openDialog = () => {
+    setOpen(true);
+    setTimeout(
+      () =>
+        document
+          .querySelector<HTMLInputElement>(
+            imgType === 'url' ? '#image-url-input' : '#select-file-button'
+          )
+          ?.focus(),
+      500
+    );
+    Mousetrap.bind('esc', closeDialog);
+  };
+
+  const closeDialog = () => {
+    setOpen(false);
+    Mousetrap.unbind('esc');
+  };
+
   const vision = useMemo<IChatModelVision>(() => {
     return model?.vision || { enabled: false };
   }, [model]);
 
   useEffect(() => {
+    Mousetrap.bind('mod+shift+6', openDialog);
     if (vision.enabled) {
       setImgType(vision.allowUrl ? 'url' : 'file');
     }
+    return () => {
+      Mousetrap.unbind('mod+shift+6');
+    };
   }, [vision]);
 
   const isAddBtnDisabled = useMemo(() => {
@@ -103,7 +127,7 @@ export default function ImgCtrl({
         value={imgURL}
         type="url"
         contentBefore={<LinkSquare20Regular />}
-        id="image-url"
+        id="image-url-input"
         className="w-full"
         onChange={onImageUrlChange}
       />
@@ -115,6 +139,7 @@ export default function ImgCtrl({
       <div className="flex justify-start items-start gap-2">
         <Button
           className="file-button"
+          id="select-file-button"
           onClick={async () => {
             const dataString = await window.electron.selectImageWithBase64();
             const file = JSON.parse(dataString);
@@ -135,12 +160,13 @@ export default function ImgCtrl({
     <Dialog open={open}>
       <DialogTrigger disableButtonEnhancement>
         <Button
-          aria-label={t('Image')}
+          aria-label={t('Common.Image')}
+          title='Mod+Shift+6'
           size="small"
           appearance="subtle"
           iconPosition="before"
           className="justify-start text-color-secondary"
-          onClick={() => setOpen(true)}
+          onClick={openDialog}
           icon={<ImageAddIcon />}
         ></Button>
       </DialogTrigger>
@@ -152,7 +178,7 @@ export default function ImgCtrl({
                 <Button
                   appearance="subtle"
                   aria-label="close"
-                  onClick={() => setOpen(false)}
+                  onClick={closeDialog}
                   icon={<Dismiss24Regular />}
                 />
               </DialogTrigger>

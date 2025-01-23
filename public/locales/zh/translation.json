@@ -214,5 +214,6 @@
   "settings.modelMappingSaved": "模型映射已保存。",
   "Common.English": "英语",
   "Common.SimpleChinese": "简体中文",
-  "Common.Language": "语言"
+  "Common.Language": "语言",
+  "Common.Image": "图片"
 }

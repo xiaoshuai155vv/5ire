@@ -103,6 +103,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
+           title='Alt+1'
           icon={<WandIcon />}
           className="w-full justify-start"
           onClick={() => navigate('/tool')}
@@ -116,6 +117,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
+           title='Alt+2'
           icon={<KnowledgeIcon />}
           className="w-full justify-start"
           onClick={() => navigate('/knowledge')}
@@ -126,6 +128,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
+          title='Alt+3'
           icon={<BookmarkMultipleIcon />}
           className="w-full justify-start"
           onClick={() => {
@@ -138,6 +141,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
+          title='Mod+n'
           icon={<ChatAddIcon />}
           className="w-full justify-start"
           onClick={async () => navigate(`/chats/${tempChatId}`)}
