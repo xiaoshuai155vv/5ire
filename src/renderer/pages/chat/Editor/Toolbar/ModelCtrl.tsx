@@ -114,7 +114,7 @@ export default function ModelCtrl({
               key={item.label}
             >
               <div className="flex justify-start items-baseline gap-1">
-                <ToolStatusIndicator enabled={activeModel.toolEnabled} />
+                <ToolStatusIndicator enabled={item.toolEnabled} />
                 <span className="latin">{item.label}</span>
                 {modelMapping[item.label || ''] && (
                   <span className="text-gray-300 dark:text-gray-600 -ml-1">
