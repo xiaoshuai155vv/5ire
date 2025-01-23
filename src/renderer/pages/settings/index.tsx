@@ -31,6 +31,7 @@ import {
   MenuTrigger,
 } from '@fluentui/react-components';
 import EmbedSettings from './EmbedSettings';
+import LanguageSettings from './LanguageSettings';
 
 const debug = Debug('5ire:pages:settings:index');
 
@@ -196,6 +197,7 @@ export default function Settings() {
         <APISettings />
         <EmbedSettings />
         <AppearanceSettings />
+        <LanguageSettings />
         <Version />
       </div>
     </div>

@@ -109,6 +109,7 @@ const electronHandler = {
   getDeviceInfo: () => ipcRenderer.invoke('get-device-info'),
   getAppVersion: () => ipcRenderer.invoke('get-app-version'),
   getNativeTheme: () => ipcRenderer.invoke('get-native-theme'),
+  getSystemLanguage: () => ipcRenderer.invoke('get-system-language'),
   selectImageWithBase64: () => ipcRenderer.invoke('select-image-with-base64'),
   embeddings: {
     getModelFileStatus: () =>

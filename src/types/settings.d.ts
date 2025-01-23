@@ -1,6 +1,7 @@
 import { ProviderType } from 'providers/types';
 import { ThemeType } from './appearance';
 
+export type LanguageType = 'en' | 'zh' | 'system';
 
 export interface IAPISettings {
   provider: ProviderType;
@@ -14,6 +15,7 @@ export interface IAPISettings {
 
 export interface ISettings {
   theme: ThemeType;
+  language: LanguageType;
   api: {
     activeProvider: string;
     providers: {

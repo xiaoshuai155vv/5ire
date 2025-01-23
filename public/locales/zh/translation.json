@@ -211,5 +211,8 @@
   "settings.modelMappingDescription": "模型映射的作用是在请求时将模型映射为对应名称。配置采用的 JSON, key 为原模型名称，value是映射后模型名称。",
   "Common.SaveFailed": "保存失败",
   "Common.InvalidJson": "错误的 JSON 格式",
-  "settings.modelMappingSaved": "模型映射已保存。"
+  "settings.modelMappingSaved": "模型映射已保存。",
+  "Common.English": "英语",
+  "Common.SimpleChinese": "简体中文",
+  "Common.Language": "语言"
 }

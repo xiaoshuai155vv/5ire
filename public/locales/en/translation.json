@@ -211,5 +211,8 @@
   "settings.modelMappingDescription": "The purpose of model mapping is to map models to their corresponding names when a request is made. The configuration uses JSON, where the key is the original model name and the value is the mapped model name.",
   "Common.SaveFailed": "Save failed",
   "Common.InvalidJson": "Incorrect JSON format.",
-  "settings.modelMappingSaved": "Model Mapping Saved."
+  "settings.modelMappingSaved": "Model Mapping Saved.",
+  "Common.English": "English",
+  "Common.SimpleChinese": "Simple Chinese",
+  "Common.Language": "Language"
 }

@@ -5,12 +5,14 @@ import { create } from 'zustand';
 import { isNil, pick } from 'lodash';
 
 import { ThemeType } from '../types/appearance';
+import { LanguageType } from '../types/settings';
 import { IAPISettings, ISettings } from '../types/settings';
 import { getProvider } from 'providers';
 
 const debug = Debug('5ire:stores:useSettingsStore');
 
 const defaultTheme = 'system';
+const defaultLanguage = 'system';
 
 const defaultAPI: IAPISettings = {
   provider: 'OpenAI',
@@ -23,11 +25,13 @@ const defualtModelMapping: IModelMapping = {};
 
 export interface ISettingStore {
   theme: ThemeType;
+  language: LanguageType;
   api: IAPISettings;
   modelMapping: IModelMapping;
   setTheme: (theme: ThemeType) => void;
   setAPI: (api: Partial<IAPISettings>) => void;
   setModelMapping: (modelMapping: IModelMapping) => void;
+  setLanguage: (language: LanguageType) => void;
 }
 
 const settings = window.electron.store.get('settings', {}) as ISettings;
@@ -43,6 +47,7 @@ if (settings.modelMapping) {
 
 const useSettingsStore = create<ISettingStore>((set, get) => ({
   theme: settings?.theme || defaultTheme,
+  language: settings?.language || defaultLanguage,
   api: apiSettings,
   modelMapping: modelMappingSettings,
   setTheme: async (theme: ThemeType) => {
@@ -80,6 +85,10 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
     set({ modelMapping });
     console.log(modelMapping);
     window.electron.store.set('settings.modelMapping', modelMapping);
+  },
+  setLanguage: (language: 'en' | 'zh' | 'system') => {
+    set({ language });
+    window.electron.store.set('settings.language', language);
   },
 }));
 

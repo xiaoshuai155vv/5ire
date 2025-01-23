@@ -211,6 +211,10 @@ ipcMain.handle('get-native-theme', () => {
   return nativeTheme.themeSource;
 });
 
+ipcMain.handle('get-system-language', () => {
+  return app.getLocale();
+});
+
 ipcMain.handle('get-embedding-model-file-status', () => {
   return Embedder.getFileStatus();
 });

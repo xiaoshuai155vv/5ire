@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import Debug from 'debug';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import {captureException} from '../logging'
+import { captureException } from '../logging';
 import {
   FluentProvider,
   Toaster,
@@ -28,6 +28,7 @@ import Settings from '../pages/settings';
 import Prompts from '../pages/prompt';
 import PromptForm from '../pages/prompt/Form';
 import AppLoader from '../apps/Loader';
+import { useTranslation } from 'react-i18next';
 
 const debug = Debug('5ire:components:FluentApp');
 
@@ -62,8 +63,10 @@ darkTheme.colorBrandForeground1 = fire[120];
 darkTheme.colorBrandForeground2 = fire[130];
 
 export default function FluentApp() {
+  const { i18n } = useTranslation();
   const themeSettings = useSettingsStore((state) => state.theme);
   const theme = useAppearanceStore((state) => state.theme);
+  const language = useSettingsStore((state) => state.language);
   const setTheme = useAppearanceStore((state) => state.setTheme);
 
   useEffect(() => {
@@ -89,6 +92,17 @@ export default function FluentApp() {
         .catch(captureException);
     } else {
       setTheme(themeSettings);
+    }
+
+    if (language === 'system') {
+      window.electron
+        .getSystemLanguage()
+        .then((_lang) => {
+          return i18n.changeLanguage(_lang);
+        })
+        .catch(captureException);
+    } else {
+      i18n.changeLanguage(language);
     }
   }, [themeSettings, setTheme]);
 
