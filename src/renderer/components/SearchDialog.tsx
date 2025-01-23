@@ -1,5 +1,6 @@
 /* eslint-disable react/no-danger */
 import Debug from 'debug';
+import Mousetrap from 'mousetrap';
 import {
   Dialog,
   DialogSurface,
@@ -94,11 +95,15 @@ export default function ConfirmDialog(args: {
   const { open, setOpen } = args;
   const navigate = useNav();
 
-  useEffect(()=>{
-   if(open){
-    window.electron.ingestEvent([{ app: 'search' }])
-   }
-  },[open])
+  useEffect(() => {
+    Mousetrap.bind('esc', () => setOpen(false));
+    if (open) {
+      window.electron.ingestEvent([{ app: 'search' }]);
+    }
+    return () => {
+      Mousetrap.unbind('esc');
+    };
+  }, [open]);
 
   const search = useMemo(
     () =>
@@ -149,7 +154,7 @@ export default function ConfirmDialog(args: {
 
   const jumpTo = useCallback((chatId: string, key: string) => {
     navigate(`/chats/${chatId}/${key}`);
-    setOpen(false)
+    setOpen(false);
   }, []);
 
   return (

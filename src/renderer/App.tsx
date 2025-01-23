@@ -9,7 +9,7 @@ import useToast from 'hooks/useToast';
 import { useTranslation } from 'react-i18next';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useMCPStore from 'stores/useMCPStore';
-import useStageStore from 'stores/useStageStore';
+import Mousetrap from 'mousetrap';
 
 if (window.envVars.NODE_ENV === 'development') {
   Debug.enable('5ire:*');
@@ -30,6 +30,9 @@ export default function App() {
 
   useEffect(() => {
     loadAuthData();
+    Mousetrap.prototype.stopCallback = () => {
+      return false;
+    };
     const subscription = onAuthStateChange();
 
     window.electron.ipcRenderer.on(

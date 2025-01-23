@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   Popover,
   PopoverSurface,
   PopoverTrigger,
 } from '@fluentui/react-components';
+import Mousetrap from 'mousetrap';
 import {
   PanelLeftText24Filled,
   PanelLeftText24Regular,
@@ -14,7 +15,7 @@ import {
   Wifi124Regular,
   WifiOff24Filled,
   WifiOff24Regular,
-  bundleIcon
+  bundleIcon,
 } from '@fluentui/react-icons';
 import useOnlineStatus from 'hooks/useOnlineStatus';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +36,7 @@ export default function AppHeader() {
   );
   const { t } = useTranslation();
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
+
   const NetworkStatusIcon = useOnlineStatus() ? (
     <Popover withArrow size="small" closeOnScroll>
       <PopoverTrigger disableButtonEnhancement>
@@ -54,6 +56,14 @@ export default function AppHeader() {
       </PopoverSurface>
     </Popover>
   );
+
+  useEffect(() => {
+    Mousetrap.bind('mod+f', () => setSearchOpen(true));
+    return () => {
+      Mousetrap.unbind('mod+f');
+    };
+  }, []);
+
   return (
     <div>
       <div

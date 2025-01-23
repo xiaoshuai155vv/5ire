@@ -5,6 +5,7 @@ import {
   MenuPopover,
   MenuTrigger,
 } from '@fluentui/react-components';
+import Mousetrap from 'mousetrap';
 import {
   QuestionCircle20Regular,
   ArrowRight16Regular,
@@ -35,6 +36,7 @@ export default function Footer({ collapsed }: { collapsed: boolean }) {
   }, []);
 
   useEffect(() => {
+    Mousetrap.bind('mod+t', () => toggleSidebarCollapsed())
     //@ts-ignore
     const canny = window?.Canny;
     if (canny) {
@@ -45,7 +47,9 @@ export default function Footer({ collapsed }: { collapsed: boolean }) {
         theme: 'auto',
       });
     }
-    //@ts-ignore
+    return () => {
+      Mousetrap.unbind('mod+t');
+    }
   }, []);
 
   return (

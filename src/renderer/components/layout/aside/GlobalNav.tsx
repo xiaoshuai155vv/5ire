@@ -1,4 +1,5 @@
 import { Button } from '@fluentui/react-components';
+import Mousetrap from 'mousetrap';
 import {
   Apps24Regular,
   Apps24Filled,
@@ -50,11 +51,21 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
   );
 
   useEffect(() => {
+    Mousetrap.bind('alt+1', () => navigate('/tool'));
+    Mousetrap.bind('alt+2', () => navigate('/knowledge'));
+    Mousetrap.bind('alt+3', () => navigate('/bookmarks'));
+    Mousetrap.bind('mod+n', () => navigate(`/chats/${tempChatId}`));
     if (numOfActiveServers === 0) {
       window.electron.mcp.getActiveServers().then((serverNames: string[]) => {
         setActiveServerNames(serverNames);
       });
     }
+    return () => {
+      Mousetrap.unbind('alt+1');
+      Mousetrap.unbind('alt+2');
+      Mousetrap.unbind('alt+3');
+      Mousetrap.unbind('mod+n');
+    };
   }, []);
 
   return (
