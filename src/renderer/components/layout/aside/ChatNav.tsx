@@ -11,6 +11,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const chats = useChatStore((state) => state.chats);
   const currentChat = useChatStore((state) => state.chat);
   const fetchChat = useChatStore((state: any) => state.fetchChat);
+  const navigate = useNav();
 
   useEffect(() => {
     Mousetrap.bind('mod+up', () => {
@@ -44,9 +45,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
       Mousetrap.unbind('mod+up');
       Mousetrap.unbind('mod+down');
     };
-  }, [fetchChat, currentChat?.id]);
-
-  const navigate = useNav();
+  }, [fetchChat,chats.length, currentChat?.id]);
 
   const renderIconWithTooltip = (isActiveChat: boolean, summary: string) => {
     return (

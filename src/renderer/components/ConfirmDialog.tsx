@@ -8,9 +8,11 @@ import {
   DialogBody,
   Button,
 } from '@fluentui/react-components';
+import Mousetrap from 'mousetrap';
 import { useTranslation } from 'react-i18next';
 import { Dismiss24Regular } from '@fluentui/react-icons';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+import React from 'react';
 
 export default function ConfirmDialog(args: {
   open: boolean;
@@ -20,6 +22,7 @@ export default function ConfirmDialog(args: {
   message?: string;
 }) {
   const { open, setOpen, onConfirm, title, message } = args;
+  const confirmButtonRef = React.useRef<HTMLButtonElement | null>(null);
   const { t } = useTranslation();
   const confirm = useCallback(() => {
     async function delAndClose() {
@@ -28,6 +31,16 @@ export default function ConfirmDialog(args: {
     }
     delAndClose();
   }, [setOpen, onConfirm]);
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => confirmButtonRef.current?.focus(), 200);
+      Mousetrap.bind('esc', ()=>setOpen(false))
+    }
+    return ()=>{
+      Mousetrap.unbind('esc')
+    }
+  }, [open]);
 
   return (
     <Dialog open={open}>
@@ -57,7 +70,11 @@ export default function ConfirmDialog(args: {
               </Button>
             </DialogTrigger>
             <DialogTrigger disableButtonEnhancement>
-              <Button appearance="primary" onClick={() => confirm()}>
+              <Button
+                appearance="primary"
+                onClick={() => confirm()}
+                ref={confirmButtonRef}
+              >
                 {t('Common.Delete')}
               </Button>
             </DialogTrigger>

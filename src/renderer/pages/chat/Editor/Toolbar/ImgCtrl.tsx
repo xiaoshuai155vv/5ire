@@ -161,10 +161,11 @@ export default function ImgCtrl({
       <DialogTrigger disableButtonEnhancement>
         <Button
           aria-label={t('Common.Image')}
-          title='Mod+Shift+6'
+          title="Mod+Shift+6"
           size="small"
           appearance="subtle"
           iconPosition="before"
+          style={{ boxShadow: 'none', borderColor: 'transparent' }}
           className="justify-start text-color-secondary"
           onClick={openDialog}
           icon={<ImageAddIcon />}
