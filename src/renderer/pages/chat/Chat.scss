@@ -9,6 +9,12 @@
   font-family: Barlow, -apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB,
   Roboto, helvetica neue, helvetica, segoe ui, Arial, sans-serif;
 }
+.message hr{
+  margin-bottom:8px;
+  height: 0.5px;
+  background-color: rgba(var(--color-border));
+  border: none;
+}
 .message .avatar {
   width: 32px;
   height: 32px;
