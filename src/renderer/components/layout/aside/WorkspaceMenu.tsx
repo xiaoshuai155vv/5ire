@@ -12,7 +12,7 @@ import {
   Button,
   Persona,
 } from '@fluentui/react-components';
-
+import Mousetrap from 'mousetrap';
 import {
   bundleIcon,
   DataUsage24Regular,
@@ -25,7 +25,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import useAppearanceStore from 'stores/useAppearanceStore';
 import useNav from 'hooks/useNav';
-import { useState} from 'react';
+import { useEffect, useState} from 'react';
 import useToast from 'hooks/useToast';
 import useAuthStore from 'stores/useAuthStore';
 
@@ -63,6 +63,15 @@ export default function WorkspaceMenu({ collapsed }: { collapsed: boolean }) {
   const onOpenChange: MenuProps['onOpenChange'] = (e, data) => {
     setOpen(data.open);
   };
+
+  useEffect(() => {
+    Mousetrap.bind('mod+k', () => navigate('/settings'));
+    Mousetrap.bind('mod+p', () => navigate('/prompts'));
+    return () => {
+      Mousetrap.unbind('mod+k');
+      Mousetrap.unbind('mod+p');
+    };
+  }, []);
 
   return (
     <div>
@@ -142,6 +151,7 @@ export default function WorkspaceMenu({ collapsed }: { collapsed: boolean }) {
           <MenuList>
             <MenuDivider className="border-base" />
             <MenuItem
+              title='mod+k'
               icon={<Settings24Regular />}
               onClick={() => {
                 navigate('/settings');
