@@ -17,11 +17,11 @@ export default {
     },
      */
     {
-      key: 'Web',
+      key: 'AppleNotes',
       command: 'uvx',
       description:
-        'A Model Context Protocol server that provides web content fetching capabilities',
-      args: ['mcp-server-fetch'],
+        'The server implements the ability to read and write to your Apple Notes. Require Python>=3.12.',
+      args: ['apple-notes-mcp'],
       isActive: false,
     },
     {
@@ -34,6 +34,14 @@ export default {
         '@modelcontextprotocol/server-filesystem',
         '<dirs:list: directories you about to access>',
       ],
+      isActive: false,
+    },
+    {
+      key: 'HackerNews',
+      command: 'uvx',
+      description:
+        'The server provides tools for fetching information from Hacker News',
+      args: ['mcp-hn'],
       isActive: false,
     },
     {
@@ -167,6 +175,14 @@ export default {
       description:
         'An MCP server tool for dynamic problem-solving with structured thinking.',
       args: ['-y', '@modelcontextprotocol/server-sequential-thinking'],
+      isActive: false,
+    },
+    {
+      key: 'Web',
+      command: 'uvx',
+      description:
+        'A Model Context Protocol server that provides web content fetching capabilities',
+      args: ['mcp-server-fetch'],
       isActive: false,
     },
   ],
