@@ -107,7 +107,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
     const $chat = {
       model: api.model,
       temperature: getProvider(api.provider).chat.temperature.default,
-      maxTokens: getChatModel(api.provider, api.model).maxTokens,
+      maxTokens: null,
       maxCtxMessages: NUM_CTX_MESSAGES,
       ...chat,
       id: tempChatId,

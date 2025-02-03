@@ -154,7 +154,7 @@ export interface IChatContext {
   getModel: () => IChatModel;
   getSystemMessage: () => string | null;
   getTemperature: () => number;
-  getMaxTokens: () => number | null;
+  getMaxTokens: () => number;
   getChatContext: () => string;
   getCtxMessages: () => IChatMessage[];
   isStream: () => boolean;

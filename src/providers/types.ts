@@ -49,6 +49,7 @@ export interface IChatModel {
   name: string;
   description?: string | null;
   maxTokens?: number | null;
+  defaultMaxTokens?: number | null;
   contextWindow: number | null;
   isDefault?: boolean;
   inputPrice: number;
