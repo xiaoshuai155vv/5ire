@@ -200,6 +200,13 @@ ipcMain.handle('open-external', (_, data) => {
   shell.openExternal(data);
 });
 
+ipcMain.handle('get-user-data-path', (_, paths) => {
+  if(paths){
+    return path.join(app.getPath('userData'), ...paths);
+  }
+  return app.getPath('userData');
+});
+
 ipcMain.handle('set-native-theme', (_, theme: 'light' | 'dark' | 'system') => {
   nativeTheme.themeSource = theme;
 });
