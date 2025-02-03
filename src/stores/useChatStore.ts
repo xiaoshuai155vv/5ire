@@ -112,7 +112,6 @@ const useChatStore = create<IChatStore>((set, get) => ({
       ...chat,
       id: tempChatId,
     } as IChat;
-    editStage($chat.id, { input: '', prompt: null });
     debug('Init a chat', $chat);
     set({ chat: $chat, messages: [] });
     return $chat;
