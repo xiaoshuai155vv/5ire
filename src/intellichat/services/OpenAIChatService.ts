@@ -179,7 +179,6 @@ export default class OpenAIChatService
         if (_tools.length > 0) {
           payload.tools = _tools;
           payload.tool_choice = 'auto';
-          payload.parallel_tool_calls = false;
         }
       }
     }
