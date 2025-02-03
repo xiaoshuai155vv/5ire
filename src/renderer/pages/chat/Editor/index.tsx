@@ -52,9 +52,9 @@ export default function Editor({
     }
   }, [savedRange]);
 
-  const debouncedEditStage = useMemo(() => {
-    return debounce((chatId: string, stage: Partial<IStage>) => {
-      editStage(chatId, stage);
+  const saveStageInput = useMemo(() => {
+    return debounce((chatId: string) => {
+      editStage(chatId, { input: editorRef.current?.innerHTML });
     }, 800);
   }, [editStage]);
 
@@ -65,8 +65,9 @@ export default function Editor({
         onSubmit(removeTagsExceptImg(editorRef.current?.innerHTML || ''));
         // @ts-ignore
         editorRef.current.innerHTML = '';
+        editStage(chat.id, { input: '' });
       } else {
-        debouncedEditStage(chat.id, { input: editorRef.current?.innerHTML });
+        saveStageInput(chat.id);
       }
     },
     [onSubmit]
