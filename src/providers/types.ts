@@ -24,7 +24,7 @@ export interface INumberRange {
 }
 
 export type ChatModelGroup =
-  | 'o1'
+  | 'O'
   | 'GPT-3.5'
   | 'GPT-4'
   | 'Gemini'

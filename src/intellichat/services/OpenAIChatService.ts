@@ -69,9 +69,13 @@ export default class OpenAIChatService
   ): Promise<IChatRequestMessage[]> {
     const result = [];
     const systemMessage = this.context.getSystemMessage();
+    let sysRole = 'system';
+    if (['o1', 'o3'].some((prefix) => this.getModelName().startsWith(prefix))) {
+      sysRole = 'developer';
+    }
     if (!isBlank(systemMessage)) {
       result.push({
-        role: 'system',
+        role: sysRole,
         content: systemMessage,
       });
     }
@@ -183,7 +187,15 @@ export default class OpenAIChatService
       }
     }
     if (this.context.getMaxTokens()) {
-      payload.max_tokens = this.context.getMaxTokens();
+      /**
+       * max_tokens is deprecated, use max_completion_tokens instead for new models
+       */
+      if (model.name.startsWith('o1') || model.name.startsWith('o3')) {
+        payload.max_completion_tokens = this.context.getMaxTokens();
+        payload.temperature = 1; // o1 and o3 models require temperature to be 1
+      } else {
+        payload.max_tokens = this.context.getMaxTokens();
+      }
     }
     return payload;
   }

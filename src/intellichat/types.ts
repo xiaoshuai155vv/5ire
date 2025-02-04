@@ -117,6 +117,7 @@ export interface IChatRequestPayload {
   model?: string;
   temperature?: number;
   max_tokens?: number | null;
+  max_completion_tokens?: number | null;
   presence_penalty?: number;
   top_p?: number;
   stream?: boolean;
