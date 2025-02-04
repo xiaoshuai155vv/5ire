@@ -64,6 +64,14 @@ export default function ModelCtrl({
     closeDialog();
   };
 
+  const toggleDialog = () => {
+    if (open) {
+      closeDialog();
+    } else {
+      openDialog();
+    }
+  }
+
   const openDialog = () => {
     setOpen(true);
     Mousetrap.bind('esc',closeDialog);
@@ -76,7 +84,7 @@ export default function ModelCtrl({
 
   useEffect(() => {
     if (models.length > 0) {
-      Mousetrap.bind('mod+shift+1', openDialog);
+      Mousetrap.bind('mod+shift+1', toggleDialog);
     }
     return () => {
       Mousetrap.unbind('mod+shift+1');
@@ -98,7 +106,7 @@ export default function ModelCtrl({
           iconPosition="after"
           icon={<ChevronDown16Regular />}
           title="Mod+Shift+1"
-          onClick={openDialog}
+          onClick={toggleDialog}
           style={{borderColor: 'transparent', boxShadow: 'none',padding: 1}}
           className="text-color-secondary flex justify-start items-center"
         >
