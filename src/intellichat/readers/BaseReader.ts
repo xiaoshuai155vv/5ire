@@ -23,7 +23,6 @@ export default abstract class BaseReader implements IChatReader {
     if (!respMsg.toolCalls || respMsg.toolCalls.length === 0) {
       return null;
     }
-
     const toolCall = respMsg.toolCalls[0];
     return {
       id: toolCall.id || '',
@@ -131,14 +130,14 @@ export default abstract class BaseReader implements IChatReader {
     isComplete: boolean;
   } {
     this.incompleteChunks.push(chunk);
-    
+
     // Keep only last 5 chunks
     if (this.incompleteChunks.length > 5) {
       this.incompleteChunks = this.incompleteChunks.slice(-5);
     }
 
     const combined = this.incompleteChunks.join('');
-    
+
     try {
       JSON.parse(combined);
       // Clear chunks if we successfully parsed
@@ -181,7 +180,6 @@ export default abstract class BaseReader implements IChatReader {
       if (state.currentTool) {
         state.currentTool.args = this.finalizeToolArguments(state.toolArguments);
       }
-
       return {
         content: state.content,
         tool: state.currentTool,
@@ -226,7 +224,7 @@ export default abstract class BaseReader implements IChatReader {
 
       for (const line of lines) {
         const chunks = this.extractDataChunks(line);
-        
+
         for (const chunk of chunks) {
           if (chunk === '[DONE]') {
             isStreamDone = true;
@@ -288,10 +286,8 @@ export default abstract class BaseReader implements IChatReader {
       if (tool) {
         state.currentTool = tool;
         callbacks.onToolCalls(tool.name);
-        return;
       }
     }
-
     if (state.currentTool) {
       this.processToolArguments(response, state);
     } else {
