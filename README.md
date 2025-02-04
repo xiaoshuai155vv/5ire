@@ -17,10 +17,11 @@
     <br />
     <div style="display:flex;justify-content:space-around;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:15px;">
     <span style="font-size:12px;">OpenAI</span>
-    <span style="font-size:12px;">/ Azure OpenAI</span>
+    <span style="font-size:12px;">/ Azure</span>
     <span style="font-size:12px;">/ Anthropic</span>
     <span style="font-size:12px;">/ Google</span>
     <span style="font-size:12px;">/ Baidu</span>
+    <span style="font-size:12px;">/ Mistral</span>
     <span style="font-size:12px;">/ Moonshot</span>
     <span style="font-size:12px;">/ Doubao</span>
     <span style="font-size:12px;">/ Grok</span>
