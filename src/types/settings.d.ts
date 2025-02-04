@@ -1,5 +1,5 @@
 import { ProviderType } from 'providers/types';
-import { ThemeType } from './appearance';
+import { FontSize, ThemeType } from './appearance';
 
 export type LanguageType = 'en' | 'zh' | 'system';
 
@@ -16,6 +16,7 @@ export interface IAPISettings {
 export interface ISettings {
   theme: ThemeType;
   language: LanguageType;
+  fontSize: FontSize;
   api: {
     activeProvider: string;
     providers: {
