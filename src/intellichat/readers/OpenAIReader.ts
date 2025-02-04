@@ -7,7 +7,11 @@ const debug = Debug('5ire:intellichat:OpenAIReader');
 
 export default class OpenAIReader extends BaseReader implements IChatReader {
   protected parseReply(chunk: string): IChatResponseMessage {
-    const choice = JSON.parse(chunk).choices[0];
+    const data = JSON.parse(chunk);
+    if (data.error) {
+      throw new Error(data.error.message);
+    }
+    const choice = data.choices[0];
     return {
       content: choice.delta.content || '',
       isEnd: false,
