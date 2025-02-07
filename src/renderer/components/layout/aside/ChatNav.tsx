@@ -14,7 +14,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const navigate = useNav();
 
   useEffect(() => {
-    Mousetrap.bind('mod+up', () => {
+    Mousetrap.bind('mod+shift+up', () => {
       let index = 0;
       if (chats.length) {
         if (currentChat) {
@@ -27,7 +27,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
         navigate(`/chats/${chats[index].id}`);
       }
     });
-    Mousetrap.bind('mod+down', () => {
+    Mousetrap.bind('mod+shift+down', () => {
       let index = 0;
       if (chats.length) {
         if (currentChat) {
