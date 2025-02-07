@@ -22,7 +22,7 @@ logging.init();
 export default function App() {
   const loadAuthData = useAuthStore((state) => state.load);
   const setSession = useAuthStore((state) => state.setSession);
-  const { setActiveServerNames } = useMCPStore();
+  const { setActiveServerNames, updateLoadingState } = useMCPStore();
   const { onAuthStateChange } = useAuthStore();
   const { notifyError } = useToast();
   const { t } = useTranslation();
@@ -34,12 +34,13 @@ export default function App() {
       return false;
     };
     const subscription = onAuthStateChange();
-
+    window.electron.mcp.init();
     window.electron.ipcRenderer.on(
       'mcp-server-loaded',
       async (serverNames: any) => {
         debug('🚩 MCP Server Loaded:', serverNames);
         setActiveServerNames(serverNames);
+        updateLoadingState(false);
       }
     );
 

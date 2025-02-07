@@ -20,7 +20,8 @@ import useNav from 'hooks/useNav';
 import { tempChatId } from 'consts';
 import WorkspaceMenu from './WorkspaceMenu';
 import useMCPStore from 'stores/useMCPStore';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
+import Spinner from 'renderer/components/Spinner';
 
 const AppsIcon = bundleIcon(Apps24Filled, Apps24Regular);
 const BookmarkMultipleIcon = bundleIcon(
@@ -43,6 +44,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
   const setActiveServerNames = useMCPStore(
     (store) => store.setActiveServerNames
   );
+  const isMCPServersLoading = useMCPStore((state) => state.isLoading);
   const activeServerNames = useMCPStore((state) => state.activeServerNames);
 
   const numOfActiveServers = useMemo(
@@ -110,8 +112,11 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
         >
           {collapsed
             ? null
-            : t('Common.Tools') +
-              (numOfActiveServers ? `(${numOfActiveServers})` : '')}
+            : <>
+            {t('Common.Tools')}
+            {isMCPServersLoading? <Spinner size={13} className='ml-1'/>:(numOfActiveServers ? `(${numOfActiveServers})` : '')}
+            </>
+            }
         </Button>
       </div>
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>

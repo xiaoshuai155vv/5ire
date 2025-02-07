@@ -19,9 +19,11 @@ export interface IMCPConfig {
   updated?: number;
 }
 export interface IMCPStore {
+  isLoading: boolean;
   activeServerNames: string[];
   config: IMCPConfig;
   remoteConfig: IMCPConfig;
+  updateLoadingState: (isLoading: boolean) => void;
   fetchConfig: (refresh?: boolean) => Promise<IMCPConfig>;
   getConfig: () => Promise<IMCPConfig>;
   setConfig: (config: IMCPConfig) => Promise<boolean>;
@@ -32,12 +34,16 @@ export interface IMCPStore {
 }
 
 const useMCPStore = create<IMCPStore>((set, get) => ({
+  isLoading: true,
   activeServerNames: [],
   config: {
     servers: [],
   },
   remoteConfig: {
     servers: [],
+  },
+  updateLoadingState: (isLoading: boolean) => {
+    set({ isLoading });
   },
   fetchConfig: async (refresh?: boolean) => {
     let { remoteConfig } = get();

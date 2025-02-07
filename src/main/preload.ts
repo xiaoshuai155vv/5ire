@@ -39,6 +39,9 @@ const electronHandler = {
     },
   },
   mcp: {
+    init() {
+      return ipcRenderer.invoke('mcp-init');
+    },
     activate(config: {
       key: string;
       command: string;

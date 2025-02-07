@@ -396,6 +396,14 @@ ipcMain.handle('cancel-download', (_, fileName: string) => {
 });
 
 /** mcp */
+ipcMain.handle('mcp-init', async () => {
+  mcp.init().then(async () => {
+    // https://github.com/sindresorhus/fix-path
+    logging.info('mcp initialized');
+    await mcp.load();
+    mainWindow?.webContents.send('mcp-server-loaded', mcp.getClientNames());
+  });
+});
 ipcMain.handle('mcp-activate', async (_, config) => {
   return await mcp.activate(config);
 });
@@ -493,7 +501,7 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.on('ready-to-show', () => {
+  mainWindow.on('ready-to-show', async() => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -502,14 +510,8 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
-    mcp.init().then(async () => {
-      // https://github.com/sindresorhus/fix-path
-      const fixPath = (await import('fix-path')).default;
-      fixPath();
-      logging.info('mcp initialized');
-      await mcp.load();
-      mainWindow?.webContents.send('mcp-server-loaded', mcp.getClientNames());
-    });
+    const fixPath = (await import('fix-path')).default;
+    fixPath();
   });
 
   mainWindow.on('closed', () => {
