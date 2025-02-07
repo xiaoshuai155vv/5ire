@@ -80,6 +80,9 @@ export default class ModuleContext {
         fs.writeFileSync(this.cfgPath, JSON.stringify(defaultConfig, null, 2));
       }
       const config = JSON.parse(fs.readFileSync(this.cfgPath, 'utf-8'));
+      if(!config.servers) {
+        config.servers = [];
+      }
       return config;
     } catch (err: any) {
       logging.captureException(err);
