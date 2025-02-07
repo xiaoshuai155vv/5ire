@@ -31,6 +31,7 @@ export default {
         'The server will only allow operations within directories specified via args',
       args: [
         '-y',
+         '--prefer-offline',
         '@modelcontextprotocol/server-filesystem',
         '<dirs:list: directories you about to access>',
       ],
@@ -61,7 +62,7 @@ export default {
       command: 'npx',
       description:
         'A Model Context Protocol server that provides macOS-specific system information and operations.',
-      args: ['-y', '@mcp-get-community/server-macos'],
+      args: ['-y',  '--prefer-offline', '@mcp-get-community/server-macos'],
       isActive: false,
     },
     {
@@ -69,7 +70,7 @@ export default {
       command: 'npx',
       description:
         'An MCP server gives LLMs read - only access to MySQL databases for schema inspection and query execution.',
-      args: ['-y', '@benborla29/mcp-server-mysql'],
+      args: ['-y',  '--prefer-offline', '@benborla29/mcp-server-mysql'],
       env: {
         MYSQL_HOST: '<host:string:database host>',
         MYSQL_PORT: '<port:string:database port>',
@@ -86,6 +87,7 @@ export default {
         'Read and search through your Obsidian vault or any directory containing Markdown notes.',
       args: [
         '-y',
+         '--prefer-offline',
         'mcp-obsidian',
         '<vaultPath:string:Folder where md files are stored>',
       ],
@@ -108,7 +110,7 @@ export default {
       command: 'npx',
       description:
         "This server allowing LLMs to interact with Linear issues.",
-      args: ['-y', 'mcp-linear'],
+      args: ['-y',  '--prefer-offline', 'mcp-linear'],
       env: {
         LINEAR_API_KEY: '<apiKey:string:Get the api key from linear.app>',
       },
@@ -131,7 +133,7 @@ export default {
       command: 'npx',
       description:
         'A Node.js MCP implementation enables secure shell command execution for AI models.',
-      args: ['-y', 'mcp-shell'],
+      args: ['-y',  '--prefer-offline', 'mcp-shell'],
       isActive: false,
     },
     {
@@ -139,7 +141,7 @@ export default {
       command: 'npx',
       description:
         'MCP Server for the Slack API, enabling Claude to interact with Slack workspaces.',
-      args: ['-y', '@modelcontextprotocol/server-slack'],
+      args: ['-y',  '--prefer-offline', '@modelcontextprotocol/server-slack'],
       env: {
         SLACK_BOT_TOKEN: '<botToken:string:Your slack bot token>',
         SLACK_TEAM_ID: '<teamId:string:Your slack team id>',
@@ -188,7 +190,7 @@ export default {
       command: 'npx',
       description:
         'An MCP server tool for dynamic problem-solving with structured thinking.',
-      args: ['-y', '@modelcontextprotocol/server-sequential-thinking'],
+      args: ['-y',  '--prefer-offline', '@modelcontextprotocol/server-sequential-thinking'],
       isActive: false,
     },
     {
