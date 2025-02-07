@@ -519,13 +519,12 @@ const createWindow = async () => {
   });
 
   nativeTheme.on('updated', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
+    if (mainWindow) {
+      mainWindow.webContents.send(
+        'native-theme-change',
+        nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
+      );
     }
-    mainWindow.webContents.send(
-      'native-theme-change',
-      nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
-    );
   });
 
   const menuBuilder = new MenuBuilder(mainWindow);
