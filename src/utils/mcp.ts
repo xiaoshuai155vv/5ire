@@ -25,6 +25,9 @@ function replaceParamInBrackets(
 }
 
 export function getParameters(args: string[]): IMCPServerParameter[] {
+  if (!args) {
+    return [];
+  }
   const paramRegex = /<([^>]+)>/g;
   const params: IMCPServerParameter[] = [];
   let match;
