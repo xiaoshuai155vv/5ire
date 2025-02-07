@@ -52,7 +52,7 @@ export default class AnthropicChatService
           {
             type: 'tool_result',
             tool_use_id: tool.id,
-            content: toolResult.content,
+            content: typeof(toolResult)==='string' ? toolResult:toolResult.content,
           },
         ],
       },

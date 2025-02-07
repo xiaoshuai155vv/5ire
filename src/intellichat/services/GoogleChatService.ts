@@ -71,7 +71,7 @@ export default class GoogleChatService
               name: tool.name,
               response: {
                 name: tool.name,
-                content: toolResult.content,
+                content: typeof(toolResult)==='string' ? toolResult:toolResult.content,
               },
             },
           },
