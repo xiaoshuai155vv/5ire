@@ -225,5 +225,6 @@
   "Common.Large": "Large",
   "Common.FontSize": "Font Size",
   "Apperance.ChatFontSize": "Text size in the chat",
-  "Apperance.ColorTheme": "Color Theme"
+  "Apperance.ColorTheme": "Color Theme",
+  "Common.Notification.Copied": "Copied"
 }

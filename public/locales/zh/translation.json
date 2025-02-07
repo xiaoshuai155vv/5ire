@@ -225,5 +225,6 @@
   "Common.Large": "较大",
   "Common.FontSize": "字体大小",
   "Apperance.ChatFontSize": "对话字体大小",
-  "Apperance.ColorTheme": "色彩主题"
+  "Apperance.ColorTheme": "色彩主题",
+  "Common.Notification.Copied": "已复制"
 }
