@@ -156,7 +156,7 @@ export default class OpenAIChatService
       {
         role: 'tool',
         name: tool.name,
-        content: toolResult.content,
+        content:typeof(toolResult)==='string' ? toolResult:toolResult.content,
         tool_call_id: tool.id,
       },
     ];
