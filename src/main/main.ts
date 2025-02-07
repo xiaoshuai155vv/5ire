@@ -505,11 +505,7 @@ const createWindow = async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-    }
+    mainWindow.show();
     const fixPath = (await import('fix-path')).default;
     fixPath();
   });
