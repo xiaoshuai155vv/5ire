@@ -142,6 +142,7 @@ export default class ModuleContext {
       return { error: null };
     } catch (err: any) {
       logging.captureException(err);
+      this.deactivate(config.key);
       return { error: err };
     }
   }
@@ -152,6 +153,9 @@ export default class ModuleContext {
         await this.clients[key].close();
         delete this.clients[key];
       }
+      const config = await this.getConfig();
+      config.servers = config.servers.filter((server: any) => server.key !== key);
+      await this.putConfig(config);
       return true;
     } catch (err: any) {
       logging.captureException(err);
