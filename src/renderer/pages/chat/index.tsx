@@ -27,6 +27,7 @@ import { ICollectionFile } from 'types/knowledge';
 import { extractCitationIds } from 'utils/util';
 import INextChatService from 'intellichat/services/INextCharService';
 import useSettingsStore from 'stores/useSettingsStore';
+import useStageStore from 'stores/useStageStore';
 
 const debug = Debug('5ire:pages:chat');
 
@@ -114,6 +115,7 @@ export default function Chat() {
   const { countInput, countOutput } = useToken();
   const updateMessage = useChatStore((state) => state.updateMessage);
   const appendReply = useChatStore((state) => state.appendReply);
+  const editStage = useStageStore((state) => state.editStage);
 
   const { moveChatCollections, listChatCollections, setChatCollections } =
     useChatKnowledgeStore.getState();
@@ -138,6 +140,7 @@ export default function Chat() {
         $chatId = $chat.id;
         setActiveChatId($chatId);
         navigate(`/chats/${$chatId}`);
+        editStage(tempChatId, { prompt: null, input: '' });
       } else {
         await updateChat({
           id: activeChatId,
