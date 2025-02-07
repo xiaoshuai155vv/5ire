@@ -106,7 +106,7 @@ export default function MaxTokens({
       <PopoverSurface aria-labelledby="max tokens">
         <div className="w-64">
           <Field
-            label={t('Common.MaxTokens')}
+            label={t('Common.MaxTokens')+'(≤'+modelMaxTokens+')'}
             style={{ borderColor: 'transparent', boxShadow: 'none' }}
           >
             <SpinButton
