@@ -127,7 +127,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
                     </Tooltip>
                   </div>
                 )}
-                {item.isActive && item.args.length > 0 && (
+                {item.isActive && item.args?.length > 0 && (
                   <Popover withArrow>
                     <PopoverTrigger disableButtonEnhancement>
                       <Button
