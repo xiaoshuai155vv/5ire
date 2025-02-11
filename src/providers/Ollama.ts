@@ -1,8 +1,7 @@
 import { IServiceProvider } from './types';
-
 export default {
   name: 'Ollama',
-  apiBase: '',
+  apiBase: 'http://127.0.0.1:11434',
   currency: 'USD',
   options: {
     apiBaseCustomizable: true,
@@ -22,6 +21,7 @@ export default {
     presencePenalty: { min: -2, max: 2, default: 0 },
     topP: { min: 0, max: 1, default: 1 },
     temperature: { min: 0, max: 1, default: 0.9 },
+
     options: {
       modelCustomizable: true,
     },

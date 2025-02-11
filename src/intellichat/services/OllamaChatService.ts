@@ -11,8 +11,7 @@ import OllamaReader from 'intellichat/readers/OllamaChatReader';
 const debug = Debug('5ire:intellichat:OllamaChatService');
 export default class OllamaChatService
   extends OpenAIChatService
-  implements INextChatService
-{
+  implements INextChatService {
   constructor(context: IChatContext) {
     super(context);
     this.provider = Ollama;
@@ -28,7 +27,8 @@ export default class OllamaChatService
     const payload = await this.makePayload(messages);
     debug('Send Request, payload:\r\n', payload);
     const { base } = this.apiSettings;
-    const response = await fetch(`${base}/api/chat`, {
+    const url = new URL('/api/chat', base);
+    const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
