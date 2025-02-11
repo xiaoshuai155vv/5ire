@@ -76,7 +76,7 @@ export default function Message({ message }: { message: IChatMessage }) {
     if (message.isActive && states.loading) {
       if (!message.reply || message.reply === '') {
         return (
-          <div className="w-full mt-1.5">
+          <div className="w-full mt-1.5 is-loading">
             {states.runningTool && (
               <div className="flex flex-row justify-start items-center gap-1">
                 <ToolSpinner size={20} style={{ marginBottom: '-3px' }} />
@@ -90,7 +90,7 @@ export default function Message({ message }: { message: IChatMessage }) {
       }
       return (
         <div
-          className={`mt-1 break-all ${
+          className={`mt-1 break-all is-loading ${
             fontSize === 'large' ? 'font-lg' : ''
           }`}
           dangerouslySetInnerHTML={{

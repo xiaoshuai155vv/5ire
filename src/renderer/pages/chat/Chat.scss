@@ -161,3 +161,17 @@
     transform: scale(1.2);
   }
 }
+
+div.think{
+ color: rgba(var(--color-text-info), 1);
+ border-left: 2px solid rgba(var(--color-border), 1);
+ padding-left: 8px;
+ margin-bottom: 10px;
+}
+.is-loading div.think::before{
+  content: 'Thinking...';
+  margin-right: 6px;
+}
+div.think::before{
+  content: '';
+}
