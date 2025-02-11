@@ -10,13 +10,13 @@ import {
   IMCPTool,
   IGoogleTool,
 } from 'intellichat/types';
-import OpenAI from '../../providers/OpenAI';
 import { isBlank } from 'utils/validators';
 import { splitByImg, stripHtmlTags } from 'utils/util';
-import NextChatService from './NextChatService';
-import INextChatService from './INextCharService';
 import OpenAIReader from 'intellichat/readers/OpenAIReader';
 import { ITool } from 'intellichat/readers/IChatReader';
+import NextChatService from './NextChatService';
+import INextChatService from './INextCharService';
+import OpenAI from '../../providers/OpenAI';
 
 const debug = Debug('5ire:intellichat:OpenAIChatService');
 
@@ -35,7 +35,7 @@ export default class OpenAIChatService
   }
 
   protected async convertPromptContent(
-    content: string
+    content: string,
   ): Promise<string | IChatRequestMessageContent[]> {
     if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content);
@@ -64,7 +64,7 @@ export default class OpenAIChatService
   }
 
   protected async makeMessages(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<IChatRequestMessage[]> {
     const result = [];
     const systemMessage = this.context.getSystemMessage();
@@ -99,7 +99,7 @@ export default class OpenAIChatService
       } else if (msg.role === 'assistant' && msg.tool_calls) {
         result.push(msg);
       } else {
-        const content = msg.content;
+        const { content } = msg;
         if (typeof content === 'string') {
           result.push({
             role: 'user',
@@ -117,7 +117,7 @@ export default class OpenAIChatService
   }
 
   protected makeTool(
-    tool: IMCPTool
+    tool: IMCPTool,
   ): IOpenAITool | IAnthropicTool | IGoogleTool {
     return {
       type: 'function',
@@ -136,7 +136,7 @@ export default class OpenAIChatService
 
   protected makeToolMessages(
     tool: ITool,
-    toolResult: any
+    toolResult: any,
   ): IChatRequestMessage[] {
     return [
       {
@@ -155,14 +155,15 @@ export default class OpenAIChatService
       {
         role: 'tool',
         name: tool.name,
-        content: typeof (toolResult) === 'string' ? toolResult : toolResult.content,
+        content:
+          typeof toolResult === 'string' ? toolResult : toolResult.content,
         tool_call_id: tool.id,
       },
     ];
   }
 
   protected async makePayload(
-    message: IChatRequestMessage[]
+    message: IChatRequestMessage[],
   ): Promise<IChatRequestPayload> {
     const model = this.context.getModel();
     const payload: IChatRequestPayload = {
@@ -200,7 +201,7 @@ export default class OpenAIChatService
   }
 
   protected async makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response> {
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);

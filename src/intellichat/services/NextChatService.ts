@@ -19,9 +19,13 @@ const debug = Debug('5ire:intellichat:NextChatService');
 
 export default abstract class NextCharService {
   abortController: AbortController;
+
   context: IChatContext;
+
   provider: IServiceProvider;
+
   modelMapping: Record<string, string>;
+
   apiSettings: {
     base: string;
     key: string;
@@ -29,15 +33,23 @@ export default abstract class NextCharService {
     secret?: string; // baidu
     deploymentId?: string; // azure
   };
+
   protected abstract getReaderType(): new (
-    reader: ReadableStreamDefaultReader<Uint8Array>
+    reader: ReadableStreamDefaultReader<Uint8Array>,
   ) => IChatReader;
+
   protected onCompleteCallback: (result: any) => Promise<void>;
+
   protected onReadingCallback: (chunk: string) => void;
+
   protected onToolCallsCallback: (toolName: string) => void;
+
   protected onErrorCallback: (error: any, aborted: boolean) => void;
+
   protected usedToolNames: string[] = [];
+
   protected inputTokens: number = 0;
+
   protected outputTokens: number = 0;
 
   constructor({
@@ -68,23 +80,27 @@ export default abstract class NextCharService {
   }
 
   protected createReader(
-    reader: ReadableStreamDefaultReader<Uint8Array>
+    reader: ReadableStreamDefaultReader<Uint8Array>,
   ): IChatReader {
     const ReaderType = this.getReaderType();
     return new ReaderType(reader);
   }
+
   protected abstract makeToolMessages(
     tool: ITool,
-    toolResult: any
+    toolResult: any,
   ): IChatRequestMessage[];
+
   protected abstract makeTool(
-    tool: IMCPTool
+    tool: IMCPTool,
   ): IOpenAITool | IAnthropicTool | IGoogleTool;
+
   protected abstract makePayload(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<IChatRequestPayload>;
+
   protected abstract makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response>;
 
   protected getModelName() {
@@ -95,6 +111,7 @@ export default abstract class NextCharService {
   public onComplete(callback: (result: any) => Promise<void>) {
     this.onCompleteCallback = callback;
   }
+
   public onReading(callback: (chunk: string) => void) {
     this.onReadingCallback = callback;
   }
@@ -117,7 +134,7 @@ export default abstract class NextCharService {
   }
 
   protected async convertPromptContent(
-    content: string
+    content: string,
   ): Promise<
     | string
     | IChatRequestMessageContent[]
@@ -155,7 +172,8 @@ export default abstract class NextCharService {
       debug('Start Reading:', response.status, response.statusText);
       if (response.status !== 200) {
         const contentType = response.headers.get('content-type');
-        let msg, json;
+        let msg;
+        let json;
         if (contentType?.includes('application/json')) {
           json = await response.json();
         } else {
@@ -190,6 +208,12 @@ export default abstract class NextCharService {
           name,
           args: readResult.tool.args,
         });
+        if (toolCallsResult.isError) {
+          this.onErrorCallback(
+            toolCallsResult.content?.text || `Run ${name} failed`,
+            false,
+          );
+        }
         const _messages = [
           ...messages,
           ...this.makeToolMessages(readResult.tool, toolCallsResult),
