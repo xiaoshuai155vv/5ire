@@ -1,6 +1,6 @@
 import Debug from 'debug';
 import { IChatResponseMessage } from 'intellichat/types';
-import IChatReader, { ITool } from './IChatReader';
+import IChatReader from './IChatReader';
 import OpenAIReader from './OpenAIReader';
 
 const debug = Debug('5ire:intellichat:OllamaReader');

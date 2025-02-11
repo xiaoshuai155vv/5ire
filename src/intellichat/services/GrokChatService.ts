@@ -11,21 +11,4 @@ export default class GrokChatService
     super(chatContext);
     this.provider = Grok;
   }
-
-  protected async makeRequest(
-    messages: IChatRequestMessage[]
-  ): Promise<Response> {
-    const { base, key } = this.apiSettings;
-    const url = new URL(`/v1/chat/completions`, base);
-    const response = await fetch(url.toJSON(), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify(await this.makePayload(messages)),
-      signal: this.abortController.signal,
-    });
-    return response;
-  }
 }
