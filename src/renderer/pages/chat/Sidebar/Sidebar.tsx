@@ -35,9 +35,9 @@ export default function Sidebar({ chatId }: { chatId: string }) {
 
   return (
     <aside
-      className={`right-sidebar shadow-md md:shadow-none ml-5 -mr-5 z-20 pt-2 flex-shrink-0 border-l w-64 ${
-        chatSidebar.hidden ? 'hidden' : 'hidden md:flex'
-      } fixed inset-y-0 top-0 flex-col duration-300 md:relative px-2`}
+      className={`right-sidebar ml-5 -mr-5 z-20 pt-2 flex-shrink-0 border-l w-64 ${
+        chatSidebar.hidden ? 'hidden' : 'hidden sm:flex'
+      }  inset-y-0 top-0 flex-col duration-300 md:relative pl-2`}
     >
       <div className="text-gray-300 dark:text-gray-600 font-bold text-xl">
         {t('Common.Inspector')}
