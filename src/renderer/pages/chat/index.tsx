@@ -125,6 +125,9 @@ export default function Chat() {
 
   const onSubmit = useCallback(
     async (prompt: string) => {
+      if(prompt.trim() === '') {
+        return;
+      }
       const model = chatService.context.getModel();
       let $chatId = activeChatId;
       if (activeChatId === tempChatId) {
