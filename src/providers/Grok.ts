@@ -2,7 +2,7 @@ import { IServiceProvider } from './types';
 
 export default {
   name: 'Grok',
-  apiBase: 'https://api.x.ai',
+  apiBase: 'https://api.x.ai/v1',
   currency: 'USD',
   options: {
     apiBaseCustomizable: true,

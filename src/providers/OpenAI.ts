@@ -2,7 +2,7 @@ import { IServiceProvider } from './types';
 
 export default {
   name: 'OpenAI',
-  apiBase: 'https://api.openai.com',
+  apiBase: 'https://api.openai.com/v1',
   currency: 'USD',
   options: {
     apiBaseCustomizable: true,

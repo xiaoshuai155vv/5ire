@@ -2,7 +2,7 @@ import { IServiceProvider } from './types';
 
 export default {
   name: 'Doubao',
-  apiBase: 'https://ark.cn-beijing.volces.com',
+  apiBase: 'https://ark.cn-beijing.volces.com/api/v3',
   currency: 'CNY',
   options: {
     apiBaseCustomizable: true,

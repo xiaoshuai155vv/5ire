@@ -2,7 +2,7 @@ import { IServiceProvider } from './types';
 
 export default {
   name: 'Anthropic',
-  apiBase: 'https://api.anthropic.com/',
+  apiBase: 'https://api.anthropic.com/v1',
   currency: 'USD',
   options: {
     apiBaseCustomizable: true,

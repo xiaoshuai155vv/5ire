@@ -2,7 +2,7 @@ import { IServiceProvider } from './types';
 
 export default {
   name: 'Moonshot',
-  apiBase: 'https://api.moonshot.cn',
+  apiBase: 'https://api.moonshot.cn/v1',
   currency: 'CNY',
   options: {
     apiBaseCustomizable: false,
