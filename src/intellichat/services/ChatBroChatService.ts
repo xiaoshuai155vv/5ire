@@ -46,7 +46,8 @@ export default class ChatBroChatService
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
-    const postResp = await fetch(`${base}/v1/open/azure/chat`, {
+    const url = new URL(`/v1/open/azure/chat`, base);
+    const postResp = await fetch(url.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

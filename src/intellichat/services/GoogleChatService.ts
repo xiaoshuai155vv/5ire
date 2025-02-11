@@ -71,7 +71,10 @@ export default class GoogleChatService
               name: tool.name,
               response: {
                 name: tool.name,
-                content: typeof(toolResult)==='string' ? toolResult:toolResult.content,
+                content:
+                  typeof toolResult === 'string'
+                    ? toolResult
+                    : toolResult.content,
               },
             },
           },
@@ -83,20 +86,20 @@ export default class GoogleChatService
   protected makeTool(
     tool: IMCPTool
   ): IOpenAITool | IAnthropicTool | IGoogleTool {
-    if(Object.keys(tool.inputSchema.properties).length===0){
+    if (Object.keys(tool.inputSchema.properties).length === 0) {
       return {
         name: tool.name,
-        description: tool.description
+        description: tool.description,
       };
     }
     const properties: any = {};
     for (const key in tool.inputSchema.properties) {
-      const prop = tool.inputSchema.properties[key]
+      const prop = tool.inputSchema.properties[key];
       /**
        * cause gemini-pro-vision not support additionalProperties
        */
-      if(prop.items){
-        delete prop.items['additionalProperties']
+      if (prop.items) {
+        delete prop.items['additionalProperties'];
       }
       properties[key] = {
         type: prop.type,
@@ -245,19 +248,20 @@ export default class GoogleChatService
       )}\r\n`
     );
     const { base, key } = this.apiSettings;
-    const response = await fetch(
-      `${base}/v1beta/models/${this.getModelName()}:${
+    const url = new URL(
+      `/v1beta/models/${this.getModelName()}:${
         isStream ? 'streamGenerateContent' : 'generateContent'
       }?key=${key}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        signal: this.abortController.signal,
-      }
+      base
     );
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      signal: this.abortController.signal,
+    });
     return response;
   }
 }

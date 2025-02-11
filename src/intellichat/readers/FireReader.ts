@@ -2,10 +2,11 @@ import Debug from 'debug';
 import { IChatResponseMessage } from 'intellichat/types';
 import BaseReader from './BaseReader';
 import IChatReader, { ITool, IReadResult } from './IChatReader';
+import OpenAIReader from './OpenAIReader';
 
 const debug = Debug('5ire:intellichat:FireReader');
 
-export default class FireReader extends BaseReader implements IChatReader {
+export default class FireReader extends OpenAIReader implements IChatReader {
   protected parseReply(chunk: string): IChatResponseMessage {
     return {
       content: chunk,

@@ -52,7 +52,8 @@ export default class AnthropicChatService
           {
             type: 'tool_result',
             tool_use_id: tool.id,
-            content: typeof(toolResult)==='string' ? toolResult:toolResult.content,
+            content:
+              typeof toolResult === 'string' ? toolResult : toolResult.content,
           },
         ],
       },
@@ -200,7 +201,8 @@ export default class AnthropicChatService
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
-    const response = await fetch(`${base}/v1/messages`, {
+    const url = new URL('/v1/messages', base);
+    const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

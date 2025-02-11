@@ -6,8 +6,7 @@ import INextChatService from './INextCharService';
 
 export default class AzureChatService
   extends OpenAIChatService
-  implements INextChatService
-{
+  implements INextChatService {
 
   constructor(chatContext: IChatContext) {
     super(chatContext);
@@ -17,8 +16,9 @@ export default class AzureChatService
   protected async makeRequest(messages: IChatRequestMessage[]): Promise<Response> {
     const apiVersion = '2023-03-15-preview';
     const { base, deploymentId, key } = this.apiSettings;
+    const url = new URL(`/openai/deployments/${deploymentId}/chat/completions?api-version=${apiVersion}`, base);
     const response = await fetch(
-      `${base}/openai/deployments/${deploymentId}/chat/completions?api-version=${apiVersion}`,
+      url.toString(),
       {
         method: 'POST',
         headers: {

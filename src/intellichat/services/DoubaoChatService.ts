@@ -5,8 +5,7 @@ import INextChatService from './INextCharService';
 
 export default class DoubaoChatService
   extends OpenAIChatService
-  implements INextChatService
-{
+  implements INextChatService {
   constructor(chatContext: IChatContext) {
     super(chatContext);
     this.provider = Doubao;
@@ -19,7 +18,8 @@ export default class DoubaoChatService
     const payload = await this.makePayload(messages);
     payload.model = deploymentId;
     payload.stream = true;
-    const response = await fetch(`${base}/api/v3/chat/completions`, {
+    const url = new URL('/api/v3/chat/completions', base);
+    const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

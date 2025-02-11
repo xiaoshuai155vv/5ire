@@ -16,7 +16,8 @@ export default class GrokChatService
     messages: IChatRequestMessage[]
   ): Promise<Response> {
     const { base, key } = this.apiSettings;
-    const response = await fetch(`${base}/v1/chat/completions`, {
+    const url = new URL(`/v1/chat/completions`, base);
+    const response = await fetch(url.toJSON(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
