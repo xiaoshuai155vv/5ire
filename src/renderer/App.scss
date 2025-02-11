@@ -102,6 +102,12 @@ pre {
   overflow-x: auto;
   @extend .wrap;
 }
+pre.ghost{
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
 svg {
   outline: none;
 }

@@ -1,4 +1,5 @@
 import Debug from 'debug';
+import { use } from 'i18next';
 import IChatReader, { ITool } from 'intellichat/readers/IChatReader';
 import {
   IAnthropicTool,
@@ -12,6 +13,7 @@ import {
   IOpenAITool,
 } from 'intellichat/types';
 import { IServiceProvider } from 'providers/types';
+import useInspectorStore from 'stores/useInspectorStore';
 import useSettingsStore from 'stores/useSettingsStore';
 import { raiseError, stripHtmlTags } from 'utils/util';
 
@@ -52,6 +54,8 @@ export default abstract class NextCharService {
 
   protected outputTokens: number = 0;
 
+  protected traceTool: (chatId: string, label: string, msg: string) => void;
+
   constructor({
     context,
     provider,
@@ -64,6 +68,7 @@ export default abstract class NextCharService {
     this.provider = provider;
     this.context = context;
     this.abortController = new AbortController();
+    this.traceTool = useInspectorStore.getState().trace;
 
     this.onCompleteCallback = () => {
       throw new Error('onCompleteCallback is not set');
@@ -163,6 +168,7 @@ export default abstract class NextCharService {
   }
 
   public async chat(messages: IChatRequestMessage[]) {
+    const chatId = this.context.getActiveChat().id;
     this.abortController = new AbortController();
     let reply = '';
     let signal = null;
@@ -203,15 +209,32 @@ export default abstract class NextCharService {
       }
       if (readResult.tool) {
         const [client, name] = readResult.tool.name.split('--');
+        this.traceTool(chatId, name, '');
         const toolCallsResult = await window.electron.mcp.callTool({
           client,
           name,
           args: readResult.tool.args,
         });
+        this.traceTool(
+          chatId,
+          'arguments',
+          JSON.stringify(readResult.tool.args, null, 2),
+        );
         if (toolCallsResult.isError) {
           this.onErrorCallback(
             toolCallsResult.content?.text || `Run ${name} failed`,
             false,
+          );
+          this.traceTool(
+            chatId,
+            'error',
+            ` ${toolCallsResult.content?.text || ''}`,
+          );
+        } else {
+          this.traceTool(
+            chatId,
+            'resp',
+            JSON.stringify(toolCallsResult, null, 2),
           );
         }
         const _messages = [

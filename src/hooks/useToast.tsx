@@ -1,4 +1,5 @@
 import {
+  useId,
   useToastController,
   Toast,
   ToastTitle,
@@ -6,8 +7,17 @@ import {
   ToastIntent,
 } from '@fluentui/react-components';
 
+import {
+  Dismiss16Regular,
+  Dismiss16Filled,
+  bundleIcon,
+} from '@fluentui/react-icons';
+
+const DismissIcon = bundleIcon(Dismiss16Filled, Dismiss16Regular);
+
 export default function useToast() {
-  const { dispatchToast } = useToastController('toaster');
+  const { dispatchToast, dismissToast } = useToastController('toaster');
+  const toastId = useId('5ire');
   const $notify = ({
     title,
     message,
@@ -20,15 +30,22 @@ export default function useToast() {
     dispatchToast(
       <Toast>
         <ToastTitle>
-          <strong>{title}</strong>
+          <div className="flex justify-between items-center w-full">
+            <strong>{title}</strong>
+            <DismissIcon onClick={dismiss} />
+          </div>
         </ToastTitle>
         <ToastBody>
-          <div style={{ width: '95%' }} className="toast-content">{message}</div>
+          <div style={{ width: '95%' }} className="toast-content">
+            {message}
+          </div>
         </ToastBody>
       </Toast>,
-      { intent, pauseOnHover: true, position: 'top-end' }
+      { toastId, intent, pauseOnHover: true, position: 'top-end' },
     );
   };
+  const dismiss = () => dismissToast(toastId);
+
   const notifyError = (message: string) =>
     $notify({ title: 'Error', message, intent: 'error' });
   const notifyWarning = (message: string) =>

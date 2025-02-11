@@ -5,6 +5,8 @@ import {
   MoreHorizontal24Regular,
   MoreHorizontal24Filled,
   FilterDismiss24Regular,
+  PanelRight24Regular,
+  PanelRight24Filled,
   Delete24Regular,
   Delete24Filled,
   bundleIcon,
@@ -23,7 +25,7 @@ import useToast from 'hooks/useToast';
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const MoreHorizontalIcon = bundleIcon(
   MoreHorizontal24Filled,
-  MoreHorizontal24Regular
+  MoreHorizontal24Regular,
 );
 
 export default function Header() {
@@ -33,6 +35,12 @@ export default function Header() {
 
   const activeChat = useChatContext().getActiveChat();
   const collapsed = useAppearanceStore((state) => state.sidebar.collapsed);
+  const chatSidebarHidden = useAppearanceStore(
+    (state) => state.chatSidebar.hidden,
+  );
+  const toggleChatSidebarVisibility = useAppearanceStore(
+    (state) => state.toggleChatSidebarVisibility,
+  );
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const [delConfirmDialogOpen, setDelConfirmDialogOpen] =
@@ -56,6 +64,7 @@ export default function Header() {
         setDelConfirmDialogOpen(true);
       }
     });
+    Mousetrap.bind('mod+shift+r', toggleChatSidebarVisibility);
     return () => {
       Mousetrap.unbind('mod+d');
     };
@@ -89,6 +98,18 @@ export default function Header() {
             ) : null}
           </>
         ) : null}
+        <Button
+          icon={
+            chatSidebarHidden ? (
+              <PanelRight24Regular className="text-color-tertiary" />
+            ) : (
+              <PanelRight24Filled className="text-color-tertiary" />
+            )
+          }
+          appearance="transparent"
+          title="Mod+shift+r"
+          onClick={toggleChatSidebarVisibility}
+        />
         <Button
           icon={<MoreHorizontalIcon />}
           appearance="subtle"

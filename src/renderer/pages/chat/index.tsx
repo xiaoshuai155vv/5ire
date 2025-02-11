@@ -28,6 +28,8 @@ import { extractCitationIds } from 'utils/util';
 import INextChatService from 'intellichat/services/INextCharService';
 import useSettingsStore from 'stores/useSettingsStore';
 import useStageStore from 'stores/useStageStore';
+import Sidebar from './Sidebar/Sidebar';
+import useInspectorStore from 'stores/useInspectorStore';
 
 const debug = Debug('5ire:pages:chat');
 
@@ -53,6 +55,7 @@ export default function Chat() {
   const getChat = useChatStore((state) => state.getChat);
   const updateChat = useChatStore((state) => state.updateChat);
   const updateStates = useChatStore((state) => state.updateStates);
+  const clearTrace = useInspectorStore((state) => state.clearTrace);
   const modelMapping = useSettingsStore((state) => state.modelMapping);
   const [chatService] = useState<INextChatService>(useChatService());
 
@@ -65,7 +68,7 @@ export default function Chat() {
       }
     },
     100,
-    { leading: true, maxWait: 300 }
+    { leading: true, maxWait: 300 },
   );
 
   useEffect(() => {
@@ -88,9 +91,9 @@ export default function Chat() {
         {
           leading: true,
           maxWait: 2000,
-        }
+        },
       ),
-    [fetchMessages]
+    [fetchMessages],
   );
 
   useEffect(() => {
@@ -132,10 +135,10 @@ export default function Chat() {
           async (newChat: IChat) => {
             const knowledgeCollections = moveChatCollections(
               tempChatId,
-              newChat.id
+              newChat.id,
             );
             await setChatCollections(newChat.id, knowledgeCollections);
-          }
+          },
         );
         $chatId = $chat.id;
         setActiveChatId($chatId);
@@ -148,6 +151,7 @@ export default function Chat() {
         });
         setKeyword(activeChatId, ''); // clear filter keyword
       }
+      clearTrace($chatId);
       updateStates($chatId, { loading: true });
 
       let $reply = '';
@@ -160,7 +164,7 @@ export default function Chat() {
       if (chatCollections.length) {
         const knowledgeString = await window.electron.knowledge.search(
           chatCollections.map((c) => c.id),
-          prompt
+          prompt,
         );
         knowledgeChunks = JSON.parse(knowledgeString);
         useKnowledgeStore.getState().cacheChunks(knowledgeChunks);
@@ -187,7 +191,7 @@ ${JSON.stringify(
     file: files.find((f) => f.id === k.fileId)?.name,
     id: k.id,
     content: k.content,
-  }))
+  })),
 )}
 
 # Objective #
@@ -223,7 +227,7 @@ ${prompt}
             result.outputTokens || (await countOutput(result.content || ''));
           const citedChunkIds = extractCitationIds(result.content || '');
           const citedChunks = knowledgeChunks.filter((k: any) =>
-            citedChunkIds.includes(k.id)
+            citedChunkIds.includes(k.id),
           );
           const citedFileIds = [
             ...new Set(citedChunks.map((k: any) => k.fileId)),
@@ -241,7 +245,7 @@ ${prompt}
                 seqNo: idx + 1,
                 content: k.content,
                 id: k.id,
-              }))
+              })),
             ),
           });
           useUsageStore.getState().create({
@@ -290,46 +294,49 @@ ${prompt}
       navigate,
       appendReply,
       notifyError,
-    ]
+    ],
   );
   return (
-    <div id="chat" className="relative h-screen">
-      <Header />
-      <div className="h-screen -mx-5 mt-10">
-        <SplitPane
-          split="horizontal"
-          sizes={sizes}
-          onChange={setSizes}
-          performanceMode
-          sashRender={sashRender}
-        >
-          <Pane className="chat-content flex-grow">
-            <div id="messages" ref={ref} className="overflow-y-auto h-full">
-              {messages.length ? (
-                <div className="mx-auto max-w-screen-md px-5">
-                  <Messages messages={messages} />
-                </div>
-              ) : chatService.isReady() ? null : (
-                <Empty image="hint" text={t('Notification.APINotReady')} />
-              )}
-            </div>
-          </Pane>
-          <Pane minSize={180} maxSize="60%">
-            {chatService.isReady() ? (
-              <Editor
-                onSubmit={onSubmit}
-                onAbort={() => {
-                  chatService.abort();
-                }}
-              />
-            ) : (
-              <div className="flex flex-col justify-center h-3/4 text-center text-sm text-gray-400">
-                {id === tempChatId ? '' : t('Notification.APINotReady')}
+    <div id="chat" className="relative h-screen flex flex-start">
+      <div className="flex-grow relative">
+        <Header />
+        <div className="h-screen -mx-5 mt-10">
+          <SplitPane
+            split="horizontal"
+            sizes={sizes}
+            onChange={setSizes}
+            performanceMode
+            sashRender={sashRender}
+          >
+            <Pane className="chat-content flex-grow">
+              <div id="messages" ref={ref} className="overflow-y-auto h-full">
+                {messages.length ? (
+                  <div className="mx-auto max-w-screen-md px-5">
+                    <Messages messages={messages} />
+                  </div>
+                ) : chatService.isReady() ? null : (
+                  <Empty image="hint" text={t('Notification.APINotReady')} />
+                )}
               </div>
-            )}
-          </Pane>
-        </SplitPane>
+            </Pane>
+            <Pane minSize={180} maxSize="60%">
+              {chatService.isReady() ? (
+                <Editor
+                  onSubmit={onSubmit}
+                  onAbort={() => {
+                    chatService.abort();
+                  }}
+                />
+              ) : (
+                <div className="flex flex-col justify-center h-3/4 text-center text-sm text-gray-400">
+                  {id === tempChatId ? '' : t('Notification.APINotReady')}
+                </div>
+              )}
+            </Pane>
+          </SplitPane>
+        </div>
       </div>
+      <Sidebar chatId={activeChatId} />
       <CitationDialog />
     </div>
   );
