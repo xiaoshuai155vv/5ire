@@ -35,11 +35,11 @@ export default function Sidebar({ chatId }: { chatId: string }) {
 
   return (
     <aside
-      className={`right-sidebar ml-5 -mr-5 z-20 pt-2 flex-shrink-0 border-l w-64 ${
+      className={`right-sidebar ml-5 -mr-5 z-20 pt-2.5 flex-shrink-0 border-l w-64 ${
         chatSidebar.hidden ? 'hidden' : 'hidden sm:flex'
       }  inset-y-0 top-0 flex-col duration-300 md:relative pl-2`}
     >
-      <div className="text-gray-300 dark:text-gray-600 font-bold text-xl">
+      <div className="text-gray-300 dark:text-gray-600 font-bold text-lg">
         {t('Common.Inspector')}
       </div>
       <div className="h-full overflow-x-hidden overflow-y-auto  break-all -ml-2.5">
@@ -47,9 +47,7 @@ export default function Sidebar({ chatId }: { chatId: string }) {
           {trace?.map((item: ITraceMessage, idx: number) => {
             return item.message === '' ? (
               <div className="pl-4 mt-2">
-                <span
-                  className={`-ml-1 inline-block pt-0 py-0.5 rounded truncate text-ellipsis overflow-hidden w-52 font-bold text-gray-400 dark:text-gray-400`}
-                >
+                <span className="-ml-1 inline-block pt-0 py-0.5 rounded truncate text-ellipsis overflow-hidden w-52 font-bold text-gray-400 dark:text-gray-400">
                   {item.label}
                 </span>
               </div>
