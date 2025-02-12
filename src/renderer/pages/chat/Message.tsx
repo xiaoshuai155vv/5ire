@@ -4,8 +4,6 @@ import Debug from 'debug';
 import useChatStore from 'stores/useChatStore';
 import { useCallback, useEffect, useMemo } from 'react';
 import useMarkdown from 'hooks/useMarkdown';
-import MessageToolbar from './MessageToolbar';
-import {highlight } from '../../../utils/util';
 import { IChatMessage } from 'intellichat/types';
 import { useTranslation } from 'react-i18next';
 import { Divider } from '@fluentui/react-components';
@@ -13,6 +11,8 @@ import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useToast from 'hooks/useToast';
 import ToolSpinner from 'renderer/components/ToolSpinner';
 import useSettingsStore from 'stores/useSettingsStore';
+import { highlight } from '../../../utils/util';
+import MessageToolbar from './MessageToolbar';
 
 const debug = Debug('5ire:pages:chat:Message');
 
@@ -25,11 +25,11 @@ export default function Message({ message }: { message: IChatMessage }) {
   const { showCitation } = useKnowledgeStore();
   const keyword = useMemo(
     () => keywords[message.chatId],
-    [keywords, message.chatId]
+    [keywords, message.chatId],
   );
   const citedFiles = useMemo(
     () => JSON.parse(message.citedFiles || '[]'),
-    [message.citedFiles]
+    [message.citedFiles],
   );
 
   const citedChunks = useMemo(() => {
@@ -44,7 +44,7 @@ export default function Message({ message }: { message: IChatMessage }) {
       if (url.pathname === '/citation' || url.protocol.startsWith('file:')) {
         event.preventDefault();
         const chunkId = url.hash.replace('#', '');
-        const chunk = citedChunks.find((chunk: any) => chunk.id === chunkId);
+        const chunk = citedChunks.find((i: any) => i.id === chunkId);
         if (chunk) {
           showCitation(chunk.content);
         } else {
@@ -52,7 +52,7 @@ export default function Message({ message }: { message: IChatMessage }) {
         }
       }
     },
-    [citedChunks, showCitation]
+    [citedChunks, showCitation],
   );
 
   const registerCitationClick = useCallback(() => {
@@ -97,7 +97,7 @@ export default function Message({ message }: { message: IChatMessage }) {
             __html: render(
               `${
                 highlight(message.reply, keyword) || ''
-              }<span class="blinking-cursor" /></span>`
+              }<span class="blinking-cursor" /></span>`,
             ),
           }}
         />
