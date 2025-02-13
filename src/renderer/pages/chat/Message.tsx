@@ -11,6 +11,7 @@ import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useToast from 'hooks/useToast';
 import ToolSpinner from 'renderer/components/ToolSpinner';
 import useSettingsStore from 'stores/useSettingsStore';
+import { protocol } from 'electron';
 import { highlight } from '../../../utils/util';
 import MessageToolbar from './MessageToolbar';
 
@@ -62,15 +63,56 @@ export default function Message({ message }: { message: IChatMessage }) {
     });
   }, [onCitationClick]);
 
+  const toggleThink = useCallback((btn: any, show: boolean) => {
+    const parent = btn.parentNode.parentNode;
+    const think = parent.querySelector('.think-body');
+    if (show) {
+      parent.classList.remove('collapsed');
+      think.classList.remove('hidden');
+      btn.classList.add('hidden');
+      btn.nextElementSibling.classList.remove('hidden');
+    } else {
+      parent.classList.add('collapsed');
+      think.classList.add('hidden');
+      btn.classList.add('hidden');
+      btn.previousElementSibling.classList.remove('hidden');
+    }
+  }, []);
+
+  const registerThinkToggle = useCallback(() => {
+    const btnShow = document.querySelectorAll('div.think-header .btn-show');
+    const btnHide = document.querySelectorAll('div.think-header .btn-hide');
+    btnShow.forEach((btn) => {
+      btn.addEventListener('click', () => toggleThink(btn, true));
+    });
+    btnHide.forEach((btn) => {
+      btn.addEventListener('click', () => toggleThink(btn, false));
+    });
+  }, [toggleThink]);
+
   useEffect(() => {
     registerCitationClick();
+    registerThinkToggle();
     return () => {
       const links = document.querySelectorAll('.msg-reply a');
       links.forEach((link) => {
         link.removeEventListener('click', onCitationClick);
       });
+      const btnShow = document.querySelectorAll('div.think-header .btn-show');
+      const btnHide = document.querySelectorAll('div.think-header .btn-hide');
+      btnShow.forEach((btn) => {
+        btn.removeEventListener('click', () => toggleThink(btn, true));
+      });
+      btnHide.forEach((btn) => {
+        btn.removeEventListener('click', () => toggleThink(btn, false));
+      });
     };
-  }, [message.isActive, registerCitationClick]);
+  }, [
+    message.isActive,
+    message.reply,
+    registerCitationClick,
+    registerThinkToggle,
+  ]);
 
   const replyNode = useCallback(() => {
     if (message.isActive && states.loading) {

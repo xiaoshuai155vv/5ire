@@ -164,16 +164,33 @@
 
 div.think{
  color: rgba(var(--color-text-info), 1);
- border-left: 2px solid rgba(var(--color-border), 1);
- padding-left: 8px;
- margin-bottom: 10px;
+ border: 0.5px solid rgba(var(--color-border), 1);
+ background-color: rgba(var(--color-bg-surface-2), 0.3);
+ border-radius: 4px;
+ font-size:13px;
+ margin-bottom: 8px;
 }
-.is-loading div.think::before{
-  content: 'Thinking...';
-  margin-right: 6px;
+div.think-header{
+  padding:8px;
+  border-bottom: 0.5px solid rgba(var(--color-border), 1);
+  display:flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 2px;
 }
-div.think::before{
-  content: '';
+.collapsed .think-header{
+  border-bottom:none;
+}
+div.think-body{
+  padding: 8px;
+}
+.is-loading .btn-show,
+.is-loading .btn-hide{
+  display:none;
+}
+[data-theme='dark'] div.think{
+  border: 1px solid rgba(0,0,0, 0.1);
+  background-color: rgba(20,20,20, 0.3);
 }
 
 .right-sidebar{

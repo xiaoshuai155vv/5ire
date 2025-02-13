@@ -227,5 +227,6 @@
   "Apperance.ChatFontSize": "Text size in the chat",
   "Apperance.ColorTheme": "Color Theme",
   "Common.Notification.Copied": "Copied",
-  "Common.Inspector": "Inspector"
+  "Common.Inspector": "Inspector",
+  "Common.Think": "Think"
 }
