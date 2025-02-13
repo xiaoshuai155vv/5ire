@@ -13,6 +13,7 @@ import Toolbar from './Toolbar';
 import Spinner from '../../../components/Spinner';
 import { removeTagsExceptImg, setCursorToEnd } from 'utils/util';
 import { debounce } from 'lodash';
+import { tempChatId } from 'consts';
 
 export default function Editor({
   onSubmit,
@@ -25,6 +26,7 @@ export default function Editor({
   const editorRef = useRef<HTMLDivElement>(null);
   const chat = useChatStore((state) => state.chat);
   const states = useChatStore().getCurState();
+  const [submitted, setSubmitted] = useState<boolean>(false);
   const updateStates = useChatStore((state) => state.updateStates);
   const editStage = useChatStore((state) => state.editStage);
   const [savedRange, setSavedRange] = useState<Range | null>(null);
@@ -49,22 +51,27 @@ export default function Editor({
     }
   }, [savedRange]);
 
-  const saveStageInput = useMemo(() => {
+  const saveInput = useMemo(() => {
     return debounce((chatId: string) => {
-      editStage(chatId, { input: editorRef.current?.innerHTML });
-    }, 800);
+      if (!submitted) {
+        editStage(chatId, { input: editorRef.current?.innerHTML });
+      }
+    }, 500);
   }, [editStage]);
+
+  const onBlur = () => {
+    saveRange();
+  };
 
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLDivElement>) => {
       if (!event.shiftKey && event.key === 'Enter') {
         event.preventDefault();
+        setSubmitted(true);
         onSubmit(removeTagsExceptImg(editorRef.current?.innerHTML || ''));
         // @ts-ignore
         editorRef.current.innerHTML = '';
         editStage(chat.id, { input: '' });
-      } else {
-        saveStageInput(chat.id);
       }
     },
     [onSubmit],
@@ -110,7 +117,13 @@ export default function Editor({
     }
   }, []);
 
+  const onInput = () => {
+    saveInput(chat.id);
+    setSubmitted(false);
+  };
+
   useEffect(() => {
+    setSubmitted(false);
     if (editorRef.current) {
       editorRef.current.addEventListener('paste', pasteWithoutStyle);
     }
@@ -128,7 +141,6 @@ export default function Editor({
       }
     };
   }, [chat.id]);
-
 
   const onAbortClick = () => {
     onAbort();
@@ -158,6 +170,8 @@ export default function Editor({
         className="w-full outline-0 pl-2.5 pr-2.5 pb-2.5 bg-brand-surface-1 flex-grow overflow-y-auto overflow-x-hidden"
         onKeyDown={onKeyDown}
         onFocus={restoreRange}
+        onBlur={onBlur}
+        onInput={onInput}
         style={{ resize: 'none', whiteSpace: 'pre-wrap' }}
       />
       <div className="h-12 flex-shrink-0" />

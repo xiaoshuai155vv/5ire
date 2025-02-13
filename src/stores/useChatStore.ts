@@ -183,8 +183,9 @@ const useChatStore = create<IChatStore>((set, get) => ({
     } as IChat;
     debug('Create a chat ', $chat);
     let prompt = null;
+    $chat.input = ''; // clear input
     try {
-      prompt = JSON.stringify($chat.prompt);
+      prompt = $chat.prompt ? JSON.stringify($chat.prompt) : null;
     } catch (err: any) {
       captureException(err);
     }
@@ -201,7 +202,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
         $chat.maxTokens || null,
         isNil($chat.stream) ? 1 : $chat.stream ? 1 : 0,
         prompt,
-        $chat.input || null,
+        $chat.input,
         $chat.createdAt,
       ],
     );

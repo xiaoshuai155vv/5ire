@@ -120,13 +120,12 @@ export default function Chat() {
   const updateMessage = useChatStore((state) => state.updateMessage);
   const appendReply = useChatStore((state) => state.appendReply);
 
-
   const { moveChatCollections, listChatCollections, setChatCollections } =
     useChatKnowledgeStore.getState();
 
   const onSubmit = useCallback(
     async (prompt: string) => {
-      if(prompt.trim() === '') {
+      if (prompt.trim() === '') {
         return;
       }
       const model = chatService.context.getModel();
