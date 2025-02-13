@@ -43,13 +43,12 @@ export default function ChatSettingsDrawer({
 
   const keyword = useMemo(
     () => keywords[activeChat?.id] || '',
-    [keywords, activeChat?.id]
+    [keywords, activeChat?.id],
   );
 
   const [systemMessage, setSystemMessage] = useState<string>();
 
-  const updateChat = useChatStore((state) => state.updateChat);
-  const editChat = useChatStore((state) => state.editChat);
+  const editStage = useChatStore((state) => state.editStage);
 
   const onSearchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (!event.shiftKey && event.key === 'Enter') {
@@ -67,15 +66,9 @@ export default function ChatSettingsDrawer({
     () =>
       debounce((ev: ChangeEvent<HTMLTextAreaElement>) => {
         const systemMessage = ev.target.value;
-        if (activeChat.isPersisted) {
-          updateChat({ id: activeChat.id, systemMessage });
-          debug('Update SystemMessage of Chat', systemMessage);
-        } else {
-          editChat({ systemMessage });
-          debug('Edit SystemMessage of Chat', systemMessage);
-        }
+        editStage(activeChat.id, { systemMessage });
       }, 1000),
-    [activeChat?.id]
+    [activeChat?.id],
   );
 
   return (
@@ -121,8 +114,7 @@ export default function ChatSettingsDrawer({
           <div className="mb-4">
             <Field label={t('Common.SystemMessage')}>
               <Textarea
-                size="large"
-                rows={20}
+                rows={40}
                 value={systemMessage}
                 onChange={onSystemMessageChange}
                 resize="vertical"
