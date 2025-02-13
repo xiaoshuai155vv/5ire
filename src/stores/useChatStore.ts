@@ -379,8 +379,6 @@ const useChatStore = create<IChatStore>((set, get) => ({
     set((state) => ({
       messages: [...state.messages, msg],
     }));
-    // 每次提交消息后，清空输入框
-    get().updateChat({ id: msg.chatId, input: '' });
     return msg;
   },
   appendReply: (msgId: string, reply: string) => {
