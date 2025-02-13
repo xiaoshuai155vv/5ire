@@ -20,6 +20,7 @@ export default {
       'grok-beta': {
         name: 'grok-beta',
         contextWindow: 131072,
+        defaultMaxTokens:2048,
         maxTokens: 4096,
         inputPrice: 0.005,
         outputPrice: 0.015,

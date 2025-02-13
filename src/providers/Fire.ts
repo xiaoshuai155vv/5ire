@@ -51,6 +51,7 @@ export default {
         name: 'gpt-4o',
         contextWindow: 128000,
         maxTokens: 4096,
+        defaultMaxTokens: 2048,
         inputPrice: 0.005,
         outputPrice: 0.015,
         vision: {
@@ -64,6 +65,7 @@ export default {
         name: 'gpt-4',
         contextWindow: 128000,
         maxTokens: 4096,
+        defaultMaxTokens: 2048,
         inputPrice: 0.03,
         outputPrice: 0.06,
         group: 'GPT-4',
@@ -72,6 +74,7 @@ export default {
         name: 'gpt-35-turbo',
         contextWindow: 16385,
         maxTokens: 4096,
+        defaultMaxTokens: 2048,
         inputPrice: 0.0015,
         outputPrice: 0.002,
         group: 'GPT-3.5',

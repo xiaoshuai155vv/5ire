@@ -21,6 +21,7 @@ export default {
         name: 'gpt-4o',
         contextWindow: 128000,
         maxTokens: 4906,
+        defaultMaxTokens: 2048,
         inputPrice: 0.005,
         outputPrice: 0.015,
         description: `GPT-4o it's most advanced multimodal model of OpenAI that’s faster and cheaper than GPT-4 Turbo with stronger vision capabilities`,
@@ -30,6 +31,7 @@ export default {
         name: 'gpt-4o-mini',
         contextWindow: 128000,
         maxTokens: 16384,
+        defaultMaxTokens: 2048,
         inputPrice: 0.00015,
         outputPrice: 0.0006,
         vision: {
@@ -44,6 +46,7 @@ export default {
         name: 'gpt-4',
         contextWindow: 128000,
         maxTokens: 4906,
+        defaultMaxTokens: 2048,
         inputPrice: 0.08,
         outputPrice: 0.3,
         description: `The latest GPT-4 model with improved instruction following,
@@ -56,6 +59,7 @@ export default {
         name: 'gpt-35-turbo',
         contextWindow: 128000,
         maxTokens: 4906,
+        defaultMaxTokens: 2048,
         inputPrice: 0.01,
         outputPrice: 0.02,
         description: `Ability to understand images, in addition to all other GPT-4 Turbo capabilties.
