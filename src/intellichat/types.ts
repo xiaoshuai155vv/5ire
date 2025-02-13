@@ -75,7 +75,7 @@ export interface IChatRequestMessageContent {
     | 'tool_use';
   id?: string;
   name?: string;
-  input?:any;
+  input?: any;
   tool_use_id?: string;
   text?: string;
   content?: any;
@@ -172,6 +172,8 @@ export interface IChat {
   context?: string | null;
   maxTokens?: number | null;
   createdAt: number | null;
+  prompt: IPrompt | string | null;
+  input: string | null;
   isPersisted?: boolean;
 }
 
@@ -220,9 +222,12 @@ export interface IPrompt {
 
 export interface IStage {
   chatId: string;
+  model: string;
   systemMessage?: string | null;
   prompt?: IPrompt | null;
   input?: string;
   temperature?: number;
   maxTokens?: number | null;
+  maxCtxMessages?: number;
+  stream?:boolean
 }

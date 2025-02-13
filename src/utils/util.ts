@@ -64,7 +64,7 @@ export function parseVariables(text: string): string[] {
 
 export function fillVariables(
   text: string,
-  variables: { [key: string]: string }
+  variables: { [key: string]: string },
 ) {
   let result = text;
   Object.keys(variables).forEach((key) => {
@@ -99,7 +99,14 @@ export function insertAtCursor(field: HTMLDivElement, value: string) {
   if (selection && selection.rangeCount > 0) {
     const range = selection.getRangeAt(0);
     const node = document.createRange().createContextualFragment(value);
+    const lastNode = node.lastChild;
     range.insertNode(node);
+    if (lastNode) {
+      range.setStartAfter(lastNode);
+      range.setEndAfter(lastNode);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
   } else {
     field.innerText = field.innerHTML + value;
     setCursorToEnd(field);
@@ -206,12 +213,12 @@ export function raiseError(status: number, response: any, message?: string) {
     case 401:
       throw new Error(
         msg ||
-          'Invalid authentication, please ensure the API key used is correct'
+          'Invalid authentication, please ensure the API key used is correct',
       );
     case 403:
       throw new Error(
         msg ||
-          'Permission denied, please confirm your authority before try again.'
+          'Permission denied, please confirm your authority before try again.',
       );
     case 404:
       new Error(msg || 'Not found');
@@ -220,15 +227,15 @@ export function raiseError(status: number, response: any, message?: string) {
     case 429:
       new Error(
         msg ||
-          'Rate limit reached for requests, or you exceeded your current quota.'
+          'Rate limit reached for requests, or you exceeded your current quota.',
       );
     case 500:
       throw new Error(
-        msg || 'The server had an error while processing your request'
+        msg || 'The server had an error while processing your request',
       );
     case 503:
       throw new Error(
-        msg || 'The engine is currently overloaded, please try again later'
+        msg || 'The engine is currently overloaded, please try again later',
       );
     default:
       throw new Error(msg || 'Unknown error');
@@ -371,7 +378,6 @@ export function extractFirstLevelBrackets(text: string): string[] {
 
   return results;
 }
-
 
 export function renderThink(str: string, options?: { header: string }): string {
   const thinkRegex = /<think>([\s\S]*?)(<\/think>|$)/g;

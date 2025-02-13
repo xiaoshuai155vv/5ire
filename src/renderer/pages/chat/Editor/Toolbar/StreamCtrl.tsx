@@ -20,8 +20,7 @@ const debug = Debug('5ire:pages:chat:Editor:Toolbar:StreamCtrl');
 export default function StreamCtrl({ ctx, chat }: { ctx: IChatContext, chat: IChat}) {
   const { t } = useTranslation();
 
-  const updateChat = useChatStore((state) => state.updateChat);
-  const editChat = useChatStore((state) => state.editChat);
+  const editStage = useChatStore((state) => state.editStage);
   const [stream, setStream] = useState<boolean>(true);
 
   const updateStream = (
@@ -29,13 +28,7 @@ export default function StreamCtrl({ ctx, chat }: { ctx: IChatContext, chat: ICh
     data: SwitchOnChangeData
   ) => {
     const $stream = data.checked;
-    if (chat.isPersisted) {
-      updateChat({ id: chat.id, stream: $stream });
-      debug('Update Stream of Chat', $stream);
-    } else {
-      editChat({ stream: $stream });
-      debug('Edit Stream of Chat', $stream);
-    }
+    editStage(chat.id, {stream: $stream})
     window.electron.ingestEvent([
       { app: 'toggle-stream', stream: $stream ? 'on' : 'off' },
     ]);

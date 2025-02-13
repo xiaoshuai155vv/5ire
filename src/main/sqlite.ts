@@ -167,6 +167,24 @@ function createTableChatKnowledgeRels() {
     .run();
 }
 
+function alertTableChats() {
+  const columns = database.prepare(`PRAGMA table_info(chats)`).all();
+  const hasPromptColumn = columns.some((column:any) => column.name === 'prompt');
+  if (!hasPromptColumn) {
+    database.prepare(`ALTER TABLE chats ADD COLUMN prompt TEXT`).run();
+    logging.debug('Added prompt column to chats table');
+  } else {
+    logging.debug('Prompt column already exists in chats table');
+  }
+  const hasInputColumn = columns.some((column:any) => column.name === 'input');
+  if (!hasInputColumn) {
+    database.prepare(`ALTER TABLE chats ADD COLUMN input TEXT`).run();
+    logging.debug('Added input column to chats table');
+  } else {
+    logging.debug('Input column already exists in chats table');
+  }
+}
+
 const initDatabase = database.transaction(() => {
   logging.debug('Init database...');
 
@@ -179,6 +197,8 @@ const initDatabase = database.transaction(() => {
   createTableKnowledgeCollections();
   createTableKnowledgeFiles();
   createTableChatKnowledgeRels();
+  // v0.9.6
+  alertTableChats();
   logging.info('Database initialized.');
 });
 

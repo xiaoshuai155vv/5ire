@@ -28,8 +28,8 @@ import { useTranslation } from 'react-i18next';
 import { isBlank } from 'utils/validators';
 import { isWebUri } from 'valid-url';
 import { insertAtCursor } from 'utils/util';
-import useStageStore from 'stores/useStageStore';
 import { IChatModelVision } from 'providers/types';
+import useChatStore from 'stores/useChatStore';
 
 const ImageAddIcon = bundleIcon(ImageAdd20Filled, ImageAdd20Regular);
 
@@ -40,7 +40,7 @@ export default function ImgCtrl({
   ctx: IChatContext;
   chat: IChat;
 }) {
-  const editStage = useStageStore((state) => state.editStage);
+  const editStage = useChatStore((state) => state.editStage);
   const { t } = useTranslation();
 
   const [imgType, setImgType] = useState<'url' | 'file'>('url');

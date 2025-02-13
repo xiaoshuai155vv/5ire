@@ -35,8 +35,7 @@ export default function ModelCtrl({
   const session = useAuthStore((state) => state.session);
   const { getProvider, getChatModels } = useProvider();
   const [providerName, setProviderName] = useState<ProviderType>(api.provider);
-  const updateChat = useChatStore((state) => state.updateChat);
-  const editChat = useChatStore((state) => state.editChat);
+  const editStage = useChatStore((state) => state.editStage);
 
   const models = useMemo<IChatModel[]>(() => {
     if (!api.provider || api.provider === 'Azure') return [];
@@ -55,11 +54,7 @@ export default function ModelCtrl({
     data: MenuCheckedValueChangeData
   ) => {
     const $model = data.checkedItems[0];
-    if (chat.isPersisted) {
-      updateChat({ id: chat.id, model: $model });
-    } else {
-      editChat({ model: $model });
-    }
+    editStage(chat.id, { model: $model })
     window.electron.ingestEvent([{ app: 'switch-model' }, { model: $model }]);
     closeDialog();
   };

@@ -22,10 +22,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import usePromptStore from 'stores/usePromptStore';
 import { fillVariables, highlight, insertAtCursor } from 'utils/util';
-import useStageStore from 'stores/useStageStore';
-import { isNull, pick } from 'lodash';
+import { isNil, pick } from 'lodash';
 import PromptVariableDialog from '../PromptVariableDialog';
 import { IChat, IChatContext, IPrompt } from 'intellichat/types';
+import useChatStore from 'stores/useChatStore';
 
 const PromptIcon = bundleIcon(Prompt20Filled, Prompt20Regular);
 
@@ -47,15 +47,14 @@ export default function PromptCtrl({
   const allPrompts = usePromptStore((state) => state.prompts);
   const fetchPrompts = usePromptStore((state) => state.fetchPrompts);
   const getPrompt = usePromptStore((state) => state.getPrompt);
-  const stagePrompts = useStageStore((state) => state.prompts);
-  const editStage = useStageStore((state) => state.editStage);
+  const editStage = useChatStore((state) => state.editStage);
 
   const openDialog = () => {
     fetchPrompts({});
     setOpen(true);
     setTimeout(
       () => document.querySelector<HTMLInputElement>('#prompt-search')?.focus(),
-      500
+      500,
     );
     Mousetrap.bind('esc', closeDialog);
   };
@@ -64,11 +63,6 @@ export default function PromptCtrl({
     setOpen(false);
     Mousetrap.unbind('esc');
   };
-
-  const appliedPrompt = useMemo(
-    () => stagePrompts[chat.id] || null,
-    [stagePrompts, chat.id]
-  );
 
   const prompts = useMemo(() => {
     return allPrompts.filter((prompt) => {
@@ -117,8 +111,8 @@ export default function PromptCtrl({
   };
 
   const removePrompt = () => {
-    editStage(chat.id, { prompt: null });
     setOpen(false);
+    setTimeout(() => editStage(chat.id, { prompt: null }), 300);
   };
 
   const onVariablesCancel = useCallback(() => {
@@ -129,7 +123,7 @@ export default function PromptCtrl({
   const onVariablesConfirm = useCallback(
     (
       systemVars: { [key: string]: string },
-      userVars: { [key: string]: string }
+      userVars: { [key: string]: string },
     ) => {
       const payload: any = {
         prompt: { ...pickedPrompt },
@@ -137,20 +131,20 @@ export default function PromptCtrl({
       if (pickedPrompt?.systemMessage) {
         payload.prompt.systemMessage = fillVariables(
           pickedPrompt.systemMessage,
-          systemVars
+          systemVars,
         );
       }
       if (pickedPrompt?.userMessage) {
         payload.prompt.userMessage = fillVariables(
           pickedPrompt.userMessage,
-          userVars
+          userVars,
         );
         payload.input = insertUserMessage(payload.prompt.userMessage);
       }
       editStage(chat.id, payload);
       setVariableDialogOpen(false);
     },
-    [pickedPrompt, editStage, chat.id]
+    [pickedPrompt, editStage, chat.id],
   );
 
   useEffect(() => {
@@ -169,18 +163,18 @@ export default function PromptCtrl({
             title="Mod+Shift+2"
             aria-label={t('Common.Prompts')}
             appearance="subtle"
-            style={{borderColor: 'transparent', boxShadow: 'none'}}
+            style={{ borderColor: 'transparent', boxShadow: 'none' }}
             className="flex justify-start items-center text-color-secondary gap-1"
             onClick={openDialog}
             icon={<PromptIcon className="flex-shrink-0" />}
           >
-            {appliedPrompt?.name && (
+            {(chat.prompt as IPrompt)?.name && (
               <span
                 className={`flex-shrink overflow-hidden whitespace-nowrap text-ellipsis ${
-                  appliedPrompt?.name ? 'min-w-8' : 'w-0'
+                  (chat.prompt as IPrompt)?.name ? 'min-w-8' : 'w-0'
                 } `}
               >
-                {appliedPrompt?.name}
+                {(chat.prompt as IPrompt)?.name}
               </span>
             )}
           </Button>
@@ -202,7 +196,7 @@ export default function PromptCtrl({
               {t('Common.Prompt')}
             </DialogTitle>
             <DialogContent>
-              {isNull(appliedPrompt) || promptPickerOpen ? (
+              {isNil(chat.prompt) || promptPickerOpen ? (
                 <div>
                   <div className="mb-2.5">
                     <Input
@@ -238,9 +232,9 @@ export default function PromptCtrl({
               ) : (
                 <div className="pb-4">
                   <div className="text-lg font-medium">
-                    {appliedPrompt?.name || ''}
+                    {(chat.prompt as IPrompt)?.name || ''}
                   </div>
-                  {appliedPrompt?.systemMessage ? (
+                  {(chat.prompt as IPrompt)?.systemMessage ? (
                     <div>
                       <div>
                         <span className="mr-1">
@@ -249,7 +243,7 @@ export default function PromptCtrl({
                         <span
                           className="leading-6"
                           dangerouslySetInnerHTML={{
-                            __html: appliedPrompt.systemMessage,
+                            __html: (chat.prompt as IPrompt).systemMessage,
                           }}
                         />
                       </div>
@@ -258,7 +252,7 @@ export default function PromptCtrl({
                 </div>
               )}
             </DialogContent>
-            {isNull(appliedPrompt) || promptPickerOpen ? null : (
+            {isNil(chat.prompt) || promptPickerOpen ? null : (
               <DialogActions>
                 <DialogTrigger disableButtonEnhancement>
                   <Button appearance="secondary" onClick={removePrompt}>

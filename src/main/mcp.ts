@@ -1,7 +1,9 @@
-import * as logging from './logging';
 import path from 'path';
 import fs from 'node:fs';
 import { app } from 'electron';
+import { IMCPServer } from 'stores/useMCPStore';
+import * as logging from './logging';
+
 export interface IClientConfig {
   key: string;
   command: 'npx' | 'uvx';
@@ -12,44 +14,48 @@ export interface IClientConfig {
 export const DEFAULT_INHERITED_ENV_VARS =
   process.platform === 'win32'
     ? [
-        'APPDATA',
-        'HOMEDRIVE',
-        'HOMEPATH',
-        'LOCALAPPDATA',
-        'PATH',
-        'PROCESSOR_ARCHITECTURE',
-        'SYSTEMDRIVE',
-        'SYSTEMROOT',
-        'TEMP',
-        'USERNAME',
-        'USERPROFILE',
-      ]
+      'APPDATA',
+      'HOMEDRIVE',
+      'HOMEPATH',
+      'LOCALAPPDATA',
+      'PATH',
+      'PROCESSOR_ARCHITECTURE',
+      'SYSTEMDRIVE',
+      'SYSTEMROOT',
+      'TEMP',
+      'USERNAME',
+      'USERPROFILE',
+    ]
     : /* list inspired by the default env inheritance of sudo */
-      ['HOME', 'LOGNAME', 'PATH', 'SHELL', 'TERM', 'USER'];
+    ['HOME', 'LOGNAME', 'PATH', 'SHELL', 'TERM', 'USER'];
 /**
  * Returns a default environment object including only environment variables deemed safe to inherit.
  */
 export function getDefaultEnvironment() {
   const env: Record<string, string> = {};
-  for (const key of DEFAULT_INHERITED_ENV_VARS) {
+  DEFAULT_INHERITED_ENV_VARS.forEach((key) => {
     const value = process.env[key];
     if (value === undefined) {
-      continue;
+      return;
     }
     if (value.startsWith('()')) {
       // Skip functions, which are a security risk.
-      continue;
+      return;
     }
     env[key] = value;
-  }
+  });
   return env;
 }
 
 export default class ModuleContext {
   private clients: { [key: string]: any } = {};
+
   private Client: any;
+
   private Transport: any;
+
   private cfgPath: string;
+
   constructor() {
     this.cfgPath = path.join(app.getPath('userData'), 'mcp.json');
   }
@@ -80,7 +86,7 @@ export default class ModuleContext {
         fs.writeFileSync(this.cfgPath, JSON.stringify(defaultConfig, null, 2));
       }
       const config = JSON.parse(fs.readFileSync(this.cfgPath, 'utf-8'));
-      if(!config.servers) {
+      if (!config.servers) {
         config.servers = [];
       }
       return config;
@@ -102,24 +108,24 @@ export default class ModuleContext {
 
   public async load() {
     const { servers } = await this.getConfig();
-    for (const server of servers) {
-      logging.debug('Activating server:', server.key);
-      const { error } = await this.activate(server);
-      if (error) {
-        logging.error('Failed to activate server:', server.key, error);
-      }
-    }
+    await Promise.all(
+      servers.map(async (server: IMCPServer) => {
+        logging.debug('Activating server:', server.key);
+        const { error } = await this.activate(server);
+        if (error) {
+          logging.error('Failed to activate server:', server.key, error);
+        }
+      }),
+    );
   }
 
   public async activate(config: IClientConfig): Promise<{ error: any }> {
     try {
       const { key, command, args, env } = config;
-      const cmd =
-        command === 'npx'
-          ? process.platform === 'win32'
-            ? `${command}.cmd`
-            : command
-          : command;
+      let cmd: string = command;
+      if (command === 'npx') {
+        cmd = process.platform === 'win32' ? `${command}.cmd` : command;
+      }
       const mergedEnv = {
         ...getDefaultEnvironment(),
         ...env,
@@ -132,7 +138,7 @@ export default class ModuleContext {
         },
         {
           capabilities: {},
-        }
+        },
       );
       const transport = new this.Transport({
         command: cmd,
@@ -157,7 +163,9 @@ export default class ModuleContext {
         delete this.clients[key];
       }
       const config = await this.getConfig();
-      config.servers = config.servers.filter((server: any) => server.key !== key);
+      config.servers = config.servers.filter(
+        (server: any) => server.key !== key,
+      );
       await this.putConfig(config);
       return true;
     } catch (err: any) {
@@ -186,13 +194,13 @@ export default class ModuleContext {
         return tool;
       });
     } else {
-      for (const key in this.clients) {
-        const { tools } = await this.clients[key].listTools();
+      for (const clientName in this.clients) {
+        const { tools } = await this.clients[clientName].listTools();
         allTools = allTools.concat(
           tools.map((tool: any) => {
-            tool.name = `${key}--${tool.name}`;
+            tool.name = `${clientName}--${tool.name}`;
             return tool;
-          })
+          }),
         );
       }
     }

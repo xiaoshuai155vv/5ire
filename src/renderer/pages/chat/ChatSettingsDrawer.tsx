@@ -1,12 +1,9 @@
 import {
   Field,
-  Label,
   Button,
   Input,
   Textarea,
-  Slider,
   Divider,
-  SliderOnChangeData,
   Drawer,
   DrawerBody,
   DrawerHeader,
@@ -23,9 +20,8 @@ import {
 } from 'react';
 import useChatStore from 'stores/useChatStore';
 import { useTranslation } from 'react-i18next';
-import { MIN_CTX_MESSAGES, MAX_CTX_MESSAGES, NUM_CTX_MESSAGES } from 'consts';
 import useChatContext from 'hooks/useChatContext';
-import { debounce, isNumber } from 'lodash';
+import { debounce } from 'lodash';
 
 const debug = Debug('5ire:pages:chat:ChatSettingsDrawer');
 
@@ -38,14 +34,8 @@ export default function ChatSettingsDrawer({
 }) {
   const { t } = useTranslation();
   const activeChat = useChatContext().getActiveChat();
-  const [ctxMessages, setCtxMessages] = useState<number>(NUM_CTX_MESSAGES);
   useEffect(() => {
     setSystemMessage(activeChat.systemMessage || '');
-    setCtxMessages(
-      isNumber(activeChat.maxCtxMessages)
-        ? activeChat.maxCtxMessages
-        : NUM_CTX_MESSAGES
-    );
   }, [activeChat?.id]);
 
   const setKeyword = useChatStore((state) => state.setKeyword);
@@ -66,25 +56,6 @@ export default function ChatSettingsDrawer({
       event.preventDefault();
       setOpen(false);
     }
-  };
-
-  const updateCtxMessages = (
-    ev: ChangeEvent<HTMLInputElement>,
-    data: SliderOnChangeData
-  ) => {
-    const maxCtxMessages = data.value;
-    setCtxMessages(maxCtxMessages);
-    if (activeChat.isPersisted) {
-      updateChat({ id: activeChat.id, maxCtxMessages });
-      debug('Update CtxMessages of Chat', maxCtxMessages);
-    } else {
-      editChat({ maxCtxMessages });
-      debug('Edit CtxMessages of Chat', maxCtxMessages);
-    }
-    window.electron.ingestEvent([
-      { app: 'modify-max-ctx-messages' },
-      { 'max-ctx-messages': maxCtxMessages },
-    ]);
   };
 
   const onSystemMessageChange = (ev: ChangeEvent<HTMLTextAreaElement>) => {
@@ -156,25 +127,6 @@ export default function ChatSettingsDrawer({
                 onChange={onSystemMessageChange}
                 resize="vertical"
               />
-            </Field>
-          </div>
-          <div>
-            <Field
-              label={`${t('Common.MaxNumOfContextMessages')} (${ctxMessages})`}
-            >
-              <div className="flex items-center p-1.5">
-                <Label aria-hidden>{MIN_CTX_MESSAGES}</Label>
-                <Slider
-                  id="chat-max-context"
-                  step={1}
-                  min={MIN_CTX_MESSAGES}
-                  max={MAX_CTX_MESSAGES}
-                  value={ctxMessages}
-                  className="flex-grow"
-                  onChange={updateCtxMessages}
-                />
-                <Label aria-hidden>{MAX_CTX_MESSAGES}</Label>
-              </div>
             </Field>
           </div>
           <div className="flex-grow" />
