@@ -143,7 +143,7 @@ export default class Knowledge {
       .search(vectors[0])
       .where(`collection_id in ('${collectionIds.join(',')}')`)
       .select(['id', 'collection_id', 'file_id', 'content'])
-      .limit(options?.limit || 5)
+      .limit(options?.limit || 6)
       .toArray();
     if (!options?.stayOpen) {
       await table.close();
