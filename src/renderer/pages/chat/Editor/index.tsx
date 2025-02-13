@@ -9,11 +9,9 @@ import {
 import useChatStore from 'stores/useChatStore';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@fluentui/react-components';
-import useStageStore from 'stores/useStageStore';
 import Toolbar from './Toolbar';
 import Spinner from '../../../components/Spinner';
 import { removeTagsExceptImg, setCursorToEnd } from 'utils/util';
-import { IStage } from 'intellichat/types';
 import { debounce } from 'lodash';
 
 export default function Editor({
@@ -28,8 +26,7 @@ export default function Editor({
   const chat = useChatStore((state) => state.chat);
   const states = useChatStore().getCurState();
   const updateStates = useChatStore((state) => state.updateStates);
-  const inputs = useStageStore((state) => state.inputs);
-  const editStage = useStageStore((state) => state.editStage);
+  const editStage = useChatStore((state) => state.editStage);
   const [savedRange, setSavedRange] = useState<Range | null>(null);
 
   const saveRange = useCallback(() => {
@@ -70,7 +67,7 @@ export default function Editor({
         saveStageInput(chat.id);
       }
     },
-    [onSubmit]
+    [onSubmit],
   );
 
   const insertText = useCallback((text: string) => {
@@ -119,7 +116,7 @@ export default function Editor({
     }
     if (editorRef.current && chat.id) {
       editorRef.current.focus();
-      const content = inputs[chat.id] || '';
+      const content = chat.input || '';
       if (content !== editorRef.current.innerHTML) {
         editorRef.current.innerHTML = content;
         setCursorToEnd(editorRef.current);
@@ -130,12 +127,8 @@ export default function Editor({
         editorRef.current.removeEventListener('paste', pasteWithoutStyle);
       }
     };
-  }, [chat.id, inputs]);
+  }, [chat.id]);
 
-  const onBlur = () => {
-    saveRange();
-    editStage(chat.id, { input: editorRef.current?.innerHTML });
-  };
 
   const onAbortClick = () => {
     onAbort();
@@ -164,7 +157,6 @@ export default function Editor({
         ref={editorRef}
         className="w-full outline-0 pl-2.5 pr-2.5 pb-2.5 bg-brand-surface-1 flex-grow overflow-y-auto overflow-x-hidden"
         onKeyDown={onKeyDown}
-        onBlur={onBlur}
         onFocus={restoreRange}
         style={{ resize: 'none', whiteSpace: 'pre-wrap' }}
       />

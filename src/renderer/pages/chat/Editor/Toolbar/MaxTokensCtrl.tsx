@@ -40,8 +40,7 @@ export default function MaxTokens({
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState<boolean>(false);
-  const updateChat = useChatStore((state) => state.updateChat);
-  const editChat = useChatStore((state) => state.editChat);
+  const editStage = useChatStore((state) => state.editStage);
 
   const modelMaxTokens = useMemo<number>(() => {
     return ctx.getModel().maxTokens as number;
@@ -72,11 +71,7 @@ export default function MaxTokens({
       ? data.value
       : str2int(data.displayValue as string);
     const $maxToken = Math.max(Math.min(value as number, modelMaxTokens), 1);
-    if (chat.isPersisted) {
-      updateChat({ id: chat.id, maxTokens: $maxToken });
-    } else {
-      editChat({ maxTokens: $maxToken });
-    }
+    editStage(chat.id, { maxTokens: $maxToken })
     setMaxTokens($maxToken);
     onConfirm();
     window.electron.ingestEvent([{ app: 'modify-max-tokens' }]);

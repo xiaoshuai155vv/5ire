@@ -7,6 +7,7 @@ import MaxTokensCtrl from './MaxTokensCtrl';
 import ImgCtrl from './ImgCtrl';
 import StreamCtrl from './StreamCtrl';
 import KnowledgeCtrl from './KnowledgeCtrl';
+import CtxNumCtrl from './CtxNumCtrl';
 
 export default function EditorToolbar({
   onConfirm,
@@ -29,6 +30,7 @@ export default function EditorToolbar({
         <KnowledgeCtrl ctx={ctx} chat={chat} />
         <MaxTokensCtrl ctx={ctx} chat={chat} onConfirm={onConfirm} />
         <TemperatureCtrl ctx={ctx} chat={chat} />
+        <CtxNumCtrl ctx={ctx} chat={chat} />
         <ImgCtrl ctx={ctx} chat={chat} />
 
         {provider.chat.options.streamCustomizable && (
