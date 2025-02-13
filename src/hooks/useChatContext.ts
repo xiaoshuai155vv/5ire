@@ -57,7 +57,6 @@ export default function useChatContext(): IChatContext {
     const getSystemMessage = () => {
       const chat = useChatStore.getState().chat;
       const prompt = chat.prompt as IPrompt | null;
-      console.log('ctx prompt:', prompt);
       const systemMessage =
         prompt?.systemMessage || chat?.systemMessage || null;
       // debug(`Chat(${chat.id}):getSystemMessage: ${systemMessage}`);

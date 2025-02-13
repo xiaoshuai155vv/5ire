@@ -51,7 +51,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
     return (
       <Tooltip
         withArrow
-        content={summary.substring(0, 200)}
+        content={summary?.substring(0, 200)}
         relationship="label"
         positioning="above-start"
       >
@@ -84,7 +84,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
               >
                 {collapsed ? null : (
                   <div className="text-sm truncate ...">
-                    {chat.summary.substring(0, 40)}
+                    {chat.summary?.substring(0, 40)}
                   </div>
                 )}
               </Button>

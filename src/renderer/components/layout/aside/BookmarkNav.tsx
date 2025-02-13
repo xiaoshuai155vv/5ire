@@ -24,7 +24,7 @@ export default function BookmarkNav({ collapsed }: { collapsed: boolean }) {
     return (
       <Tooltip
         withArrow
-        content={summary.substring(0, 200)}
+        content={summary?.substring(0, 200)}
         relationship="label"
         positioning="above-start"
       >
