@@ -4,6 +4,7 @@ import {
   AccordionHeader,
   AccordionPanel,
 } from '@fluentui/react-components';
+import { PersonRunning20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppearanceStore from 'stores/useAppearanceStore';
@@ -22,50 +23,53 @@ export default function Sidebar({ chatId }: { chatId: string }) {
         error: 'text-red-500 bg-red-900',
         run: 'text-gray-500 bg-gray-900',
         arguments: 'text-blue-400 bg-blue-900 ',
-        resp: 'text-green-500 bg-green-900',
+        response: 'text-green-500 bg-green-900',
       };
     }
     return {
       error: 'text-red-500 bg-red-100',
       run: 'text-gray-500 bg-gray-100',
       arguments: 'text-blue-500 bg-blue-100',
-      resp: 'text-green-500 bg-green-100',
+      response: 'text-green-500 bg-green-100',
     };
   }, [theme]);
 
   return (
     <aside
-      className={`right-sidebar ml-5 -mr-5 z-20 pt-2.5 flex-shrink-0 border-l w-64 ${
+      className={`right-sidebar ml-5 -mr-5 z-20 pt-2.5 flex-shrink-0 border-l w-72 ${
         chatSidebar.hidden ? 'hidden' : 'hidden sm:flex'
       }  inset-y-0 top-0 flex-col duration-300 md:relative pl-2`}
     >
-      <div className="text-gray-300 dark:text-gray-600 font-bold text-lg">
+      <div className="text-gray-300 dark:text-gray-600 font-bold text-lg mb-2">
         {t('Common.Inspector')}
       </div>
-      <div className="h-full overflow-x-hidden overflow-y-auto  break-all -ml-2.5">
+      <div className="h-full overflow-x-hidden overflow-y-auto break-all -ml-2.5">
         <Accordion multiple collapsible>
           {trace?.map((item: ITraceMessage, idx: number) => {
             return item.message === '' ? (
               <div className="pl-4 mt-2">
                 <span className="-ml-1 inline-block pt-0 py-0.5 rounded truncate text-ellipsis overflow-hidden w-52 font-bold text-gray-400 dark:text-gray-400">
-                  {item.label}
+                  <PersonRunning20Regular />
+                  &nbsp;{item.label}
                 </span>
               </div>
             ) : (
               <AccordionItem value={idx} key={`${chatId}-trace-${idx}`}>
                 <AccordionHeader size="small">
                   <span
-                    className={`-ml-1 px-1 inline-block pt-0 py-0.5 rounded ${labelClasses[item.label] || ''}`}
+                    className={`-ml-1 inline-block pt-0 py-0.5 rounded ${labelClasses[item.label] || ''}`}
                   >
                     {item.label}
                   </span>
                 </AccordionHeader>
                 <AccordionPanel>
-                  <pre className="ghost">
-                    <code className="text-gray-500 dark:text-gray-300 text-left pl-1">
-                      {item.message}
-                    </code>
-                  </pre>
+                  <div className="inspector-message  pl-2" style={{ marginLeft: 8 }}>
+                    <pre className="ghost" >
+                      <code className="text-gray-500 dark:text-gray-400 text-left text-xs">
+                        {item.message}
+                      </code>
+                    </pre>
+                  </div>
                 </AccordionPanel>
               </AccordionItem>
             );

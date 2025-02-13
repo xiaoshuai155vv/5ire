@@ -200,3 +200,6 @@ div.think-body{
   background-color: rgba(var(--color-bg-sidebar),var(--tw-bg-opacity));
   border-color: rgba(var(--color-border),var(--tw-border-opacity));
 }
+.inspector-message{
+  border-left: 0.5px dashed rgba(var(--color-text-secondary), 1);
+}

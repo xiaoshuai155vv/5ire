@@ -233,7 +233,7 @@ export default abstract class NextCharService {
         } else {
           this.traceTool(
             chatId,
-            'resp',
+            'response',
             JSON.stringify(toolCallsResult, null, 2),
           );
         }
