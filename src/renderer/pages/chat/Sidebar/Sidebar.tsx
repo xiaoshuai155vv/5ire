@@ -57,7 +57,7 @@ export default function Sidebar({ chatId }: { chatId: string }) {
               <AccordionItem value={idx} key={`${chatId}-trace-${idx}`}>
                 <AccordionHeader size="small">
                   <span
-                    className={`-ml-1 inline-block pt-0 py-0.5 rounded ${labelClasses[item.label] || ''}`}
+                    className={`-ml-1 px-1 inline-block pt-0 py-0.5 rounded ${labelClasses[item.label] || ''}`}
                   >
                     {item.label}
                   </span>
