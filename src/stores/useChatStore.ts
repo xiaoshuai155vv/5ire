@@ -28,7 +28,7 @@ let defaultTempStage = {
   prompt: null,
   input: '',
   maxTokens: DEFAULT_MAX_TOKENS,
-  maxCtxMessages: MAX_CTX_MESSAGES,
+  maxCtxMessages: NUM_CTX_MESSAGES,
 };
 let tempStage = window.electron.store.get('stage', defaultTempStage);
 if (!isPlainObject(tempStage)) {
