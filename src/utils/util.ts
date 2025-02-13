@@ -371,3 +371,15 @@ export function extractFirstLevelBrackets(text: string): string[] {
 
   return results;
 }
+
+
+export function renderThink(str: string, options?: { header: string }): string {
+  const thinkRegex = /<think>([\s\S]*?)(<\/think>|$)/g;
+  return str.replace(thinkRegex, (match, content, closingTag) => {
+    const trimmedContent = content.trim();
+    if (trimmedContent && !trimmedContent.startsWith('<')) {
+      return `<div class="think">${options?.header || ''}<div class="think-body">${content}${closingTag === '</think>' ? '</div></div>' : ''}`;
+    }
+    return match;
+  });
+}

@@ -5,6 +5,8 @@ import {
   MoreHorizontal24Regular,
   MoreHorizontal24Filled,
   FilterDismiss24Regular,
+  PanelRight24Regular,
+  PanelRight24Filled,
   Delete24Regular,
   Delete24Filled,
   bundleIcon,
@@ -13,18 +15,20 @@ import useAppearanceStore from 'stores/useAppearanceStore';
 import useChatStore from 'stores/useChatStore';
 import { useTranslation } from 'react-i18next';
 import useChatContext from 'hooks/useChatContext';
-import ChatSettingsDrawer from './ChatSettingsDrawer';
 import ConfirmDialog from 'renderer/components/ConfirmDialog';
 
 import { tempChatId } from 'consts';
 import useNav from 'hooks/useNav';
 import useToast from 'hooks/useToast';
+import ChatSettingsDrawer from './ChatSettingsDrawer';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const MoreHorizontalIcon = bundleIcon(
   MoreHorizontal24Filled,
-  MoreHorizontal24Regular
+  MoreHorizontal24Regular,
 );
+const PanelRightHideIcon = bundleIcon(PanelRight24Filled, PanelRight24Regular);
+const PanelRightShowIcon = bundleIcon(PanelRight24Regular, PanelRight24Filled);
 
 export default function Header() {
   const { t } = useTranslation();
@@ -33,6 +37,12 @@ export default function Header() {
 
   const activeChat = useChatContext().getActiveChat();
   const collapsed = useAppearanceStore((state) => state.sidebar.collapsed);
+  const chatSidebarHidden = useAppearanceStore(
+    (state) => state.chatSidebar.hidden,
+  );
+  const toggleChatSidebarVisibility = useAppearanceStore(
+    (state) => state.toggleChatSidebarVisibility,
+  );
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const [delConfirmDialogOpen, setDelConfirmDialogOpen] =
@@ -56,6 +66,7 @@ export default function Header() {
         setDelConfirmDialogOpen(true);
       }
     });
+    Mousetrap.bind('mod+shift+r', toggleChatSidebarVisibility);
     return () => {
       Mousetrap.unbind('mod+d');
     };
@@ -89,6 +100,20 @@ export default function Header() {
             ) : null}
           </>
         ) : null}
+        <div className="hidden sm:block">
+          <Button
+            icon={
+              chatSidebarHidden ? (
+                <PanelRightHideIcon className="text-color-tertiary" />
+              ) : (
+                <PanelRightShowIcon className="text-color-tertiary" />
+              )
+            }
+            appearance="transparent"
+            title="Mod+shift+r"
+            onClick={toggleChatSidebarVisibility}
+          />
+        </div>
         <Button
           icon={<MoreHorizontalIcon />}
           appearance="subtle"
