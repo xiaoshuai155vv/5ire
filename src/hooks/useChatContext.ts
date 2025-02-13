@@ -2,7 +2,7 @@ import Debug from 'debug';
 
 import useChatStore from 'stores/useChatStore';
 import useSettingsStore from 'stores/useSettingsStore';
-import { NUM_CTX_MESSAGES, tempChatId } from 'consts';
+import { DEFAULT_MAX_TOKENS, NUM_CTX_MESSAGES, tempChatId } from 'consts';
 import { useMemo } from 'react';
 import { isNil, isNumber } from 'lodash';
 import { isValidMaxTokens, isValidTemperature } from 'intellichat/validators';
@@ -83,7 +83,8 @@ export default function useChatContext(): IChatContext {
       const { chat } = useChatStore.getState();
       const { api } = useSettingsStore.getState();
       const model = getModel();
-      let maxTokens = model.defaultMaxTokens || model.maxTokens;
+      let maxTokens =
+        model.defaultMaxTokens || model.maxTokens || DEFAULT_MAX_TOKENS;
       const prompt = chat.prompt as IPrompt | null;
       if (
         prompt?.maxTokens != null &&

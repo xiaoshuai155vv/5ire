@@ -21,6 +21,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useChatStore from 'stores/useChatStore';
 import { str2int } from 'utils/util';
+import { DEFAULT_MAX_TOKENS, MAX_TOKENS } from 'consts';
 
 const debug = Debug('5ire:pages:chat:Editor:Toolbar:MaxTokensCtrl');
 
@@ -43,7 +44,7 @@ export default function MaxTokens({
   const editStage = useChatStore((state) => state.editStage);
 
   const modelMaxTokens = useMemo<number>(() => {
-    return ctx.getModel().maxTokens as number;
+    return ctx.getModel().maxTokens as number || MAX_TOKENS;
   }, [chat.model]);
 
   const [maxTokens, setMaxTokens] = useState<number>(1);

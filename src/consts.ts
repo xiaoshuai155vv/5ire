@@ -2,6 +2,9 @@ export const tempChatId = 'temp';
 
 export const EARLIEST_DATE = new Date('2023-08-01');
 
+export const DEFAULT_MAX_TOKENS = 512;
+export const MAX_TOKENS = 4096
+
 export const NUM_CTX_MESSAGES = 10;
 export const MAX_CTX_MESSAGES = 99;
 export const MIN_CTX_MESSAGES = 0;

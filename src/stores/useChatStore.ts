@@ -9,8 +9,9 @@ import {
   isPlainObject,
   isString,
   isUndefined,
+  pick,
 } from 'lodash';
-import { NUM_CTX_MESSAGES, tempChatId } from 'consts';
+import { DEFAULT_MAX_TOKENS, MAX_CTX_MESSAGES, NUM_CTX_MESSAGES, tempChatId } from 'consts';
 import { captureException } from '../renderer/logging';
 import { date2unix } from 'utils/util';
 import { isBlank, isNotBlank } from 'utils/validators';
@@ -22,14 +23,19 @@ import { getProvider } from 'providers';
 const debug = Debug('5ire:stores:useChatStore');
 
 let defaultTempStage = {
+  model: '',
   systemMessage: '',
   prompt: null,
   input: '',
-  maxTokens: null,
+  maxTokens: DEFAULT_MAX_TOKENS,
+  maxCtxMessages: MAX_CTX_MESSAGES,
 };
 let tempStage = window.electron.store.get('stage', defaultTempStage);
 if (!isPlainObject(tempStage)) {
   tempStage = defaultTempStage;
+} else {
+  tempStage = pick(tempStage, Object.keys(defaultTempStage));
+  console.log('tempStage', tempStage);
 }
 export interface IChatStore {
   chats: IChat[];
@@ -536,7 +542,6 @@ const useChatStore = create<IChatStore>((set, get) => ({
     return messages;
   },
   editStage: (chatId: string, stage: Partial<IStage>) => {
-    debug(`${chatId}, edit stage:`, JSON.stringify(stage, null, 2));
     if (chatId === tempChatId) {
       set(
         produce((state: IChatStore): void => {
