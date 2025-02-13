@@ -171,7 +171,7 @@ export default abstract class NextCharService {
     const chatId = this.context.getActiveChat().id;
     this.abortController = new AbortController();
     let reply = '';
-    let signal = null;
+    let signal: any = null;
     try {
       signal = this.abortController.signal;
       const response = await this.makeRequest(messages);
@@ -194,7 +194,7 @@ export default abstract class NextCharService {
       }
       const chatReader = this.createReader(reader);
       const readResult = await chatReader.read({
-        onError: (err: any) => this.onErrorCallback(err, false),
+        onError: (err: any) => this.onErrorCallback(err, !!signal?.aborted),
         onProgress: (chunk: string) => {
           reply += chunk;
           this.onReadingCallback(chunk);
