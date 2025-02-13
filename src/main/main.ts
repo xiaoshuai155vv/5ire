@@ -291,8 +291,8 @@ ipcMain.handle('select-knowledge-files', async () => {
         },
       ],
     });
-    if (result.filePaths.length > 10) {
-      dialog.showErrorBox('Error', 'Please not more than 10 files a time.');
+    if (result.filePaths.length > 20) {
+      dialog.showErrorBox('Error', 'Please not more than 20 files a time.');
       return '[]';
     }
     const files = [];
