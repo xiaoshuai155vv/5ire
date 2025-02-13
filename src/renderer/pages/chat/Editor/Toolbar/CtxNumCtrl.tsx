@@ -38,7 +38,6 @@ export default function CtxNumCtrl({
   const { t } = useTranslation();
   const [open, setOpen] = useState<boolean>(false);
   const providerName = useSettingsStore((state) => state.api).provider;
-  const updateChat = useChatStore((state) => state.updateChat);
   const editStage = useChatStore((state) => state.editStage);
   const [ctxMessages, setCtxMessages] = useState<number>(NUM_CTX_MESSAGES);
 
@@ -77,7 +76,7 @@ export default function CtxNumCtrl({
       <PopoverTrigger disableButtonEnhancement>
         <Button
           size="small"
-          title="Mod+Shift+5"
+          title="Mod+Shift+6"
           aria-label={t('Common.Temperature')}
           appearance="subtle"
           icon={<AttacheTextIcon className="mr-0" />}

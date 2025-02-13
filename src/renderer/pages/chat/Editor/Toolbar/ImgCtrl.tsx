@@ -75,12 +75,12 @@ export default function ImgCtrl({
   }, [model]);
 
   useEffect(() => {
-    Mousetrap.bind('mod+shift+6', openDialog);
+    Mousetrap.bind('mod+shift+7', openDialog);
     if (vision.enabled) {
       setImgType(vision.allowUrl ? 'url' : 'file');
     }
     return () => {
-      Mousetrap.unbind('mod+shift+6');
+      Mousetrap.unbind('mod+shift+7');
     };
   }, [vision]);
 
