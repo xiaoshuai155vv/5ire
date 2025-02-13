@@ -20,7 +20,6 @@ import {
   DocumentArrowRight20Regular,
 } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
-import { SUPPORTED_FILE_TYPES } from '../../../consts';
 import { useEffect, useMemo, useState } from 'react';
 import useToast from 'hooks/useToast';
 import { typeid } from 'typeid-js';
