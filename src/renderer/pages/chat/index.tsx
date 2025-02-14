@@ -114,7 +114,6 @@ export default function Chat() {
 
   const createMessage = useChatStore((state) => state.createMessage);
   const createChat = useChatStore((state) => state.createChat);
-  const editStage = useChatStore((state) => state.editStage);
   const deleteStage = useChatStore((state) => state.deleteStage);
   const { countInput, countOutput } = useToken();
   const updateMessage = useChatStore((state) => state.updateMessage);
@@ -158,6 +157,19 @@ export default function Chat() {
       updateStates($chatId, { loading: true });
 
       let $reply = '';
+
+      const msg = await useChatStore.getState().createMessage({
+        prompt,
+        reply: '',
+        chatId: $chatId,
+        model: modelMapping[model.label || ''] || model.label,
+        temperature: chatService.context.getTemperature(),
+        maxTokens: chatService.context.getMaxTokens(),
+        isActive: 1,
+      });
+
+      scrollToBottom();
+
       // Knowledge Collections
       let knowledgeChunks = [];
       let files: ICollectionFile[] = [];
@@ -201,18 +213,6 @@ ${JSON.stringify(
 ${prompt}
 `;
       }
-
-      const msg = await useChatStore.getState().createMessage({
-        prompt,
-        reply: '',
-        chatId: $chatId,
-        model: modelMapping[model.label || ''] || model.label,
-        temperature: chatService.context.getTemperature(),
-        maxTokens: chatService.context.getMaxTokens(),
-        isActive: 1,
-      });
-
-      scrollToBottom();
 
       const onChatComplete = async (result: IChatResponseMessage) => {
         /**
