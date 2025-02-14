@@ -115,7 +115,7 @@ export default function Header() {
           />
         </div>
         <Button
-          icon={<MoreHorizontalIcon />}
+          icon={<MoreHorizontalIcon className="text-color-tertiary"/>}
           appearance="subtle"
           onClick={() => setDrawerOpen(true)}
         />
