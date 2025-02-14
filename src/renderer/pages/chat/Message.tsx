@@ -11,7 +11,6 @@ import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useToast from 'hooks/useToast';
 import ToolSpinner from 'renderer/components/ToolSpinner';
 import useSettingsStore from 'stores/useSettingsStore';
-import { protocol } from 'electron';
 import { highlight } from '../../../utils/util';
 import MessageToolbar from './MessageToolbar';
 
@@ -57,59 +56,61 @@ export default function Message({ message }: { message: IChatMessage }) {
   );
 
   const registerCitationClick = useCallback(() => {
-    const links = document.querySelectorAll('.msg-reply a');
+    const links = document.querySelectorAll(`#${message.id} .msg-reply a`);
     links.forEach((link) => {
       link.addEventListener('click', onCitationClick);
     });
   }, [onCitationClick]);
 
-  const toggleThink = useCallback((btn: any, show: boolean) => {
-    const parent = btn.parentNode.parentNode;
-    const think = parent.querySelector('.think-body');
-    if (show) {
-      parent.classList.remove('collapsed');
-      think.classList.remove('hidden');
-      btn.classList.add('hidden');
-      btn.nextElementSibling.classList.remove('hidden');
-    } else {
-      parent.classList.add('collapsed');
-      think.classList.add('hidden');
-      btn.classList.add('hidden');
-      btn.previousElementSibling.classList.remove('hidden');
+  const toggleThink = useCallback((evt: React.MouseEvent) => {
+    const target = evt.currentTarget as HTMLElement;
+    const parent = target?.parentNode as HTMLElement; // div.think
+    if (parent) {
+      console.log(parent);
+      const body = parent.querySelector('div.think-body');
+      console.log(body,'>', body?.classList.contains('hidden'));
+      const iconShow = parent.querySelector('.icon-show');
+      const iconHide = parent.querySelector('.icon-hide');
+      if (body?.classList.contains('hidden')) {
+        parent.classList.remove('collapsed');
+        body.classList.remove('hidden');
+        iconShow?.classList.add('hidden');
+        iconHide?.classList.remove('hidden');
+      } else {
+        parent.classList.add('collapsed');
+        body?.classList.add('hidden');
+        iconShow?.classList.remove('hidden');
+        iconHide?.classList.add('hidden');
+      }
     }
   }, []);
 
+
   const registerThinkToggle = useCallback(() => {
-    const btnShow = document.querySelectorAll('div.think-header .btn-show');
-    const btnHide = document.querySelectorAll('div.think-header .btn-hide');
-    btnShow.forEach((btn) => {
-      btn.addEventListener('click', () => toggleThink(btn, true));
-    });
-    btnHide.forEach((btn) => {
-      btn.addEventListener('click', () => toggleThink(btn, false));
+    const headers = document.querySelectorAll(`#${message.id} .think-header`);
+    headers.forEach((header: any) => {
+      console.log('registerThinkToggle', header.parentNode.parentNode.parentNode.parentNode);
+      header?.addEventListener('click', toggleThink);
     });
   }, [toggleThink]);
+
+
 
   useEffect(() => {
     registerCitationClick();
     registerThinkToggle();
     return () => {
-      const links = document.querySelectorAll('.msg-reply a');
+      const links = document.querySelectorAll(`#${message.id} .msg-reply a`);
       links.forEach((link) => {
         link.removeEventListener('click', onCitationClick);
       });
-      const btnShow = document.querySelectorAll('div.think-header .btn-show');
-      const btnHide = document.querySelectorAll('div.think-header .btn-hide');
-      btnShow.forEach((btn) => {
-        btn.removeEventListener('click', () => toggleThink(btn, true));
-      });
-      btnHide.forEach((btn) => {
-        btn.removeEventListener('click', () => toggleThink(btn, false));
+      const headers = document.querySelectorAll(`#${message.id} .think-header`);
+      headers.forEach((header: any) => {
+        header?.removeEventListener('click', toggleThink);
       });
     };
   }, [
     message.isActive,
-    message.reply,
     registerCitationClick,
     registerThinkToggle,
   ]);

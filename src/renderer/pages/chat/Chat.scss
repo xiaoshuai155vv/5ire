@@ -170,13 +170,26 @@ div.think{
  font-size:13px;
  margin-bottom: 8px;
 }
+[data-theme='dark'] div.think{
+  border: 1px solid rgba(0,0,0, 0.1);
+  background-color: rgba(20,20,20, 0.3);
+}
 div.think-header{
   padding:4px 8px;
   border-bottom: 0.5px solid rgba(var(--color-border), 1);
   display:flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   gap: 2px;
+}
+[data-theme='dark'] div.think-header{
+  border-bottom: 1px solid rgba(0,0,0, 0.1);
+}
+div.think-header > div{
+  display:flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
 }
 .collapsed .think-header{
   border-bottom:none;
@@ -184,14 +197,11 @@ div.think-header{
 div.think-body{
   padding: 8px;
 }
-.is-loading .btn-show,
-.is-loading .btn-hide{
+.is-loading .icon-show,
+.is-loading .icon-hide{
   display:none;
 }
-[data-theme='dark'] div.think{
-  border: 1px solid rgba(0,0,0, 0.1);
-  background-color: rgba(20,20,20, 0.3);
-}
+
 
 .right-sidebar{
   height:100vh;
