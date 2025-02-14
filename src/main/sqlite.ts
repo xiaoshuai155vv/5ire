@@ -22,6 +22,8 @@ function createTableChats() {
     "stream" integer(1) DEFAULT 1,
     "context" text,
     "maxCtxMessages" integer DEFAULT 5,
+    "prompt" TEXT,
+    "input" TEXT,
     "createdAt" integer,
     PRIMARY KEY ("id")
   )`
