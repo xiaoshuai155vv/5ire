@@ -108,6 +108,7 @@ export default function Message({ message }: { message: IChatMessage }) {
     };
   }, [
     message.isActive,
+    keywords,
     registerCitationClick,
     registerThinkToggle,
   ]);
