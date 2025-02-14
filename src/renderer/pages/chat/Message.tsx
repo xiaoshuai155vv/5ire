@@ -66,9 +66,7 @@ export default function Message({ message }: { message: IChatMessage }) {
     const target = evt.currentTarget as HTMLElement;
     const parent = target?.parentNode as HTMLElement; // div.think
     if (parent) {
-      console.log(parent);
       const body = parent.querySelector('div.think-body');
-      console.log(body,'>', body?.classList.contains('hidden'));
       const iconShow = parent.querySelector('.icon-show');
       const iconHide = parent.querySelector('.icon-hide');
       if (body?.classList.contains('hidden')) {
@@ -89,7 +87,6 @@ export default function Message({ message }: { message: IChatMessage }) {
   const registerThinkToggle = useCallback(() => {
     const headers = document.querySelectorAll(`#${message.id} .think-header`);
     headers.forEach((header: any) => {
-      console.log('registerThinkToggle', header.parentNode.parentNode.parentNode.parentNode);
       header?.addEventListener('click', toggleThink);
     });
   }, [toggleThink]);
