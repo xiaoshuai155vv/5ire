@@ -16,11 +16,6 @@ export function isValidMaxTokens(
   if (maxTokens <= 0) return false;
 
   const model = getChatModel(providerName, modelName);
-  if (providerName!=='Ollama' && !model.name) {
-    captureException(
-      `Could find model:${modelName} for provider:${providerName}`
-    );
-  }
   return maxTokens <= (model.maxTokens || DEFAULT_MAX_TOKEN);
 }
 
