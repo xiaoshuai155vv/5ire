@@ -86,6 +86,7 @@ export default function ToolDetailDialog(args: { tool: string }) {
                             inputSchema
                           </legend>
                           <div
+                            className='-mt-3'
                             dangerouslySetInnerHTML={{
                               __html: render(
                                 `\`\`\`json\n${JSON.stringify(tool.inputSchema, null, 2)}\n\`\`\``,
