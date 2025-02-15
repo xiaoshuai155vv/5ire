@@ -76,11 +76,11 @@ export default function ToolDetailDialog(args: { tool: string }) {
                     <div className='text-gray-500 dark:text-gray-300 font-bold'>{tool.name.split('--')[1]}</div>
                   </AccordionHeader>
                   <AccordionPanel>
-                    <div className="border-l border-stone-300 dark:border-gray-400 ml-2 pl-2">
+                    <div className="border-l border-dotted border-stone-300 dark:border-gray-500 ml-2 pl-2">
                       <div className="text-sm text-gray-500 dark:text-gray-300 ml-3">
                         {tool.description}
                       </div>
-                      <div className="mt-2">
+                      <div className="mt-2 ml-2">
                         <fieldset className="border border-stone-300 dark:border-stone-600 rounded bg-stone-50 dark:bg-stone-800">
                           <legend className="text-sm px-1 ml-2 text-gray-500 dark:text-gray-300">
                             inputSchema
