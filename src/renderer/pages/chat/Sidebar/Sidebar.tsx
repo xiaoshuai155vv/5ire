@@ -66,7 +66,7 @@ export default function Sidebar({ chatId }: { chatId: string }) {
                 </AccordionHeader>
                 <AccordionPanel>
                   <div
-                    className="inspector-message  pl-2"
+                    className="inspector-message"
                     style={{ marginLeft: 8 }}
                   >
                     <div
