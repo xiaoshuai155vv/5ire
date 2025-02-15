@@ -14,8 +14,7 @@ import useProvider from 'hooks/useProvider';
 import { Info16Regular } from '@fluentui/react-icons';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
-import Ollama from 'providers/Ollama';
-import OllamaModelPicker from 'renderer/components/OllamaModelPicker';
+import OllamaModelPicker from './OllamaModelPicker';
 
 export default function ModelField({
   provider,
@@ -119,11 +118,11 @@ export default function ModelField({
                 value={model}
                 placeholder={t(provider.chat.placeholders?.deploymentId || '')}
                 onInput={onInput}
-                className='w-full'
+                className="w-full"
               />
             )}
             {provider.name === 'Ollama' && (
-              <div className='absolute right-1 top-1'>
+              <div className="absolute right-1 top-1">
                 <OllamaModelPicker baseUrl={baseUrl} onConfirm={setModel} />
               </div>
             )}
