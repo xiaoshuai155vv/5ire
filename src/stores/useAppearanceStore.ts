@@ -10,7 +10,7 @@ interface IAppearanceStore {
     collapsed: boolean;
   };
   chatSidebar: {
-    hidden: boolean;
+    show: boolean;
   };
   setTheme: (theme: Omit<ThemeType, 'system'>) => void;
   toggleSidebarCollapsed: () => void;
@@ -26,7 +26,7 @@ const useAppearanceStore = create<IAppearanceStore>((set, get) => ({
     collapsed: localStorage.getItem('sidebar-collapsed') === 'true',
   },
   chatSidebar: {
-    hidden: localStorage.getItem('chat-sidebar-hidden') === 'true',
+    show: localStorage.getItem('chat-sidebar-show') === 'true',
   },
   setTheme: (theme: Omit<ThemeType, 'system'>) => set({ theme }),
   toggleSidebarCollapsed: () => {
@@ -49,11 +49,10 @@ const useAppearanceStore = create<IAppearanceStore>((set, get) => ({
   },
   toggleChatSidebarVisibility: () => {
     set((state) => {
-      const hidden = !state.chatSidebar.hidden;
-      console.log('hidden', hidden);
-      localStorage.setItem('chat-sidebar-hidden', String(hidden));
-      window.electron.ingestEvent([{ app: 'toggle-right-sidebar-visibility' }]);
-      return { chatSidebar: { hidden } };
+      const show = !state.chatSidebar.show;
+      localStorage.setItem('chat-sidebar-show', String(show));
+      window.electron.ingestEvent([{ app: 'toggle-chat-sidebar-visibility' }]);
+      return { chatSidebar: { show } };
     });
   },
   getPalette: (name: 'error' | 'warning' | 'success' | 'info') => {

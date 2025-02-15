@@ -38,7 +38,7 @@ export default function Header() {
   const activeChat = useChatContext().getActiveChat();
   const collapsed = useAppearanceStore((state) => state.sidebar.collapsed);
   const chatSidebarHidden = useAppearanceStore(
-    (state) => state.chatSidebar.hidden,
+    (state) => state.chatSidebar.show,
   );
   const toggleChatSidebarVisibility = useAppearanceStore(
     (state) => state.toggleChatSidebarVisibility,

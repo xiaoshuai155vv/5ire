@@ -15,7 +15,6 @@ interface IInspectorStore {
 const useInspectorStore = create<IInspectorStore>((set, get) => ({
   messages: {},
   trace: (chatId: string, label: string, message: string) => {
-    console.log('traceTool', chatId, message);
     const { messages } = get();
     if (!messages[chatId]) {
       set({ messages: { ...messages, [chatId]: [{ label, message }] } });

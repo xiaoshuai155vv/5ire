@@ -4,7 +4,7 @@ import {
   AccordionHeader,
   AccordionPanel,
 } from '@fluentui/react-components';
-import { PersonRunning20Regular } from '@fluentui/react-icons';
+import { PlayCircleHint16Regular} from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppearanceStore from 'stores/useAppearanceStore';
@@ -37,7 +37,7 @@ export default function Sidebar({ chatId }: { chatId: string }) {
   return (
     <aside
       className={`right-sidebar ml-5 -mr-5 z-20 pt-2.5 flex-shrink-0 border-l w-72 ${
-        chatSidebar.hidden ? 'hidden' : 'hidden sm:flex'
+        chatSidebar.show ? 'hidden sm:flex' : 'hidden'
       }  inset-y-0 top-0 flex-col duration-300 md:relative pl-2`}
     >
       <div className="text-gray-300 dark:text-gray-600 font-bold text-lg mb-2">
@@ -49,7 +49,7 @@ export default function Sidebar({ chatId }: { chatId: string }) {
             return item.message === '' ? (
               <div className="pl-4 mt-2">
                 <span className="-ml-1 inline-block pt-0 py-0.5 rounded truncate text-ellipsis overflow-hidden w-52 font-bold text-gray-400 dark:text-gray-400">
-                  <PersonRunning20Regular />
+                <PlayCircleHint16Regular />
                   &nbsp;{item.label}
                 </span>
               </div>
@@ -63,8 +63,11 @@ export default function Sidebar({ chatId }: { chatId: string }) {
                   </span>
                 </AccordionHeader>
                 <AccordionPanel>
-                  <div className="inspector-message  pl-2" style={{ marginLeft: 8 }}>
-                    <pre className="ghost" >
+                  <div
+                    className="inspector-message  pl-2"
+                    style={{ marginLeft: 8 }}
+                  >
+                    <pre className="ghost">
                       <code className="text-gray-500 dark:text-gray-400 text-left text-xs">
                         {item.message}
                       </code>
