@@ -27,8 +27,8 @@ const MoreHorizontalIcon = bundleIcon(
   MoreHorizontal24Filled,
   MoreHorizontal24Regular,
 );
-const PanelRightHideIcon = bundleIcon(PanelRight24Filled, PanelRight24Regular);
-const PanelRightShowIcon = bundleIcon(PanelRight24Regular, PanelRight24Filled);
+const PanelRightShowIcon = bundleIcon(PanelRight24Filled, PanelRight24Regular);
+const PanelRightHideIcon = bundleIcon(PanelRight24Regular, PanelRight24Filled);
 
 export default function Header() {
   const { t } = useTranslation();
