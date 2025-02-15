@@ -46,7 +46,7 @@ export default function AppearanceSettings() {
     <div className="settings-section">
       <div className="settings-section--header">{t('Common.Appearance')}</div>
       <div className="py-4 flex-grow">
-        <p className="pt-1 pb-2">{t('Apperance.ColorTheme')}</p>
+        <p className="pt-1 pb-2">{t('Appearance.ColorTheme')}</p>
         <RadioGroup
           name='theme'
           aria-labelledby={t('Common.Appearance')}
@@ -58,12 +58,12 @@ export default function AppearanceSettings() {
           <Radio
             name="appearance"
             value="system"
-            label={t('Apperance.System')}
+            label={t('Appearance.System')}
           />
         </RadioGroup>
       </div>
       <div className="py-4 flex-grow">
-        <p className="pt-1 pb-2">{t('Apperance.ChatFontSize')}</p>
+        <p className="pt-1 pb-2">{t('Appearance.ChatFontSize')}</p>
         <RadioGroup
           name='fontSize'
           aria-labelledby={t('Common.FontSize')}

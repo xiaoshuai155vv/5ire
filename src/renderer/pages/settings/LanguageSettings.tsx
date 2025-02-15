@@ -47,7 +47,7 @@ export default function LanguageSettings() {
             value="zh-CN"
             label={t('Common.SimpleChinese')}
           />
-          <Radio name="language" value="system" label={t('Apperance.System')} />
+          <Radio name="language" value="system" label={t('Appearance.System')} />
         </RadioGroup>
       </div>
     </div>
