@@ -227,5 +227,7 @@
   "Apperance.ChatFontSize": "对话字体大小",
   "Apperance.ColorTheme": "色彩主题",
   "Common.Notification.Copied": "已复制",
-  "Common.Think": "思考"
+  "Common.Think": "思考",
+  "Common.Action.Choose": "选择",
+  "Common.Error.InvalidAPIBase": "错误的 API 根路径"
 }

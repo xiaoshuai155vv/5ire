@@ -228,5 +228,9 @@
   "Apperance.ColorTheme": "Color Theme",
   "Common.Notification.Copied": "Copied",
   "Common.Inspector": "Inspector",
-  "Common.Think": "Think"
+  "Common.Think": "Think",
+  "Common.Action.Choose": "Choose",
+  "Common.Error.FetchFailed": "Fetch Failed",
+  "Common.Error.InvalidURL": "Invalid URL",
+  "Common.Error.InvalidAPIBase": "Invalid API Base"
 }

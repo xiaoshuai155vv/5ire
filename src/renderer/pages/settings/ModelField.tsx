@@ -11,9 +11,11 @@ import useSettingsStore from '../../../stores/useSettingsStore';
 import { useEffect, useMemo } from 'react';
 import { IChatModel, IServiceProvider } from '../../../providers/types';
 import useProvider from 'hooks/useProvider';
-import { Info16Regular, Wand16Regular } from '@fluentui/react-icons';
+import { Info16Regular } from '@fluentui/react-icons';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
+import Ollama from 'providers/Ollama';
+import OllamaModelPicker from 'renderer/components/OllamaModelPicker';
 
 export default function ModelField({
   provider,
@@ -22,6 +24,7 @@ export default function ModelField({
 }) {
   const { t } = useTranslation();
   const model = useSettingsStore((state) => state.api.model);
+  const baseUrl = useSettingsStore((state) => state.api.base);
   const { getChatModels } = useProvider();
   const setAPI = useSettingsStore((state) => state.setAPI);
   const { getDefaultChatModel } = useProvider();
@@ -40,6 +43,10 @@ export default function ModelField({
 
   const onInput = (evt: any) => {
     setAPI({ model: evt.target.value });
+  };
+
+  const setModel = (model: string) => {
+    setAPI({ model });
   };
 
   return (
@@ -106,14 +113,21 @@ export default function ModelField({
             </Dropdown>
           )
         ) : (
-          provider.chat.options.modelCustomizable && (
-            <Input
-              value={model}
-              placeholder={t(provider.chat.placeholders?.deploymentId || '')}
-              onInput={onInput}
-              className="w-4/5 min-w-fit"
-            />
-          )
+          <div className="flex justify-start items-center gap-1 w-4/5 min-w-fit relative">
+            {provider.chat.options.modelCustomizable && (
+              <Input
+                value={model}
+                placeholder={t(provider.chat.placeholders?.deploymentId || '')}
+                onInput={onInput}
+                className='w-full'
+              />
+            )}
+            {provider.name === 'Ollama' && (
+              <div className='absolute right-1 top-1'>
+                <OllamaModelPicker baseUrl={baseUrl} onConfirm={setModel} />
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

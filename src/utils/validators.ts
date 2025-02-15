@@ -30,11 +30,21 @@ export function isValidUsername(name: string) {
   return true;
 }
 
-export function isValidEmail(email:string){
+export function isValidEmail(email: string) {
   const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return pattern.test(email);
 }
 
-export function isValidPassword(password:string){
-  return password.length >= 6 && password.length <= 20 && /\d/.test(password) && /[a-zA-Z]/.test(password);
+export function isValidPassword(password: string) {
+  return (
+    password.length >= 6 &&
+    password.length <= 20 &&
+    /\d/.test(password) &&
+    /[a-zA-Z]/.test(password)
+  );
+}
+
+export function isValidHttpHRL(url: string) {
+  const pattern = /^(http|https):\/\/[^ "]+$/;
+  return pattern.test(url);
 }
