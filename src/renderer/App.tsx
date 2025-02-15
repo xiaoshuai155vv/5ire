@@ -1,8 +1,6 @@
 import * as logging from './logging';
 import Debug from 'debug';
 import FluentApp from './components/FluentApp';
-import './App.scss';
-import './fluentui.scss';
 import useAuthStore from 'stores/useAuthStore';
 import { useEffect } from 'react';
 import useToast from 'hooks/useToast';
@@ -10,6 +8,9 @@ import { useTranslation } from 'react-i18next';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useMCPStore from 'stores/useMCPStore';
 import Mousetrap from 'mousetrap';
+
+import './App.scss';
+import './fluentui.scss';
 
 if (window.envVars.NODE_ENV === 'development') {
   Debug.enable('5ire:*');

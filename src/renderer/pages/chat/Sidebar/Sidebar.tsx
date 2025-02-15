@@ -4,7 +4,8 @@ import {
   AccordionHeader,
   AccordionPanel,
 } from '@fluentui/react-components';
-import { PlayCircleHint16Regular} from '@fluentui/react-icons';
+import { PlayCircleHint16Regular } from '@fluentui/react-icons';
+import useMarkdown from 'hooks/useMarkdown';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAppearanceStore from 'stores/useAppearanceStore';
@@ -13,6 +14,7 @@ import useInspectorStore, { ITraceMessage } from 'stores/useInspectorStore';
 export default function Sidebar({ chatId }: { chatId: string }) {
   const { t } = useTranslation();
   const theme = useAppearanceStore((state) => state.theme);
+  const { render } = useMarkdown();
   const chatSidebar = useAppearanceStore((state) => state.chatSidebar);
   const messages = useInspectorStore((state) => state.messages);
   const trace = useMemo(() => messages[chatId] || [], [messages, chatId]);
@@ -49,7 +51,7 @@ export default function Sidebar({ chatId }: { chatId: string }) {
             return item.message === '' ? (
               <div className="pl-4 mt-2">
                 <span className="-ml-1 inline-block pt-0 py-0.5 rounded truncate text-ellipsis overflow-hidden w-52 font-bold text-gray-400 dark:text-gray-400">
-                <PlayCircleHint16Regular />
+                  <PlayCircleHint16Regular />
                   &nbsp;{item.label}
                 </span>
               </div>
@@ -67,11 +69,13 @@ export default function Sidebar({ chatId }: { chatId: string }) {
                     className="inspector-message  pl-2"
                     style={{ marginLeft: 8 }}
                   >
-                    <pre className="ghost">
-                      <code className="text-gray-500 dark:text-gray-400 text-left text-xs">
-                        {item.message}
-                      </code>
-                    </pre>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: render(
+                          `\`\`\`json\n${item.message}\n\`\`\``,
+                        ),
+                      }}
+                    />
                   </div>
                 </AccordionPanel>
               </AccordionItem>

@@ -38,10 +38,11 @@ import useMCPStore, { IMCPServer } from 'stores/useMCPStore';
 import * as mcpUtils from 'utils/mcp';
 import ParamsDialog from './ParamsDialog';
 import useToast from 'hooks/useToast';
+import ToolDetailDialog from './DetailDialog';
 
 const BracesVariableIcon = bundleIcon(
   BracesVariable20Filled,
-  BracesVariable20Regular
+  BracesVariable20Regular,
 );
 
 export default function Grid({ servers }: { servers: IMCPServer[] }) {
@@ -128,20 +129,23 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
                   </div>
                 )}
                 {item.isActive && item.args?.length > 0 && (
-                  <Popover withArrow>
-                    <PopoverTrigger disableButtonEnhancement>
-                      <Button
-                        icon={<BracesVariableIcon className="-mb-0.5" />}
-                        size="small"
-                        appearance="subtle"
-                      />
-                    </PopoverTrigger>
-                    <PopoverSurface tabIndex={-1}>
-                      <pre>
-                        <div>{JSON.stringify(item.args, null, 2)}</div>
-                      </pre>
-                    </PopoverSurface>
-                  </Popover>
+                  <div className="-mb-0.5 ml-1">
+                    <Popover withArrow>
+                      <PopoverTrigger disableButtonEnhancement>
+                        <Button
+                          icon={<BracesVariableIcon />}
+                          size="small"
+                          appearance="subtle"
+                        />
+                      </PopoverTrigger>
+                      <PopoverSurface tabIndex={-1}>
+                        <pre>
+                          <div>{JSON.stringify(item.args, null, 2)}</div>
+                        </pre>
+                      </PopoverSurface>
+                    </Popover>
+                    <ToolDetailDialog tool={item.key} />
+                  </div>
                 )}
               </div>
             </TableCellLayout>
@@ -154,7 +158,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
                   if (data.checked) {
                     const args = mcpUtils.getParameters(item.args);
                     const env = mcpUtils.getParameters(
-                      Object.values(item.env || {})
+                      Object.values(item.env || {}),
                     );
                     const params = [...args, ...env];
                     setParams(params);
@@ -167,7 +171,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
                         await activateServer(item.key);
                       } catch (error: any) {
                         notifyError(
-                          error.message || t('MCP.ServerActivationFailed')
+                          error.message || t('MCP.ServerActivationFailed'),
                         );
                       } finally {
                         setLoading((prev) => ({ ...prev, [item.key]: false }));
