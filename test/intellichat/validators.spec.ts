@@ -30,7 +30,7 @@ describe('intellichat/validators', () => {
     expect(isValidTemperature(0, 'OpenAI')).toBe(true);
     expect(isValidTemperature(0, 'Baidu')).toBe(false);
 
-    expect(isValidTemperature(2, 'OpenAI')).toBe(false);
+    expect(isValidTemperature(2, 'OpenAI')).toBe(true);
     expect(isValidTemperature(2, 'Baidu')).toBe(false);
 
     expect(isValidTemperature(-1, 'OpenAI')).toBe(false);
