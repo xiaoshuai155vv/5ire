@@ -20,13 +20,13 @@ import {
 } from '@fluentui/react-icons';
 import useMarkdown from 'hooks/useMarkdown';
 import useToast from 'hooks/useToast';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import useBookmarkStore from 'stores/useBookmarkStore';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import { IBookmark } from 'types/bookmark';
-import { fmtDateTime, unix2date } from 'utils/util';
+import { fmtDateTime, toggleThink, unix2date } from 'utils/util';
 import CitationDialog from '../chat/CitationDialog';
 
 const ArrowLeftIcon = bundleIcon(ArrowLeft16Filled, ArrowLeft16Regular);
@@ -41,7 +41,7 @@ export default function Bookmark() {
   const navigate = useNavigate();
   const [updated, setUpdated] = useState<boolean>(false);
   const setActiveBookmarkId = useBookmarkStore(
-    (state) => state.setActiveBookmarkId
+    (state) => state.setActiveBookmarkId,
   );
   const updateBookmarks = useBookmarkStore((state) => state.updateBookmark);
   const deleteBookmark = useBookmarkStore((state) => state.deleteBookmark);
@@ -50,9 +50,17 @@ export default function Bookmark() {
   const { notifyInfo } = useToast();
   const bookmarks = useBookmarkStore((state) => state.bookmarks);
 
+  const registerThinkToggle = useCallback(() => {
+    const headers = document.querySelectorAll(`.think-header`);
+    headers.forEach((header: any) => {
+      header?.addEventListener('click', toggleThink);
+    });
+  }, [toggleThink]);
+
   useEffect(() => {
     setUpdated(false);
     setActiveBookmarkId(id as string);
+    registerThinkToggle();
     const links = document.querySelectorAll('.bookmark-reply a');
     links.forEach((link) => {
       link.addEventListener('click', onCitationClick);
@@ -61,17 +69,21 @@ export default function Bookmark() {
       links.forEach((link) => {
         link.removeEventListener('click', onCitationClick);
       });
+      const headers = document.querySelectorAll(` .think-header`);
+      headers.forEach((header: any) => {
+        header?.removeEventListener('click', toggleThink);
+      });
     };
   }, [updated, id]);
 
   const bookmark = useMemo(
     () => bookmarks.find((item) => item.id === id) as IBookmark,
-    [id]
+    [id],
   );
 
   const citedFiles = useMemo(
     () => JSON.parse(bookmark?.citedFiles || '[]'),
-    [bookmark]
+    [bookmark],
   );
 
   const { notifySuccess } = useToast();
@@ -81,7 +93,9 @@ export default function Bookmark() {
     if (url.pathname === '/citation' || url.protocol.startsWith('file:')) {
       event.preventDefault();
       const chunkId = url.hash.replace('#', '');
-      const chunk = JSON.parse(bookmark.citedChunks || '[]').find((chunk:any) => chunk.id === chunkId);
+      const chunk = JSON.parse(bookmark.citedChunks || '[]').find(
+        (chunk: any) => chunk.id === chunkId,
+      );
       if (chunk) {
         showCitation(chunk.content);
       } else {
@@ -114,8 +128,8 @@ export default function Bookmark() {
 
   return (
     <div className="page h-full">
-    <div className="page-top-bar"></div>
-    <div className="page-header">
+      <div className="page-top-bar"></div>
+      <div className="page-header">
         <div className="bookmark-topbar p-1 rounded flex justify-between items-center">
           <div className="flex justify-start items-center">
             <Button
@@ -217,19 +231,19 @@ export default function Bookmark() {
             <div className="h-16" />
           </div>
           {citedFiles.length > 0 && (
-          <div className="mt-2">
-            <div className="mt-4 mb-4">
-              <Divider>{t('Common.References')}</Divider>
+            <div className="mt-2">
+              <div className="mt-4 mb-4">
+                <Divider>{t('Common.References')}</Divider>
+              </div>
+              <ul>
+                {citedFiles.map((file: string) => (
+                  <li className="text-gray-500" key={file}>
+                    {file}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul>
-              {citedFiles.map((file: string) => (
-                <li className="text-gray-500" key={file}>
-                  {file}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+          )}
         </div>
       </div>
       <CitationDialog />

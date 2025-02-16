@@ -389,3 +389,24 @@ export function renderThink(str: string, options?: { header: string }): string {
     return match;
   });
 }
+
+export function toggleThink(evt: React.MouseEvent) {
+  const target = evt.currentTarget as HTMLElement;
+  const parent = target?.parentNode as HTMLElement; // div.think
+  if (parent) {
+    const body = parent.querySelector('div.think-body');
+    const iconShow = parent.querySelector('.icon-show');
+    const iconHide = parent.querySelector('.icon-hide');
+    if (body?.classList.contains('hidden')) {
+      parent.classList.remove('collapsed');
+      body.classList.remove('hidden');
+      iconShow?.classList.add('hidden');
+      iconHide?.classList.remove('hidden');
+    } else {
+      parent.classList.add('collapsed');
+      body?.classList.add('hidden');
+      iconShow?.classList.remove('hidden');
+      iconHide?.classList.add('hidden');
+    }
+  }
+}
