@@ -221,15 +221,11 @@ export default abstract class NextCharService {
           JSON.stringify(readResult.tool.args, null, 2),
         );
         if (toolCallsResult.isError) {
-          this.onErrorCallback(
-            toolCallsResult.content?.text || `Run ${name} failed`,
-            false,
-          );
-          this.traceTool(
-            chatId,
-            'error',
-            ` ${toolCallsResult.content?.text || ''}`,
-          );
+          const toolError =
+            toolCallsResult.content.length > 0
+              ? toolCallsResult.content[0]
+              : { error: 'Unknown error' };
+          this.traceTool(chatId, 'error', JSON.stringify(toolError, null, 2));
         } else {
           this.traceTool(
             chatId,
