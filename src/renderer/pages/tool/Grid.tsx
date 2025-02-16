@@ -215,7 +215,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
             )}
           </DataGridRow>
         </DataGridHeader>
-        <DataGridBody<Item> itemSize={50} height={innerHeight - 225}>
+        <DataGridBody<Item> itemSize={50} height={innerHeight - 240}>
           {renderRow}
         </DataGridBody>
       </DataGrid>
