@@ -253,7 +253,7 @@ export default function Grid({
             )}
           </DataGridRow>
         </DataGridHeader>
-        <DataGridBody<Item> itemSize={50} height={innerHeight - 140}>
+        <DataGridBody<Item> itemSize={50} height={innerHeight - 155}>
           {renderRow}
         </DataGridBody>
       </DataGrid>

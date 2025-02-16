@@ -55,7 +55,7 @@ const PinIcon = bundleIcon(PinFilled, PinRegular);
 const PinOffIcon = bundleIcon(PinOffFilled, PinOffRegular);
 const DocumentFolderIcon = bundleIcon(
   DocumentFolderFilled,
-  DocumentFolderRegular
+  DocumentFolderRegular,
 );
 
 const OptionsIcon = bundleIcon(OptionsFilled, OptionsRegular);
@@ -109,7 +109,7 @@ export default function Grid({ collections }: { collections: any[] }) {
           }
           return b.id.localeCompare(a.id);
         }),
-    [collections]
+    [collections],
   );
 
   type UpdatedCell = {
@@ -270,7 +270,7 @@ export default function Grid({ collections }: { collections: any[] }) {
             )}
           </DataGridRow>
         </DataGridHeader>
-        <DataGridBody<Item> itemSize={50} height={innerHeight - 140}>
+        <DataGridBody<Item> itemSize={50} height={innerHeight - 155}>
           {renderRow}
         </DataGridBody>
       </DataGrid>
