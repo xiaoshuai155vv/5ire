@@ -11,7 +11,7 @@ import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useToast from 'hooks/useToast';
 import ToolSpinner from 'renderer/components/ToolSpinner';
 import useSettingsStore from 'stores/useSettingsStore';
-import { highlight } from '../../../utils/util';
+import { highlight, toggleThink } from '../../../utils/util';
 import MessageToolbar from './MessageToolbar';
 
 const debug = Debug('5ire:pages:chat:Message');
@@ -62,26 +62,6 @@ export default function Message({ message }: { message: IChatMessage }) {
     });
   }, [onCitationClick]);
 
-  const toggleThink = useCallback((evt: React.MouseEvent) => {
-    const target = evt.currentTarget as HTMLElement;
-    const parent = target?.parentNode as HTMLElement; // div.think
-    if (parent) {
-      const body = parent.querySelector('div.think-body');
-      const iconShow = parent.querySelector('.icon-show');
-      const iconHide = parent.querySelector('.icon-hide');
-      if (body?.classList.contains('hidden')) {
-        parent.classList.remove('collapsed');
-        body.classList.remove('hidden');
-        iconShow?.classList.add('hidden');
-        iconHide?.classList.remove('hidden');
-      } else {
-        parent.classList.add('collapsed');
-        body?.classList.add('hidden');
-        iconShow?.classList.remove('hidden');
-        iconHide?.classList.add('hidden');
-      }
-    }
-  }, []);
 
 
   const registerThinkToggle = useCallback(() => {
