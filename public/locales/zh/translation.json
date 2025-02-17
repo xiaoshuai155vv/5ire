@@ -230,5 +230,15 @@
   "Common.Think": "思考",
   "Common.Action.Choose": "选择",
   "Common.Error.InvalidAPIBase": "错误的 API 根路径",
-  "Common.Action.Reload": "重新加载"
+  "Common.Action.Reload": "重新加载",
+  "Tools.New": "添加工具",
+  "Tools.Edit": "编辑工具",
+  "Tools.Key": "工具标识",
+  "Tools.KeyHint": "工具标识必须唯一，只能由大小写字母和数字组成且不能以数字开头",
+  "Common.Description": "描述",
+  "Tools.Command": "命令",
+  "Tools.EnvVars": "环境变量",
+  "Common.EnvValue": "值",
+  "Common.EnvName": "名称",
+  "Tools.Hint.CommandIsRequired": "命令是必须的"
 }

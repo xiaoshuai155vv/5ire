@@ -215,7 +215,7 @@ export default function ImgCtrl({
           <DialogActions>
             <DialogTrigger disableButtonEnhancement>
               <Button
-                appearance="secondary"
+                appearance="subtle"
                 onClick={() => {
                   setOpen(false);
                   setImgURL('');

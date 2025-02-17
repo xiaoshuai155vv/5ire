@@ -233,5 +233,16 @@
   "Common.Error.FetchFailed": "Fetch Failed",
   "Common.Error.InvalidURL": "Invalid URL",
   "Common.Error.InvalidAPIBase": "Invalid API Base",
-  "Common.Action.Reload": "Reload"
+  "Common.Action.Reload": "Reload",
+  "Tools.New": "Add a new tool",
+  "Tools.Edit": "Edit tool",
+  "Tools.Key": "Tool Key",
+  "Tools.KeyHint": "The tool's key must be unique, containing only letters (both cases) and numbers, and can't start with a digit.",
+  "Common.Description": "Description",
+  "Tools.Command": "Command",
+  "Tools.EnvVars": "Enviroment Variables",
+  "Common.EnvName": "Name",
+  "Common.EnvValue": "Value",
+  "Tools.ConfigPreview": "Config Preview",
+  "Tools.Hint.CommandIsRequired": "Command is required"
 }

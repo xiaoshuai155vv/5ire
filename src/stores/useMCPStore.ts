@@ -1,4 +1,5 @@
 import Debug from 'debug';
+import { produce } from 'immer';
 import { IMCPConfig, IMCPServer } from 'types/mcp';
 import { create } from 'zustand';
 
@@ -16,6 +17,7 @@ export interface IMCPStore {
   fetchConfig: (refresh?: boolean) => Promise<IMCPConfig>;
   setActiveServerNames: (activeServerNames: string[]) => void;
   getActiveServerNames: () => Promise<string[]>;
+  addServer: (server: IMCPServer) => Promise<boolean>;
   activateServer: (
     key: string,
     command?: string,
@@ -66,6 +68,17 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
     const activeServerNames = await window.electron.mcp.getActiveServers();
     set({ activeServerNames });
     return activeServerNames;
+  },
+  addServer: async (server: IMCPServer) => {
+    const { servers } = get().config;
+    if (!servers.find((svr) => svr.key === server.key)) {
+      const ok = await window.electron.mcp.addServer(server);
+      if (ok) {
+        get().loadConfig(true);
+        return true;
+      }
+    }
+    return false;
   },
   activateServer: async (
     key: string,

@@ -10,9 +10,6 @@ import {
 } from '@fluentui-contrib/react-data-grid-react-window';
 import {
   Button,
-  Popover,
-  PopoverSurface,
-  PopoverTrigger,
   Switch,
   TableCell,
   TableCellActions,
@@ -24,8 +21,8 @@ import {
   useScrollbarWidth,
 } from '@fluentui/react-components';
 import {
-  BracesVariable20Filled,
-  BracesVariable20Regular,
+  Edit20Regular,
+  Edit20Filled,
   bundleIcon,
   Circle16Filled,
   CircleHintHalfVertical16Filled,
@@ -36,17 +33,19 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useMCPStore from 'stores/useMCPStore';
 import * as mcpUtils from 'utils/mcp';
-import ParamsDialog from './ParamsDialog';
 import useToast from 'hooks/useToast';
 import ToolDetailDialog from './DetailDialog';
 import { IMCPServer } from 'types/mcp';
 
-const BracesVariableIcon = bundleIcon(
-  BracesVariable20Filled,
-  BracesVariable20Regular,
-);
+const EditIcon = bundleIcon(Edit20Filled, Edit20Regular);
 
-export default function Grid({ servers }: { servers: IMCPServer[] }) {
+export default function Grid({
+  servers,
+  edit,
+}: {
+  servers: IMCPServer[];
+  edit: (server: IMCPServer) => void;
+}) {
   const { t } = useTranslation();
   const { notifyError } = useToast();
   const { activateServer, deactivateServer } = useMCPStore((state) => state);
@@ -55,14 +54,6 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
   const [selectedServer, setSelectedServer] = useState<IMCPServer | null>(null);
   const [params, setParams] = useState<mcpUtils.IMCPServerParameter[]>([]);
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
-
-  type Item = {
-    key: string;
-    description: string;
-    args: string[];
-    env?: Record<string, string>;
-    isActive: boolean;
-  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -91,10 +82,10 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
     setOpen(false);
   };
 
-  const columns: TableColumnDefinition<Item>[] = [
-    createTableColumn<Item>({
+  const columns: TableColumnDefinition<IMCPServer>[] = [
+    createTableColumn<IMCPServer>({
       columnId: 'name',
-      compare: (a: Item, b: Item) => {
+      compare: (a: IMCPServer, b: IMCPServer) => {
         return a.key.localeCompare(b.key);
       },
       renderHeaderCell: () => {
@@ -131,20 +122,12 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
                 )}
                 {item.isActive && item.args?.length > 0 && (
                   <div className="-mb-0.5 ml-1">
-                    <Popover withArrow>
-                      <PopoverTrigger disableButtonEnhancement>
-                        <Button
-                          icon={<BracesVariableIcon />}
-                          size="small"
-                          appearance="subtle"
-                        />
-                      </PopoverTrigger>
-                      <PopoverSurface tabIndex={-1}>
-                        <pre>
-                          <div>{JSON.stringify(item.args, null, 2)}</div>
-                        </pre>
-                      </PopoverSurface>
-                    </Popover>
+                    <Button
+                      icon={<EditIcon />}
+                      size="small"
+                      onClick={() => edit(item)}
+                      appearance="subtle"
+                    />
                     <ToolDetailDialog tool={item.key} />
                   </div>
                 )}
@@ -190,8 +173,8 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
     }),
   ];
 
-  const renderRow: RowRenderer<Item> = ({ item, rowId }, style) => (
-    <DataGridRow<Item> key={rowId} style={style}>
+  const renderRow: RowRenderer<IMCPServer> = ({ item, rowId }, style) => (
+    <DataGridRow<IMCPServer> key={rowId} style={style}>
       {({ renderCell }) => <DataGridCell>{renderCell(item)}</DataGridCell>}
     </DataGridRow>
   );
@@ -216,17 +199,10 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
             )}
           </DataGridRow>
         </DataGridHeader>
-        <DataGridBody<Item> itemSize={50} height={innerHeight - 240}>
+        <DataGridBody<IMCPServer> itemSize={50} height={innerHeight - 240}>
           {renderRow}
         </DataGridBody>
       </DataGrid>
-      <ParamsDialog
-        title={selectedServer?.key || ''}
-        open={open}
-        setOpen={setOpen}
-        params={params}
-        onSubmit={activateServerWithParams}
-      />
     </div>
   );
 }

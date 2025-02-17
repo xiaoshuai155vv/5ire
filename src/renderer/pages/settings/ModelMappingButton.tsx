@@ -76,7 +76,7 @@ export default function ModelMappingButton() {
             </DialogContent>
             <DialogActions>
               <DialogTrigger disableButtonEnhancement>
-                <Button appearance="secondary">{t('Common.Cancel')}</Button>
+                <Button appearance="subtle">{t('Common.Cancel')}</Button>
               </DialogTrigger>
               <Button appearance="primary" onClick={onSave}>
                 {t('Common.Save')}

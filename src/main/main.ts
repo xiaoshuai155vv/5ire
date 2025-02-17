@@ -103,7 +103,7 @@ class AppUpdater {
         });
 
         axiom.ingest([{ app: 'upgrade' }, { version: releaseName }]);
-      }
+      },
     );
 
     autoUpdater.on('error', (message) => {
@@ -169,7 +169,7 @@ ipcMain.handle(
   'decrypt',
   (_event, encrypted: string, key: string, iv: string) => {
     return decrypt(encrypted, key, iv);
-  }
+  },
 );
 
 ipcMain.handle('get-protocol', () => {
@@ -201,7 +201,7 @@ ipcMain.handle('open-external', (_, data) => {
 });
 
 ipcMain.handle('get-user-data-path', (_, paths) => {
-  if(paths){
+  if (paths) {
     return path.join(app.getPath('userData'), ...paths);
   }
   return app.getPath('userData');
@@ -232,7 +232,7 @@ ipcMain.handle(
   'save-embedding-model-file',
   (_, fileName: string, filePath: string) => {
     Embedder.saveModelFile(fileName, filePath);
-  }
+  },
 );
 
 ipcMain.handle(
@@ -251,7 +251,7 @@ ipcMain.handle(
         type: string;
       };
       collectionId: string;
-    }
+    },
   ) => {
     Knowledge.importFile({
       file,
@@ -261,14 +261,14 @@ ipcMain.handle(
           'knowledge-import-progress',
           filePath,
           total,
-          done
+          done,
         );
       },
       onSuccess: (data: any) => {
         mainWindow?.webContents.send('knowledge-import-success', data);
       },
     });
-  }
+  },
 );
 
 ipcMain.handle('select-knowledge-files', async () => {
@@ -301,7 +301,7 @@ ipcMain.handle('select-knowledge-files', async () => {
       if (!SUPPORTED_FILE_TYPES[fileType]) {
         dialog.showErrorBox(
           'Error',
-          `Unsupported file type ${fileType} for ${filePath}`
+          `Unsupported file type ${fileType} for ${filePath}`,
         );
         return '[]';
       }
@@ -311,7 +311,7 @@ ipcMain.handle('select-knowledge-files', async () => {
           'Error',
           `the size of ${filePath} exceeds the limit (${
             MAX_FILE_SIZE / (1024 * 1024)
-          } MB})`
+          } MB})`,
         );
         return '[]';
       }
@@ -341,7 +341,7 @@ ipcMain.handle('select-image-with-base64', async () => {
     if (!SUPPORTED_IMAGE_TYPES[fileType]) {
       dialog.showErrorBox(
         'Error',
-        `Unsupported file type ${fileType} for ${filePath}`
+        `Unsupported file type ${fileType} for ${filePath}`,
       );
       return null;
     }
@@ -351,7 +351,7 @@ ipcMain.handle('select-image-with-base64', async () => {
         'Error',
         `the size of ${filePath} exceeds the limit (${
           MAX_FILE_SIZE / (1024 * 1024)
-        } MB})`
+        } MB})`,
       );
       return null;
     }
@@ -374,7 +374,7 @@ ipcMain.handle(
   async (_, collectionIds: string[], query: string) => {
     const result = await Knowledge.search(collectionIds, query, { limit: 4 });
     return JSON.stringify(result);
-  }
+  },
 );
 ipcMain.handle('remove-knowledge-file', async (_, fileId: string) => {
   return await Knowledge.remove({ fileId });
@@ -383,7 +383,7 @@ ipcMain.handle(
   'remove-knowledge-collection',
   async (_, collectionId: string) => {
     return await Knowledge.remove({ collectionId });
-  }
+  },
 );
 ipcMain.handle('get-knowledge-chunk', async (_, chunkId: string) => {
   return await Knowledge.getChunk(chunkId);
@@ -404,6 +404,9 @@ ipcMain.handle('mcp-init', async () => {
     mainWindow?.webContents.send('mcp-server-loaded', mcp.getClientNames());
   });
 });
+ipcMain.handle('mcp-add-server', async (_, config) => {
+  return await mcp.addServer(config);
+});
 ipcMain.handle('mcp-activate', async (_, config) => {
   return await mcp.activate(config);
 });
@@ -417,7 +420,7 @@ ipcMain.handle(
   'mcp-call-tool',
   async (_, args: { client: string; name: string; args: any }) => {
     return await mcp.callTool(args);
-  }
+  },
 );
 ipcMain.handle('mcp-fetch-config', async () => {
   let config: IMCPConfig = {
@@ -462,7 +465,7 @@ const installExtensions = async () => {
   return installer
     .default(
       extensions.map((name) => installer[name]),
-      forceDownload
+      forceDownload,
     )
     .catch(logging.info);
 };
@@ -501,7 +504,7 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-  mainWindow.on('ready-to-show', async() => {
+  mainWindow.on('ready-to-show', async () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
@@ -518,7 +521,7 @@ const createWindow = async () => {
     if (mainWindow) {
       mainWindow.webContents.send(
         'native-theme-change',
-        nativeTheme.shouldUseDarkColors ? 'dark' : 'light'
+        nativeTheme.shouldUseDarkColors ? 'dark' : 'light',
       );
     }
   });
@@ -550,7 +553,7 @@ const createWindow = async () => {
         'download-failed',
         fileName,
         savePath,
-        state
+        state,
       );
     },
     onProgress: (fileName: string, progress: number) => {
@@ -564,7 +567,7 @@ const createWindow = async () => {
  */
 if (app.dock) {
   const dockIcon = nativeImage.createFromPath(
-    `${app.getAppPath()}/assets/dockicon.png`
+    `${app.getAppPath()}/assets/dockicon.png`,
   );
   app.dock.setIcon(dockIcon);
 }
@@ -608,7 +611,7 @@ app
         // 允许私有证书
         event.preventDefault();
         callback(true);
-      }
+      },
     );
     axiom.ingest([{ app: 'launch' }]);
   })

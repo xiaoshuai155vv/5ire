@@ -265,7 +265,7 @@ export default function TabSubscription() {
             <DialogActions>
               <DialogTrigger disableButtonEnhancement>
                 <Button
-                  appearance="secondary"
+                  appearance="subtle"
                   onClick={() => setRedeemOpen(false)}
                 >
                   {t('Common.Cancel')}

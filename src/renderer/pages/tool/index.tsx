@@ -1,20 +1,32 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Empty from 'renderer/components/Empty';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import useMCPStore from 'stores/useMCPStore';
 import Grid from './Grid';
-import NewButton from './NewButton';
 import { Button } from '@fluentui/react-components';
 import { ArrowSyncCircleRegular } from '@fluentui/react-icons';
-import { set } from 'lodash';
+import ToolEditDialog from './EditDialog';
+import { IMCPServer } from 'types/mcp';
 
 export default function Tools() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const [server, setServer] = useState<IMCPServer | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const config = useMCPStore((state) => state.config);
   const builtinConfig = useMCPStore((state) => state.builtinConfig);
   const activeServerNames = useMCPStore((state) => state.activeServerNames);
+
+  const editServer = useCallback((server: IMCPServer) => {
+    setServer(server);
+    setEditDialogOpen(true);
+  }, []);
+
+  const newServer = useCallback(() => {
+    setServer(null);
+    setEditDialogOpen(true);
+  }, []);
 
   const loadConfig = async (force: boolean, animate: boolean) => {
     try {
@@ -52,8 +64,9 @@ export default function Tools() {
   }, [builtinConfig, config, activeServerNames]);
 
   useEffect(() => {
+    console.log('loadConfig');
     loadConfig(false, true);
-  }, []);
+  }, [config]);
 
   return (
     <div className="page h-full">
@@ -77,7 +90,9 @@ export default function Tools() {
                 appearance="subtle"
                 title={t('Common.Action.Reload')}
               />
-              <NewButton />
+              <Button appearance="primary" onClick={() => newServer()}>
+                {t('Common.New')}
+              </Button>
             </div>
           </div>
           <div className="tips flex justify-start items-center">
@@ -93,9 +108,14 @@ export default function Tools() {
         {servers.length === 0 ? (
           <Empty image="tools" text={t('Tool.Info.Empty')} />
         ) : (
-          <Grid servers={servers} />
+          <Grid servers={servers} edit={editServer} />
         )}
       </div>
+      <ToolEditDialog
+        open={editDialogOpen}
+        setOpen={setEditDialogOpen}
+        server={server}
+      />
     </div>
   );
 }
