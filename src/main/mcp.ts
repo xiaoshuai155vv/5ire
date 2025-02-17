@@ -147,17 +147,15 @@ export default class ModuleContext {
 
   public async load() {
     const { servers } = await this.getConfig();
-    await Promise.all(
-      servers.forEach(async (server: IMCPServer) => {
-        if (server.isActive) {
-          logging.debug('Activating server:', server.key);
-          const { error } = await this.activate(server);
-          if (error) {
-            logging.error('Failed to activate server:', server.key, error);
-          }
+    for (const server of servers) {
+      if (server.isActive) {
+        logging.debug('Activating server:', server.key);
+        const { error } = await this.activate(server);
+        if (error) {
+          logging.error('Failed to activate server:', server.key, error);
         }
-      }),
-    );
+      }
+    }
   }
 
   public async activate(server: IMCPServer): Promise<{ error: any }> {

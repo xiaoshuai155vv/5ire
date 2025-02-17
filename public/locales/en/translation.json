@@ -232,5 +232,6 @@
   "Common.Action.Choose": "Choose",
   "Common.Error.FetchFailed": "Fetch Failed",
   "Common.Error.InvalidURL": "Invalid URL",
-  "Common.Error.InvalidAPIBase": "Invalid API Base"
+  "Common.Error.InvalidAPIBase": "Invalid API Base",
+  "Common.Action.Reload": "Reload"
 }

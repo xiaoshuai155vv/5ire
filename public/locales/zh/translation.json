@@ -229,5 +229,6 @@
   "Common.Notification.Copied": "已复制",
   "Common.Think": "思考",
   "Common.Action.Choose": "选择",
-  "Common.Error.InvalidAPIBase": "错误的 API 根路径"
+  "Common.Error.InvalidAPIBase": "错误的 API 根路径",
+  "Common.Action.Reload": "重新加载"
 }

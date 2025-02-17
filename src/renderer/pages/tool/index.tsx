@@ -1,26 +1,33 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Empty from 'renderer/components/Empty';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import useMCPStore from 'stores/useMCPStore';
 import Grid from './Grid';
 import NewButton from './NewButton';
+import { Button } from '@fluentui/react-components';
+import { ArrowSyncCircleRegular } from '@fluentui/react-icons';
+import { set } from 'lodash';
 
 export default function Tools() {
   const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
   const config = useMCPStore((state) => state.config);
   const builtinConfig = useMCPStore((state) => state.builtinConfig);
   const activeServerNames = useMCPStore((state) => state.activeServerNames);
 
-  const loadConfig = async () => {
+  const loadConfig = async (force: boolean, animate: boolean) => {
     try {
+      animate && setLoading(true);
       await Promise.all([
         useMCPStore.getState().fetchConfig(),
-        useMCPStore.getState().loadConfig(),
+        useMCPStore.getState().loadConfig(force),
         useMCPStore.getState().getActiveServerNames(),
       ]);
     } catch (error) {
       console.error(error);
+    } finally {
+      animate && setLoading(false);
     }
   };
 
@@ -45,7 +52,7 @@ export default function Tools() {
   }, [builtinConfig, config, activeServerNames]);
 
   useEffect(() => {
-    loadConfig();
+    loadConfig(false, true);
   }, []);
 
   return (
@@ -56,6 +63,20 @@ export default function Tools() {
           <div className="flex justify-between items-baseline w-full">
             <h1 className="text-2xl flex-shrink-0 mr-6">{t('Common.Tools')}</h1>
             <div className="flex justify-end w-full items-center gap-2">
+              <Button
+                icon={
+                  <ArrowSyncCircleRegular
+                    className={loading ? 'animate-spin' : ''}
+                  />
+                }
+                onClick={() => {
+                  setLoading(true);
+                  loadConfig(true, false);
+                  setTimeout(() => setLoading(false), 1000);
+                }}
+                appearance="subtle"
+                title={t('Common.Action.Reload')}
+              />
               <NewButton />
             </div>
           </div>

@@ -12,7 +12,7 @@ export interface IMCPStore {
   config: IMCPConfig;
   builtinConfig: IMCPConfig;
   updateLoadingState: (isLoading: boolean) => void;
-  loadConfig: () => Promise<IMCPConfig>;
+  loadConfig: (force?: boolean) => Promise<IMCPConfig>;
   fetchConfig: (refresh?: boolean) => Promise<IMCPConfig>;
   setActiveServerNames: (activeServerNames: string[]) => void;
   getActiveServerNames: () => Promise<string[]>;
@@ -35,7 +35,10 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
   updateLoadingState: (isLoading: boolean) => {
     set({ isLoading });
   },
-  loadConfig: async () => {
+  loadConfig: async (force?: boolean) => {
+    if (!force && get().config.servers.length > 0) {
+      return get().config;
+    }
     const config = await window.electron.mcp.getConfig();
     set({ config });
     return config;
@@ -89,7 +92,7 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
     set({
       activeServerNames: [...activeServerNames, key],
     });
-    await get().loadConfig();
+    await get().loadConfig(true);
     return true;
   },
   deactivateServer: async (key: string) => {
@@ -101,7 +104,7 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
     set({
       activeServerNames: activeServerNames.filter((name) => name !== key),
     });
-    await get().loadConfig();
+    await get().loadConfig(true);
     return true;
   },
 }));
