@@ -4,20 +4,19 @@ import Empty from 'renderer/components/Empty';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import useMCPStore from 'stores/useMCPStore';
 import Grid from './Grid';
-import { Button } from '@fluentui/react-components';
 import NewButton from './NewButton';
 
 export default function Tools() {
   const { t } = useTranslation();
-  const remoteConfig = useMCPStore((state) => state.remoteConfig);
   const config = useMCPStore((state) => state.config);
+  const builtinConfig = useMCPStore((state) => state.builtinConfig);
   const activeServerNames = useMCPStore((state) => state.activeServerNames);
 
   const loadConfig = async () => {
     try {
       await Promise.all([
         useMCPStore.getState().fetchConfig(),
-        useMCPStore.getState().getConfig(),
+        useMCPStore.getState().loadConfig(),
         useMCPStore.getState().getActiveServerNames(),
       ]);
     } catch (error) {
@@ -26,7 +25,7 @@ export default function Tools() {
   };
 
   const servers = useMemo(() => {
-    const mergedServers = [...remoteConfig.servers];
+    const mergedServers = [...builtinConfig.servers];
     config.servers.forEach((configServer) => {
       if (activeServerNames.includes(configServer.key)) {
         configServer.isActive = true;
@@ -34,7 +33,7 @@ export default function Tools() {
         configServer.isActive = false;
       }
       const index = mergedServers.findIndex(
-        (remoteServer) => remoteServer.key === configServer.key
+        (remoteServer) => remoteServer.key === configServer.key,
       );
       if (index !== -1) {
         mergedServers[index] = configServer;
@@ -43,7 +42,7 @@ export default function Tools() {
       }
     });
     return mergedServers;
-  }, [remoteConfig, config, activeServerNames]);
+  }, [builtinConfig, config, activeServerNames]);
 
   useEffect(() => {
     loadConfig();

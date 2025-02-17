@@ -1,33 +1,29 @@
 import path from 'path';
 import fs from 'node:fs';
 import { app } from 'electron';
-import { IMCPServer } from 'stores/useMCPStore';
 import * as logging from './logging';
-
-export interface IClientConfig {
-  key: string;
-  command: 'npx' | 'uvx';
-  args: string[];
-  env?: Record<string, string>;
-}
+import builtinConfig from '../mcp.config';
+import { IMCPConfig, IMCPServer } from 'types/mcp';
+import { log } from 'console';
+import { isUndefined, omitBy } from 'lodash';
 
 export const DEFAULT_INHERITED_ENV_VARS =
   process.platform === 'win32'
     ? [
-      'APPDATA',
-      'HOMEDRIVE',
-      'HOMEPATH',
-      'LOCALAPPDATA',
-      'PATH',
-      'PROCESSOR_ARCHITECTURE',
-      'SYSTEMDRIVE',
-      'SYSTEMROOT',
-      'TEMP',
-      'USERNAME',
-      'USERPROFILE',
-    ]
+        'APPDATA',
+        'HOMEDRIVE',
+        'HOMEPATH',
+        'LOCALAPPDATA',
+        'PATH',
+        'PROCESSOR_ARCHITECTURE',
+        'SYSTEMDRIVE',
+        'SYSTEMROOT',
+        'TEMP',
+        'USERNAME',
+        'USERPROFILE',
+      ]
     : /* list inspired by the default env inheritance of sudo */
-    ['HOME', 'LOGNAME', 'PATH', 'SHELL', 'TERM', 'USER'];
+      ['HOME', 'LOGNAME', 'PATH', 'SHELL', 'TERM', 'USER'];
 /**
  * Returns a default environment object including only environment variables deemed safe to inherit.
  */
@@ -79,6 +75,49 @@ export default class ModuleContext {
     return StdioClientTransport;
   }
 
+  private getMCPServer(server: IMCPServer, config: IMCPConfig) {
+    let mcpSvr = config.servers.find(
+      (svr: IMCPServer) => svr.key === server.key,
+    );
+    if (!mcpSvr) {
+      mcpSvr = builtinConfig.servers.find(
+        (svr: IMCPServer) => svr.key === server.key,
+      );
+    }
+    mcpSvr = Object.assign(
+      {},
+      mcpSvr,
+      omitBy({ ...server, isActive: true }, isUndefined),
+    );
+    logging.debug('MCP Server:', mcpSvr);
+    return mcpSvr;
+  }
+
+  private async updateConfigAfterActivation(
+    server: IMCPServer,
+    config: IMCPConfig,
+  ) {
+    const index = config.servers.findIndex(
+      (svr: IMCPServer) => svr.key === server.key,
+    );
+    if (index > -1) {
+      config.servers[index] = server;
+    } else {
+      config.servers.push(server);
+    }
+    await this.putConfig(config);
+  }
+
+  private async updateConfigAfterDeactivation(key: string, config: IMCPConfig) {
+    config.servers = config.servers.map((svr: IMCPServer) => {
+      if (svr.key === key) {
+        svr.isActive = false;
+      }
+      return svr;
+    });
+    await this.putConfig(config);
+  }
+
   public async getConfig() {
     const defaultConfig = { servers: [] };
     try {
@@ -109,19 +148,23 @@ export default class ModuleContext {
   public async load() {
     const { servers } = await this.getConfig();
     await Promise.all(
-      servers.map(async (server: IMCPServer) => {
-        logging.debug('Activating server:', server.key);
-        const { error } = await this.activate(server);
-        if (error) {
-          logging.error('Failed to activate server:', server.key, error);
+      servers.forEach(async (server: IMCPServer) => {
+        if (server.isActive) {
+          logging.debug('Activating server:', server.key);
+          const { error } = await this.activate(server);
+          if (error) {
+            logging.error('Failed to activate server:', server.key, error);
+          }
         }
       }),
     );
   }
 
-  public async activate(config: IClientConfig): Promise<{ error: any }> {
+  public async activate(server: IMCPServer): Promise<{ error: any }> {
     try {
-      const { key, command, args, env } = config;
+      const config = await this.getConfig();
+      let mcpSvr = this.getMCPServer(server, config);
+      const { key, command, args, env } = mcpSvr;
       let cmd: string = command;
       if (command === 'npx') {
         cmd = process.platform === 'win32' ? `${command}.cmd` : command;
@@ -148,11 +191,12 @@ export default class ModuleContext {
       });
       await client.connect(transport);
       this.clients[key] = client;
+      await this.updateConfigAfterActivation(mcpSvr, config);
       return { error: null };
-    } catch (err: any) {
-      logging.captureException(err);
-      this.deactivate(config.key);
-      return { error: err };
+    } catch (error: any) {
+      logging.captureException(error);
+      this.deactivate(server.key);
+      return { error };
     }
   }
 
@@ -162,15 +206,11 @@ export default class ModuleContext {
         await this.clients[key].close();
         delete this.clients[key];
       }
-      const config = await this.getConfig();
-      config.servers = config.servers.filter(
-        (server: any) => server.key !== key,
-      );
-      await this.putConfig(config);
-      return true;
-    } catch (err: any) {
-      logging.captureException(err);
-      return false;
+      await this.updateConfigAfterDeactivation(key, await this.getConfig());
+      return { error: null };
+    } catch (error: any) {
+      logging.captureException(error);
+      return { error };
     }
   }
 

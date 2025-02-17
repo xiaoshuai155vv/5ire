@@ -44,13 +44,13 @@ const electronHandler = {
     },
     activate(config: {
       key: string;
-      command: string;
-      args: string[];
+      command?: string;
+      args?: string[];
       env?: Record<string, string>;
     }): Promise<{ error: any }> {
       return ipcRenderer.invoke('mcp-activate', config);
     },
-    deactivated(clientName: string): Promise<boolean> {
+    deactivated(clientName: string): Promise<{ error: any }> {
       return ipcRenderer.invoke('mcp-deactivate', clientName);
     },
     listTools(name?: string) {

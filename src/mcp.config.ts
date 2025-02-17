@@ -1,4 +1,4 @@
-import { IMCPConfig } from 'stores/useMCPStore';
+import { IMCPConfig } from './types/mcp';
 
 export default {
   servers: [

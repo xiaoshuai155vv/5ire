@@ -34,11 +34,12 @@ import {
 } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useMCPStore, { IMCPServer } from 'stores/useMCPStore';
+import useMCPStore from 'stores/useMCPStore';
 import * as mcpUtils from 'utils/mcp';
 import ParamsDialog from './ParamsDialog';
 import useToast from 'hooks/useToast';
 import ToolDetailDialog from './DetailDialog';
+import { IMCPServer } from 'types/mcp';
 
 const BracesVariableIcon = bundleIcon(
   BracesVariable20Filled,
@@ -81,7 +82,7 @@ export default function Grid({ servers }: { servers: IMCPServer[] }) {
     const env = mcpUtils.setEnv(server.env, params);
     try {
       setLoading((prev) => ({ ...prev, [server.key]: true }));
-      await activateServer(server.key, args, env);
+      await activateServer(server.key, undefined, args, env);
     } catch (error: any) {
       notifyError(error.message || t('MCP.ServerActivationFailed'));
     } finally {
