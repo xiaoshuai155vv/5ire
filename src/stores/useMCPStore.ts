@@ -10,6 +10,7 @@ export interface IMCPStore {
   updateLoadingState: (isLoading: boolean) => void;
   loadConfig: (force?: boolean) => Promise<IMCPConfig>;
   addServer: (server: IMCPServer) => Promise<boolean>;
+  updateServer: (server: IMCPServer) => Promise<boolean>;
   deleteServer: (key: string) => Promise<boolean>;
   activateServer: (
     key: string,
@@ -42,6 +43,17 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
         get().loadConfig(true);
         return true;
       }
+    }
+    return false;
+  },
+  updateServer: async (server: IMCPServer) => {
+    const { servers } = get().config;
+    const index = servers.findIndex((svr) => svr.key === server.key);
+    if (index !== -1) {
+      servers[index] = server;
+      set({ config: { servers } });
+      await window.electron.mcp.putConfig({ servers });
+      return true;
     }
     return false;
   },

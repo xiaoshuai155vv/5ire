@@ -46,7 +46,7 @@ export default function ToolEditDialog(options: {
   const [envName, setEnvName] = useState('');
   const [envValue, setEnvValue] = useState('');
   const [env, setEnv] = useState<{ [key: string]: string }>({});
-  const { addServer } = useMCPStore();
+  const { addServer, updateServer } = useMCPStore();
 
   const [keyValidationState, setKeyValidationState] = useState<
     'none' | 'error'
@@ -120,7 +120,8 @@ export default function ToolEditDialog(options: {
     if (!isValid) {
       return;
     }
-    const ok = await addServer({
+    const upset = server ? updateServer : addServer;
+    const ok = await upset({
       key,
       description,
       command: cmd,
@@ -130,9 +131,9 @@ export default function ToolEditDialog(options: {
     });
     if (ok) {
       setOpen(false);
-      notifySuccess('Server added successfully');
+      notifySuccess('Server saved successfully');
     } else {
-      notifyError('Server already exists');
+      notifyError(server ? 'Cannot update server' : 'Server already exists');
     }
   }, [key, cmd, server, args, env]);
 
@@ -169,9 +170,10 @@ export default function ToolEditDialog(options: {
                 <Field
                   label={t('Tools.Key')}
                   validationState={keyValidationState}
-                  validationMessage={t('Tools.KeyHint')}
+                  validationMessage={server?t('Tools.KeyCannotUpdate'):t('Tools.KeyHint') }
                 >
                   <Input
+                    disabled={!!server}
                     className="w-full min-w-fit"
                     placeholder={t('Common.Required')}
                     value={key}

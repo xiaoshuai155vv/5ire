@@ -151,22 +151,26 @@ export default function Grid({
                     <MenuPopover>
                       <MenuList>
                         <MenuItem
+                          disabled={item.isActive}
                           icon={<EditIcon />}
                           onClick={() => onEdit(item)}
                         >
                           {t('Common.Edit')}
                         </MenuItem>
                         <MenuItem
+                          disabled={item.isActive}
                           icon={<DeleteIcon />}
                           onClick={() => onDelete(item)}
                         >
                           {t('Common.Delete')}
                         </MenuItem>
-                        { item.isActive && (<MenuItem
+                        <MenuItem
+                          disabled={!item.isActive}
                           icon={<RadarIcon />}
-                          onClick={() => onInspect(item)}>
+                          onClick={() => onInspect(item)}
+                        >
                           {t('Tools.Functions')}
-                        </MenuItem>)}
+                        </MenuItem>
                       </MenuList>
                     </MenuPopover>
                   </Menu>

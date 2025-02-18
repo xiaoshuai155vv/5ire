@@ -247,5 +247,6 @@
   "Tools.Hint.CommandIsRequired": "Command is required",
   "Tools.DeleteConfirmation": "Are you sure you want to delete the tool?",
   "Tools.DeleteConfirmationInfo": "Deletion is irreversible. Are you sure you want to continue?",
-  "Tools.Functions": "Functions"
+  "Tools.Functions": "Functions",
+  "Tools.KeyCannotUpdate": "The key can't be modified."
 }
