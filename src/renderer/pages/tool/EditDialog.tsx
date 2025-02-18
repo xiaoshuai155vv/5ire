@@ -136,7 +136,14 @@ export default function ToolEditDialog(options: {
     }
   }, [key, cmd, server, args, env]);
 
-  useEffect(() => {}, [open, server]);
+  useEffect(() => {
+    if (server) {
+      setKey(server.key);
+      setDescription(server.description || '');
+      setCommand([server.command, ...server.args].join(' '));
+      setEnv(server.env || {});
+    }
+  }, [open, server]);
 
   return (
     <Dialog open={open}>
@@ -166,6 +173,7 @@ export default function ToolEditDialog(options: {
                 <Input
                   className="w-full min-w-fit"
                   placeholder={t('Common.Required')}
+                  value={key}
                   onChange={(
                     _: ChangeEvent<HTMLInputElement>,
                     data: InputOnChangeData,
@@ -185,6 +193,7 @@ export default function ToolEditDialog(options: {
                 <Input
                   className="w-full min-w-fit"
                   placeholder={t('Common.Optional')}
+                  value={description}
                   onChange={(
                     _: ChangeEvent<HTMLInputElement>,
                     data: InputOnChangeData,
@@ -203,6 +212,7 @@ export default function ToolEditDialog(options: {
                 <Input
                   className="w-full min-w-fit"
                   placeholder={t('Common.Required')}
+                  value={command}
                   onChange={(
                     _: ChangeEvent<HTMLInputElement>,
                     data: InputOnChangeData,
