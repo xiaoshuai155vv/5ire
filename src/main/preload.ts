@@ -70,9 +70,6 @@ const electronHandler = {
     }) {
       return ipcRenderer.invoke('mcp-call-tool', { client, name, args });
     },
-    fetchConfig() {
-      return ipcRenderer.invoke('mcp-fetch-config');
-    },
     getConfig(): Promise<any> {
       return ipcRenderer.invoke('mcp-get-config');
     },

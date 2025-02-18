@@ -422,18 +422,6 @@ ipcMain.handle(
     return await mcp.callTool(args);
   },
 );
-ipcMain.handle('mcp-fetch-config', async () => {
-  let config: IMCPConfig = {
-    servers: [],
-  };
-  try {
-    //const resp  = await fetch('https://api.5ire.app/mcp/config');
-    config = mcpConfig;
-  } catch (err: any) {
-    logging.captureException(err);
-  }
-  return config;
-});
 ipcMain.handle('mcp-get-config', async () => {
   return await mcp.getConfig();
 });

@@ -2,20 +2,6 @@ import { IMCPConfig } from './types/mcp';
 
 export default {
   servers: [
-    /** not working, no clues
-    {
-      key: 'Cloudflare',
-      command: 'npx',
-      description: 'MCP server for interacting with Cloudflare API',
-      args: [
-        '-y',
-        '@cloudflare/mcp-server-cloudflare',
-        'run',
-        '<accountId:string:You can find your AccountID on the right side of the "Workers and Pages" page.>',
-      ],
-      isActive: false,
-    },
-     */
     {
       key: 'AppleNotes',
       command: 'uvx',

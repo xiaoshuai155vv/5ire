@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Empty from 'renderer/components/Empty';
 import TooltipIcon from 'renderer/components/TooltipIcon';
@@ -12,11 +12,10 @@ import { IMCPServer } from 'types/mcp';
 export default function Tools() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const { loadConfig } = useMCPStore();
   const [server, setServer] = useState<IMCPServer | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const config = useMCPStore((state) => state.config);
-  const builtinConfig = useMCPStore((state) => state.builtinConfig);
-  const activeServerNames = useMCPStore((state) => state.activeServerNames);
 
   const editServer = useCallback((server: IMCPServer) => {
     setServer(server);
@@ -28,14 +27,10 @@ export default function Tools() {
     setEditDialogOpen(true);
   }, []);
 
-  const loadConfig = async (force: boolean, animate: boolean) => {
+  const loadMCPConfig = async (force: boolean, animate: boolean) => {
     try {
       animate && setLoading(true);
-      await Promise.all([
-        useMCPStore.getState().fetchConfig(),
-        useMCPStore.getState().loadConfig(force),
-        useMCPStore.getState().getActiveServerNames(),
-      ]);
+      await loadConfig(force);
     } catch (error) {
       console.error(error);
     } finally {
@@ -43,29 +38,9 @@ export default function Tools() {
     }
   };
 
-  const servers = useMemo(() => {
-    const mergedServers = [...builtinConfig.servers];
-    config.servers.forEach((configServer) => {
-      if (activeServerNames.includes(configServer.key)) {
-        configServer.isActive = true;
-      } else {
-        configServer.isActive = false;
-      }
-      const index = mergedServers.findIndex(
-        (remoteServer) => remoteServer.key === configServer.key,
-      );
-      if (index !== -1) {
-        mergedServers[index] = configServer;
-      } else {
-        mergedServers.push(configServer);
-      }
-    });
-    return mergedServers;
-  }, [builtinConfig, config, activeServerNames]);
-
   useEffect(() => {
     console.log('loadConfig');
-    loadConfig(false, true);
+    loadMCPConfig(false, true);
   }, [config]);
 
   return (
@@ -84,7 +59,7 @@ export default function Tools() {
                 }
                 onClick={() => {
                   setLoading(true);
-                  loadConfig(true, false);
+                  loadMCPConfig(true, false);
                   setTimeout(() => setLoading(false), 1000);
                 }}
                 appearance="subtle"
@@ -97,17 +72,15 @@ export default function Tools() {
           </div>
           <div className="tips flex justify-start items-center">
             {t('Common.MCPServers')}
-            <TooltipIcon
-              tip={t('Tools.PrerequisiteDescription')}
-            />
+            <TooltipIcon tip={t('Tools.PrerequisiteDescription')} />
           </div>
         </div>
       </div>
       <div className="mt-2.5 pb-12 h-full -mr-5 overflow-y-auto">
-        {servers.length === 0 ? (
+        {config.servers.length === 0 ? (
           <Empty image="tools" text={t('Tool.Info.Empty')} />
         ) : (
-          <Grid servers={servers} edit={editServer} />
+          <Grid servers={config.servers} edit={editServer} />
         )}
       </div>
       <ToolEditDialog

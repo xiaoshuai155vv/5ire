@@ -22,15 +22,16 @@ import WorkspaceMenu from './WorkspaceMenu';
 import useMCPStore from 'stores/useMCPStore';
 import { useEffect, useMemo } from 'react';
 import Spinner from 'renderer/components/Spinner';
+import { IMCPServer } from 'types/mcp';
 
 const AppsIcon = bundleIcon(Apps24Filled, Apps24Regular);
 const BookmarkMultipleIcon = bundleIcon(
   BookmarkMultiple24Filled,
-  BookmarkMultiple24Regular
+  BookmarkMultiple24Regular,
 );
 const EmojiSparkleIcon = bundleIcon(
   EmojiSparkle24Filled,
-  EmojiSparkle24Regular
+  EmojiSparkle24Regular,
 );
 const ChatAddIcon = bundleIcon(ChatAdd24Filled, ChatAdd24Regular);
 const KnowledgeIcon = bundleIcon(Library24Filled, Library24Regular);
@@ -41,15 +42,13 @@ const IS_ASSISTANTS_ENABLED = false;
 export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
   const { t } = useTranslation();
   const navigate = useNav();
-  const setActiveServerNames = useMCPStore(
-    (store) => store.setActiveServerNames
-  );
+  const config = useMCPStore((store) => store.config);
+  const loadConfig = useMCPStore((state) => state.loadConfig);
   const isMCPServersLoading = useMCPStore((state) => state.isLoading);
-  const activeServerNames = useMCPStore((state) => state.activeServerNames);
 
   const numOfActiveServers = useMemo(
-    () => activeServerNames.length,
-    [activeServerNames]
+    () => config.servers.filter((server: IMCPServer) => server.isActive).length,
+    [config.servers],
   );
 
   useEffect(() => {
@@ -58,9 +57,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
     Mousetrap.bind('alt+3', () => navigate('/bookmarks'));
     Mousetrap.bind('mod+n', () => navigate(`/chats/${tempChatId}`));
     if (numOfActiveServers === 0) {
-      window.electron.mcp.getActiveServers().then((serverNames: string[]) => {
-        setActiveServerNames(serverNames);
-      });
+      loadConfig(true);
     }
     return () => {
       Mousetrap.unbind('alt+1');
@@ -105,24 +102,29 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
-           title='Alt+1'
+          title="Alt+1"
           icon={<WandIcon />}
           className="w-full justify-start"
           onClick={() => navigate('/tool')}
         >
-          {collapsed
-            ? null
-            : <>
-            {t('Common.Tools')}
-            {isMCPServersLoading? <Spinner size={13} className='ml-1'/>:(numOfActiveServers ? `(${numOfActiveServers})` : '')}
+          {collapsed ? null : (
+            <>
+              {t('Common.Tools')}
+              {isMCPServersLoading ? (
+                <Spinner size={13} className="ml-1" />
+              ) : numOfActiveServers ? (
+                `(${numOfActiveServers})`
+              ) : (
+                ''
+              )}
             </>
-            }
+          )}
         </Button>
       </div>
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
-           title='Alt+2'
+          title="Alt+2"
           icon={<KnowledgeIcon />}
           className="w-full justify-start"
           onClick={() => navigate('/knowledge')}
@@ -133,7 +135,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
-          title='Alt+3'
+          title="Alt+3"
           icon={<BookmarkMultipleIcon />}
           className="w-full justify-start"
           onClick={() => {
@@ -146,7 +148,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
       <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
         <Button
           appearance="subtle"
-          title='Mod+n'
+          title="Mod+n"
           icon={<ChatAddIcon />}
           className="w-full justify-start"
           onClick={async () => navigate(`/chats/${tempChatId}`)}
