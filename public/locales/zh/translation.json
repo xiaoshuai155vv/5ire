@@ -240,5 +240,7 @@
   "Tools.EnvVars": "环境变量",
   "Common.EnvValue": "值",
   "Common.EnvName": "名称",
-  "Tools.Hint.CommandIsRequired": "命令是必须的"
+  "Tools.Hint.CommandIsRequired": "命令是必须的",
+  "Tools.DeleteConfirmation": "确定要删除选中的工具吗？",
+  "Tools.DeleteConfirmationInfo": "删除操作不可撤销，是否继续？"
 }

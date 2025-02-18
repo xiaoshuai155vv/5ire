@@ -244,5 +244,7 @@
   "Common.EnvName": "Name",
   "Common.EnvValue": "Value",
   "Tools.ConfigPreview": "Config Preview",
-  "Tools.Hint.CommandIsRequired": "Command is required"
+  "Tools.Hint.CommandIsRequired": "Command is required",
+  "Tools.DeleteConfirmation": "Are you sure you want to delete the tool?",
+  "Tools.DeleteConfirmationInfo": "Deletion is irreversible. Are you sure you want to continue?"
 }

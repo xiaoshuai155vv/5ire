@@ -25,11 +25,11 @@ export default function ConfirmDialog(args: {
   const confirmButtonRef = React.useRef<HTMLButtonElement | null>(null);
   const { t } = useTranslation();
   const confirm = useCallback(() => {
-    async function delAndClose() {
+    async function confirmAndClose() {
       await onConfirm();
       setOpen(false);
     }
-    delAndClose();
+    confirmAndClose();
   }, [setOpen, onConfirm]);
 
   useEffect(() => {

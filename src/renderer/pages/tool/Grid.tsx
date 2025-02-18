@@ -120,17 +120,17 @@ export default function Grid({
                     </Tooltip>
                   </div>
                 )}
-                {item.isActive && item.args?.length > 0 && (
-                  <div className="-mb-0.5 ml-1">
-                    <Button
-                      icon={<EditIcon />}
-                      size="small"
-                      onClick={() => edit(item)}
-                      appearance="subtle"
-                    />
+                <div className='ml-4'>
+                  <Button
+                    icon={<EditIcon />}
+                    size="small"
+                    onClick={() => edit(item)}
+                    appearance="subtle"
+                  />
+                  {item.isActive && item.args?.length > 0 && (
                     <ToolDetailDialog tool={item.key} />
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </TableCellLayout>
             <TableCellActions>
