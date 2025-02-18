@@ -11,17 +11,17 @@ import { IMCPServer } from 'types/mcp';
 import useToast from 'hooks/useToast';
 import ConfirmDialog from 'renderer/components/ConfirmDialog';
 import DetailDialog from './DetailDialog';
+import ToolMarketDialog from './MarketDialog';
 
 export default function Tools() {
   const { t } = useTranslation();
   const { notifySuccess, notifyError } = useToast();
   const [loading, setLoading] = useState(false);
-  const { loadConfig } = useMCPStore();
   const [server, setServer] = useState<IMCPServer | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [delConfirmDialogOpen, setDelConfirmDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const { config, deleteServer } = useMCPStore();
+  const { config, loadConfig, deleteServer } = useMCPStore();
 
   const editServer = useCallback((server: IMCPServer) => {
     setServer(server);
@@ -66,9 +66,8 @@ export default function Tools() {
   };
 
   useEffect(() => {
-    console.log('loadConfig');
     loadMCPConfig(false, true);
-  }, [config]);
+  }, []);
 
   return (
     <div className="page h-full">
@@ -95,6 +94,7 @@ export default function Tools() {
               <Button appearance="primary" onClick={() => newServer()}>
                 {t('Common.New')}
               </Button>
+              <ToolMarketDialog />
             </div>
           </div>
           <div className="tips flex justify-start items-center">
@@ -104,7 +104,7 @@ export default function Tools() {
         </div>
       </div>
       <div className="mt-2.5 pb-12 h-full -mr-5 overflow-y-auto">
-        {config.servers.length === 0 ? (
+        {config.servers.length == 0 ? (
           <Empty image="tools" text={t('Tool.Info.Empty')} />
         ) : (
           <Grid

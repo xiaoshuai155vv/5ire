@@ -18,7 +18,7 @@ const useMCPServerMarketStore = create<IMCPServerMarketStore>((set, get) => ({
     if (!force && updatedAt > Date.now() - REMOTE_CONFIG_TTL) {
       return servers;
     }
-    const resp = await fetch('https://statics.5ire.app/mcp/servers.json');
+    const resp = await fetch('https://open.5ire.app/mcp/servers.json');
     if (resp.ok) {
       const data = await resp.json();
       set({

@@ -17,7 +17,6 @@ import { Dismiss24Regular } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import useMarkdown from 'hooks/useMarkdown';
 
-import 'highlight.js/styles/atom-one-light.css';
 import { IMCPServer } from 'types/mcp';
 
 export default function ToolDetailDialog(options: {
@@ -44,7 +43,7 @@ export default function ToolDetailDialog(options: {
 
   return (
     <Dialog open={open}>
-      <DialogSurface>
+      <DialogSurface mountNode={document.body.querySelector('#portal')}>
         <DialogBody>
           <DialogTitle
             action={
@@ -80,7 +79,7 @@ export default function ToolDetailDialog(options: {
                             inputSchema
                           </legend>
                           <div
-                            className="-mt-3"
+                            className="-mt-3 ghost p-2"
                             dangerouslySetInnerHTML={{
                               __html: render(
                                 `\`\`\`json\n${JSON.stringify(tool.inputSchema, null, 2)}\n\`\`\``,

@@ -244,5 +244,6 @@
   "Tools.DeleteConfirmation": "确定要删除选中的工具吗？",
   "Tools.DeleteConfirmationInfo": "删除操作不可撤销，是否继续？",
   "Tools.Functions": "函数列表",
-  "Tools.KeyCannotUpdate": "工具标识不可修改"
+  "Tools.KeyCannotUpdate": "工具标识不可修改",
+  "Tools.Market": "工具市场"
 }

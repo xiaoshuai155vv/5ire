@@ -149,7 +149,7 @@ export default function ToolEditDialog(options: {
   return (
     <div>
       <Dialog open={open}>
-        <DialogSurface>
+        <DialogSurface mountNode={document.body.querySelector('#portal')}>
           <DialogBody>
             <DialogTitle
               action={
@@ -170,7 +170,9 @@ export default function ToolEditDialog(options: {
                 <Field
                   label={t('Tools.Key')}
                   validationState={keyValidationState}
-                  validationMessage={server?t('Tools.KeyCannotUpdate'):t('Tools.KeyHint') }
+                  validationMessage={
+                    server ? t('Tools.KeyCannotUpdate') : t('Tools.KeyHint')
+                  }
                 >
                   <Input
                     disabled={!!server}
@@ -235,13 +237,13 @@ export default function ToolEditDialog(options: {
               </div>
               <div>
                 <Field label={t('Tools.EnvVars')}>
-                  <div className="bg-gray-50 dark:bg-stone-800 border rounded dark:border-neutral-500">
-                    <div className="flex flex-start items-center border-b px-1 py-1">
+                  <div className="bg-gray-50 dark:bg-neutral-800 border rounded border-base">
+                    <div className="flex flex-start items-center border-b border-base px-1 py-1">
                       <div className="w-5/12">{t('Common.EnvName')}</div>
                       <div className="w-6/12">{t('Common.EnvValue')}</div>
                       <div></div>
                     </div>
-                    <div className="flex flex-start items-center border-b px-1 p-1">
+                    <div className="flex flex-start items-center border-b border-base px-1 p-1">
                       <div className="w-5/12 px-1">
                         <Input
                           className="w-full"
@@ -305,14 +307,12 @@ export default function ToolEditDialog(options: {
               </div>
               <div>
                 <Field label={t('Tools.ConfigPreview')} hint="in JSON format">
-                  <div className="bg-gray-50 dark:bg-stone-800 min-h-32 border rounded dark:border-neutral-500">
-                    <div
-                      className="-mt-3"
-                      dangerouslySetInnerHTML={{
-                        __html: render(`\`\`\`json\n${preview}\n\`\`\``),
-                      }}
-                    />
-                  </div>
+                  <div
+                    className="border rounded border-base"
+                    dangerouslySetInnerHTML={{
+                      __html: render(`\`\`\`json\n${preview}\n\`\`\``),
+                    }}
+                  />
                 </Field>
               </div>
             </DialogContent>

@@ -137,6 +137,10 @@ export default function FluentApp() {
               <Route path="/prompts/form/:id?" element={<PromptForm />} />
               <Route path="/settings" element={<Settings />} />
             </Routes>
+            <div
+              id="portal"
+              style={{ zIndex: 99999, position: 'absolute' }}
+            ></div>
           </main>
         </div>
       </Router>
