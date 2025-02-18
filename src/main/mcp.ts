@@ -2,9 +2,7 @@ import path from 'path';
 import fs from 'node:fs';
 import { app } from 'electron';
 import * as logging from './logging';
-import builtinConfig from '../mcp.config';
 import { IMCPConfig, IMCPServer } from 'types/mcp';
-import { log } from 'console';
 import { isUndefined, omitBy } from 'lodash';
 
 export const DEFAULT_INHERITED_ENV_VARS =
@@ -79,11 +77,6 @@ export default class ModuleContext {
     let mcpSvr = config.servers.find(
       (svr: IMCPServer) => svr.key === server.key,
     );
-    if (!mcpSvr) {
-      mcpSvr = builtinConfig.servers.find(
-        (svr: IMCPServer) => svr.key === server.key,
-      );
-    }
     mcpSvr = Object.assign(
       {},
       mcpSvr,
