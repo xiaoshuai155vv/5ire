@@ -85,7 +85,7 @@ const extractMatchedSnippet = (msgs: IChatMessage[], keywords: string[]) => {
   return result;
 };
 
-export default function ConfirmDialog(args: {
+export default function SearchDialog(args: {
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
