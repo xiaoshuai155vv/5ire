@@ -36,9 +36,9 @@ import {
   EditRegular,
   DocumentFolderRegular,
   DocumentFolderFilled,
-  OptionsFilled,
-  OptionsRegular,
   Info16Regular,
+  MoreHorizontalFilled,
+  MoreHorizontalRegular,
 } from '@fluentui/react-icons';
 import ConfirmDialog from 'renderer/components/ConfirmDialog';
 import useNav from 'hooks/useNav';
@@ -58,7 +58,10 @@ const DocumentFolderIcon = bundleIcon(
   DocumentFolderRegular,
 );
 
-const OptionsIcon = bundleIcon(OptionsFilled, OptionsRegular);
+const MoreHorizontalIcon = bundleIcon(
+  MoreHorizontalFilled,
+  MoreHorizontalRegular,
+);
 
 export default function Grid({ collections }: { collections: any[] }) {
   const { t } = useTranslation();
@@ -160,7 +163,7 @@ export default function Grid({ collections }: { collections: any[] }) {
             <TableCellActions>
               <Menu>
                 <MenuTrigger disableButtonEnhancement>
-                  <Button icon={<OptionsIcon />} appearance="subtle" />
+                  <Button icon={<MoreHorizontalIcon />} appearance="subtle" />
                 </MenuTrigger>
                 <MenuPopover>
                   <MenuList>
