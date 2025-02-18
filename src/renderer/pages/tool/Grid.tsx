@@ -10,6 +10,11 @@ import {
 } from '@fluentui-contrib/react-data-grid-react-window';
 import {
   Button,
+  Menu,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
   Switch,
   TableCell,
   TableCellActions,
@@ -21,30 +26,45 @@ import {
   useScrollbarWidth,
 } from '@fluentui/react-components';
 import {
-  Edit20Regular,
-  Edit20Filled,
   bundleIcon,
   Circle16Filled,
   CircleHintHalfVertical16Filled,
   CircleOff16Regular,
   Info16Regular,
+  DeleteFilled,
+  DeleteRegular,
+  EditFilled,
+  EditRegular,
+  MoreHorizontalRegular,
+  MoreHorizontalFilled,
+  Radar20Filled,
+  Radar20Regular,
 } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useMCPStore from 'stores/useMCPStore';
 import * as mcpUtils from 'utils/mcp';
 import useToast from 'hooks/useToast';
-import ToolDetailDialog from './DetailDialog';
 import { IMCPServer } from 'types/mcp';
 
-const EditIcon = bundleIcon(Edit20Filled, Edit20Regular);
+const EditIcon = bundleIcon(EditFilled, EditRegular);
+const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
+const RadarIcon = bundleIcon(Radar20Filled, Radar20Regular);
+const MoreHorizontalIcon = bundleIcon(
+  MoreHorizontalFilled,
+  MoreHorizontalRegular,
+);
 
 export default function Grid({
   servers,
-  edit,
+  onEdit,
+  onDelete,
+  onInspect,
 }: {
   servers: IMCPServer[];
-  edit: (server: IMCPServer) => void;
+  onEdit: (server: IMCPServer) => void;
+  onDelete: (server: IMCPServer) => void;
+  onInspect: (server: IMCPServer) => void;
 }) {
   const { t } = useTranslation();
   const { notifyError } = useToast();
@@ -120,16 +140,36 @@ export default function Grid({
                     </Tooltip>
                   </div>
                 )}
-                <div className='ml-4'>
-                  <Button
-                    icon={<EditIcon />}
-                    size="small"
-                    onClick={() => edit(item)}
-                    appearance="subtle"
-                  />
-                  {item.isActive && item.args?.length > 0 && (
-                    <ToolDetailDialog tool={item.key} />
-                  )}
+                <div className="ml-4">
+                  <Menu>
+                    <MenuTrigger disableButtonEnhancement>
+                      <Button
+                        icon={<MoreHorizontalIcon />}
+                        appearance="subtle"
+                      />
+                    </MenuTrigger>
+                    <MenuPopover>
+                      <MenuList>
+                        <MenuItem
+                          icon={<EditIcon />}
+                          onClick={() => onEdit(item)}
+                        >
+                          {t('Common.Edit')}
+                        </MenuItem>
+                        <MenuItem
+                          icon={<DeleteIcon />}
+                          onClick={() => onDelete(item)}
+                        >
+                          {t('Common.Delete')}
+                        </MenuItem>
+                        { item.isActive && (<MenuItem
+                          icon={<RadarIcon />}
+                          onClick={() => onInspect(item)}>
+                          {t('Tools.Functions')}
+                        </MenuItem>)}
+                      </MenuList>
+                    </MenuPopover>
+                  </Menu>
                 </div>
               </div>
             </TableCellLayout>

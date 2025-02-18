@@ -25,7 +25,6 @@ import useMarkdown from 'hooks/useMarkdown';
 import { isValidMCPServerKey } from 'utils/validators';
 import useMCPStore from 'stores/useMCPStore';
 import useToast from 'hooks/useToast';
-import ConfirmDialog from 'renderer/components/ConfirmDialog';
 
 type EnvItem = {
   name: string | null;
@@ -47,8 +46,7 @@ export default function ToolEditDialog(options: {
   const [envName, setEnvName] = useState('');
   const [envValue, setEnvValue] = useState('');
   const [env, setEnv] = useState<{ [key: string]: string }>({});
-  const { addServer, deleteServer } = useMCPStore();
-  const [delConfirmDialogOpen, setDelConfirmDialogOpen] = useState(false);
+  const { addServer } = useMCPStore();
 
   const [keyValidationState, setKeyValidationState] = useState<
     'none' | 'error'
@@ -137,18 +135,6 @@ export default function ToolEditDialog(options: {
       notifyError('Server already exists');
     }
   }, [key, cmd, server, args, env]);
-
-  const onDeleteTool = useCallback(async () => {
-    if (server) {
-      const ok = await deleteServer(server.key);
-      if (ok) {
-        setOpen(false);
-        notifySuccess('Server deleted successfully');
-      } else {
-        notifyError('Failed to delete server');
-      }
-    }
-  }, [server]);
 
   useEffect(() => {
     if (server) {
@@ -328,38 +314,17 @@ export default function ToolEditDialog(options: {
                 </Field>
               </div>
             </DialogContent>
-            <DialogActions fluid style={{ width: '100%' }}>
-              <div className="flex flex-grow justify-between items-center w-full mt-2">
-                {server ? (
-                  <Button
-                    appearance="outline"
-                    onClick={() => setDelConfirmDialogOpen(true)}
-                  >
-                    {t('Common.Delete')}
-                  </Button>
-                ) : (
-                  <div>&nbsp;</div>
-                )}
-                <div className="flex justify-end items-center gap-2">
-                  <Button appearance="subtle" onClick={() => setOpen(false)}>
-                    {t('Common.Cancel')}
-                  </Button>
-                  <Button type="submit" appearance="primary" onClick={submit}>
-                    {t('Common.Save')}
-                  </Button>
-                </div>
-              </div>
+            <DialogActions>
+              <Button appearance="subtle" onClick={() => setOpen(false)}>
+                {t('Common.Cancel')}
+              </Button>
+              <Button type="submit" appearance="primary" onClick={submit}>
+                {t('Common.Save')}
+              </Button>
             </DialogActions>
           </DialogBody>
         </DialogSurface>
       </Dialog>
-      <ConfirmDialog
-        open={delConfirmDialogOpen}
-        setOpen={setDelConfirmDialogOpen}
-        title={t('Tools.DeleteConfirmation')}
-        message={t('Tools.DeleteConfirmationInfo')}
-        onConfirm={onDeleteTool}
-      />
     </div>
   );
 }

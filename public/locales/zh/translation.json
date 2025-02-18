@@ -242,5 +242,6 @@
   "Common.EnvName": "名称",
   "Tools.Hint.CommandIsRequired": "命令是必须的",
   "Tools.DeleteConfirmation": "确定要删除选中的工具吗？",
-  "Tools.DeleteConfirmationInfo": "删除操作不可撤销，是否继续？"
+  "Tools.DeleteConfirmationInfo": "删除操作不可撤销，是否继续？",
+  "Tools.Functions": "函数列表"
 }

@@ -8,14 +8,20 @@ import { Button } from '@fluentui/react-components';
 import { ArrowSyncCircleRegular } from '@fluentui/react-icons';
 import ToolEditDialog from './EditDialog';
 import { IMCPServer } from 'types/mcp';
+import useToast from 'hooks/useToast';
+import ConfirmDialog from 'renderer/components/ConfirmDialog';
+import DetailDialog from './DetailDialog';
 
 export default function Tools() {
   const { t } = useTranslation();
+  const { notifySuccess, notifyError } = useToast();
   const [loading, setLoading] = useState(false);
   const { loadConfig } = useMCPStore();
   const [server, setServer] = useState<IMCPServer | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+  const [delConfirmDialogOpen, setDelConfirmDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const config = useMCPStore((state) => state.config);
+  const { config, deleteServer } = useMCPStore();
 
   const editServer = useCallback((server: IMCPServer) => {
     setServer(server);
@@ -26,6 +32,27 @@ export default function Tools() {
     setServer(null);
     setEditDialogOpen(true);
   }, []);
+
+  const inspectServer = useCallback((server: IMCPServer) => {
+    setServer(server);
+    setDetailDialogOpen(true);
+  }, []);
+
+  const toDeleteServer = useCallback((server: IMCPServer) => {
+    setServer(server);
+    setDelConfirmDialogOpen(true);
+  }, []);
+
+  const onDeleteServer = useCallback(async () => {
+    if (server) {
+      const ok = await deleteServer(server.key);
+      if (ok) {
+        notifySuccess('Server deleted successfully');
+      } else {
+        notifyError('Failed to delete server');
+      }
+    }
+  }, [server]);
 
   const loadMCPConfig = async (force: boolean, animate: boolean) => {
     try {
@@ -80,7 +107,12 @@ export default function Tools() {
         {config.servers.length === 0 ? (
           <Empty image="tools" text={t('Tool.Info.Empty')} />
         ) : (
-          <Grid servers={config.servers} edit={editServer} />
+          <Grid
+            servers={config.servers}
+            onEdit={editServer}
+            onDelete={toDeleteServer}
+            onInspect={inspectServer}
+          />
         )}
       </div>
       <ToolEditDialog
@@ -88,6 +120,20 @@ export default function Tools() {
         setOpen={setEditDialogOpen}
         server={server}
       />
+      <ConfirmDialog
+        open={delConfirmDialogOpen}
+        setOpen={setDelConfirmDialogOpen}
+        title={t('Tools.DeleteConfirmation')}
+        message={t('Tools.DeleteConfirmationInfo')}
+        onConfirm={onDeleteServer}
+      />
+      {server && (
+        <DetailDialog
+          open={detailDialogOpen}
+          setOpen={setDetailDialogOpen}
+          server={server}
+        />
+      )}
     </div>
   );
 }

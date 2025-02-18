@@ -13,45 +13,37 @@ import {
 } from '@fluentui/react-components';
 import Mousetrap from 'mousetrap';
 import { useTranslation } from 'react-i18next';
-import {
-  Dismiss24Regular,
-  Radar20Regular,
-  Radar20Filled,
-  bundleIcon,
-} from '@fluentui/react-icons';
+import { Dismiss24Regular } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import useMarkdown from 'hooks/useMarkdown';
 
-import 'highlight.js/styles/atom-one-light.css'
+import 'highlight.js/styles/atom-one-light.css';
+import { IMCPServer } from 'types/mcp';
 
-const RadarIcon = bundleIcon(Radar20Filled, Radar20Regular);
-
-export default function ToolDetailDialog(args: { tool: string }) {
-  const [open, setOpen] = useState(false);
+export default function ToolDetailDialog(options: {
+  server: IMCPServer | null;
+  open: boolean;
+  setOpen: Function;
+}) {
+  const { server, open, setOpen } = options;
   const { t } = useTranslation();
   const [tools, setTools] = useState<any[]>([]);
   const { render } = useMarkdown();
   useEffect(() => {
     if (open) {
       Mousetrap.bind('esc', () => setOpen(false));
-      window.electron.mcp.listTools(args.tool).then((_tools) => {
-        setTools(_tools);
-      });
+      server &&
+        window.electron.mcp.listTools(server.key).then((_tools) => {
+          setTools(_tools);
+        });
     }
     return () => {
       Mousetrap.unbind('esc');
     };
-  }, [open, args.tool]);
+  }, [open]);
 
   return (
     <Dialog open={open}>
-      <DialogTrigger disableButtonEnhancement>
-        <Button
-          appearance="subtle"
-          onClick={() => setOpen(true)}
-          icon={<RadarIcon />}
-        />
-      </DialogTrigger>
       <DialogSurface>
         <DialogBody>
           <DialogTitle
@@ -66,14 +58,16 @@ export default function ToolDetailDialog(args: { tool: string }) {
               </DialogTrigger>
             }
           >
-            {args.tool}&nbsp;{t('Common.Tools')}
+            {server?.key}&nbsp;{t('Tools.Functions')}
           </DialogTitle>
           <DialogContent>
             <Accordion multiple collapsible>
               {tools.map((tool: any) => (
                 <AccordionItem value={tool.name} key={tool.name}>
                   <AccordionHeader>
-                    <div className='text-gray-500 dark:text-gray-300 font-bold'>{tool.name.split('--')[1]}</div>
+                    <div className="text-gray-500 dark:text-gray-300 font-bold">
+                      {tool.name.split('--')[1]}
+                    </div>
                   </AccordionHeader>
                   <AccordionPanel>
                     <div className="border-l border-dotted border-stone-300 dark:border-gray-500 ml-2 pl-2">
@@ -86,7 +80,7 @@ export default function ToolDetailDialog(args: { tool: string }) {
                             inputSchema
                           </legend>
                           <div
-                            className='-mt-3'
+                            className="-mt-3"
                             dangerouslySetInnerHTML={{
                               __html: render(
                                 `\`\`\`json\n${JSON.stringify(tool.inputSchema, null, 2)}\n\`\`\``,
