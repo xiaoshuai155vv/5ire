@@ -43,7 +43,6 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useMCPStore from 'stores/useMCPStore';
-import * as mcpUtils from 'utils/mcp';
 import useToast from 'hooks/useToast';
 import { IMCPServer } from 'types/mcp';
 
@@ -70,9 +69,7 @@ export default function Grid({
   const { notifyError } = useToast();
   const { activateServer, deactivateServer } = useMCPStore((state) => state);
   const [loading, setLoading] = useState<{ [key: string]: boolean }>({});
-  const [open, setOpen] = useState(false);
-  const [selectedServer, setSelectedServer] = useState<IMCPServer | null>(null);
-  const [params, setParams] = useState<mcpUtils.IMCPServerParameter[]>([]);
+
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
 
   useEffect(() => {
@@ -84,23 +81,6 @@ export default function Grid({
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-  const activateServerWithParams = async (params: {
-    [key: string]: string;
-  }) => {
-    const server = { ...(selectedServer as IMCPServer) };
-    const args = mcpUtils.setParameters(server.args, params);
-    const env = mcpUtils.setEnv(server.env, params);
-    try {
-      setLoading((prev) => ({ ...prev, [server.key]: true }));
-      await activateServer(server.key, undefined, args, env);
-    } catch (error: any) {
-      notifyError(error.message || t('MCP.ServerActivationFailed'));
-    } finally {
-      setLoading((prev) => ({ ...prev, [server.key]: false }));
-    }
-    setOpen(false);
-  };
 
   const columns: TableColumnDefinition<IMCPServer>[] = [
     createTableColumn<IMCPServer>({
@@ -184,26 +164,15 @@ export default function Grid({
                 aria-label={t('Common.State')}
                 onChange={async (ev: any, data: any) => {
                   if (data.checked) {
-                    const args = mcpUtils.getParameters(item.args);
-                    const env = mcpUtils.getParameters(
-                      Object.values(item.env || {}),
-                    );
-                    const params = [...args, ...env];
-                    setParams(params);
-                    if (params.length > 0) {
-                      setSelectedServer(item as IMCPServer);
-                      setOpen(true);
-                    } else {
-                      try {
-                        setLoading((prev) => ({ ...prev, [item.key]: true }));
-                        await activateServer(item.key);
-                      } catch (error: any) {
-                        notifyError(
-                          error.message || t('MCP.ServerActivationFailed'),
-                        );
-                      } finally {
-                        setLoading((prev) => ({ ...prev, [item.key]: false }));
-                      }
+                    try {
+                      setLoading((prev) => ({ ...prev, [item.key]: true }));
+                      await activateServer(item.key);
+                    } catch (error: any) {
+                      notifyError(
+                        error.message || t('MCP.ServerActivationFailed'),
+                      );
+                    } finally {
+                      setLoading((prev) => ({ ...prev, [item.key]: false }));
                     }
                   } else {
                     deactivateServer(item.key);

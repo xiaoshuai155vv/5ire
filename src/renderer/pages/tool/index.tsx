@@ -12,12 +12,15 @@ import useToast from 'hooks/useToast';
 import ConfirmDialog from 'renderer/components/ConfirmDialog';
 import DetailDialog from './DetailDialog';
 import ToolMarketDialog from './MarketDialog';
+import ToolInstallDialog from './InstallDialog';
 
 export default function Tools() {
   const { t } = useTranslation();
   const { notifySuccess, notifyError } = useToast();
   const [loading, setLoading] = useState(false);
+  const [mktServer, setMktServer] = useState<IMCPServer | null>(null);
   const [server, setServer] = useState<IMCPServer | null>(null);
+  const [installDialogOpen, setInstallDialogOpen] = useState(false);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [delConfirmDialogOpen, setDelConfirmDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -31,6 +34,11 @@ export default function Tools() {
   const newServer = useCallback(() => {
     setServer(null);
     setEditDialogOpen(true);
+  }, []);
+
+  const installServer = useCallback((server: IMCPServer) => {
+    setMktServer(server);
+    setInstallDialogOpen(true);
   }, []);
 
   const inspectServer = useCallback((server: IMCPServer) => {
@@ -94,7 +102,7 @@ export default function Tools() {
               <Button appearance="primary" onClick={() => newServer()}>
                 {t('Common.New')}
               </Button>
-              <ToolMarketDialog />
+              <ToolMarketDialog onInstall={installServer} />
             </div>
           </div>
           <div className="tips flex justify-start items-center">
@@ -132,6 +140,13 @@ export default function Tools() {
           open={detailDialogOpen}
           setOpen={setDetailDialogOpen}
           server={server}
+        />
+      )}
+      {mktServer && (
+        <ToolInstallDialog
+          server={mktServer}
+          open={installDialogOpen}
+          setOpen={setInstallDialogOpen}
         />
       )}
     </div>

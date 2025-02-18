@@ -249,5 +249,8 @@
   "Tools.DeleteConfirmationInfo": "Deletion is irreversible. Are you sure you want to continue?",
   "Tools.Functions": "Functions",
   "Tools.KeyCannotUpdate": "The key can't be modified.",
-  "Tools.Market": "Market"
+  "Tools.Market": "Market",
+  "Common.Action.Install": "Install",
+  "Common.Installed": "Installed",
+  "Tools.InstallConfirmation": "Confirm installation of this tool?"
 }

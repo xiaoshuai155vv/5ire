@@ -2,11 +2,7 @@
  * ['--db-path',<dbPath>] => dbPath
  */
 
-export interface IMCPServerParameter {
-  name: string;
-  type: string;
-  description: string;
-}
+import { IMCPServerParameter } from "types/mcp";
 
 function replaceParamInBrackets(
   params: { [key: string]: any },
@@ -32,7 +28,7 @@ export function getParameters(args: string[]): IMCPServerParameter[] {
   const params: IMCPServerParameter[] = [];
   let match;
   while ((match = paramRegex.exec(args.join(' '))) !== null) {
-    const [name, type, description] = match[1].split(':');
+    const [name, type, description] = match[1].split('::');
     params.push({
       name,
       type: type || 'string',

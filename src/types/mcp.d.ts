@@ -6,7 +6,13 @@ export interface IMCPServer {
   args: string[];
   env?: Record<string, string>;
   isActive: boolean;
-  homepage?:string
+  homepage?: string;
+}
+
+export interface IMCPServerParameter {
+  name: string;
+  type: string;
+  description: string;
 }
 
 export interface IMCPConfig {

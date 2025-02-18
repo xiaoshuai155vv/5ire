@@ -16,23 +16,32 @@ import {
   BuildingShopRegular,
   bundleIcon,
   Dismiss24Regular,
-  Home16Regular,
 } from '@fluentui/react-icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useMCPServerMarketStore from 'stores/useMCPServerMarketStore';
 import Spinner from 'renderer/components/Spinner';
+import { IMCPServer } from 'types/mcp';
+import useMCPStore from 'stores/useMCPStore';
 const BuildingShopIcon = bundleIcon(BuildingShopFilled, BuildingShopRegular);
 
-export default function ToolMarketDialog() {
+export default function ToolMarketDialog(options: {
+  onInstall: (server: IMCPServer) => void;
+}) {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const { fetchServers, servers } = useMCPServerMarketStore();
+  const { config } = useMCPStore();
+
+  const installedServer = useMemo(
+    () => new Set(config.servers.map((svr: IMCPServer) => svr.key)),
+    [config.servers],
+  );
 
   const loadServers = async () => {
     setLoading(true);
     try {
-      await fetchServers(true);
+      await fetchServers();
     } finally {
       setLoading(false);
     }
@@ -73,7 +82,7 @@ export default function ToolMarketDialog() {
               </DialogTrigger>
             }
           >
-            {t('Tools.Market')}
+            {t('Common.Tools')} {t('Tools.Market')}
           </DialogTitle>
           <DialogContent>
             {loading ? (
@@ -88,11 +97,28 @@ export default function ToolMarketDialog() {
                 <List navigationMode="items">
                   {servers.map((server) => (
                     <ListItem key={server.key}>
-                      <div className="py-2 my-x [&:not(:last-child)]:border-b border-base w-full">
-                        <div className="text-lg font-bold">
-                          {server.name || server.key}
+                      <div className="p-2 my-1 w-full rounded bg-gray-50 dark:bg-neutral-900">
+                        <div className="flex justify-between items-center">
+                          <div className="text-lg font-bold">
+                            {server.name || server.key}
+                          </div>
+                          {installedServer.has(server.key) ? (
+                            <Button appearance="subtle" size="small" disabled>
+                              {t('Common.Installed')}
+                            </Button>
+                          ) : (
+                            <Button
+                              appearance="subtle"
+                              size="small"
+                              onClick={() => options.onInstall(server)}
+                            >
+                              {t('Common.Action.Install')}
+                            </Button>
+                          )}
                         </div>
-                        <p className='text-gray-700 dark:text-gray-400'>{server.description}</p>
+                        <p className="text-gray-700 dark:text-gray-400">
+                          {server.description}
+                        </p>
                         {server.homepage && (
                           <div
                             className="text-gray-400 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-300 inline-block"
