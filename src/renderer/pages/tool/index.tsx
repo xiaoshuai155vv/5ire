@@ -98,10 +98,9 @@ export default function Tools() {
           <div className="tips flex justify-start items-center">
             {t('Common.MCPServers')}
             <TooltipIcon
-              tip={t('Tools.Description') + '\n' + t('Common.MCPDescription')}
+              tip={t('Tools.PrerequisiteDescription')}
             />
           </div>
-          <div className="tip mt-0.5">{t('Tools.PrerequisiteDescription')}</div>
         </div>
       </div>
       <div className="mt-2.5 pb-12 h-full -mr-5 overflow-y-auto">

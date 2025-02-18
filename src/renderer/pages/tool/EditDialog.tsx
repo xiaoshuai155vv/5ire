@@ -222,7 +222,7 @@ export default function ToolEditDialog(options: {
             </div>
             <div>
               <Field label={t('Tools.EnvVars')}>
-                <div className="bg-gray-50 dark:bg-stone-800 min-h-32 border rounded dark:border-neutral-500">
+                <div className="bg-gray-50 dark:bg-stone-800 border rounded dark:border-neutral-500">
                   <div className="flex flex-start items-center border-b px-1 py-1">
                     <div className="w-5/12">{t('Common.EnvName')}</div>
                     <div className="w-6/12">{t('Common.EnvValue')}</div>
@@ -264,11 +264,11 @@ export default function ToolEditDialog(options: {
                       />
                     </div>
                   </div>
-                  <div className="overflow-y-auto min-h-20 max-h-40 flex flex-col">
+                  <div className="overflow-y-auto min-h-6 max-h-40 flex flex-col">
                     {Object.keys(env).map((key: string) => (
                       <div
                         key={key}
-                        className="flex flex-start items-center border-b w-full px-1 py-1"
+                        className="flex flex-start items-center [&:not(:last-child)]:border-b w-full px-1"
                       >
                         <div className="w-5/12 px-2">{key}</div>
                         <div className="w-6/12 px-2">{env[key]}</div>
