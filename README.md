@@ -82,3 +82,10 @@ You can perform keyword searches across all conversations, quickly pinpointing t
 # License
 
 5ire is licensed under the GNU General Public License version 3.
+
+<hr/>
+
+##  Discover Exceptional MCP Servers
+
+> [!TIP]
+> [MCPSvr](https://github.com/nanbingxyz/mcpsvr), a decentralized directory of MCP servers, empowers developers to discover exceptional tools while offering a streamlined process for sharing their own MCP server creations.
