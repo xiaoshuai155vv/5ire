@@ -10,3 +10,6 @@
   --tw-bg-opacity: 1;
   background-color: rgba(var(--color-bg-sidebar), var(--tw-bg-opacity));
 }
+[data-theme='dark'] .bookmark :not(.think):not(.think *) {
+  color: #d6d6d6;
+}

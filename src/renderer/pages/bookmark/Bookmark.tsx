@@ -243,7 +243,7 @@ export default function Bookmark() {
           </div>
         </div>
       </div>
-      <div className="h-full overflow-y-auto -mr-5">
+      <div className="h-full overflow-y-auto -mr-5 bookmark">
         <div className="mr-5">
           <div className="mx-auto">
             <div
