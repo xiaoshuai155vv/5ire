@@ -11,6 +11,13 @@ export default class OpenAIReader extends BaseReader implements IChatReader {
     if (data.error) {
       throw new Error(data.error.message);
     }
+    if (data.choices.length === 0) {
+      return {
+        content: '',
+        isEnd: false,
+        toolCalls: [],
+      };
+    }
     const choice = data.choices[0];
     return {
       content: choice.delta.content || '',
