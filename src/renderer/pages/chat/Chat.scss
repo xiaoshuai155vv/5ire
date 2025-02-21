@@ -9,6 +9,9 @@
   font-family: Barlow, -apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB,
   Roboto, helvetica neue, helvetica, segoe ui, Arial, sans-serif;
 }
+[data-theme='dark'] .message :not(.think):not(.think *) {
+  color: #d6d6d6;
+}
 .message .font-lg{
   font-size:16px;
   * {
@@ -81,6 +84,9 @@
 }
 .editor img{
   width:300px;
+}
+[data-theme='dark'] .editor{
+  color: #d6d6d6;
 }
 .editor-loading-mask {
   z-index: 10;
@@ -163,27 +169,20 @@
 }
 
 div.think{
- color: rgba(var(--color-text-info), 1);
- border: 0.5px solid rgba(var(--color-border), 1);
- background-color: rgba(var(--color-bg-surface-2), 0.3);
+ color: rgba(var(--color-text-info), 0.7);
  border-radius: 4px;
  font-size:13px;
  margin-bottom: 8px;
 }
 [data-theme='dark'] div.think{
-  border: 1px solid rgba(0,0,0, 0.1);
-  background-color: rgba(20,20,20, 0.3);
+  color: #999;
 }
 div.think-header{
-  padding:4px 8px;
-  border-bottom: 0.5px solid rgba(var(--color-border), 1);
+  padding:4px 0;
   display:flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   gap: 2px;
-}
-[data-theme='dark'] div.think-header{
-  border-bottom: 1px solid rgba(0,0,0, 0.1);
 }
 div.think-header > div{
   display:flex;
@@ -196,6 +195,10 @@ div.think-header > div{
 }
 div.think-body{
   padding: 8px;
+  border-left: 1px solid rgba(var(--color-border), 1);
+}
+[data-theme='dark'] div.think-body{
+  border-left: 1px solid rgba(60,60,60, 1);
 }
 .is-loading .icon-show,
 .is-loading .icon-hide{
