@@ -2,7 +2,7 @@
 /* eslint-disable react/no-danger */
 import Debug from 'debug';
 import useChatStore from 'stores/useChatStore';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useMarkdown from 'hooks/useMarkdown';
 import { IChatMessage } from 'intellichat/types';
 import { useTranslation } from 'react-i18next';
@@ -11,8 +11,12 @@ import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useToast from 'hooks/useToast';
 import ToolSpinner from 'renderer/components/ToolSpinner';
 import useSettingsStore from 'stores/useSettingsStore';
-import { highlight, toggleThink } from '../../../utils/util';
+import { highlight } from '../../../utils/util';
 import MessageToolbar from './MessageToolbar';
+import {
+  ChevronDown16Regular,
+  ChevronUp16Regular,
+} from '@fluentui/react-icons';
 
 const debug = Debug('5ire:pages:chat:Message');
 
@@ -62,77 +66,193 @@ export default function Message({ message }: { message: IChatMessage }) {
     });
   }, [onCitationClick]);
 
-
-
-  const registerThinkToggle = useCallback(() => {
-    const headers = document.querySelectorAll(`#${message.id} .think-header`);
-    headers.forEach((header: any) => {
-      header?.addEventListener('click', toggleThink);
-    });
-  }, [toggleThink]);
-
-
-
   useEffect(() => {
     registerCitationClick();
-    registerThinkToggle();
     return () => {
       const links = document.querySelectorAll(`#${message.id} .msg-reply a`);
       links.forEach((link) => {
         link.removeEventListener('click', onCitationClick);
       });
-      const headers = document.querySelectorAll(`#${message.id} .think-header`);
-      headers.forEach((header: any) => {
-        header?.removeEventListener('click', toggleThink);
-      });
     };
-  }, [
-    message.isActive,
-    keywords,
-    registerCitationClick,
-    registerThinkToggle,
-  ]);
+  }, [message.isActive, keywords, registerCitationClick]);
+
+  const thoughts = useMemo(() => {
+    const parts = message.reply.split('<think>');
+
+    // 如果没有 <think> 标签，返回空数组
+    if (parts.length <= 1) {
+      return '';
+    }
+
+    // 处理有 <think> 标签的情况
+    const thinkParts = parts
+      .slice(1) // 从第一个部分开始处理
+      .map((part) => {
+        const [content] = part.split('</think>');
+        return content; // 返回每个部分的内容
+      })
+      .filter(Boolean); // 过滤掉空字符串
+
+    return thinkParts.join(''); // 返回所有的 thoughts
+  }, [message.reply]);
+
+  const reply = useMemo(() => {
+    const parts = message.reply.split('<think>');
+
+    // 如果没有 <think> 标签，返回整个内容
+    if (parts.length === 1) {
+      return message.reply; // 返回整个内容
+    }
+
+    // 处理有 <think> 标签的情况
+    const replyParts = parts
+      .map((part) => part.split('</think>')[1]) // 获取结束标签后的内容
+      .filter(Boolean); // 过滤掉空字符串
+
+    return replyParts.join(''); // 将所有非空部分连接起来
+  }, [message.reply]);
+
+  const [isThinking, setIsThinking] = useState(true);
+  const [thinkSeconds, setThinkSeconds] = useState(0);
+  const messageRef = useRef(message);
+  const isThinkingRef = useRef(isThinking);
+  const thinkInterval = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    messageRef.current = message;
+  }, [message]);
+
+  useEffect(() => {
+    isThinkingRef.current = isThinking;
+  }, [isThinking]);
+
+  function monitorThinkStatus() {
+    // 清除之前的计时器
+    if (thinkInterval.current) {
+      clearInterval(thinkInterval.current);
+    }
+
+    thinkInterval.current = setInterval(() => {
+      const { reply } = messageRef.current;
+
+      if (
+        reply.includes('<think>') &&
+        !isThinkingRef.current &&
+        messageRef.current.isActive
+      ) {
+        setIsThinking(true);
+        setThinkSeconds(0); // 重置计时
+        console.log('Think started');
+      }
+
+      if (isThinkingRef.current && messageRef.current.isActive) {
+        setThinkSeconds((prev) => prev + 1); // 每秒增加
+      }
+
+      if (
+        (reply.includes('</think>') && isThinkingRef.current) ||
+        !messageRef.current.isActive
+      ) {
+        clearInterval(thinkInterval.current as NodeJS.Timeout); // 停止计时
+        setIsThinking(false);
+        console.log('Think ended');
+        console.log(`Total thinking time: ${thinkSeconds} seconds`);
+      }
+    }, 1000);
+  }
+
+  useEffect(() => {
+    if (message.isActive) {
+      monitorThinkStatus();
+    } else {
+      setIsThinking(false);
+    }
+    return () => {
+      clearInterval(thinkInterval.current as NodeJS.Timeout);
+    };
+  }, [message.isActive]);
+
+  const [isThinkShow, setIsThinkShow] = useState(true);
+
+  const toggleThink = useCallback(() => {
+    setIsThinkShow(!isThinkShow);
+  }, [isThinkShow]);
 
   const replyNode = useCallback(() => {
-    if (message.isActive && states.loading) {
-      if (!message.reply || message.reply === '') {
-        return (
-          <div className="w-full mt-1.5 is-loading">
-            {states.runningTool && (
-              <div className="flex flex-row justify-start items-center gap-1">
-                <ToolSpinner size={20} style={{ marginBottom: '-3px' }} />
-                <span>{states.runningTool}</span>
-              </div>
-            )}
+    const isLoading = message.isActive && states.loading;
+    const isEmpty = !message.reply || message.reply === '';
+    const thinkTitle =
+      (isThinking ? t('Reasoning.Thinking') : t('Reasoning.Thought')) +
+      `${thinkSeconds > 0 ? ` ${thinkSeconds}s` : ''}`;
+    return (
+      <div className={`w-full mt-1.5 ${isLoading ? 'is-loading' : ''}`}>
+        {message.isActive && states.runningTool ? (
+          <div className="flex flex-row justify-start items-center gap-1">
+            <ToolSpinner size={20} style={{ marginBottom: '-3px' }} />
+            <span>{states.runningTool}</span>
+          </div>
+        ) : null}
+        {isLoading && isEmpty ? (
+          <>
             <span className="skeleton-box" style={{ width: '80%' }} />
             <span className="skeleton-box" style={{ width: '90%' }} />
+          </>
+        ) : (
+          <div className="-mt-1">
+            {thoughts.trim() ? (
+              <div className="think">
+                <div className="think-header" onClick={toggleThink}>
+                  <span className="font-bold text-gray-400 ">{thinkTitle}</span>
+                  <div className="text-gray-400 -mb-0.5">
+                    {isThinkShow ? (
+                      <ChevronUp16Regular />
+                    ) : (
+                      <ChevronDown16Regular />
+                    )}
+                  </div>
+                </div>
+                <div
+                  className="think-body"
+                  style={{ display: isThinkShow ? 'block' : 'none' }}
+                >
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: render(
+                        `${
+                          highlight(thoughts, keyword) || ''
+                        }${isThinking && thoughts ? '<span class="blinking-cursor" /></span>' : ''}`,
+                      ),
+                    }}
+                  />
+                </div>
+              </div>
+            ) : null}
+            <div
+              className={`mt-1 break-all ${
+                fontSize === 'large' ? 'font-lg' : ''
+              }`}
+              dangerouslySetInnerHTML={{
+                __html: render(
+                  `${
+                    highlight(reply, keyword) || ''
+                  }${isLoading && reply ? '<span class="blinking-cursor" /></span>' : ''}`,
+                ),
+              }}
+            />
           </div>
-        );
-      }
-      return (
-        <div
-          className={`mt-1 break-all is-loading ${
-            fontSize === 'large' ? 'font-lg' : ''
-          }`}
-          dangerouslySetInnerHTML={{
-            __html: render(
-              `${
-                highlight(message.reply, keyword) || ''
-              }<span class="blinking-cursor" /></span>`,
-            ),
-          }}
-        />
-      );
-    }
-    return (
-      <div
-        className={`mt-1 break-all ${fontSize === 'large' ? 'font-lg' : ''}`}
-        dangerouslySetInnerHTML={{
-          __html: render(`${highlight(message.reply, keyword)}` || ''),
-        }}
-      />
+        )}
+      </div>
     );
-  }, [message, keyword, states, fontSize]);
+  }, [
+    message.reply,
+    keyword,
+    states,
+    fontSize,
+    isThinking,
+    thinkSeconds,
+    isThinkShow,
+  ]);
+
   return (
     <div className="leading-6 message" id={message.id}>
       <div>
