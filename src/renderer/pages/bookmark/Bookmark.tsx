@@ -113,7 +113,7 @@ export default function Bookmark() {
     [bookmark],
   );
 
-  const [isThinkShow, setIsThinkShow] = useState(true);
+  const [isThinkShow, setIsThinkShow] = useState(false);
   const toggleThink = useCallback(() => {
     setIsThinkShow(!isThinkShow);
   }, [isThinkShow]);
