@@ -116,6 +116,9 @@ export default function Chat() {
     } else if (chatService?.isReady()) {
       initChat({});
     }
+    return () => {
+      isUserScrollingRef.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeChatId]);
 

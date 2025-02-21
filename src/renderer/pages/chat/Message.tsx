@@ -114,6 +114,7 @@ export default function Message({ message }: { message: IChatMessage }) {
 
   const [isThinking, setIsThinking] = useState(true);
   const [thinkSeconds, setThinkSeconds] = useState(0);
+  const [isThinkShow, setIsThinkShow] = useState(false);
   const messageRef = useRef(message);
   const isThinkingRef = useRef(isThinking);
   const thinkInterval = useRef<NodeJS.Timeout | null>(null);
@@ -163,6 +164,7 @@ export default function Message({ message }: { message: IChatMessage }) {
 
   useEffect(() => {
     if (message.isActive) {
+      setIsThinkShow(true);
       monitorThinkStatus();
     } else {
       setIsThinking(false);
@@ -172,7 +174,7 @@ export default function Message({ message }: { message: IChatMessage }) {
     };
   }, [message.isActive]);
 
-  const [isThinkShow, setIsThinkShow] = useState(true);
+
 
   const toggleThink = useCallback(() => {
     setIsThinkShow(!isThinkShow);
