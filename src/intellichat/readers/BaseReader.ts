@@ -286,6 +286,9 @@ export default abstract class BaseReader implements IChatReader {
       if (tool) {
         state.currentTool = tool;
         callbacks.onToolCalls(tool.name);
+      } else {
+        state.currentTool = null;
+        callbacks.onToolCalls(null);
       }
     }
     if (state.currentTool) {
