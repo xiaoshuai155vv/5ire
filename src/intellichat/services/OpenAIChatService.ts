@@ -126,9 +126,9 @@ export default class OpenAIChatService
         description: tool.description.substring(0, 1000), // some models have a limit on the description length, like gpt series, so we truncate it
         parameters: {
           type: tool.inputSchema.type,
-          properties: tool.inputSchema.properties,
-          required: tool.inputSchema.required,
-          additionalProperties: tool.inputSchema.additionalProperties,
+          properties: tool.inputSchema.properties || {},
+          required: tool.inputSchema.required || [],
+          additionalProperties: tool.inputSchema.additionalProperties || false,
         },
       },
     };

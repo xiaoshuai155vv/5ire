@@ -66,9 +66,9 @@ export default class AnthropicChatService
       description: tool.description,
       input_schema: {
         type: tool.inputSchema.type,
-        properties: tool.inputSchema.properties,
-        required: tool.inputSchema.required,
-        additionalProperties: tool.inputSchema.additionalProperties,
+        properties: tool.inputSchema.properties || {},
+        required: tool.inputSchema.required || [],
+        additionalProperties: tool.inputSchema.additionalProperties || false,
       },
     };
   }
