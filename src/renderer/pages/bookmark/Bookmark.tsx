@@ -286,7 +286,6 @@ export default function Bookmark() {
                 }}
               />
             </div>
-            <div className="h-16" />
           </div>
           {citedFiles.length > 0 && (
             <div className="mt-2">
@@ -303,6 +302,7 @@ export default function Bookmark() {
             </div>
           )}
         </div>
+        <div className="h-16" />
       </div>
       <CitationDialog />
     </div>
