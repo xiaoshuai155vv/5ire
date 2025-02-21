@@ -196,6 +196,9 @@ div.think-header > div{
 div.think-body{
   padding: 8px;
   border-left: 1px solid rgba(var(--color-border), 1);
+  p:not(:last-child){
+    margin-bottom: 10px;
+  }
 }
 [data-theme='dark'] div.think-body{
   border-left: 1px solid rgba(60,60,60, 1);
