@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import { IPromptDef } from '../../src/intellichat/types';
-import { fillVariables, parseVariables, renderThink, sortPrompts } from '../../src/utils/util';
+import { fillVariables, parseVariables, sortPrompts } from '../../src/utils/util';
 
 describe('utils/util', () => {
   test('parseVariables', () => {
@@ -88,33 +88,6 @@ describe('utils/util', () => {
       fillVariables(txt3, { name: 'John' })
     );
   });
-
-  test('renderThink',()=>{
-    const txt1 = `<think>Hi, John, Nice to meet you!`;
-    expect('<div class="think"><div class="think-body">Hi, John, Nice to meet you!').toEqual(
-      renderThink(txt1, { header: '' })
-    );
-    const txt2 = `<think>`;
-    expect('<think>').toEqual(
-      renderThink(txt2, { header: '' })
-    );
-    const txt3 = `<think>Hi, John, Nice to meet you!</think>`;
-    expect('<div class="think"><div class="think-body">Hi, John, Nice to meet you!</div></div>').toEqual(
-      renderThink(txt3, { header: ''})
-    );
-    const txt4 = `<think>  </think>`;
-    expect('<think>  </think>').toEqual(
-      renderThink(txt4, { header: ''})
-    );
-    const txt5 = `<think>  <`;
-    expect('<think>  <').toEqual(
-      renderThink(txt5, { header: ''})
-    );
-    const txt6 = `<think>  </`;
-    expect('<think>  </').toEqual(
-      renderThink(txt6, { header: ''})
-    );
-  })
 });
 
 
