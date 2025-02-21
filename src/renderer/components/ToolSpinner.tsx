@@ -1,5 +1,3 @@
-import './ToolSpinner.scss';
-
 export default function ToolSpinner(props: { size?: number } & any) {
   const { size, ...rest } = props;
   return (
@@ -7,25 +5,111 @@ export default function ToolSpinner(props: { size?: number } & any) {
       width={size || 24}
       height={size || 24}
       viewBox="0 0 24 24"
-      {...rest}
       xmlns="http://www.w3.org/2000/svg"
+      {...rest}
     >
-      <defs>
-        <filter id="spinner-gF00">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="y" />
-          <feColorMatrix
-            in="y"
-            mode="matrix"
-            values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 18 -7"
-            result="z"
-          />
-          <feBlend in="SourceGraphic" in2="z" />
-        </filter>
-      </defs>
-      <g filter="url(#spinner-gF00)">
-        <circle className="spinner_mHwL" cx="4" cy="12" r="3" fill="#555" />
-        <circle className="spinner_ote2" cx="15" cy="12" r="8" fill="#555" />
-      </g>
+      <rect fill="currentColor" height="2" rx="2" width="2" x="5" y="16">
+        <animate
+          attributeName="x"
+          dur="1360ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="6;10;10;16;16"
+        ></animate>
+        <animate
+          attributeName="y"
+          dur="1360ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="16;5;5;16;16"
+        ></animate>
+        <animate
+          attributeName="height"
+          dur="680ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="2;4;4;2;2"
+        ></animate>
+        <animate
+          attributeName="width"
+          dur="680ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="2;4;4;2;2"
+        ></animate>
+      </rect>
+      <rect fill="currentColor" height="2" rx="2" width="2" x="11" y="6">
+        <animate
+          attributeName="x"
+          dur="1360ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="11;16;16;6;6"
+        ></animate>
+        <animate
+          attributeName="y"
+          dur="1360ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="7;15;15;16;16"
+        ></animate>
+        <animate
+          attributeName="height"
+          dur="680ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="2;4;4;2;2"
+        ></animate>
+        <animate
+          attributeName="width"
+          dur="680ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="2;4;4;2;2"
+        ></animate>
+      </rect>
+      <rect fill="currentColor" height="2" rx="2" width="2" x="17" y="16">
+        <animate
+          attributeName="x"
+          dur="1360ms"
+          keySplines="0 0.8 0.8 1; 0 0.8 0.8 1; 0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="16;4;4;11;11"
+        ></animate>
+        <animate
+          attributeName="y"
+          dur="1360ms"
+          keySplines="0 0.8 0.8 1; 0 0.8 0.8 1; 0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="16;15;15;7;7"
+        ></animate>
+        <animate
+          attributeName="height"
+          dur="680ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="2;4;4;2;2"
+        ></animate>
+        <animate
+          attributeName="width"
+          dur="680ms"
+          keySplines="0 0.8 0.8 1"
+          keyTimes="0;0.25;0.5;0.75;1"
+          repeatCount="indefinite"
+          values="2;4;4;2;2"
+        ></animate>
+      </rect>
     </svg>
   );
 }
