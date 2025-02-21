@@ -17,6 +17,8 @@ import {
   Heart16Filled,
   HeartOff16Regular,
   HeartOff16Filled,
+  ChevronDown16Regular,
+  ChevronUp16Regular,
 } from '@fluentui/react-icons';
 import useMarkdown from 'hooks/useMarkdown';
 import useToast from 'hooks/useToast';
@@ -26,8 +28,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useBookmarkStore from 'stores/useBookmarkStore';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import { IBookmark } from 'types/bookmark';
-import { fmtDateTime, toggleThink, unix2date } from 'utils/util';
+import { fmtDateTime, highlight, unix2date } from 'utils/util';
 import CitationDialog from '../chat/CitationDialog';
+import { keyword } from 'chalk';
 
 const ArrowLeftIcon = bundleIcon(ArrowLeft16Filled, ArrowLeft16Regular);
 const DeleteIcon = bundleIcon(Delete16Filled, Delete16Regular);
@@ -50,17 +53,9 @@ export default function Bookmark() {
   const { notifyInfo } = useToast();
   const bookmarks = useBookmarkStore((state) => state.bookmarks);
 
-  const registerThinkToggle = useCallback(() => {
-    const headers = document.querySelectorAll(`.think-header`);
-    headers.forEach((header: any) => {
-      header?.addEventListener('click', toggleThink);
-    });
-  }, [toggleThink]);
-
   useEffect(() => {
     setUpdated(false);
     setActiveBookmarkId(id as string);
-    registerThinkToggle();
     const links = document.querySelectorAll('.bookmark-reply a');
     links.forEach((link) => {
       link.addEventListener('click', onCitationClick);
@@ -68,10 +63,6 @@ export default function Bookmark() {
     return () => {
       links.forEach((link) => {
         link.removeEventListener('click', onCitationClick);
-      });
-      const headers = document.querySelectorAll(` .think-header`);
-      headers.forEach((header: any) => {
-        header?.removeEventListener('click', toggleThink);
       });
     };
   }, [updated, id]);
@@ -81,10 +72,51 @@ export default function Bookmark() {
     [id],
   );
 
+  const thoughts = useMemo(() => {
+    const parts = bookmark.reply.split('<think>');
+
+    // 如果没有 <think> 标签，返回空数组
+    if (parts.length <= 1) {
+      return '';
+    }
+
+    // 处理有 <think> 标签的情况
+    const thinkParts = parts
+      .slice(1) // 从第一个部分开始处理
+      .map((part) => {
+        const [content] = part.split('</think>');
+        return content; // 返回每个部分的内容
+      })
+      .filter(Boolean); // 过滤掉空字符串
+
+    return thinkParts.join(''); // 返回所有的 thoughts
+  }, [bookmark.reply]);
+
+  const reply = useMemo(() => {
+    const parts = bookmark.reply.split('<think>');
+
+    // 如果没有 <think> 标签，返回整个内容
+    if (parts.length === 1) {
+      return bookmark.reply; // 返回整个内容
+    }
+
+    // 处理有 <think> 标签的情况
+    const replyParts = parts
+      .map((part) => part.split('</think>')[1]) // 获取结束标签后的内容
+      .filter(Boolean); // 过滤掉空字符串
+
+    return replyParts.join(''); // 将所有非空部分连接起来
+  }, [bookmark.reply]);
+
   const citedFiles = useMemo(
     () => JSON.parse(bookmark?.citedFiles || '[]'),
     [bookmark],
   );
+
+  const [isThinkShow, setIsThinkShow] = useState(true);
+  const toggleThink = useCallback(() => {
+    setIsThinkShow(!isThinkShow);
+  }, [isThinkShow]);
 
   const { notifySuccess } = useToast();
 
@@ -221,10 +253,36 @@ export default function Bookmark() {
               }}
             />
             <div className="mt-2.5 -mr-5 bookmark-reply">
+              {thoughts.trim() ? (
+                <div className="think">
+                  <div className="think-header" onClick={toggleThink}>
+                    <span className="font-bold text-gray-400 ">
+                      {t('Reasoning.Thought')}
+                    </span>
+                    <div className="text-gray-400 -mb-0.5">
+                      {isThinkShow ? (
+                        <ChevronUp16Regular />
+                      ) : (
+                        <ChevronDown16Regular />
+                      )}
+                    </div>
+                  </div>
+                  <div
+                    className="think-body"
+                    style={{ display: isThinkShow ? 'block' : 'none' }}
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: render(thoughts || ''),
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : null}
               <div
                 className="mr-5 leading-7"
                 dangerouslySetInnerHTML={{
-                  __html: render(bookmark.reply || ''),
+                  __html: render(reply || ''),
                 }}
               />
             </div>
