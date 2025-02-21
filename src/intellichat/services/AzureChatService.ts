@@ -14,7 +14,7 @@ export default class AzureChatService
   }
 
   protected async makeRequest(messages: IChatRequestMessage[]): Promise<Response> {
-    const apiVersion = '2023-03-15-preview';
+    const apiVersion = '2024-10-21';
     const { base, deploymentId, key } = this.apiSettings;
     const url = new URL(`/openai/deployments/${deploymentId}/chat/completions?api-version=${apiVersion}`, base);
     const response = await fetch(
