@@ -29,8 +29,11 @@ import INextChatService from 'intellichat/services/INextCharService';
 import useSettingsStore from 'stores/useSettingsStore';
 import Sidebar from './Sidebar/Sidebar';
 import useInspectorStore from 'stores/useInspectorStore';
+import React from 'react';
 
 const debug = Debug('5ire:pages:chat');
+
+const MemoizedMessages = React.memo(Messages);
 
 export default function Chat() {
   const { t } = useTranslation();
@@ -60,15 +63,52 @@ export default function Chat() {
 
   const { notifyError } = useToast();
 
-  const scrollToBottom = debounce(
-    () => {
-      if (ref.current) {
-        ref.current.scrollTop = ref.current.scrollHeight;
-      }
-    },
-    100,
-    { leading: true, maxWait: 300 },
-  );
+  const isUserScrollingRef = useRef(false);
+  const lastScrollTopRef = useRef(0);
+
+  const scrollToBottom = useRef(
+    debounce(
+      () => {
+        if (ref.current) {
+          ref.current.scrollTop = ref.current.scrollHeight;
+        }
+      },
+      100,
+      { leading: true, maxWait: 300 },
+    ),
+  ).current;
+
+  // 监听滚动事件
+  const handleScroll = useRef(
+    debounce(
+      () => {
+        if (ref.current) {
+          const { scrollTop, scrollHeight, clientHeight } = ref.current;
+          const atBottom = scrollTop + clientHeight >= scrollHeight - 50;
+          if (scrollTop > lastScrollTopRef.current) {
+            if (atBottom) {
+              isUserScrollingRef.current = false;
+            }
+          } else {
+            isUserScrollingRef.current = true;
+            scrollToBottom.cancel();
+          }
+          lastScrollTopRef.current = scrollTop;
+        }
+      },
+      300,
+      { leading: true, maxWait: 500 },
+    ),
+  ).current;
+
+  useEffect(() => {
+    const currentRef = ref.current;
+    currentRef?.addEventListener('scroll', handleScroll);
+    return () => {
+      currentRef?.removeEventListener('scroll', handleScroll);
+      isUserScrollingRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (activeChatId !== tempChatId) {
@@ -263,7 +303,9 @@ ${prompt}
       chatService.onComplete(onChatComplete);
       chatService.onReading((content: string) => {
         $reply = appendReply(msg.id, content);
-        scrollToBottom();
+        if (!isUserScrollingRef.current) {
+          scrollToBottom();
+        }
       });
       chatService.onToolCalls((toolName: string) => {
         updateStates($chatId, { runningTool: toolName });
@@ -299,6 +341,7 @@ ${prompt}
       notifyError,
     ],
   );
+
   return (
     <div id="chat" className="relative h-screen flex flex-start">
       <div className="flex-grow relative">
@@ -315,7 +358,7 @@ ${prompt}
               <div id="messages" ref={ref} className="overflow-y-auto h-full">
                 {messages.length ? (
                   <div className="mx-auto max-w-screen-md px-5">
-                    <Messages messages={messages} />
+                    <MemoizedMessages messages={messages} />
                   </div>
                 ) : chatService.isReady() ? null : (
                   <Empty image="hint" text={t('Notification.APINotReady')} />
