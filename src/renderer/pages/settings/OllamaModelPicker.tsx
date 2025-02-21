@@ -1,6 +1,5 @@
-import Mousetrap from 'mousetrap';
 import { useTranslation } from 'react-i18next';
-import { useCallback, useEffect, useMemo } from 'react';
+import {  useEffect } from 'react';
 import React from 'react';
 import { isValidHttpHRL } from 'utils/validators';
 import {
