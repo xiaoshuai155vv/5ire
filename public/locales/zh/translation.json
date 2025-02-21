@@ -227,7 +227,6 @@
   "Appearance.ChatFontSize": "对话字体大小",
   "Appearance.ColorTheme": "色彩主题",
   "Common.Notification.Copied": "已复制",
-  "Common.Think": "思考",
   "Common.Action.Choose": "选择",
   "Common.Error.InvalidAPIBase": "错误的 API 根路径",
   "Common.Action.Reload": "重新加载",
@@ -248,5 +247,7 @@
   "Tools.Market": "工具市场",
   "Common.Action.Install": "安装",
   "Common.Installed": "已安装",
-  "Tools.InstallConfirmation": "确认安装？"
+  "Tools.InstallConfirmation": "确认安装？",
+  "Reasoning.Thinking": "思考中",
+  "Reasoning.Thought": "思考过程"
 }

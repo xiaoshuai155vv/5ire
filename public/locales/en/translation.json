@@ -228,7 +228,6 @@
   "Appearance.ColorTheme": "Color Theme",
   "Common.Notification.Copied": "Copied",
   "Common.Inspector": "Inspector",
-  "Common.Think": "Think",
   "Common.Action.Choose": "Choose",
   "Common.Error.FetchFailed": "Fetch Failed",
   "Common.Error.InvalidURL": "Invalid URL",
@@ -252,5 +251,7 @@
   "Tools.Market": "Market",
   "Common.Action.Install": "Install",
   "Common.Installed": "Installed",
-  "Tools.InstallConfirmation": "Confirm installation of this tool?"
+  "Tools.InstallConfirmation": "Confirm installation of this tool?",
+  "Reasoning.Thinking": "Thinking for",
+  "Reasoning.Thought": "Thought for"
 }
