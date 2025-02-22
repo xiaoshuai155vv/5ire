@@ -13,7 +13,10 @@ import {
 } from '@fluentui/react-components';
 import Mousetrap from 'mousetrap';
 import { useTranslation } from 'react-i18next';
-import { Dismiss24Regular } from '@fluentui/react-icons';
+import {
+  Dismiss24Regular,
+  WrenchScrewdriver24Regular,
+} from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import useMarkdown from 'hooks/useMarkdown';
 
@@ -57,19 +60,26 @@ export default function ToolDetailDialog(options: {
               </DialogTrigger>
             }
           >
-            {server?.key}&nbsp;{t('Tools.Functions')}
+            <div className="flex items-center gap-2 font-bold">
+              <WrenchScrewdriver24Regular />
+              {server?.key}&nbsp;{t('Common.Tools')}
+            </div>
           </DialogTitle>
           <DialogContent>
-            <Accordion multiple collapsible>
+            <Accordion multiple collapsible className="mt-4">
               {tools.map((tool: any) => (
-                <AccordionItem value={tool.name} key={tool.name}>
+                <AccordionItem
+                  value={tool.name}
+                  key={tool.name}
+                  className="-my-3"
+                >
                   <AccordionHeader>
                     <div className="text-gray-500 dark:text-gray-300 font-bold">
                       {tool.name.split('--')[1]}
                     </div>
                   </AccordionHeader>
                   <AccordionPanel>
-                    <div className="border-l border-dotted border-stone-300 dark:border-gray-500 ml-2 pl-2">
+                    <div className="border-l border-dotted border-stone-300 dark:border-gray-500 ml-2 pl-2 pb-3 mb-2">
                       <div className="text-sm text-gray-500 dark:text-gray-300 ml-3">
                         {tool.description}
                       </div>
