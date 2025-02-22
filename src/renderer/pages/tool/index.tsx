@@ -5,14 +5,21 @@ import TooltipIcon from 'renderer/components/TooltipIcon';
 import useMCPStore from 'stores/useMCPStore';
 import Grid from './Grid';
 import { Button } from '@fluentui/react-components';
-import { ArrowSyncCircleRegular } from '@fluentui/react-icons';
+import {
+  ArrowSyncCircleRegular,
+  BuildingShopFilled,
+  BuildingShopRegular,
+  bundleIcon,
+} from '@fluentui/react-icons';
 import ToolEditDialog from './EditDialog';
 import { IMCPServer } from 'types/mcp';
 import useToast from 'hooks/useToast';
 import ConfirmDialog from 'renderer/components/ConfirmDialog';
 import DetailDialog from './DetailDialog';
-import ToolMarketDialog from './MarketDialog';
 import ToolInstallDialog from './InstallDialog';
+import ToolMarketDrawer from './MarketDrawer';
+
+const BuildingShopIcon = bundleIcon(BuildingShopFilled, BuildingShopRegular);
 
 export default function Tools() {
   const { t } = useTranslation();
@@ -20,6 +27,7 @@ export default function Tools() {
   const [loading, setLoading] = useState(false);
   const [mktServer, setMktServer] = useState<IMCPServer | null>(null);
   const [server, setServer] = useState<IMCPServer | null>(null);
+  const [marketOpen, setMarketOpen] = useState(false);
   const [installDialogOpen, setInstallDialogOpen] = useState(false);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [delConfirmDialogOpen, setDelConfirmDialogOpen] = useState(false);
@@ -102,7 +110,13 @@ export default function Tools() {
               <Button appearance="primary" onClick={() => newServer()}>
                 {t('Common.New')}
               </Button>
-              <ToolMarketDialog onInstall={installServer} />
+              <Button
+                appearance="outline"
+                icon={<BuildingShopIcon />}
+                onClick={() => setMarketOpen(true)}
+              >
+                {t('Tools.Market')}
+              </Button>
             </div>
           </div>
           <div className="tips flex justify-start items-center">
@@ -149,6 +163,11 @@ export default function Tools() {
           setOpen={setInstallDialogOpen}
         />
       )}
+      <ToolMarketDrawer
+        open={marketOpen}
+        setOpen={setMarketOpen}
+        onInstall={installServer}
+      />
     </div>
   );
 }

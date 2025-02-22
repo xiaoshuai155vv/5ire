@@ -139,7 +139,7 @@ export default function FluentApp() {
             </Routes>
             <div
               id="portal"
-              style={{ zIndex: 99999, position: 'absolute' }}
+              style={{ zIndex: 9999999, position: 'absolute' }}
             ></div>
           </main>
         </div>
