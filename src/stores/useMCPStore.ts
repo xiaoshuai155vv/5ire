@@ -36,23 +36,17 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
     return config;
   },
   addServer: async (server: IMCPServer) => {
-    const { servers } = get().config;
-    if (!servers.find((svr) => svr.key === server.key)) {
-      const ok = await window.electron.mcp.addServer(server);
-      if (ok) {
-        get().loadConfig(true);
-        return true;
-      }
+    const ok = await window.electron.mcp.addServer(server);
+    if (ok) {
+      get().loadConfig(true);
+      return true;
     }
     return false;
   },
   updateServer: async (server: IMCPServer) => {
-    const { servers } = get().config;
-    const index = servers.findIndex((svr) => svr.key === server.key);
-    if (index !== -1) {
-      servers[index] = server;
-      set({ config: { servers } });
-      await window.electron.mcp.putConfig({ servers });
+    const ok = await window.electron.mcp.updateServer(server);
+    if (ok) {
+      get().loadConfig(true);
       return true;
     }
     return false;
