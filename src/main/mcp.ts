@@ -161,6 +161,20 @@ export default class ModuleContext {
     return false;
   }
 
+  public async updateServer(server: IMCPServer) {
+    console.log('updateServer', JSON.stringify(server));
+    const config = await this.getConfig();
+    const index = config.servers.findIndex(
+      (svr: IMCPServer) => svr.key === server.key,
+    );
+    if (index > -1) {
+      config.servers[index] =server;
+      await this.putConfig(config);
+      return true;
+    }
+    return false;
+  }
+
   public async activate(server: IMCPServer): Promise<{ error: any }> {
     try {
       const config = await this.getConfig();

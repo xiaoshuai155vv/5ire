@@ -42,8 +42,11 @@ const electronHandler = {
     init() {
       return ipcRenderer.invoke('mcp-init');
     },
-    addServer(server: any) {
+    addServer(server: any): Promise<boolean> {
       return ipcRenderer.invoke('mcp-add-server', server);
+    },
+    updateServer(server: any): Promise<boolean> {
+      return ipcRenderer.invoke('mcp-update-server', server);
     },
     activate(config: {
       key: string;

@@ -407,6 +407,9 @@ ipcMain.handle('mcp-init', async () => {
 ipcMain.handle('mcp-add-server', async (_, config) => {
   return await mcp.addServer(config);
 });
+ipcMain.handle('mcp-update-server', async (_, config) => {
+  return await mcp.updateServer(config);
+});
 ipcMain.handle('mcp-activate', async (_, config) => {
   return await mcp.activate(config);
 });
