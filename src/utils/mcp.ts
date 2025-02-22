@@ -2,71 +2,57 @@
  * ['--db-path',<dbPath>] => dbPath
  */
 
-import { IMCPServerParameter } from "types/mcp";
+import { flatten, isUndefined } from "lodash";
+import { IMCPArgParameter, IMCPArgType, IMCPEnvParameter, IMCPEnvType, IMCPServerParameter } from "types/mcp";
 
-function replaceParamInBrackets(
-  params: { [key: string]: any },
-  template: string
-) {
-  // 使用正则表达式匹配 <key:...> 的模式
-  return template.replace(/<([^:>]+):[^>]*>/g, (match, key) => {
-    // 检查 params 中是否存在对应的 key
-    if (params.hasOwnProperty(key)) {
-      // 如果存在，则返回 params 中对应 key 的值
-      return params[key];
-    }
-    // 如果不存在，则返回原始匹配项
-    return match;
-  });
+export function getParameters(parmas: string[]): IMCPServerParameter[] {
+  const result:IMCPServerParameter[] = []
+  if (!parmas) {
+    return result;
+  }
+  const pattern = /\{\{(?<name>[^@]+)@(?<type>[^:]+)(::(?<description>[^}]*)?)?\}\}/;
+  parmas.forEach((param:string)=>{
+    const match = param.match(pattern);
+    if (match && match.groups) {
+      result.push({
+            name: match.groups.name,
+            type: match.groups.type as IMCPEnvType|IMCPArgType,
+            description: match.groups.description||'',
+        }) ;
+  }});
+  return result;
 }
 
-export function getParameters(args: string[]): IMCPServerParameter[] {
-  if (!args) {
-    return [];
-  }
-  const paramRegex = /<([^>]+)>/g;
-  const params: IMCPServerParameter[] = [];
-  let match;
-  while ((match = paramRegex.exec(args.join(' '))) !== null) {
-    const [name, type, description] = match[1].split('::');
-    params.push({
-      name,
-      type: type || 'string',
-      description: description || '',
-    });
-  }
-  return params;
-}
-
-export function setParameters(
+export function fillArgs(
   args: string[],
-  params: { [key: string]: string }
+  params: IMCPArgParameter
 ): string[] {
-  let _args = [...args];
-  for (const key in params) {
-    _args = _args.map((arg) =>
-      replaceParamInBrackets({ [key]: params[key] }, arg)
-    );
+  const pattern = /\{\{(?<name>[^@]+)@(?<type>[^:]+)(::(?<description>[^}]*)?)?\}\}/;
+  let _args:(string|string[])[] = [...args];
+  for (let index=0; index<args.length; index++) {
+    const arg = args[index]
+    const match = arg.match(pattern);
+    if(match && match.groups){
+      _args[index] = params[match.groups.name]
+    }
   }
-  return _args;
+  return flatten(_args);
 }
 
-export function setEnv(
+export function FillEnv(
   env: Record<string, string> | undefined,
   params: { [key: string]: string }
 ): Record<string, string> {
-  if (!env) {
-    return {};
-  }
-  const _env = { ...env };
-  for (const key in params) {
-    const regex = new RegExp('<' + key + '>', 'g');
-    for (const envKey in _env) {
-      _env[envKey] = replaceParamInBrackets(
-        { [key]: params[key] },
-        _env[envKey]
-      );
+  if(!env) return{}
+  const pattern = /\{\{(?<name>[^@]+)@(?<type>[^:]+)(::(?<description>[^}]*)?)?\}\}/;
+  let _env = {...env};
+  const envKeys = Object.keys(env)
+  for(const envKey of envKeys){
+    const envItem = env[envKey]
+    const match = envItem.match(pattern);
+    if(match && match.groups){
+      _env[envKey] = params[match.groups.name]||''
     }
   }
-  return _env;
+  return  _env
 }
