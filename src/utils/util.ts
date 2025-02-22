@@ -41,10 +41,19 @@ export function fmtDateTime(date: Date) {
   return `${fmtDate(date)} ${hours}:${minutes}:${seconds}`;
 }
 
-export function highlight(text: string, keyword: string) {
-  if (!keyword || keyword.trim() === '') return text;
-  const regex = new RegExp(keyword.trim(), 'gi');
-  return text.replace(regex, (match) => `<mark>${match}</mark>`);
+export function highlight(text: string, keyword: string | string[]) {
+  if (!text) return '';
+  if (typeof keyword === 'string') {
+    if (keyword.trim() === '') return text;
+    const regex = new RegExp(keyword.trim(), 'gi');
+    return text.replace(regex, (match) => `<mark>${match}</mark>`);
+  }
+  let result = text;
+  keyword.forEach((word) => {
+    const regex = new RegExp(word, 'gi');
+    result = result.replace(regex, (match) => `<mark>${match}</mark>`);
+  });
+  return result;
 }
 
 export function parseVariables(text: string): string[] {
@@ -95,7 +104,7 @@ export function sortPrompts(prompts: IPromptDef[]) {
 
 export function insertAtCursor(field: HTMLDivElement, value: string) {
   field.focus();
-  let selection = window.getSelection();
+  const selection = window.getSelection();
   if (selection && selection.rangeCount > 0) {
     const range = selection.getRangeAt(0);
     const node = document.createRange().createContextualFragment(value);
@@ -205,7 +214,7 @@ export function raiseError(status: number, response: any, message?: string) {
    *   }
    * }
    */
-  let resp = Array.isArray(response) ? response[0] : response;
+  const resp = Array.isArray(response) ? response[0] : response;
   const msg = resp?.error?.message || message;
   switch (status) {
     case 400:
@@ -213,12 +222,12 @@ export function raiseError(status: number, response: any, message?: string) {
     case 401:
       throw new Error(
         msg ||
-          'Invalid authentication, please ensure the API key used is correct',
+        'Invalid authentication, please ensure the API key used is correct',
       );
     case 403:
       throw new Error(
         msg ||
-          'Permission denied, please confirm your authority before try again.',
+        'Permission denied, please confirm your authority before try again.',
       );
     case 404:
       new Error(msg || 'Not found');
@@ -227,7 +236,7 @@ export function raiseError(status: number, response: any, message?: string) {
     case 429:
       new Error(
         msg ||
-          'Rate limit reached for requests, or you exceeded your current quota.',
+        'Rate limit reached for requests, or you exceeded your current quota.',
       );
     case 500:
       throw new Error(
@@ -243,10 +252,10 @@ export function raiseError(status: number, response: any, message?: string) {
 }
 
 export function arrayBufferToBase64(buffer: ArrayBuffer) {
-  var binary = '';
-  var bytes = new Uint8Array(buffer);
-  var len = bytes.byteLength;
-  for (var i = 0; i < len; i++) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
   return window.btoa(binary);
@@ -291,13 +300,13 @@ export function splitByImg(html: string, base64Only: boolean = false) {
   return items.map((item: string) => {
     const matches = item.match(srcRegex);
     if (matches) {
-      let data = matches.map((match) => match.replace(srcRegex, '$1'))[0];
+      const data = matches.map((match) => match.replace(srcRegex, '$1'))[0];
       const dataType = data.startsWith('data:') ? 'base64' : 'URL';
       let mimeType = defaultMimeType;
       if (dataType === 'base64') {
         mimeType = data.split(';')[0].split(':')[1];
       } else {
-        const ext = '.' + data.split('.').pop()?.toLowerCase();
+        const ext = `.${data.split('.').pop()?.toLowerCase()}`;
         mimeType = ext ? mimeTypes[ext] || defaultMimeType : defaultMimeType;
       }
       return {
@@ -321,8 +330,7 @@ export function paddingZero(num: number, length: number) {
 export function fileSize(sizeInBytes: number) {
   const i = Math.floor(Math.log(sizeInBytes) / Math.log(1024));
   return (
-    (sizeInBytes / Math.pow(1024, i)).toFixed(1) +
-    ['B', 'KB', 'MB', 'GB', 'TB'][i]
+    (sizeInBytes / 1024 ** i).toFixed(1) + ['B', 'KB', 'MB', 'GB', 'TB'][i]
   );
 }
 
@@ -330,7 +338,7 @@ export function isOneDimensionalArray(arr: any[]): boolean {
   if (!isArray(arr)) {
     throw new Error('Input is not an array.');
   }
-  for (let item of arr) {
+  for (const item of arr) {
     if (isArray(item)) {
       return false; // It is a two-dimensional array
     }
@@ -378,4 +386,3 @@ export function extractFirstLevelBrackets(text: string): string[] {
 
   return results;
 }
-

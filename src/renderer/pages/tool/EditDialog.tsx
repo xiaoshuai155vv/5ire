@@ -26,11 +26,6 @@ import { isValidMCPServerKey } from 'utils/validators';
 import useMCPStore from 'stores/useMCPStore';
 import useToast from 'hooks/useToast';
 
-type EnvItem = {
-  name: string | null;
-  value: string | null;
-};
-
 export default function ToolEditDialog(options: {
   server: IMCPServer | null;
   open: boolean;
@@ -89,16 +84,13 @@ export default function ToolEditDialog(options: {
       payload.env = env;
     }
     return JSON.stringify(payload, null, 2);
-  }, [key, description, command, env]);
+  }, [key, description, cmd, args, env]);
 
   const addEnv = useCallback(() => {
     if (envName.trim() === '' || envValue.trim() === '') {
       return;
     }
-    setEnv({
-      ...env,
-      [envName.trim()]: envValue.trim(),
-    });
+    setEnv((_env) => ({ ..._env, [envName.trim()]: envValue.trim() }));
     setEnvName('');
     setEnvValue('');
   }, [envName, envValue]);
@@ -143,6 +135,11 @@ export default function ToolEditDialog(options: {
       setDescription(server.description || '');
       setCommand([server.command, ...server.args].join(' '));
       setEnv(server.env || {});
+    } else {
+      setKey('');
+      setDescription('');
+      setCommand('');
+      setEnv({});
     }
   }, [open, server]);
 
@@ -241,7 +238,7 @@ export default function ToolEditDialog(options: {
                     <div className="flex flex-start items-center border-b border-base px-1 py-1">
                       <div className="w-5/12">{t('Common.EnvName')}</div>
                       <div className="w-6/12">{t('Common.EnvValue')}</div>
-                      <div></div>
+                      <div />
                     </div>
                     <div className="flex flex-start items-center border-b border-base px-1 p-1">
                       <div className="w-5/12 px-1">
