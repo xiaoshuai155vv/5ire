@@ -114,7 +114,7 @@ export default function ToolMarketDrawer({
             </p>
           </div>
         ) : servers.length > 0 ? (
-          <div className="max-h-[600px] overflow-y-auto -mr-5 pr-5">
+          <div className="overflow-y-auto -mr-5 pr-5 pb-5">
             <List navigationMode="items">
               {servers.map((server) => (
                 <ListItem key={server.key}>
