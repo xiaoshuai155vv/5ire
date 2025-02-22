@@ -253,5 +253,6 @@
   "Common.Installed": "Installed",
   "Tools.InstallConfirmation": "Confirm installation of this tool?",
   "Reasoning.Thinking": "Thinking",
-  "Reasoning.Thought": "Thought"
+  "Reasoning.Thought": "Thought",
+  "Tools.Name": "Name"
 }

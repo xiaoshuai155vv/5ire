@@ -249,5 +249,6 @@
   "Common.Installed": "已安装",
   "Tools.InstallConfirmation": "确认安装？",
   "Reasoning.Thinking": "思考中",
-  "Reasoning.Thought": "思考过程"
+  "Reasoning.Thought": "思考过程",
+  "Tools.Name": "名称"
 }
