@@ -43,6 +43,7 @@ export function fmtDateTime(date: Date) {
 
 export function highlight(text: string, keyword: string | string[]) {
   if (!text) return '';
+  if (!keyword) return text;
   if (typeof keyword === 'string') {
     if (keyword.trim() === '') return text;
     const regex = new RegExp(keyword.trim(), 'gi');
