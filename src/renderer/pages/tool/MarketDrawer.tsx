@@ -107,7 +107,7 @@ export default function ToolMarketDrawer({
       </DrawerHeader>
       <DrawerBody>
         {loading ? (
-          <div className="h-32 flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center h-full">
             <Spinner size={48} />
             <p className="mt-4 text-gray-400 dark:text-neutral-800">
               {t('Common.Loading')}
