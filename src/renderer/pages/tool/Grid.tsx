@@ -37,8 +37,8 @@ import {
   EditRegular,
   MoreHorizontalRegular,
   MoreHorizontalFilled,
-  Radar20Filled,
-  Radar20Regular,
+  WrenchScrewdriver20Filled,
+  WrenchScrewdriver20Regular,
 } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -48,7 +48,10 @@ import { IMCPServer } from 'types/mcp';
 
 const EditIcon = bundleIcon(EditFilled, EditRegular);
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
-const RadarIcon = bundleIcon(Radar20Filled, Radar20Regular);
+const WrenchScrewdriverIcon = bundleIcon(
+  WrenchScrewdriver20Filled,
+  WrenchScrewdriver20Regular,
+);
 const MoreHorizontalIcon = bundleIcon(
   MoreHorizontalFilled,
   MoreHorizontalRegular,
@@ -146,10 +149,10 @@ export default function Grid({
                         </MenuItem>
                         <MenuItem
                           disabled={!item.isActive}
-                          icon={<RadarIcon />}
+                          icon={<WrenchScrewdriverIcon />}
                           onClick={() => onInspect(item)}
                         >
-                          {t('Tools.Functions')}
+                          {t('Common.Tools')}
                         </MenuItem>
                       </MenuList>
                     </MenuPopover>

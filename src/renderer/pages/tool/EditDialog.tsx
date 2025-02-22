@@ -35,6 +35,7 @@ export default function ToolEditDialog(options: {
   const { render } = useMarkdown();
   const { notifySuccess, notifyError } = useToast();
   const { server, open, setOpen } = options;
+  const [name, setName] = useState('');
   const [key, setKey] = useState('');
   const [description, setDescription] = useState('');
   const [command, setCommand] = useState('');
@@ -66,8 +67,11 @@ export default function ToolEditDialog(options: {
     return [];
   }, [command]);
 
-  const preview = useMemo(() => {
+  const config: IMCPServer = useMemo(() => {
     const payload: any = {};
+    if (name.trim() !== '') {
+      payload.name = name;
+    }
     if (key.trim() !== '') {
       payload.key = key;
     }
@@ -83,8 +87,11 @@ export default function ToolEditDialog(options: {
     if (Object.keys(env).length > 0) {
       payload.env = env;
     }
-    return JSON.stringify(payload, null, 2);
-  }, [key, description, cmd, args, env]);
+    if (envName.trim() !== '' && envValue.trim() !== '') {
+      payload.env = { ...env, [envName.trim()]: envValue.trim() };
+    }
+    return payload;
+  }, [name, key, description, cmd, args, env, envName, envValue]);
 
   const addEnv = useCallback(() => {
     if (envName.trim() === '' || envValue.trim() === '') {
@@ -113,34 +120,33 @@ export default function ToolEditDialog(options: {
       return;
     }
     const upset = server ? updateServer : addServer;
-    const ok = await upset({
-      key,
-      description,
-      command: cmd,
-      args,
-      env,
-      isActive: false,
-    });
+    const ok = await upset(config);
     if (ok) {
       setOpen(false);
       notifySuccess('Server saved successfully');
     } else {
       notifyError(server ? 'Cannot update server' : 'Server already exists');
     }
-  }, [key, cmd, server, args, env]);
+  }, [name, key, description, cmd, args, env, envName, envValue, server]);
 
   useEffect(() => {
-    if (server) {
+    if (open && server) {
+      setName(server.name || '');
       setKey(server.key);
       setDescription(server.description || '');
       setCommand([server.command, ...server.args].join(' '));
       setEnv(server.env || {});
-    } else {
+    }
+
+    return () => {
+      setName('');
       setKey('');
       setDescription('');
       setCommand('');
+      setEnvName('');
+      setEnvValue('');
       setEnv({});
-    }
+    };
   }, [open, server]);
 
   return (
@@ -163,32 +169,49 @@ export default function ToolEditDialog(options: {
               {server ? t('Tools.Edit') : t('Tools.New')}
             </DialogTitle>
             <DialogContent className="flex flex-col gap-4">
-              <div>
-                <Field
-                  label={t('Tools.Key')}
-                  validationState={keyValidationState}
-                  validationMessage={
-                    server ? t('Tools.KeyCannotUpdate') : t('Tools.KeyHint')
-                  }
-                >
-                  <Input
-                    disabled={!!server}
-                    className="w-full min-w-fit"
-                    placeholder={t('Common.Required')}
-                    value={key}
-                    onChange={(
-                      _: ChangeEvent<HTMLInputElement>,
-                      data: InputOnChangeData,
-                    ) => {
-                      setKey(data.value);
-                      if (!data.value || isValidMCPServerKey(data.value)) {
-                        setKeyValidationState('none');
-                      } else {
-                        setKeyValidationState('error');
-                      }
-                    }}
-                  />
-                </Field>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Field
+                    label={t('Tools.Key')}
+                    validationState={keyValidationState}
+                    validationMessage={
+                      server ? t('Tools.KeyCannotUpdate') : t('Tools.KeyHint')
+                    }
+                  >
+                    <Input
+                      disabled={!!server}
+                      className="w-full min-w-fit"
+                      placeholder={t('Common.Required')}
+                      value={key}
+                      onChange={(
+                        _: ChangeEvent<HTMLInputElement>,
+                        data: InputOnChangeData,
+                      ) => {
+                        setKey(data.value);
+                        if (!data.value || isValidMCPServerKey(data.value)) {
+                          setKeyValidationState('none');
+                        } else {
+                          setKeyValidationState('error');
+                        }
+                      }}
+                    />
+                  </Field>
+                </div>
+                <div>
+                  <Field label={t('Tools.Name')}>
+                    <Input
+                      className="w-full min-w-fit"
+                      placeholder={t('Common.Optional')}
+                      value={name}
+                      onChange={(
+                        _: ChangeEvent<HTMLInputElement>,
+                        data: InputOnChangeData,
+                      ) => {
+                        setName(data.value);
+                      }}
+                    />
+                  </Field>
+                </div>
               </div>
               <div>
                 <Field label={t('Common.Description')}>
@@ -307,7 +330,7 @@ export default function ToolEditDialog(options: {
                   <div
                     className="border rounded border-base"
                     dangerouslySetInnerHTML={{
-                      __html: render(`\`\`\`json\n${preview}\n\`\`\``),
+                      __html: render(`\`\`\`json\n${JSON.stringify(config, null, 2)}\n\`\`\``),
                     }}
                   />
                 </Field>
