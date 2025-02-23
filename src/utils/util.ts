@@ -216,19 +216,19 @@ export function raiseError(status: number, response: any, message?: string) {
    * }
    */
   const resp = Array.isArray(response) ? response[0] : response;
-  const msg = resp?.error?.message || message;
+  const msg = resp?.error?.message || resp?.error || message;
   switch (status) {
     case 400:
       throw new Error(msg || 'Bad request');
     case 401:
       throw new Error(
         msg ||
-        'Invalid authentication, please ensure the API key used is correct',
+          'Invalid authentication, please ensure the API key used is correct',
       );
     case 403:
       throw new Error(
         msg ||
-        'Permission denied, please confirm your authority before try again.',
+          'Permission denied, please confirm your authority before try again.',
       );
     case 404:
       new Error(msg || 'Not found');
@@ -237,7 +237,7 @@ export function raiseError(status: number, response: any, message?: string) {
     case 429:
       new Error(
         msg ||
-        'Rate limit reached for requests, or you exceeded your current quota.',
+          'Rate limit reached for requests, or you exceeded your current quota.',
       );
     case 500:
       throw new Error(
