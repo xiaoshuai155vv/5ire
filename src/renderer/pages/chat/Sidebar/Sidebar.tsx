@@ -49,7 +49,7 @@ export default function Sidebar({ chatId }: { chatId: string }) {
         <Accordion multiple collapsible>
           {trace?.map((item: ITraceMessage, idx: number) => {
             return item.message === '' ? (
-              <div className="pl-4 mt-2">
+              <div className="pl-4 mt-2" key={`${chatId}-trace-${idx}`}>
                 <span className="-ml-1 inline-block pt-0 py-0.5 rounded truncate text-ellipsis overflow-hidden w-52 font-bold text-gray-400 dark:text-gray-400">
                   <PlayCircleHint16Regular />
                   &nbsp;{item.label}
