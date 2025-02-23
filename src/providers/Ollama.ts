@@ -7,7 +7,7 @@ export default {
     apiBaseCustomizable: true,
   },
   chat: {
-    apiSchema: ['base', 'model'],
+    apiSchema: ['base', 'model', 'toolEnabled'],
     docs: {
       temperature:
         'Higher values will make the output more creative and unpredictable, while lower values will make it more precise.',

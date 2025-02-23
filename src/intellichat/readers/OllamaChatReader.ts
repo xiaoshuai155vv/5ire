@@ -19,7 +19,7 @@ export default class OllamaReader extends OpenAIReader implements IChatReader {
     return {
       content: data.message.content,
       isEnd: false,
-      toolCalls: data.tool_calls,
+      toolCalls: data.message.tool_calls,
     };
   }
 }

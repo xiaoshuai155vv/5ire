@@ -64,6 +64,9 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
       const deploymentId = isNil(api.deploymentId)
         ? state.api.deploymentId
         : api.deploymentId;
+      const toolEnabled = isNil(api.toolEnabled)
+        ? state.api.toolEnabled
+        : api.toolEnabled;
       const newAPI = {
         provider,
         base,
@@ -71,12 +74,13 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
         secret,
         deploymentId,
         model,
+        toolEnabled,
       } as IAPISettings;
       const { apiSchema } = getProvider(provider).chat;
       window.electron.store.set('settings.api.activeProvider', provider);
       window.electron.store.set(
         `settings.api.providers.${provider}`,
-        pick(newAPI, [...apiSchema, 'provider'])
+        pick(newAPI, [...apiSchema, 'provider']),
       );
       return { api: newAPI };
     });

@@ -22,7 +22,8 @@ const debug = Debug('5ire:intellichat:OpenAIChatService');
 
 export default class OpenAIChatService
   extends NextChatService
-  implements INextChatService {
+  implements INextChatService
+{
   constructor(context: IChatContext) {
     super({
       context,
@@ -54,7 +55,6 @@ export default class OpenAIChatService
             text: item.data,
           });
         } else {
-          console.error('Unknown message type', item);
           throw new Error('Unknown message type');
         }
       });
@@ -165,14 +165,14 @@ export default class OpenAIChatService
   protected async makePayload(
     message: IChatRequestMessage[],
   ): Promise<IChatRequestPayload> {
-    const model = this.context.getModel();
+    const modelName = this.getModelName();
     const payload: IChatRequestPayload = {
-      model: this.getModelName(),
+      model: modelName,
       messages: await this.makeMessages(message),
       temperature: this.context.getTemperature(),
       stream: true,
     };
-    if (model.toolEnabled) {
+    if (this.context.isToolEnabled()) {
       const tools = await window.electron.mcp.listTools();
       if (tools) {
         const _tools = tools
@@ -190,7 +190,7 @@ export default class OpenAIChatService
       /**
        * max_tokens is deprecated, use max_completion_tokens instead for new models
        */
-      if (model.name.startsWith('o1') || model.name.startsWith('o3')) {
+      if (modelName.startsWith('o1') || modelName.startsWith('o3')) {
         payload.max_completion_tokens = this.context.getMaxTokens();
         payload.temperature = 1; // o1 and o3 models require temperature to be 1
       } else {

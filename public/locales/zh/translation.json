@@ -250,5 +250,7 @@
   "Tools.InstallConfirmation": "确认安装？",
   "Reasoning.Thinking": "思考中",
   "Reasoning.Thought": "思考过程",
-  "Tools.Name": "名称"
+  "Tools.Name": "名称",
+  "Common.SupportTools": "是否支持工具",
+  "Common.SupportToolsTip": "请确认模型是否支持工具，若不清楚请查询：https://ollama.com/search?c=tools"
 }

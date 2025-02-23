@@ -144,12 +144,12 @@ export default abstract class BaseReader implements IChatReader {
       this.incompleteChunks = [];
       return {
         combinedChunk: combined,
-        isComplete: true
+        isComplete: true,
       };
     } catch (e) {
       return {
         combinedChunk: combined,
-        isComplete: false
+        isComplete: false,
       };
     }
   }
@@ -178,7 +178,9 @@ export default abstract class BaseReader implements IChatReader {
 
       // Finalize tool arguments if a tool was being processed
       if (state.currentTool) {
-        state.currentTool.args = this.finalizeToolArguments(state.toolArguments);
+        state.currentTool.args = this.finalizeToolArguments(
+          state.toolArguments,
+        );
       }
       return {
         content: state.content,
@@ -211,7 +213,7 @@ export default abstract class BaseReader implements IChatReader {
     callbacks: {
       onProgress: (chunk: string) => void;
       onToolCalls: (toolCalls: any) => void;
-    }
+    },
   ): Promise<void> {
     let isStreamDone = false;
 
@@ -252,16 +254,16 @@ export default abstract class BaseReader implements IChatReader {
   private splitIntoLines(value: string): string[] {
     return value
       .split('\n')
-      .filter(line => !line.includes('event:'))
-      .map(line => line.trim())
-      .filter(line => line !== '');
+      .filter((line) => !line.includes('event:'))
+      .map((line) => line.trim())
+      .filter((line) => line !== '');
   }
 
   private extractDataChunks(line: string): string[] {
     return line
       .split('data:')
-      .filter(chunk => chunk !== '')
-      .map(chunk => chunk.trim());
+      .filter((chunk) => chunk !== '')
+      .map((chunk) => chunk.trim());
   }
 
   private async processResponse(
@@ -277,7 +279,7 @@ export default abstract class BaseReader implements IChatReader {
     callbacks: {
       onProgress: (chunk: string) => void;
       onToolCalls: (toolCalls: any) => void;
-    }
+    },
   ): Promise<void> {
     if (response.content === null && !response.toolCalls) return;
 
@@ -306,21 +308,26 @@ export default abstract class BaseReader implements IChatReader {
     state: {
       toolArguments: string[];
       messageIndex: number;
-    }
+    },
   ): void {
     const argument = this.parseToolArgs(response);
     if (argument) {
-      if (state.messageIndex >= 0 && !state.toolArguments[argument.index]) {
-        state.toolArguments[argument.index] = '';
+      const { index } = argument;
+      const arg =
+        typeof argument.args === 'string'
+          ? argument.args
+          : JSON.stringify(argument.args);
+      if (!state.toolArguments[index]) {
+        state.toolArguments[index] = '';
       }
-      state.toolArguments[argument.index] += argument.args;
+      state.toolArguments[index] += arg;
     }
   }
 
   private processContentResponse(
     response: IChatResponseMessage,
     state: { content: string },
-    callbacks: { onProgress: (chunk: string) => void }
+    callbacks: { onProgress: (chunk: string) => void },
   ): void {
     state.content += response.content;
     callbacks.onProgress(response.content || '');
@@ -328,7 +335,7 @@ export default abstract class BaseReader implements IChatReader {
 
   private updateTokenCounts(
     response: IChatResponseMessage,
-    state: { inputTokens: number; outputTokens: number }
+    state: { inputTokens: number; outputTokens: number },
   ): void {
     if (response.outputTokens) {
       state.outputTokens += response.outputTokens;
@@ -339,7 +346,7 @@ export default abstract class BaseReader implements IChatReader {
   }
 
   private finalizeToolArguments(toolArguments: string[]): any {
-    const parsedArgs = toolArguments.map(arg => JSON.parse(arg));
+    const parsedArgs = toolArguments.map((arg) => JSON.parse(arg));
     return merge({}, ...parsedArgs);
   }
 }

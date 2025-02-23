@@ -159,6 +159,7 @@ export interface IChatContext {
   getChatContext: () => string;
   getCtxMessages: () => IChatMessage[];
   isStream: () => boolean;
+  isToolEnabled: () => boolean;
 }
 
 export interface IChat {

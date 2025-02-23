@@ -7,6 +7,7 @@ import {
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
 import OllamaReader from 'intellichat/readers/OllamaChatReader';
+import { ITool } from 'intellichat/readers/IChatReader';
 
 const debug = Debug('5ire:intellichat:OllamaChatService');
 export default class OllamaChatService
@@ -19,6 +20,34 @@ export default class OllamaChatService
 
   protected getReaderType() {
     return OllamaReader;
+  }
+
+  protected makeToolMessages(
+    tool: ITool,
+    toolResult: any,
+  ): IChatRequestMessage[] {
+    return [
+      {
+        role: 'assistant',
+        tool_calls: [
+          {
+            id: tool.id,
+            type: 'function',
+            function: {
+              arguments: tool.args, // unlike openai, ollama tool args is not a string
+              name: tool.name,
+            },
+          },
+        ],
+      },
+      {
+        role: 'tool',
+        name: tool.name,
+        content:
+          typeof toolResult === 'string' ? toolResult : toolResult.content,
+        tool_call_id: tool.id,
+      },
+    ];
   }
 
   protected async makeRequest(

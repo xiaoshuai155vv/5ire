@@ -11,6 +11,7 @@ export interface IAPISettings {
   secret?: string;
   deploymentId?: string;
   endpoint?: string;
+  toolEnabled?: boolean;
 }
 
 export interface ISettings {

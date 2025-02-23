@@ -254,5 +254,7 @@
   "Tools.InstallConfirmation": "Confirm installation of this tool?",
   "Reasoning.Thinking": "Thinking",
   "Reasoning.Thought": "Thought",
-  "Tools.Name": "Name"
+  "Tools.Name": "Name",
+  "Common.SupportTools": "Support tools",
+  "Common.SupportToolsTip": "Check if your model supports tools. Unsure? Visit  https://ollama.com/search?c=tools"
 }

@@ -5,10 +5,13 @@ import {
   Option,
   Button,
   Tooltip,
+  Switch,
+  SwitchOnChangeData,
+  Field,
 } from '@fluentui/react-components';
 import { useTranslation } from 'react-i18next';
 import useSettingsStore from '../../../stores/useSettingsStore';
-import { useEffect, useMemo } from 'react';
+import { ChangeEvent, useEffect, useMemo } from 'react';
 import { IChatModel, IServiceProvider } from '../../../providers/types';
 import useProvider from 'hooks/useProvider';
 import { Info16Regular } from '@fluentui/react-icons';
@@ -23,6 +26,7 @@ export default function ModelField({
 }) {
   const { t } = useTranslation();
   const model = useSettingsStore((state) => state.api.model);
+  const toolEnabled = useSettingsStore((state) => state.api.toolEnabled);
   const baseUrl = useSettingsStore((state) => state.api.base);
   const { getChatModels } = useProvider();
   const setAPI = useSettingsStore((state) => state.setAPI);
@@ -48,13 +52,19 @@ export default function ModelField({
     setAPI({ model });
   };
 
+  const setToolEnabled = (
+    _: ChangeEvent<HTMLInputElement>,
+    data: SwitchOnChangeData,
+  ) => {
+    setAPI({ toolEnabled: data.checked });
+  };
+
   return (
     <div className="my-3.5">
       <div className="flex justify-start items-center mb-1.5">
         <Label htmlFor="model">{t('Common.Model')}</Label>
         <TooltipIcon tip={t(provider.chat.docs?.model || '')} />
       </div>
-      {}
       <div>
         {models.length > 0 ? (
           models.length === 1 ? (
@@ -129,6 +139,17 @@ export default function ModelField({
           </div>
         )}
       </div>
+      {provider.name === 'Ollama' && (
+        <div className="my-3.5">
+          <div className="flex justify-start items-center mb-1.5">
+            <Label>{t('Common.SupportTools')}</Label>
+            <TooltipIcon tip={t('Common.SupportToolsTip')} />
+          </div>
+          <div className="flex justify-start items-center gap-1 -mt-1">
+            <Switch checked={toolEnabled || false} onChange={setToolEnabled} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -32,7 +32,7 @@ export default class AnthropicChatService
 
   protected makeToolMessages(
     tool: ITool,
-    toolResult: any
+    toolResult: any,
   ): IChatRequestMessage[] {
     return [
       {
@@ -78,7 +78,7 @@ export default class AnthropicChatService
   }
 
   protected async convertPromptContent(
-    content: string
+    content: string,
   ): Promise<string | IChatRequestMessageContent[]> {
     if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content);
@@ -115,7 +115,7 @@ export default class AnthropicChatService
   }
 
   protected async makeMessages(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<IChatRequestMessage[]> {
     const result = [];
     this.context.getCtxMessages().forEach((msg: IChatMessage) => {
@@ -156,9 +156,8 @@ export default class AnthropicChatService
   }
 
   protected async makePayload(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<IChatRequestPayload> {
-    const model = this.context.getModel();
     const payload: IChatRequestPayload = {
       model: this.getModelName(),
       messages: await this.makeMessages(messages),
@@ -172,7 +171,7 @@ export default class AnthropicChatService
     if (this.context.getMaxTokens()) {
       payload.max_tokens = this.context.getMaxTokens();
     }
-    if (model.toolEnabled) {
+    if (this.context.isToolEnabled()) {
       const tools = await window.electron.mcp.listTools();
       if (tools) {
         const _tools = tools
@@ -196,7 +195,7 @@ export default class AnthropicChatService
   }
 
   protected async makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response> {
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);

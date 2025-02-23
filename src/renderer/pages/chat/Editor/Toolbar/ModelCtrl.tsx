@@ -51,10 +51,10 @@ export default function ModelCtrl({
 
   const onModelChange = (
     _: MenuCheckedValueChangeEvent,
-    data: MenuCheckedValueChangeData
+    data: MenuCheckedValueChangeData,
   ) => {
     const $model = data.checkedItems[0];
-    editStage(chat.id, { model: $model })
+    editStage(chat.id, { model: $model });
     window.electron.ingestEvent([{ app: 'switch-model' }, { model: $model }]);
     closeDialog();
   };
@@ -65,17 +65,17 @@ export default function ModelCtrl({
     } else {
       openDialog();
     }
-  }
+  };
 
   const openDialog = () => {
     setOpen(true);
-    Mousetrap.bind('esc',closeDialog);
-  }
+    Mousetrap.bind('esc', closeDialog);
+  };
 
   const closeDialog = () => {
     setOpen(false);
     Mousetrap.unbind('esc');
-  }
+  };
 
   useEffect(() => {
     if (models.length > 0) {
@@ -102,12 +102,12 @@ export default function ModelCtrl({
           icon={<ChevronDown16Regular />}
           title="Mod+Shift+1"
           onClick={toggleDialog}
-          style={{borderColor: 'transparent', boxShadow: 'none',padding: 1}}
+          style={{ borderColor: 'transparent', boxShadow: 'none', padding: 1 }}
           className="text-color-secondary flex justify-start items-center"
         >
           <div className="flex flex-row justify-start items-center mr-1">
             <ToolStatusIndicator
-              enabled={activeModel.toolEnabled}
+              enabled={ctx.isToolEnabled()}
               withTooltip={true}
             />
           </div>
@@ -156,7 +156,7 @@ export default function ModelCtrl({
     <Text size={200}>
       <span className="flex justify-start items-center gap-1">
         <div>
-          <ToolStatusIndicator enabled={activeModel.toolEnabled} />
+          <ToolStatusIndicator enabled={ctx.isToolEnabled()} />
         </div>
         <span className="latin">
           {api.provider} / {activeModel.label}
