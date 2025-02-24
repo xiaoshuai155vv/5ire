@@ -3,7 +3,7 @@
  */
 
 import { flatten, isUndefined } from "lodash";
-import { IMCPArgParameter, IMCPArgType, IMCPEnvParameter, IMCPEnvType, IMCPServerParameter } from "types/mcp";
+import { MCPArgParameter, MCPArgType, MCPEnvParameter, MCPEnvType, IMCPServerParameter } from "types/mcp";
 
 export function getParameters(parmas: string[]): IMCPServerParameter[] {
   const result:IMCPServerParameter[] = []
@@ -16,7 +16,7 @@ export function getParameters(parmas: string[]): IMCPServerParameter[] {
     if (match && match.groups) {
       result.push({
             name: match.groups.name,
-            type: match.groups.type as IMCPEnvType|IMCPArgType,
+            type: match.groups.type as MCPEnvType|MCPArgType,
             description: match.groups.description||'',
         }) ;
   }});
@@ -25,7 +25,7 @@ export function getParameters(parmas: string[]): IMCPServerParameter[] {
 
 export function fillArgs(
   args: string[],
-  params: IMCPArgParameter
+  params: MCPArgParameter
 ): string[] {
   const pattern = /\{\{(?<name>[^@]+)@(?<type>[^:]+)(::(?<description>[^}]*)?)?\}\}/;
   let _args:(string|string[])[] = [...args];

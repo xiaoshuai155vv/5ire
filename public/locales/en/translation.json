@@ -256,5 +256,6 @@
   "Reasoning.Thought": "Thought",
   "Tools.Name": "Name",
   "Common.SupportTools": "Support tools",
-  "Common.SupportToolsTip": "Check if your model supports tools. Unsure? Visit  https://ollama.com/search?c=tools"
+  "Common.SupportToolsTip": "Check if your model supports tools. Unsure? Visit  https://ollama.com/search?c=tools",
+  "Common.Validation.MustBeNumber": "Must be a number"
 }
