@@ -13,7 +13,7 @@ import {
 import Mousetrap from 'mousetrap';
 import { useTranslation } from 'react-i18next';
 import { AddRegular, Dismiss24Regular } from '@fluentui/react-icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useMCPServerMarketStore from 'stores/useMCPServerMarketStore';
 import Spinner from 'renderer/components/Spinner';
 import { IMCPServer } from 'types/mcp';
@@ -37,14 +37,13 @@ export default function ToolMarketDrawer({
   const { config } = useMCPStore();
   const [filter, setFilter] = useState<string[]>([]);
 
-  const debouncedSearch = useCallback(
+  const debouncedSearch = useRef(
     debounce((_: SearchBoxChangeEvent, data: InputOnChangeData) => {
       const value = data.value || '';
       const terms = value.split(/\s+/g).filter(Boolean);
       setFilter(terms);
     }, 500),
-    [],
-  );
+  ).current;
 
   const servers = useMemo(() => {
     let filteredServers = allServers;
@@ -91,7 +90,7 @@ export default function ToolMarketDrawer({
 
   return (
     <Drawer open={open} position="end" separator size="medium">
-      <DrawerHeader>
+      <DrawerHeader className="border-none">
         <DrawerHeaderTitle
           action={
             <Button
@@ -131,7 +130,7 @@ export default function ToolMarketDrawer({
             <List navigationMode="items">
               {servers.map((server) => (
                 <ListItem key={server.key}>
-                  <div className="p-2 my-1 w-full rounded bg-gray-50 dark:bg-neutral-900">
+                  <div className="p-2 my-1 w-full rounded bg-gray-50 dark:bg-stone-800">
                     <div className="flex justify-between items-center">
                       <div
                         className="text-lg font-bold"

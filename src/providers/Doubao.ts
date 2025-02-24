@@ -16,16 +16,30 @@ export default {
       presencePenalty:
         "Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.",
       topP: 'An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with topP probability mass.',
-      model: '用于统计用量和控制上下文长度，请选择与部署一致的模型'
+      model: '用于统计用量和控制上下文长度，请选择与部署一致的模型',
     },
     apiSchema: ['base', 'key', 'model', 'deploymentId'],
     frequencyPenalty: { min: -2, max: 2, default: 0 },
     topP: { min: 0, max: 1, default: 0.7 },
-    temperature: { min: 0, max: 1, default: 1},
+    temperature: { min: 0, max: 1, default: 1 },
     options: {
       modelCustomizable: true,
     },
     models: {
+      'doubao-vision-pro-32k': {
+        name: 'doubao-vision-pro-32k',
+        contextWindow: 32000,
+        maxTokens: 4096,
+        defaultMaxTokens: 2048,
+        inputPrice: 0.0008,
+        outputPrice: 0.002,
+        vision: {
+          enabled: true,
+          allowBase64: true,
+          allowUrl: true,
+        },
+        group: 'Doubao-Pro',
+      },
       'doubao-pro-256k': {
         name: 'doubao-pro-256k',
         contextWindow: 256000,
@@ -59,7 +73,7 @@ export default {
       },
       'doubao-pro-4k': {
         name: 'doubao-pro-4k',
-        contextWindow:  4000,
+        contextWindow: 4000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
         inputPrice: 0.0008,
@@ -69,17 +83,17 @@ export default {
       },
       'doubao-lite-128k': {
         name: 'doubao-lite-128k',
-        contextWindow:  128000,
+        contextWindow: 128000,
         defaultMaxTokens: 2048,
         maxTokens: 4096,
         inputPrice: 0.0008,
-        outputPrice: 0.0010,
+        outputPrice: 0.001,
         toolEnabled: true,
         group: 'Doubao-Lite',
       },
       'doubao-lite-32k': {
         name: 'doubao-pro-4k',
-        contextWindow:  32000,
+        contextWindow: 32000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
         inputPrice: 0.0003,
@@ -89,7 +103,7 @@ export default {
       },
       'doubao-lite-4k': {
         name: 'doubao-pro-4k',
-        contextWindow:  4000,
+        contextWindow: 4000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
         inputPrice: 0.0003,
