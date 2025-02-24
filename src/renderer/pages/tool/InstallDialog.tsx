@@ -71,7 +71,7 @@ export default function ToolInstallDialog(options: {
         const paramValue = paramVals[param.name];
         let isValid = true;
         if (param.type === 'number') {
-          if (!isNumeric(paramValue)) {
+          if (!isNumeric(paramValue as string)) {
             setErrorMessages((state) => ({
               ...state,
               [param.name]: t('Common.Validation.MustBeNumber'),
