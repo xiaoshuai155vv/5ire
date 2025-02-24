@@ -5,17 +5,21 @@ import INextChatService from './INextCharService';
 
 export default class DeepSeekChatService
   extends OpenAIChatService
-  implements INextChatService {
+  implements INextChatService
+{
   constructor(chatContext: IChatContext) {
     super(chatContext);
     this.provider = DeepSeek;
   }
 
   protected async makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response> {
     const { base, key } = this.apiSettings;
-    const url = new URL('/chat/completions', base);
+    const url = new URL(
+      'chat/completions',
+      base.endsWith('/') ? base : `${base}/`,
+    );
     const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {
