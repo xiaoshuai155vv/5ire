@@ -18,8 +18,8 @@ import * as mcpUtils from 'utils/mcp';
 import { captureException } from '../../logging';
 import { IMCPServer, IMCPServerParameter, MCPArgParameter } from 'types/mcp';
 import ListInput from 'renderer/components/ListInput';
-import { isNumber } from 'lodash';
 import useMCPStore from 'stores/useMCPStore';
+import { isNumeric } from 'utils/validators';
 
 export default function ToolInstallDialog(options: {
   server: IMCPServer;
@@ -71,7 +71,7 @@ export default function ToolInstallDialog(options: {
         const paramValue = paramVals[param.name];
         let isValid = true;
         if (param.type === 'number') {
-          if (!isNumber(paramValue)) {
+          if (!isNumeric(paramValue)) {
             setErrorMessages((state) => ({
               ...state,
               [param.name]: t('Common.Validation.MustBeNumber'),

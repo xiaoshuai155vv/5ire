@@ -1,7 +1,10 @@
-import { isNull, isNumber } from 'lodash';
-
 export function isNotBlank(str: string | undefined | null): str is string {
   return !!(str && str.trim() !== '');
+}
+
+export function isNumeric(str: string) {
+  if (typeof str != 'string') return false; // we only process strings!
+  return !isNaN(Number(str)) && !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
 }
 
 export function isBlank(str: string | undefined | null): str is '' {
