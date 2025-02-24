@@ -11,7 +11,12 @@ import {
   isUndefined,
   pick,
 } from 'lodash';
-import { DEFAULT_MAX_TOKENS, MAX_CTX_MESSAGES, NUM_CTX_MESSAGES, tempChatId } from 'consts';
+import {
+  DEFAULT_MAX_TOKENS,
+  MAX_CTX_MESSAGES,
+  NUM_CTX_MESSAGES,
+  tempChatId,
+} from 'consts';
 import { captureException } from '../renderer/logging';
 import { date2unix } from 'utils/util';
 import { isBlank, isNotBlank } from 'utils/validators';
@@ -475,13 +480,16 @@ const useChatStore = create<IChatStore>((set, get) => ({
     return false;
   },
   bookmarkMessage: (id: string, bookmarkId: string | null) => {
-    const $messages = get().messages.map((msg) => {
-      if (msg.id === id) {
-        msg.bookmarkId = bookmarkId;
-      }
-      return msg;
-    });
-    set({ messages: [...$messages] });
+    set(
+      produce((state: IChatStore) => {
+        state.messages = state.messages.map((msg) => {
+          if (msg.id === id) {
+            msg.bookmarkId = bookmarkId;
+          }
+          return msg;
+        });
+      }),
+    );
   },
   deleteMessage: async (id: string) => {
     const ok = await window.electron.db.run(
