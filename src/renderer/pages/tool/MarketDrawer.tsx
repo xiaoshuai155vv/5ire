@@ -12,8 +12,8 @@ import {
 } from '@fluentui/react-components';
 import Mousetrap from 'mousetrap';
 import { useTranslation } from 'react-i18next';
-import { Dismiss24Regular } from '@fluentui/react-icons';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AddRegular, Dismiss24Regular } from '@fluentui/react-icons';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useMCPServerMarketStore from 'stores/useMCPServerMarketStore';
 import Spinner from 'renderer/components/Spinner';
 import { IMCPServer } from 'types/mcp';
@@ -102,7 +102,20 @@ export default function ToolMarketDrawer({
             />
           }
         >
-          <SearchBox onChange={debouncedSearch} />
+          <div className="flex justify-start gap-2">
+            <Button
+              appearance="primary"
+              icon={<AddRegular />}
+              onClick={() =>
+                window.electron.openExternal(
+                  'https://github.com/nanbingxyz/mcpsvr',
+                )
+              }
+            >
+              {t('Common.Submit')}
+            </Button>
+            <SearchBox onChange={debouncedSearch} />
+          </div>
         </DrawerHeaderTitle>
       </DrawerHeader>
       <DrawerBody>
