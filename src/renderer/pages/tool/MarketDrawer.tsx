@@ -90,7 +90,7 @@ export default function ToolMarketDrawer({
 
   return (
     <Drawer open={open} position="end" separator size="medium">
-      <DrawerHeader>
+      <DrawerHeader className="border-none">
         <DrawerHeaderTitle
           action={
             <Button
