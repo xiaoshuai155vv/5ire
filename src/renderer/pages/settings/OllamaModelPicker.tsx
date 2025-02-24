@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import {  useEffect } from 'react';
+import { useEffect } from 'react';
 import React from 'react';
 import { isValidHttpHRL } from 'utils/validators';
 import {
@@ -40,37 +40,46 @@ export default function OllamaModelPicker(args: {
         },
       ]);
       const url = new URL('/api/tags', baseUrl);
-      fetch(url.toString()).then((res) => {
-        if (res.ok) {
-          res
-            .json()
-            .then((data) => {
-              setItems(
-                data.models.map((model: any) => {
-                  return {
-                    name: model.name,
-                    isEnabled: model.name.indexOf('embed') < 0, // filter out embedding models
-                  };
-                }),
-              );
-            })
-            .catch(() => {
-              setItems([
-                {
-                  name: t('Common.Error.FetchFailed'),
-                  isEnabled: false,
-                },
-              ]);
-            });
-        } else {
+      fetch(url.toString())
+        .then((res) => {
+          if (res.ok) {
+            res
+              .json()
+              .then((data) => {
+                setItems(
+                  data.models.map((model: any) => {
+                    return {
+                      name: model.name,
+                      isEnabled: model.name.indexOf('embed') < 0, // filter out embedding models
+                    };
+                  }),
+                );
+              })
+              .catch(() => {
+                setItems([
+                  {
+                    name: t('Common.Error.FetchFailed'),
+                    isEnabled: false,
+                  },
+                ]);
+              });
+          } else {
+            setItems([
+              {
+                name: t('Common.Error.FetchFailed'),
+                isEnabled: false,
+              },
+            ]);
+          }
+        })
+        .catch(() => {
           setItems([
             {
               name: t('Common.Error.FetchFailed'),
               isEnabled: false,
             },
           ]);
-        }
-      });
+        });
     }
   }, [baseUrl]);
 
