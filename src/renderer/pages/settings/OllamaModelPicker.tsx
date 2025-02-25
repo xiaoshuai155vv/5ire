@@ -83,7 +83,7 @@ export default function OllamaModelPicker({
         });
     }
     return () => setItems([]);
-  }, [provider,baseUrl]);
+  }, [baseUrl]);
 
   return (
     <Menu>
