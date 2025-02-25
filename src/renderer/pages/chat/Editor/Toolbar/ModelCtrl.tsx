@@ -20,6 +20,7 @@ import { IChatModel, ProviderType } from 'providers/types';
 import useProvider from 'hooks/useProvider';
 import useAuthStore from 'stores/useAuthStore';
 import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
+import { isUndefined } from 'lodash';
 
 export default function ModelCtrl({
   ctx,
@@ -32,6 +33,7 @@ export default function ModelCtrl({
   const [open, setOpen] = useState(false);
   const api = useSettingsStore((state) => state.api);
   const modelMapping = useSettingsStore((state) => state.modelMapping);
+  const { getToolState } = useSettingsStore();
   const session = useAuthStore((state) => state.session);
   const { getProvider, getChatModels } = useProvider();
   const [providerName, setProviderName] = useState<ProviderType>(api.provider);
@@ -132,23 +134,29 @@ export default function ModelCtrl({
       </MenuTrigger>
       <MenuPopover>
         <MenuList>
-          {models.map((item) => (
-            <MenuItemRadio
-              name="model"
-              value={item.label as string}
-              key={item.label}
-            >
-              <div className="flex justify-start items-baseline gap-1">
-                <ToolStatusIndicator enabled={item.toolEnabled} />
-                <span className="latin">{item.label}</span>
-                {modelMapping[item.label || ''] && (
-                  <span className="text-gray-300 dark:text-gray-600 -ml-1">
-                    ‣{modelMapping[item.label || '']}
-                  </span>
-                )}
-              </div>
-            </MenuItemRadio>
-          ))}
+          {models.map((item) => {
+            let toolEnabled = getToolState(providerName, item.name);
+            if (isUndefined(toolEnabled)) {
+              toolEnabled = item.toolEnabled;
+            }
+            return (
+              <MenuItemRadio
+                name="model"
+                value={item.label as string}
+                key={item.label}
+              >
+                <div className="flex justify-start items-baseline gap-1">
+                  <ToolStatusIndicator enabled={toolEnabled} />
+                  <span className="latin">{item.label}</span>
+                  {modelMapping[item.label || ''] && (
+                    <span className="text-gray-300 dark:text-gray-600 -ml-1">
+                      ‣{modelMapping[item.label || '']}
+                    </span>
+                  )}
+                </div>
+              </MenuItemRadio>
+            );
+          })}
         </MenuList>
       </MenuPopover>
     </Menu>

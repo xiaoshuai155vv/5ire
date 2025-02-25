@@ -256,7 +256,7 @@
   "Reasoning.Thought": "Thought",
   "Tools.Name": "Name",
   "Common.SupportTools": "Support tools",
-  "Common.SupportToolsTip": "Check if your model supports tools. Unsure? Visit  https://ollama.com/search?c=tools",
+  "Common.SupportToolsTip": "You can override the model's original tool capabilities.",
   "Common.Validation.MustBeNumber": "Must be a number",
   "Bookmarks.Notification.Removed": "Removed from your Bookmarks",
   "Bookmarks.Notification.Added": "Added to your Favorites",

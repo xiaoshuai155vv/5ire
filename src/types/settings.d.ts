@@ -11,7 +11,6 @@ export interface IAPISettings {
   secret?: string;
   deploymentId?: string;
   endpoint?: string;
-  toolEnabled?: boolean;
 }
 
 export interface ISettings {
@@ -25,8 +24,13 @@ export interface ISettings {
     };
   };
   modelMapping: IModelMapping;
+  toolStates: IToolStates;
 }
 
 export interface IModelMapping {
   [key: string]: string;
+}
+
+export interface IToolStates {
+  [key: string]: boolean;
 }

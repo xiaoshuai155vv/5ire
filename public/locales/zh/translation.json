@@ -252,7 +252,7 @@
   "Reasoning.Thought": "思考过程",
   "Tools.Name": "名称",
   "Common.SupportTools": "是否支持工具",
-  "Common.SupportToolsTip": "请确认模型是否支持工具，若不清楚请查询：https://ollama.com/search?c=tools",
+  "Common.SupportToolsTip": "覆盖模型原本的工具支持功能",
   "Common.Validation.MustBeNumber": "必须位数字",
   "Bookmarks.Notification.Removed": "已从书签中移除",
   "Bookmarks.Notification.Added": "已添加至书签",

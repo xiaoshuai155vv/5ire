@@ -1,8 +1,8 @@
-import { IModelMapping } from './../types/settings.d';
+import { IModelMapping, IToolStates } from './../types/settings.d';
 /* eslint-disable no-console */
 import Debug from 'debug';
 import { create } from 'zustand';
-import { isNil, pick } from 'lodash';
+import { isNil, pick, set } from 'lodash';
 
 import { FontSize, ThemeType } from '../types/appearance';
 import { LanguageType } from '../types/settings';
@@ -23,6 +23,7 @@ const defaultAPI: IAPISettings = {
 };
 
 const defaultModelMapping: IModelMapping = {};
+const defaultToolStates: IToolStates = {};
 
 export interface ISettingStore {
   theme: ThemeType;
@@ -30,9 +31,19 @@ export interface ISettingStore {
   fontSize: FontSize;
   api: IAPISettings;
   modelMapping: IModelMapping;
+  toolStates: IToolStates;
   setTheme: (theme: ThemeType) => void;
   setAPI: (api: Partial<IAPISettings>) => void;
   setModelMapping: (modelMapping: IModelMapping) => void;
+  setToolState: (
+    providerName: string,
+    modelName: string,
+    state: boolean,
+  ) => void;
+  getToolState: (
+    providerName: string,
+    modelName: string,
+  ) => boolean | undefined;
   setLanguage: (language: LanguageType) => void;
   setFontSize: (fontSize: FontSize) => void;
 }
@@ -49,6 +60,7 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
   language: settings?.language || defaultLanguage,
   fontSize: settings?.fontSize || defaultFontSize,
   modelMapping: settings.modelMapping || defaultModelMapping,
+  toolStates: settings.toolStates || defaultToolStates,
   api: apiSettings,
   setTheme: async (theme: ThemeType) => {
     set({ theme });
@@ -64,9 +76,6 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
       const deploymentId = isNil(api.deploymentId)
         ? state.api.deploymentId
         : api.deploymentId;
-      const toolEnabled = isNil(api.toolEnabled)
-        ? state.api.toolEnabled
-        : api.toolEnabled;
       const newAPI = {
         provider,
         base,
@@ -74,7 +83,6 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
         secret,
         deploymentId,
         model,
-        toolEnabled,
       } as IAPISettings;
       const { apiSchema } = getProvider(provider).chat;
       window.electron.store.set('settings.api.activeProvider', provider);
@@ -88,6 +96,17 @@ const useSettingsStore = create<ISettingStore>((set, get) => ({
   setModelMapping: (modelMapping: IModelMapping) => {
     set({ modelMapping });
     window.electron.store.set('settings.modelMapping', modelMapping);
+  },
+  setToolState(providerName: string, modelName: string, state: boolean) {
+    set((currentState) => {
+      const key = `${providerName}.${modelName}`;
+      const newToolStates = { ...currentState.toolStates, [key]: state };
+      window.electron.store.set('settings.toolStates', newToolStates);
+      return { toolStates: newToolStates };
+    });
+  },
+  getToolState(providerName: string, modelName: string) {
+    return get().toolStates[`${providerName}.${modelName}`];
   },
   setLanguage: (language: 'en' | 'zh' | 'system') => {
     set({ language });

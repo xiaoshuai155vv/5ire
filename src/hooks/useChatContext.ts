@@ -4,7 +4,7 @@ import useChatStore from 'stores/useChatStore';
 import useSettingsStore from 'stores/useSettingsStore';
 import { DEFAULT_MAX_TOKENS, NUM_CTX_MESSAGES, tempChatId } from 'consts';
 import { useMemo } from 'react';
-import { isNil, isNumber } from 'lodash';
+import { isNil, isNumber, isUndefined } from 'lodash';
 import { isValidMaxTokens, isValidTemperature } from 'intellichat/validators';
 
 import useProvider from './useProvider';
@@ -120,9 +120,13 @@ export default function useChatContext(): IChatContext {
     };
 
     const isToolEnabled = () => {
-      const { api } = useSettingsStore.getState();
+      const { getToolState } = useSettingsStore();
       const model = getModel();
-      return api.toolEnabled || model.toolEnabled;
+      let toolEnabled = getToolState(getProvider().name, model.name);
+      if (isUndefined(toolEnabled)) {
+        toolEnabled = model.toolEnabled || false;
+      }
+      return toolEnabled;
     };
 
     const getCtxMessages = () => {

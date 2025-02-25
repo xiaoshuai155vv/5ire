@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 // @ts-ignore
 import MarkdownIt from 'markdown-it';
 // @ts-ignore
-import mathjax3 from 'markdown-it-mathjax3'; // @ts-ignore
+import mathjax3 from 'markdown-it-mathjax3';
 import hljs from 'highlight.js/lib/common';
 import MarkdownItCodeCopy from '../libs/markdownit-plugins/CodeCopy';
 import useToast from './useToast';
