@@ -16,6 +16,27 @@ export default {
       modelCustomizable: true,
     },
     models: {
+      'claude-3.7-sonnet-latest': {
+        name: 'claude-3-7-sonnet-20250219',
+        contextWindow: 200000,
+        maxTokens: 8192,
+        defaultMaxTokens: 2048,
+        inputPrice: 0.003,
+        outputPrice: 0.015,
+        toolEnabled: true,
+        vision: {
+          enabled: true,
+          allowBase64: true,
+          allowedMimeTypes: [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+          ],
+        },
+        description: `Highest level of intelligence and capability with toggleable extended thinking`,
+        group: 'Claude-3.5',
+      },
       'claude-3.5-sonnet-latest': {
         name: 'claude-3-5-sonnet-20241022',
         contextWindow: 200000,
@@ -34,29 +55,7 @@ export default {
             'image/webp',
           ],
         },
-        description: `Most intelligent multilingual model, highest level of intelligence and capability`,
-        group: 'Claude-3.5',
-      },
-      'claude-3.5-sonnet': {
-        name: 'claude-3-5-sonnet-20240620',
-        contextWindow: 200000,
-        maxTokens: 8192,
-        defaultMaxTokens: 2048,
-        inputPrice: 0.003,
-        outputPrice: 0.015,
-        toolEnabled: true,
-        vision: {
-          enabled: true,
-          allowBase64: true,
-          allowedMimeTypes: [
-            'image/jpeg',
-            'image/png',
-            'image/gif',
-            'image/webp',
-          ],
-        },
-        isDefault: true,
-        description: `Most intelligent multilingual model, highest level of intelligence and capability`,
+        description: `High level of intelligence and capability`,
         group: 'Claude-3.5',
       },
       'claude-3.5-haiku': {
