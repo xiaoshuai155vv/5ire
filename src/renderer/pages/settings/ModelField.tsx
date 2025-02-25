@@ -86,7 +86,8 @@ export default function ModelField({
             models.length === 1 ? (
               <div className="flex flex-row justify-start items-center gap-1 w-full">
                 <ToolStatusIndicator
-                  enabled={models[0].toolEnabled}
+                  provider={provider.name}
+                  model={models[0].name}
                   withTooltip={true}
                 />
                 <span className="latin">{models[0].label}</span>
@@ -118,7 +119,10 @@ export default function ModelField({
                   >
                     <div className="flex justify-start items-center latin">
                       <div className="flex justify-start items-baseline gap-1">
-                        <ToolStatusIndicator enabled={model.toolEnabled} />
+                        <ToolStatusIndicator
+                          model={model.name}
+                          provider={provider.name}
+                        />
                         <span className="latin">{model.label as string}</span>
                       </div>
                       {model.description && (
@@ -165,7 +169,7 @@ export default function ModelField({
           <TooltipIcon tip={t('Common.SupportToolsTip')} />
         </div>
         <div className="flex justify-start items-center gap-1 -mb-1.5">
-          <Switch checked={toolEnabled || false} onChange={setToolSetting} />
+          <Switch checked={toolEnabled} onChange={setToolSetting} />
         </div>
       </div>
     </div>
