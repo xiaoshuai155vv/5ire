@@ -253,5 +253,8 @@
   "Tools.Name": "名称",
   "Common.SupportTools": "是否支持工具",
   "Common.SupportToolsTip": "请确认模型是否支持工具，若不清楚请查询：https://ollama.com/search?c=tools",
-  "Common.Validation.MustBeNumber": "必须位数字"
+  "Common.Validation.MustBeNumber": "必须位数字",
+  "Bookmarks.Notification.Removed": "已从书签中移除",
+  "Bookmarks.Notification.Added": "已添加至书签",
+  "Bookmarks.Notification.RemovedFavarites": "已从收藏中移除书签"
 }
