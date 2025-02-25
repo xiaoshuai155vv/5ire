@@ -428,7 +428,7 @@ describe('intellichat/readers/GoogleReader', () => {
     let toolName = null;
     const googleReader = new GoogleReader(mockReader);
     const result = await googleReader.read({
-      onProgress: (content: string) => {
+      onProgress: (content: string, reasoning?:string) => {
         console.log(content);
       },
       onError: (err: any) => {
@@ -464,7 +464,6 @@ describe('intellichat/readers/GoogleReader', () => {
     });
     expect(result.content).toEqual('');
     expect(toolName).toEqual('search_notes');
-    console.log(result.tool);
     expect(result.tool).toEqual({
       id: "",
       name: 'search_notes',

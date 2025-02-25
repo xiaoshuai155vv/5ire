@@ -24,7 +24,11 @@ import useChatKnowledgeStore from 'stores/useChatKnowledgeStore';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import CitationDialog from './CitationDialog';
 import { ICollectionFile } from 'types/knowledge';
-import { extractCitationIds } from 'utils/util';
+import {
+  extractCitationIds,
+  getNormalContent,
+  getReasoningContent,
+} from 'utils/util';
 import INextChatService from 'intellichat/services/INextCharService';
 import useSettingsStore from 'stores/useSettingsStore';
 import Sidebar from './Sidebar/Sidebar';
@@ -199,8 +203,6 @@ export default function Chat() {
       clearTrace($chatId);
       updateStates($chatId, { loading: true });
 
-      let $reply = '';
-
       const msg = await useChatStore.getState().createMessage({
         prompt,
         reply: '',
@@ -258,11 +260,16 @@ ${prompt}
       }
 
       const onChatComplete = async (result: IChatResponseMessage) => {
+        debug(JSON.stringify(result, null, 2));
         /**
          * 异常分两种情况，一种是有输出， 但没有正常结束； 一种是没有输出
          * 异常且没有输出，则只更新 isActive 为 0
          */
-        if (result.error && isBlank(result.content)) {
+        if (
+          result.error &&
+          isBlank(result.content) &&
+          isBlank(result.reasoning)
+        ) {
           await updateMessage({
             id: msg.id,
             isActive: 0,
@@ -281,7 +288,11 @@ ${prompt}
           const citedFiles = files.filter((f) => citedFileIds.includes(f.id));
           await updateMessage({
             id: msg.id,
-            reply: result.content,
+            reply: getNormalContent(result.content as string),
+            reasoning: getReasoningContent(
+              result.content as string,
+              result.reasoning,
+            ),
             inputTokens,
             outputTokens,
             isActive: 0,
@@ -304,8 +315,8 @@ ${prompt}
         updateStates($chatId, { loading: false, runningTool: null });
       };
       chatService.onComplete(onChatComplete);
-      chatService.onReading((content: string) => {
-        $reply = appendReply(msg.id, content);
+      chatService.onReading((content: string, reasoning?: string) => {
+        appendReply(msg.id, content || '', reasoning || '');
         if (!isUserScrollingRef.current) {
           scrollToBottom();
         }

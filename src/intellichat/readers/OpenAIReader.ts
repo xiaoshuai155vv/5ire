@@ -14,6 +14,7 @@ export default class OpenAIReader extends BaseReader implements IChatReader {
     if (data.choices.length === 0) {
       return {
         content: '',
+        reasoning: '',
         isEnd: false,
         toolCalls: [],
       };
@@ -21,6 +22,7 @@ export default class OpenAIReader extends BaseReader implements IChatReader {
     const choice = data.choices[0];
     return {
       content: choice.delta.content || '',
+      reasoning: choice.delta.reasoning_content || '',
       isEnd: false,
       toolCalls: choice.delta.tool_calls,
     };

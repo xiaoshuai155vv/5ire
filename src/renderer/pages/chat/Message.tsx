@@ -11,7 +11,11 @@ import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useToast from 'hooks/useToast';
 import ToolSpinner from 'renderer/components/ToolSpinner';
 import useSettingsStore from 'stores/useSettingsStore';
-import { highlight } from '../../../utils/util';
+import {
+  getNormalContent,
+  getReasoningContent,
+  highlight,
+} from '../../../utils/util';
 import MessageToolbar from './MessageToolbar';
 import {
   ChevronDown16Regular,
@@ -76,114 +80,85 @@ export default function Message({ message }: { message: IChatMessage }) {
     };
   }, [message.isActive, keywords, registerCitationClick]);
 
-  const thoughts = useMemo(() => {
-    const parts = message.reply.split('<think>');
+  const [reply, setReply] = useState('');
+  const [reasoning, setReasoning] = useState('');
 
-    // 如果没有 <think> 标签，返回空数组
-    if (parts.length <= 1) {
-      return '';
-    }
-
-    // 处理有 <think> 标签的情况
-    const thinkParts = parts
-      .slice(1) // 从第一个部分开始处理
-      .map((part) => {
-        const [content] = part.split('</think>');
-        return content; // 返回每个部分的内容
-      })
-      .filter(Boolean); // 过滤掉空字符串
-
-    return thinkParts.join(''); // 返回所有的 thoughts
-  }, [message.reply]);
-
-  const reply = useMemo(() => {
-    const parts = message.reply.split('<think>');
-
-    // 如果没有 <think> 标签，返回整个内容
-    if (parts.length === 1) {
-      return message.reply; // 返回整个内容
-    }
-
-    // 处理有 <think> 标签的情况
-    const replyParts = parts
-      .map((part) => part.split('</think>')[1]) // 获取结束标签后的内容
-      .filter(Boolean); // 过滤掉空字符串
-
-    return replyParts.join(''); // 将所有非空部分连接起来
-  }, [message.reply]);
-
-  const [isThinking, setIsThinking] = useState(true);
-  const [thinkSeconds, setThinkSeconds] = useState(0);
-  const [isThinkShow, setIsThinkShow] = useState(false);
+  const [isReasoning, setIsReasoning] = useState(true);
+  const [reasoningSeconds, setReasoningSeconds] = useState(0);
+  const [isReasoningShow, setIsReasoningShow] = useState(false);
   const messageRef = useRef(message);
-  const isThinkingRef = useRef(isThinking);
-  const thinkInterval = useRef<NodeJS.Timeout | null>(null);
+  const isReasoningRef = useRef(isReasoning);
+  const reasoningInterval = useRef<NodeJS.Timeout | null>(null);
+  const reasoningRef = useRef('');
+  const replyRef = useRef('');
 
   useEffect(() => {
     messageRef.current = message;
-  }, [message]);
+  }, [message.id, message.isActive]);
 
   useEffect(() => {
-    isThinkingRef.current = isThinking;
-  }, [isThinking]);
+    isReasoningRef.current = isReasoning;
+  }, [isReasoning]);
+
+  useEffect(() => {
+    const _reply = getNormalContent(message.reply);
+    const _reasoning = getReasoningContent(message.reply, message.reasoning);
+    setReply(_reply);
+    setReasoning(_reasoning);
+    replyRef.current = reply;
+    reasoningRef.current = reasoning;
+  }, [message.reply, message.reasoning]);
 
   function monitorThinkStatus() {
     // 清除之前的计时器
-    if (thinkInterval.current) {
-      clearInterval(thinkInterval.current);
+    if (reasoningInterval.current) {
+      clearInterval(reasoningInterval.current);
     }
 
-    thinkInterval.current = setInterval(() => {
-      const { reply } = messageRef.current;
+    reasoningInterval.current = setInterval(() => {
+      if (isReasoningRef.current && messageRef.current.isActive) {
+        setReasoningSeconds((prev) => prev + 1); // 每秒增加
+      }
 
       if (
-        reply.includes('<think>') &&
-        !isThinkingRef.current &&
+        !!replyRef.current.trim() &&
+        isReasoningRef.current &&
         messageRef.current.isActive
       ) {
-        setIsThinking(true);
-        setThinkSeconds(0); // 重置计时
-        console.log('Think started');
-      }
+        clearInterval(reasoningInterval.current as NodeJS.Timeout); // 停止计时
+        setIsReasoning(false);
 
-      if (isThinkingRef.current && messageRef.current.isActive) {
-        setThinkSeconds((prev) => prev + 1); // 每秒增加
-      }
-
-      if (
-        (reply.includes('</think>') && isThinkingRef.current) ||
-        !messageRef.current.isActive
-      ) {
-        clearInterval(thinkInterval.current as NodeJS.Timeout); // 停止计时
-        setIsThinking(false);
-        console.log('Think ended');
-        console.log(`Total thinking time: ${thinkSeconds} seconds`);
+        debug('Reasoning ended');
+        debug(`Total thinking time: ${reasoningSeconds} seconds`);
       }
     }, 1000);
   }
 
   useEffect(() => {
     if (message.isActive) {
-      setIsThinkShow(true);
+      setIsReasoningShow(true);
       monitorThinkStatus();
     } else {
-      setIsThinking(false);
+      setIsReasoning(false);
     }
     return () => {
-      clearInterval(thinkInterval.current as NodeJS.Timeout);
+      clearInterval(reasoningInterval.current as NodeJS.Timeout);
+      setReasoningSeconds(0);
     };
   }, [message.isActive]);
 
   const toggleThink = useCallback(() => {
-    setIsThinkShow(!isThinkShow);
-  }, [isThinkShow]);
+    setIsReasoningShow(!isReasoningShow);
+  }, [isReasoningShow]);
 
   const replyNode = useCallback(() => {
     const isLoading = message.isActive && states.loading;
-    const isEmpty = !message.reply || message.reply === '';
+    const isEmpty =
+      (!message.reply || message.reply === '') &&
+      (!message.reasoning || message.reasoning === '');
     const thinkTitle =
-      (isThinking ? t('Reasoning.Thinking') : t('Reasoning.Thought')) +
-      `${thinkSeconds > 0 ? ` ${thinkSeconds}s` : ''}`;
+      (isReasoning ? t('Reasoning.Thinking') : t('Reasoning.Thought')) +
+      `${reasoningSeconds > 0 ? ` ${reasoningSeconds}s` : ''}`;
     return (
       <div className={`w-full mt-1.5 ${isLoading ? 'is-loading' : ''}`}>
         {message.isActive && states.runningTool ? (
@@ -199,12 +174,12 @@ export default function Message({ message }: { message: IChatMessage }) {
           </>
         ) : (
           <div className="-mt-1">
-            {thoughts.trim() ? (
+            {reasoning.trim() ? (
               <div className="think">
                 <div className="think-header" onClick={toggleThink}>
                   <span className="font-bold text-gray-400 ">{thinkTitle}</span>
                   <div className="text-gray-400 -mb-0.5">
-                    {isThinkShow ? (
+                    {isReasoningShow ? (
                       <ChevronUp16Regular />
                     ) : (
                       <ChevronDown16Regular />
@@ -213,14 +188,14 @@ export default function Message({ message }: { message: IChatMessage }) {
                 </div>
                 <div
                   className="think-body"
-                  style={{ display: isThinkShow ? 'block' : 'none' }}
+                  style={{ display: isReasoningShow ? 'block' : 'none' }}
                 >
                   <div
                     dangerouslySetInnerHTML={{
                       __html: render(
                         `${
-                          highlight(thoughts, keyword) || ''
-                        }${isThinking && thoughts ? '<span class="blinking-cursor" /></span>' : ''}`,
+                          highlight(reasoning, keyword) || ''
+                        }${isReasoning && reasoning ? '<span class="blinking-cursor" /></span>' : ''}`,
                       ),
                     }}
                   />
@@ -244,13 +219,14 @@ export default function Message({ message }: { message: IChatMessage }) {
       </div>
     );
   }, [
-    message.reply,
+    reply,
+    reasoning,
     keyword,
     states,
     fontSize,
-    isThinking,
-    thinkSeconds,
-    isThinkShow,
+    isReasoning,
+    reasoningSeconds,
+    isReasoningShow,
   ]);
 
   return (

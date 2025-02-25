@@ -26,7 +26,7 @@ function createTableChats() {
     "input" TEXT,
     "createdAt" integer,
     PRIMARY KEY ("id")
-  )`
+  )`,
     )
     .run();
 }
@@ -38,6 +38,7 @@ function createTableMessages() {
       "id" text(31) NOT NULL,
       "prompt" TEXT COLLATE NOCASE,
       "reply" TEXT COLLATE NOCASE,
+      "reasoning" TEXT,
       "inputTokens" integer,
       "outputTokens" integer,
       "chatId" real(31),
@@ -51,7 +52,7 @@ function createTableMessages() {
       "maxTokens" INTEGER,
       PRIMARY KEY ("id"),
       CONSTRAINT "fk_messages_chats" FOREIGN KEY ("chatId") REFERENCES "chats" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-    )`
+    )`,
     )
     .run();
 }
@@ -64,6 +65,7 @@ function createTableBookmarks() {
     "msgId" text NOT NULL,
     "prompt" TEXT,
     "reply" TEXT,
+    "reasoning" TEXT,
     "temperature" real,
     "model" text,
     "memo" text,
@@ -73,7 +75,7 @@ function createTableBookmarks() {
     "createdAt" integer,
     PRIMARY KEY ("id"),
     CONSTRAINT "uix_msg_id" UNIQUE ("msgId" COLLATE BINARY ASC)
-  )`
+  )`,
     )
     .run();
 }
@@ -95,7 +97,7 @@ function createTablePrompts() {
     "updatedAt" integer,
     "pinedAt" integer DEFAULT NULL,
     PRIMARY KEY ("id")
-  )`
+  )`,
     )
     .run();
 }
@@ -113,7 +115,7 @@ function createTableUsages() {
     "outputPrice" NUMBER,
     "createdAt" integer,
     PRIMARY KEY ("id")
-  )`
+  )`,
     )
     .run();
 }
@@ -129,7 +131,7 @@ function createTableKnowledgeCollections() {
      "favorite" integer(1),
      "createdAt" integer NOT NULL,
      "updatedAt" integer NOT NULL,
-     PRIMARY KEY (id));`
+     PRIMARY KEY (id));`,
     )
     .run();
 }
@@ -149,7 +151,7 @@ function createTableKnowledgeFiles() {
     FOREIGN KEY (collectionId)
         REFERENCES knowledge_collections(id)
         ON DELETE CASCADE
-    );`
+    );`,
     )
     .run();
 }
@@ -164,26 +166,54 @@ function createTableChatKnowledgeRels() {
 	FOREIGN KEY("chatId") REFERENCES "chats"("id") ON DELETE CASCADE,
 	FOREIGN KEY("collectionId") REFERENCES "knowledge_collections"("id") ON DELETE CASCADE,
 	PRIMARY KEY (id)
-)`
+)`,
     )
     .run();
 }
 
 function alertTableChats() {
   const columns = database.prepare(`PRAGMA table_info(chats)`).all();
-  const hasPromptColumn = columns.some((column:any) => column.name === 'prompt');
+  const hasPromptColumn = columns.some(
+    (column: any) => column.name === 'prompt',
+  );
   if (!hasPromptColumn) {
     database.prepare(`ALTER TABLE chats ADD COLUMN prompt TEXT`).run();
-    logging.debug('Added prompt column to chats table');
+    logging.debug('Added [prompt] column to [chats] table');
   } else {
-    logging.debug('Prompt column already exists in chats table');
+    logging.debug('[prompt】 column already exists in [chats] table');
   }
-  const hasInputColumn = columns.some((column:any) => column.name === 'input');
+  const hasInputColumn = columns.some((column: any) => column.name === 'input');
   if (!hasInputColumn) {
     database.prepare(`ALTER TABLE chats ADD COLUMN input TEXT`).run();
-    logging.debug('Added input column to chats table');
+    logging.debug('Added [input] column to [chats] table');
   } else {
-    logging.debug('Input column already exists in chats table');
+    logging.debug('[input] column already exists in [chats] table');
+  }
+}
+
+function alertTableMessages() {
+  const columns = database.prepare(`PRAGMA table_info(messages)`).all();
+  const hasReasoningColumn = columns.some(
+    (column: any) => column.name === 'reasoning',
+  );
+  if (!hasReasoningColumn) {
+    database.prepare(`ALTER TABLE messages ADD COLUMN reasoning TEXT`).run();
+    logging.debug('Added [reasoning] column to  [messages] table');
+  } else {
+    logging.debug('[reasoning] column already exists in [Messages] table');
+  }
+}
+
+function alertTableBookmarks() {
+  const columns = database.prepare(`PRAGMA table_info(bookmarks)`).all();
+  const hasReasoningColumn = columns.some(
+    (column: any) => column.name === 'reasoning',
+  );
+  if (!hasReasoningColumn) {
+    database.prepare(`ALTER TABLE bookmarks ADD COLUMN reasoning TEXT`).run();
+    logging.debug('Added [reasoning] column to [bookmarks] table');
+  } else {
+    logging.debug('[reasoning] column already exists in [bookmarks] table');
   }
 }
 
@@ -201,6 +231,9 @@ const initDatabase = database.transaction(() => {
   createTableChatKnowledgeRels();
   // v0.9.6
   alertTableChats();
+  // v.0.9.7
+  alertTableMessages();
+  alertTableBookmarks();
   logging.info('Database initialized.');
 });
 

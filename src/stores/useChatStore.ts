@@ -13,7 +13,6 @@ import {
 } from 'lodash';
 import {
   DEFAULT_MAX_TOKENS,
-  MAX_CTX_MESSAGES,
   NUM_CTX_MESSAGES,
   tempChatId,
 } from 'consts';
@@ -75,7 +74,7 @@ export interface IChatStore {
   getChat: (id: string) => Promise<IChat>;
   // message
   createMessage: (message: Partial<IChatMessage>) => Promise<IChatMessage>;
-  appendReply: (chatId: string, reply: string) => string;
+  appendReply: (chatId: string, reply: string, reasoning:string) => void;
   updateMessage: (
     message: { id: string } & Partial<IChatMessage>,
   ) => Promise<boolean>;
@@ -393,18 +392,22 @@ const useChatStore = create<IChatStore>((set, get) => ({
     }));
     return msg;
   },
-  appendReply: (msgId: string, reply: string) => {
-    let $reply = '';
+  appendReply: (msgId: string, reply: string, reasoning: string) => {
+    let accReply = '';
+    let accReasoning = '';
     set(
       produce((state: IChatStore) => {
         const message = state.messages.find((msg) => msg.id === msgId);
         if (message) {
-          $reply = message.reply ? `${message.reply}${reply}` : reply;
-          message.reply = $reply;
+          accReply = message.reply ? `${message.reply}${reply}` : reply;
+          accReasoning = message.reasoning
+            ? `${message.reasoning}${reasoning}`
+            : reasoning;
+          message.reply = accReply;
+          message.reasoning = accReasoning;
         }
       }),
     );
-    return $reply;
   },
   updateMessage: async (message: { id: string } & Partial<IChatMessage>) => {
     const msg = { id: message.id } as IChatMessage;
@@ -459,6 +462,11 @@ const useChatStore = create<IChatStore>((set, get) => ({
       stats.push('citedChunks = ?');
       msg.citedChunks = message.citedChunks as string;
       params.push(msg.citedChunks);
+    }
+    if(!isBlank(message.reasoning)){
+      stats.push('reasoning = ?');
+      msg.reasoning = message.reasoning as string;
+      params.push(msg.reasoning);
     }
     if (message.id && stats.length) {
       params.push(msg.id);

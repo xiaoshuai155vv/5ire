@@ -28,9 +28,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useBookmarkStore from 'stores/useBookmarkStore';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import { IBookmark } from 'types/bookmark';
-import { fmtDateTime, highlight, unix2date } from 'utils/util';
+import { fmtDateTime, unix2date } from 'utils/util';
 import CitationDialog from '../chat/CitationDialog';
-import { keyword } from 'chalk';
 
 const ArrowLeftIcon = bundleIcon(ArrowLeft16Filled, ArrowLeft16Regular);
 const DeleteIcon = bundleIcon(Delete16Filled, Delete16Regular);
@@ -72,41 +71,6 @@ export default function Bookmark() {
     [id],
   );
 
-  const thoughts = useMemo(() => {
-    const parts = bookmark.reply.split('<think>');
-
-    // 如果没有 <think> 标签，返回空数组
-    if (parts.length <= 1) {
-      return '';
-    }
-
-    // 处理有 <think> 标签的情况
-    const thinkParts = parts
-      .slice(1) // 从第一个部分开始处理
-      .map((part) => {
-        const [content] = part.split('</think>');
-        return content; // 返回每个部分的内容
-      })
-      .filter(Boolean); // 过滤掉空字符串
-
-    return thinkParts.join(''); // 返回所有的 thoughts
-  }, [bookmark.reply]);
-
-  const reply = useMemo(() => {
-    const parts = bookmark.reply.split('<think>');
-
-    // 如果没有 <think> 标签，返回整个内容
-    if (parts.length === 1) {
-      return bookmark.reply; // 返回整个内容
-    }
-
-    // 处理有 <think> 标签的情况
-    const replyParts = parts
-      .map((part) => part.split('</think>')[1]) // 获取结束标签后的内容
-      .filter(Boolean); // 过滤掉空字符串
-
-    return replyParts.join(''); // 将所有非空部分连接起来
-  }, [bookmark.reply]);
 
   const citedFiles = useMemo(
     () => JSON.parse(bookmark?.citedFiles || '[]'),
@@ -139,21 +103,21 @@ export default function Bookmark() {
   const onDeleteBookmark = async () => {
     await deleteBookmark(bookmark.id);
     navigate(-1);
-    notifySuccess(t('Removed from your Bookmarks'));
+    notifySuccess(t('Bookmarks.Notification.Removed'));
   };
 
   const addToFavorites = async () => {
     await updateBookmarks({ id: bookmark.id, favorite: true });
     setUpdated(true);
     loadFavorites({ limit: 100, offset: 0 });
-    notifySuccess(t('Added to your Favorites'));
+    notifySuccess(t('Bookmarks.Notification.Added'));
   };
 
   const removeFromFavorites = async () => {
     await updateBookmarks({ id: bookmark.id, favorite: false });
     setUpdated(true);
     loadFavorites({ limit: 100, offset: 0 });
-    notifySuccess(t('Removed from your Favorites'));
+    notifySuccess(t('Bookmarks.Notification.RemovedFavarites'));
   };
 
   const { render } = useMarkdown();
@@ -253,7 +217,7 @@ export default function Bookmark() {
               }}
             />
             <div className="mt-2.5 -mr-5 bookmark-reply">
-              {thoughts.trim() ? (
+              {bookmark.reasoning?.trim() ? (
                 <div className="think">
                   <div className="think-header" onClick={toggleThink}>
                     <span className="font-bold text-gray-400 ">
@@ -273,7 +237,7 @@ export default function Bookmark() {
                   >
                     <div
                       dangerouslySetInnerHTML={{
-                        __html: render(thoughts || ''),
+                        __html: render(bookmark.reasoning || ''),
                       }}
                     />
                   </div>
@@ -282,7 +246,7 @@ export default function Bookmark() {
               <div
                 className="mr-5 leading-7"
                 dangerouslySetInnerHTML={{
-                  __html: render(reply || ''),
+                  __html: render(bookmark.reply || ''),
                 }}
               />
             </div>

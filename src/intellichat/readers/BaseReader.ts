@@ -166,6 +166,7 @@ export default abstract class BaseReader implements IChatReader {
     const decoder = new TextDecoder('utf-8');
     const state = {
       content: '',
+      reasoning: '',
       inputTokens: 0,
       outputTokens: 0,
       currentTool: null as any,
@@ -184,6 +185,7 @@ export default abstract class BaseReader implements IChatReader {
       }
       return {
         content: state.content,
+        reasoning: state.reasoning,
         tool: state.currentTool,
         inputTokens: state.inputTokens,
         outputTokens: state.outputTokens,
@@ -193,6 +195,7 @@ export default abstract class BaseReader implements IChatReader {
       onError(error);
       return {
         content: state.content,
+        reasoning: state.reasoning,
         tool: state.currentTool,
         inputTokens: state.inputTokens,
         outputTokens: state.outputTokens,
@@ -204,6 +207,7 @@ export default abstract class BaseReader implements IChatReader {
     decoder: TextDecoder,
     state: {
       content: string;
+      reasoning: string;
       inputTokens: number;
       outputTokens: number;
       currentTool: any;
@@ -211,7 +215,7 @@ export default abstract class BaseReader implements IChatReader {
       messageIndex: number;
     },
     callbacks: {
-      onProgress: (chunk: string) => void;
+      onProgress: (chunk: string, reasoning?: string) => void;
       onToolCalls: (toolCalls: any) => void;
     },
   ): Promise<void> {
@@ -270,6 +274,7 @@ export default abstract class BaseReader implements IChatReader {
     response: IChatResponseMessage,
     state: {
       content: string;
+      reasoning: string;
       inputTokens: number;
       outputTokens: number;
       currentTool: any;
@@ -326,11 +331,12 @@ export default abstract class BaseReader implements IChatReader {
 
   private processContentResponse(
     response: IChatResponseMessage,
-    state: { content: string },
-    callbacks: { onProgress: (chunk: string) => void },
+    state: { content: string; reasoning: string },
+    callbacks: { onProgress: (chunk: string, reasoning?: string) => void },
   ): void {
     state.content += response.content;
-    callbacks.onProgress(response.content || '');
+    state.reasoning += response.reasoning || '';
+    callbacks.onProgress(response.content || '', response.reasoning || '');
   }
 
   private updateTokenCounts(

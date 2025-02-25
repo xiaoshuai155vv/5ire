@@ -2,6 +2,7 @@ import { IChatModel, IServiceProvider } from 'providers/types';
 import { ICollection } from 'types/knowledge';
 
 export interface IChatResponseMessage {
+  reasoning?: string;
   content?: string;
   function?: {
     id: string;
@@ -185,6 +186,7 @@ export interface IChatMessage {
   systemMessage?: string | null;
   prompt: string;
   reply: string;
+  reasoning?: string;
   model: string;
   temperature: number;
   maxTokens: number | null;

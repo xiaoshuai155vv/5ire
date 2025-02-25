@@ -1,4 +1,8 @@
-import { IPromptDef } from 'intellichat/types';
+import {
+  IChatMessage,
+  IChatResponseMessage,
+  IPromptDef,
+} from 'intellichat/types';
 import { isArray, isNull } from 'lodash';
 
 export function date2unix(date: Date) {
@@ -386,4 +390,39 @@ export function extractFirstLevelBrackets(text: string): string[] {
   }
 
   return results;
+}
+
+export function getReasoningContent(reply: string, reasoning?: string) {
+  if (reasoning) {
+    return reasoning;
+  }
+  const parts = reply.split('<think>');
+
+  if (parts.length <= 1) {
+    return '';
+  }
+
+  const thinkParts = parts
+    .slice(1)
+    .map((part) => {
+      const [content] = part.split('</think>');
+      return content;
+    })
+    .filter(Boolean);
+
+  return thinkParts.join('');
+}
+
+export function getNormalContent(reply: string) {
+  const parts = reply.split('<think>');
+
+  if (parts.length === 1) {
+    return reply;
+  }
+
+  const replyParts = parts
+    .map((part) => part.split('</think>')[1])
+    .filter(Boolean);
+
+  return replyParts.join('');
 }

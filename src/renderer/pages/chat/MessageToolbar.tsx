@@ -42,13 +42,14 @@ export default function MessageToolbar({ message }: { message: IChatMessage }) {
       msgId: message.id,
       prompt: message.prompt,
       reply: message.reply,
+      reasoning: message.reasoning||'',
       model: message.model,
       temperature: message.temperature,
       citedFiles: message.citedFiles,
       citedChunks: message.citedChunks,
       memo: message.memo,
     } as IBookmark);
-    notifySuccess(t('Added to your Bookmarks'));
+    notifySuccess(t('Bookmarks.Notification.Added'));
     bookmarkMessage(message.id, bookmark.id);
     window.electron.ingestEvent([{ app: 'bookmark' }]);
   };
@@ -56,7 +57,7 @@ export default function MessageToolbar({ message }: { message: IChatMessage }) {
   const unbookmark = async () => {
     if (message.bookmarkId) {
       await deleteBookmark(message.bookmarkId);
-      notifySuccess(t('Removed from your Bookmarks'));
+      notifySuccess(t('Bookmarks.Notification.Removed'));
       bookmarkMessage(message.id, null);
       window.electron.ingestEvent([{ app: 'unbookmark' }]);
     }
@@ -65,7 +66,7 @@ export default function MessageToolbar({ message }: { message: IChatMessage }) {
   const copy = () => {
     const content = `user: \n${message.prompt}\n\nassistant:\n${message.reply}`;
     navigator.clipboard.writeText(content)
-    notifySuccess(t('Copied to clipboard'));
+    notifySuccess(t('Common.Notification.Copied'));
   };
 
   return !message.isActive && (

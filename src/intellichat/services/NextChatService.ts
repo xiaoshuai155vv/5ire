@@ -42,7 +42,7 @@ export default abstract class NextCharService {
 
   protected onCompleteCallback: (result: any) => Promise<void>;
 
-  protected onReadingCallback: (chunk: string) => void;
+  protected onReadingCallback: (chunk: string, reasoning?: string) => void;
 
   protected onToolCallsCallback: (toolName: string) => void;
 
@@ -117,7 +117,7 @@ export default abstract class NextCharService {
     this.onCompleteCallback = callback;
   }
 
-  public onReading(callback: (chunk: string) => void) {
+  public onReading(callback: (chunk: string, reasoning?: string) => void) {
     this.onReadingCallback = callback;
   }
 
@@ -171,6 +171,7 @@ export default abstract class NextCharService {
     const chatId = this.context.getActiveChat().id;
     this.abortController = new AbortController();
     let reply = '';
+    let reasoning = '';
     let signal: any = null;
     try {
       signal = this.abortController.signal;
@@ -195,9 +196,10 @@ export default abstract class NextCharService {
       const chatReader = this.createReader(reader);
       const readResult = await chatReader.read({
         onError: (err: any) => this.onErrorCallback(err, !!signal?.aborted),
-        onProgress: (chunk: string) => {
-          reply += chunk;
-          this.onReadingCallback(chunk);
+        onProgress: (replyChunk: string, reasoningChunk?: string) => {
+          reply += replyChunk;
+          reasoning += reasoningChunk || '';
+          this.onReadingCallback(replyChunk, reasoningChunk);
         },
         onToolCalls: this.onToolCallsCallback,
       });
@@ -241,6 +243,7 @@ export default abstract class NextCharService {
       } else {
         await this.onCompleteCallback({
           content: reply,
+          reasoning,
           inputTokens: this.inputTokens,
           outputTokens: this.outputTokens,
         });
@@ -251,6 +254,7 @@ export default abstract class NextCharService {
       this.onErrorCallback(error, !!signal?.aborted);
       await this.onCompleteCallback({
         content: reply,
+        reasoning,
         inputTokens: this.inputTokens,
         outputTokens: this.outputTokens,
         error: {

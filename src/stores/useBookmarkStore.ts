@@ -3,7 +3,7 @@ import { isNumber, isNil } from 'lodash';
 import { typeid } from 'typeid-js';
 import { IBookmark } from 'types/bookmark';
 import { date2unix } from 'utils/util';
-import { isNotBlank } from 'utils/validators';
+import { isBlank, isNotBlank } from 'utils/validators';
 import { create } from 'zustand';
 
 const debug = Debug('5ire:stores:useBookmarkStore');
@@ -15,7 +15,7 @@ export interface IBookmarkStore {
   setActiveBookmarkId: (id: string) => void;
   createBookmark: (bookmark: IBookmark) => Promise<IBookmark>;
   updateBookmark: (
-    bookmark: { id: string } & Partial<IBookmark>
+    bookmark: { id: string } & Partial<IBookmark>,
   ) => Promise<boolean>;
   deleteBookmark: (id: string) => Promise<boolean>;
   getBookmark: (id: string) => Promise<IBookmark>;
@@ -25,13 +25,13 @@ export interface IBookmarkStore {
     keyword,
     favorite,
   }: {
-    limit?: number ;
+    limit?: number;
     offset?: number;
     keyword?: string;
     favorite?: boolean;
   }) => Promise<IBookmark[]>;
   loadFavorites: ({
-    limit ,
+    limit,
     offset,
   }: {
     limit?: number;
@@ -40,7 +40,7 @@ export interface IBookmarkStore {
   loadBookmarks: ({
     limit,
     offset,
-    keyword ,
+    keyword,
   }: {
     limit?: number;
     offset?: number;
@@ -65,7 +65,7 @@ const useBookmarkStore = create<IBookmarkStore>((set, get) => ({
     await window.electron.db.run(
       `INSERT INTO bookmarks (${columns.join(',')})
       VALUES(${'?'.repeat(columns.length).split('').join(',')})`,
-      Object.values($bookmark)
+      Object.values($bookmark),
     );
     set((state) => ({
       bookmarks: [...state.bookmarks, $bookmark],
@@ -106,11 +106,16 @@ const useBookmarkStore = create<IBookmarkStore>((set, get) => ({
       $bookmark.favorite = bookmark.favorite;
       params.push($bookmark.favorite ? 1 : 0);
     }
+    if (!isBlank(bookmark.reasoning)) {
+      stats.push('reasoning = ?');
+      $bookmark.reasoning = bookmark.reasoning as string;
+      params.push($bookmark.reasoning);
+    }
     if (bookmark.id && stats.length) {
       params.push($bookmark.id);
       await window.electron.db.run(
         `UPDATE bookmarks SET ${stats.join(', ')} WHERE id = ?`,
-        params
+        params,
       );
       const updatedBookmarks = get().bookmarks.map((m: IBookmark) => {
         if (m.id === $bookmark.id) {
@@ -127,12 +132,12 @@ const useBookmarkStore = create<IBookmarkStore>((set, get) => ({
   deleteBookmark: async (id: string) => {
     const ok = await window.electron.db.run(
       `DELETE FROM bookmarks WHERE id = ?`,
-      [id]
+      [id],
     );
     if (!ok) {
       throw new Error('Delete bookmark failed');
     }
-    const { bookmarks, favorites} = get();
+    const { bookmarks, favorites } = get();
     const index = bookmarks.findIndex((item) => item.id === id);
     if (index > -1) {
       debug(`Remove bookmark(${id}) from index: ${index})`);
@@ -149,8 +154,8 @@ const useBookmarkStore = create<IBookmarkStore>((set, get) => ({
   },
   getBookmark: async (id: string) => {
     const bookmark = (await window.electron.db.get(
-      `SELECT id, prompt, reply, model, temperature, memo, favorite, citedFiles, citedChunks, createdAt WHERE id = ?`,
-      [id]
+      `SELECT id, prompt, reply, reasoning, model, temperature, memo, favorite, citedFiles, citedChunks, createdAt WHERE id = ?`,
+      [id],
     )) as IBookmark;
     return bookmark;
   },
@@ -165,7 +170,7 @@ const useBookmarkStore = create<IBookmarkStore>((set, get) => ({
     keyword?: string;
     favorite?: boolean;
   }) => {
-    let sql = `SELECT id, prompt, reply, model, temperature, memo, favorite, citedFiles, citedChunks, createdAt FROM bookmarks`;
+    let sql = `SELECT id, prompt, reply, reasoning, model, temperature, memo, favorite, citedFiles, citedChunks, createdAt FROM bookmarks`;
     const whereClauses = [];
     const params: any[] = [];
     if (!isNil(favorite)) {
@@ -183,7 +188,7 @@ const useBookmarkStore = create<IBookmarkStore>((set, get) => ({
     }
     const bookmarks = (await window.electron.db.all(
       `${sql} ORDER BY createdAt DESC LIMIT ? OFFSET ?`,
-      params
+      params,
     )) as IBookmark[];
     return bookmarks;
   },
