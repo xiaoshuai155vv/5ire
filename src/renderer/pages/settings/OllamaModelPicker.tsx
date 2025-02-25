@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { isValidHttpHRL } from 'utils/validators';
 import {
   MenuTrigger,
@@ -16,12 +15,14 @@ type Item = {
   isEnabled: boolean;
 };
 
-export default function OllamaModelPicker(args: {
+export default function OllamaModelPicker({
+  baseUrl,
+  onConfirm,
+}: {
   baseUrl: string;
   onConfirm: (modeName: string) => void;
 }) {
-  const { baseUrl, onConfirm } = args;
-  const [items, setItems] = React.useState<Item[]>([]);
+  const [items, setItems] = useState<Item[]>([]);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -81,7 +82,8 @@ export default function OllamaModelPicker(args: {
           ]);
         });
     }
-  }, [baseUrl]);
+    return () => setItems([]);
+  }, [provider,baseUrl]);
 
   return (
     <Menu>
