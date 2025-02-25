@@ -109,7 +109,8 @@ export default function ModelCtrl({
         >
           <div className="flex flex-row justify-start items-center mr-1">
             <ToolStatusIndicator
-              enabled={ctx.isToolEnabled()}
+              provider={providerName}
+              model={activeModel.name}
               withTooltip={true}
             />
           </div>
@@ -146,7 +147,10 @@ export default function ModelCtrl({
                 key={item.label}
               >
                 <div className="flex justify-start items-baseline gap-1">
-                  <ToolStatusIndicator enabled={toolEnabled} />
+                  <ToolStatusIndicator
+                    provider={providerName}
+                    model={item.name}
+                  />
                   <span className="latin">{item.label}</span>
                   {modelMapping[item.label || ''] && (
                     <span className="text-gray-300 dark:text-gray-600 -ml-1">
@@ -164,7 +168,10 @@ export default function ModelCtrl({
     <Text size={200}>
       <span className="flex justify-start items-center gap-1">
         <div>
-          <ToolStatusIndicator enabled={ctx.isToolEnabled()} />
+          <ToolStatusIndicator
+            provider={providerName}
+            model={activeModel.name}
+          />
         </div>
         <span className="latin">
           {api.provider} / {activeModel.label}
