@@ -157,12 +157,12 @@ export default function ToolMarketDrawer({
                         )}
                       </div>
                       {installedServer.has(server.key) ? (
-                        <Button appearance="subtle" size="small" disabled>
+                        <Button appearance="primary" size="small" disabled>
                           {t('Common.Installed')}
                         </Button>
                       ) : (
                         <Button
-                          appearance="subtle"
+                          appearance="primary"
                           size="small"
                           onClick={() => onInstall(server)}
                         >
