@@ -130,14 +130,32 @@ export default function ToolMarketDrawer({
             <List navigationMode="items">
               {servers.map((server) => (
                 <ListItem key={server.key}>
-                  <div className="p-2 my-1 w-full rounded bg-gray-50 dark:bg-stone-800">
+                  <div className="p-2 my-1 w-full rounded bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700">
                     <div className="flex justify-between items-center">
-                      <div
-                        className="text-lg font-bold"
-                        dangerouslySetInnerHTML={{
-                          __html: highlight(server.name || server.key, filter),
-                        }}
-                      />
+                      <div className="flex flex-start items-center flex-grow">
+                        <div
+                          className="text-base font-bold"
+                          dangerouslySetInnerHTML={{
+                            __html: highlight(
+                              server.name || server.key,
+                              filter,
+                            ),
+                          }}
+                        />
+                        {server.homepage && (
+                          <span
+                            title="homepage"
+                            className=" text-gray-400 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-300 ml-1"
+                            onClick={() =>
+                              window.electron.openExternal(
+                                server.homepage as string,
+                              )
+                            }
+                          >
+                            {new URL(server.homepage).hostname}
+                          </span>
+                        )}
+                      </div>
                       {installedServer.has(server.key) ? (
                         <Button appearance="subtle" size="small" disabled>
                           {t('Common.Installed')}
@@ -153,23 +171,11 @@ export default function ToolMarketDrawer({
                       )}
                     </div>
                     <p
-                      className="text-gray-700 dark:text-gray-400"
+                      className="text-gray-700 dark:text-gray-400 text-xs"
                       dangerouslySetInnerHTML={{
                         __html: highlight(server.description || '', filter),
                       }}
                     />
-                    {server.homepage && (
-                      <div
-                        className="text-gray-400 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-300 inline-block"
-                        onClick={() =>
-                          window.electron.openExternal(
-                            server.homepage as string,
-                          )
-                        }
-                      >
-                        {server.homepage}
-                      </div>
-                    )}
                   </div>
                 </ListItem>
               ))}
