@@ -62,7 +62,7 @@ export default {
         group: 'Doubao-Pro',
       },
       'doubao-pro-32k': {
-        name: 'gpt-4-turbo',
+        name: 'doubao-pro-32k',
         contextWindow: 32000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
@@ -92,7 +92,7 @@ export default {
         group: 'Doubao-Lite',
       },
       'doubao-lite-32k': {
-        name: 'doubao-pro-4k',
+        name: 'doubao-lite-32k',
         contextWindow: 32000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
@@ -102,7 +102,7 @@ export default {
         group: 'Doubao-Lite',
       },
       'doubao-lite-4k': {
-        name: 'doubao-pro-4k',
+        name: 'doubao-lite-4k',
         contextWindow: 4000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
