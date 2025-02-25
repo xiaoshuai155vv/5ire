@@ -256,7 +256,7 @@
   "Reasoning.Thought": "Thought",
   "Tools.Name": "Name",
   "Common.SupportTools": "Support tools",
-  "Common.SupportToolsTip": "You can override the model's original tool capabilities.",
+  "Common.SupportToolsTip": "You can override a model's inherent tool capabilities. The circular badge before each model name visually indicates its tool compatibility status: the outer ring in a shade of gray-green shows the model's original capability, while the inner dot uses the same color gradient to reflect the current configuration setting.",
   "Common.Validation.MustBeNumber": "Must be a number",
   "Bookmarks.Notification.Removed": "Removed from your Bookmarks",
   "Bookmarks.Notification.Added": "Added to your Favorites",

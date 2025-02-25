@@ -252,7 +252,7 @@
   "Reasoning.Thought": "思考过程",
   "Tools.Name": "名称",
   "Common.SupportTools": "是否支持工具",
-  "Common.SupportToolsTip": "覆盖模型原本的工具支持功能",
+  "Common.SupportToolsTip": "可覆盖模型的工具能力，并通过模型名称前的圆形图标来确认支持状态，外圈灰绿色表示模型原本是否支持工具，内部圆点的灰绿色表示当前设置是否支持工具。",
   "Common.Validation.MustBeNumber": "必须位数字",
   "Bookmarks.Notification.Removed": "已从书签中移除",
   "Bookmarks.Notification.Added": "已添加至书签",
