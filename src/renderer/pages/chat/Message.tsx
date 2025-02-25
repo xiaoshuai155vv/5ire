@@ -174,8 +174,6 @@ export default function Message({ message }: { message: IChatMessage }) {
     };
   }, [message.isActive]);
 
-
-
   const toggleThink = useCallback(() => {
     setIsThinkShow(!isThinkShow);
   }, [isThinkShow]);
@@ -191,7 +189,7 @@ export default function Message({ message }: { message: IChatMessage }) {
         {message.isActive && states.runningTool ? (
           <div className="flex flex-row justify-start items-center gap-1">
             <ToolSpinner size={20} style={{ marginBottom: '-3px' }} />
-            <span>{states.runningTool}</span>
+            <span>{states.runningTool.replace('--', ':')}</span>
           </div>
         ) : null}
         {isLoading && isEmpty ? (
