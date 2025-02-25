@@ -7,7 +7,6 @@ import {
   Tooltip,
   Switch,
   SwitchOnChangeData,
-  Field,
 } from '@fluentui/react-components';
 import { useTranslation } from 'react-i18next';
 import useSettingsStore from '../../../stores/useSettingsStore';
@@ -18,7 +17,7 @@ import { Info16Regular } from '@fluentui/react-icons';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
 import OllamaModelPicker from './OllamaModelPicker';
-import { get, isUndefined, set } from 'lodash';
+import { isUndefined } from 'lodash';
 
 export default function ModelField({
   provider,
@@ -86,7 +85,8 @@ export default function ModelField({
             models.length === 1 ? (
               <div className="flex flex-row justify-start items-center gap-1 w-full">
                 <ToolStatusIndicator
-                  enabled={models[0].toolEnabled}
+                  provider={provider.name}
+                  model={models[0].name}
                   withTooltip={true}
                 />
                 <span className="latin">{models[0].label}</span>
@@ -113,12 +113,16 @@ export default function ModelField({
               >
                 {models.map((model: IChatModel) => (
                   <Option
-                    key={model.label as string}
+                    key={model.name as string}
                     text={model.label as string}
+                    value={model.name as string}
                   >
                     <div className="flex justify-start items-center latin">
                       <div className="flex justify-start items-baseline gap-1">
-                        <ToolStatusIndicator enabled={model.toolEnabled} />
+                        <ToolStatusIndicator
+                          model={model.name}
+                          provider={provider.name}
+                        />
                         <span className="latin">{model.label as string}</span>
                       </div>
                       {model.description && (
@@ -150,6 +154,7 @@ export default function ModelField({
                   className="w-full"
                 />
               )}
+
               {provider.name === 'Ollama' && (
                 <div className="absolute right-1 top-1">
                   <OllamaModelPicker baseUrl={baseUrl} onConfirm={setModel} />
@@ -165,7 +170,7 @@ export default function ModelField({
           <TooltipIcon tip={t('Common.SupportToolsTip')} />
         </div>
         <div className="flex justify-start items-center gap-1 -mb-1.5">
-          <Switch checked={toolEnabled || false} onChange={setToolSetting} />
+          <Switch checked={toolEnabled} onChange={setToolSetting} />
         </div>
       </div>
     </div>
