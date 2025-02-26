@@ -1,5 +1,4 @@
 import Debug from 'debug';
-import { use } from 'i18next';
 import IChatReader, { ITool } from 'intellichat/readers/IChatReader';
 import {
   IAnthropicTool,
@@ -181,7 +180,9 @@ export default abstract class NextCharService {
         const contentType = response.headers.get('content-type');
         let msg;
         let json;
-        if (contentType?.includes('application/json')) {
+        if (response.status === 404) {
+          msg = `${response.url} not found, verify your API base.`;
+        } else if (contentType?.includes('application/json')) {
           json = await response.json();
         } else {
           msg = await response.text();
