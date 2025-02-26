@@ -21,13 +21,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useChatStore from 'stores/useChatStore';
 import { str2int } from 'utils/util';
-import { DEFAULT_MAX_TOKENS, MAX_TOKENS } from 'consts';
+import { MAX_TOKENS } from 'consts';
 
 const debug = Debug('5ire:pages:chat:Editor:Toolbar:MaxTokensCtrl');
 
 const NumberSymbolSquareIcon = bundleIcon(
   NumberSymbolSquare20Filled,
-  NumberSymbolSquare20Regular
+  NumberSymbolSquare20Regular,
 );
 
 export default function MaxTokens({
@@ -44,7 +44,7 @@ export default function MaxTokens({
   const editStage = useChatStore((state) => state.editStage);
 
   const modelMaxTokens = useMemo<number>(() => {
-    return ctx.getModel().maxTokens as number || MAX_TOKENS;
+    return (ctx.getModel().maxTokens as number) || MAX_TOKENS;
   }, [chat.model]);
 
   const [maxTokens, setMaxTokens] = useState<number>(1);
@@ -55,24 +55,24 @@ export default function MaxTokens({
         return !prevOpen;
       });
     });
-    setMaxTokens(ctx.getMaxTokens());
+    setMaxTokens(modelMaxTokens);
     return () => {
       Mousetrap.unbind('mod+shift+4');
     };
-  }, [chat.id]);
+  }, [chat.id, modelMaxTokens]);
 
   const handleOpenChange: PopoverProps['onOpenChange'] = (e, data) =>
     setOpen(data.open || false);
 
   const updateMaxTokens = (
     ev: SpinButtonChangeEvent,
-    data: SpinButtonOnChangeData
+    data: SpinButtonOnChangeData,
   ) => {
     const value = data.value
       ? data.value
       : str2int(data.displayValue as string);
     const $maxToken = Math.max(Math.min(value as number, modelMaxTokens), 1);
-    editStage(chat.id, { maxTokens: $maxToken })
+    editStage(chat.id, { maxTokens: $maxToken });
     setMaxTokens($maxToken);
     onConfirm();
     window.electron.ingestEvent([{ app: 'modify-max-tokens' }]);
@@ -102,7 +102,7 @@ export default function MaxTokens({
       <PopoverSurface aria-labelledby="max tokens">
         <div className="w-64">
           <Field
-            label={t('Common.MaxTokens')+'(≤'+modelMaxTokens+')'}
+            label={t('Common.MaxTokens') + '(≤' + modelMaxTokens + ')'}
             style={{ borderColor: 'transparent', boxShadow: 'none' }}
           >
             <SpinButton
