@@ -14,21 +14,38 @@ export default {
     topP: { min: 0, max: 1, default: 1 },
     temperature: { min: 0, max: 2, default: 0.9 },
     options: {
-      modelCustomizable: false,
+      modelCustomizable: true,
     },
     models: {
-      'grok-beta': {
-        name: 'grok-beta',
-        contextWindow: 131072,
-        defaultMaxTokens:2048,
+      'grok-2-vision': {
+        name: 'grok-2-vision',
+        contextWindow: 32768,
+        defaultMaxTokens:4000,
         maxTokens: 4096,
-        inputPrice: 0.005,
-        outputPrice: 0.015,
+        inputPrice: 0.002,
+        outputPrice: 0.01,
+        isDefault: true,
+        vision: {
+          enabled: true,
+          allowBase64: true,
+          allowUrl: true,
+        },
+        description: `specialized model for advanced image generation and understanding`,
+        toolEnabled: true,
+        group: 'Grok',
+      },
+      'grok-2': {
+        name: 'grok-2',
+        contextWindow: 128000,
+        defaultMaxTokens:128000,
+        maxTokens: 128000,
+        inputPrice: 0.002,
+        outputPrice: 0.01,
         isDefault: true,
         description: `Comparable performance to Grok 2 but with improved efficiency, speed and capabilities.`,
         toolEnabled: true,
         group: 'Grok',
-      }
+      },
     },
   },
 } as IServiceProvider;
