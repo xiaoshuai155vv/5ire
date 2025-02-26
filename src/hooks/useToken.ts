@@ -13,7 +13,7 @@ import {
   countTokenOfLlama,
 } from 'utils/token';
 import useChatContext from './useChatContext';
-import { IChatMessage } from 'intellichat/types';
+import { IChatMessage, IChatRequestMessage } from 'intellichat/types';
 import useSettingsStore from 'stores/useSettingsStore';
 
 export default function useToken() {
@@ -28,7 +28,7 @@ export default function useToken() {
         isGrok(modelName) ||
         isDeepSeek(modelName)
       ) {
-        const messages = [];
+        const messages: IChatRequestMessage[] = [];
         ctx.getCtxMessages().forEach((msg: IChatMessage) => {
           messages.push({ role: 'user', content: msg.prompt });
           messages.push({ role: 'assistant', content: msg.reply });
@@ -38,7 +38,7 @@ export default function useToken() {
       }
 
       if (isGemini(modelName)) {
-        const messages = [];
+        const messages: IChatRequestMessage[] = [];
         ctx.getCtxMessages().forEach((msg: IChatMessage) => {
           messages.push({ role: 'user', parts: [{ text: msg.prompt }] });
           messages.push({ role: 'model', parts: [{ text: msg.reply }] });
@@ -48,12 +48,12 @@ export default function useToken() {
           messages,
           api.base,
           api.key,
-          ctx.getModel().name
+          ctx.getModel().name,
         );
       }
 
       if (isMoonshot(modelName)) {
-        const messages = [];
+        const messages: IChatRequestMessage[] = [];
         ctx.getCtxMessages().forEach((msg: IChatMessage) => {
           messages.push({ role: 'user', content: msg.prompt });
           messages.push({ role: 'assistant', content: msg.reply });
@@ -63,12 +63,12 @@ export default function useToken() {
           messages,
           api.base,
           api.key,
-          modelName
+          modelName,
         );
       }
 
       // Note: use Llama as default
-      const messages = [];
+      const messages: IChatRequestMessage[] = [];
       ctx.getCtxMessages().forEach((msg: IChatMessage) => {
         messages.push({ role: 'user', content: msg.prompt });
         messages.push({ role: 'assistant', content: msg.reply });
@@ -84,16 +84,18 @@ export default function useToken() {
         isDeepSeek(modelName)
       ) {
         return Promise.resolve(
-          countGPTTokens([{ role: 'assistant', content: reply }], modelName)
+          countGPTTokens([{ role: 'assistant', content: reply }], modelName),
         );
       }
       if (isGemini(modelName)) {
-        const messages = [{ role: 'model', parts: [{ text: reply }] }];
+        const messages: IChatRequestMessage[] = [
+          { role: 'model', parts: [{ text: reply }] },
+        ];
         return await countTokensOfGemini(
           messages,
           api.base,
           api.key,
-          modelName
+          modelName,
         );
       }
       if (isMoonshot(modelName)) {
@@ -101,12 +103,12 @@ export default function useToken() {
           [{ role: 'assistant', content: reply }],
           api.base,
           api.key,
-          modelName
+          modelName,
         );
       }
       // Note: use Llama as default
       return Promise.resolve(
-        countTokenOfLlama([{ role: 'assistant', content: reply }], modelName)
+        countTokenOfLlama([{ role: 'assistant', content: reply }], modelName),
       );
     },
   };
