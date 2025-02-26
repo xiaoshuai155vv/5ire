@@ -13,7 +13,7 @@ import {
 } from 'intellichat/types';
 import { isBlank } from 'utils/validators';
 import Google from 'providers/Google';
-import { getBase64, splitByImg, stripHtmlTags } from 'utils/util';
+import { getBase64, splitByImg, stripHtmlTags, urlJoin } from 'utils/util';
 import INextChatService from './INextCharService';
 import NextChatService from './NextChatService';
 import BaseReader from 'intellichat/readers/BaseReader';
@@ -247,7 +247,7 @@ export default class GoogleChatService
       )}\r\n`
     );
     const { base, key } = this.apiSettings;
-    const url = new URL(
+    const url = urlJoin(
       `/v1beta/models/${this.getModelName()}:${
         isStream ? 'streamGenerateContent' : 'generateContent'
       }?key=${key}`,

@@ -2,6 +2,7 @@ import OpenAIChatService from './OpenAIChatService';
 import DeepSeek from '../../providers/DeepSeek';
 import { IChatContext, IChatRequestMessage } from 'intellichat/types';
 import INextChatService from './INextCharService';
+import { urlJoin } from 'utils/util';
 
 export default class DeepSeekChatService
   extends OpenAIChatService
@@ -16,10 +17,7 @@ export default class DeepSeekChatService
     messages: IChatRequestMessage[],
   ): Promise<Response> {
     const { base, key } = this.apiSettings;
-    const url = new URL(
-      'chat/completions',
-      base.endsWith('/') ? base : `${base}/`,
-    );
+    const url = urlJoin('/chat/completions', base)
     const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {

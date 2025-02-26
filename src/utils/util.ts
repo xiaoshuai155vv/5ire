@@ -426,3 +426,16 @@ export function getNormalContent(reply: string) {
 
   return replyParts.join('');
 }
+
+
+
+export function urlJoin(part: string, base: string): URL {
+  // Trim trailing slash from base
+  const trimmedBase = base.replace(/\/+$/, '');
+  
+  // Remove leading slash from part and trim trailing slashes
+  const trimmedPart = part.replace(/^\/+/, '');
+  
+  // Join with a single slash
+  return new URL(`${trimmedBase}/${trimmedPart}`);
+}
