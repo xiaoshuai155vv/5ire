@@ -9,15 +9,15 @@ import {
   SwitchOnChangeData,
 } from '@fluentui/react-components';
 import { useTranslation } from 'react-i18next';
-import useSettingsStore from '../../../stores/useSettingsStore';
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
-import { IChatModel, IServiceProvider } from '../../../providers/types';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import useProvider from 'hooks/useProvider';
 import { Info16Regular } from '@fluentui/react-icons';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
-import OllamaModelPicker from './OllamaModelPicker';
 import { isUndefined } from 'lodash';
+import OllamaModelPicker from './OllamaModelPicker';
+import { IChatModel, IServiceProvider } from '../../../providers/types';
+import useSettingsStore from '../../../stores/useSettingsStore';
 
 export default function ModelField({
   provider,
@@ -25,11 +25,10 @@ export default function ModelField({
   provider: IServiceProvider;
 }) {
   const { t } = useTranslation();
-  const toolStates = useSettingsStore((state) => state.toolStates);
   const model = useSettingsStore((state) => state.api.model);
   const baseUrl = useSettingsStore((state) => state.api.base);
   const { getChatModels } = useProvider();
-  const { setAPI, setToolState, getToolState } = useSettingsStore();
+  const { setAPI, setToolState, getToolState, toolStates } = useSettingsStore();
   const { getDefaultChatModel } = useProvider();
   const [toolEnabled, setToolEnabled] = useState(
     getToolState(provider.name, model),
@@ -40,18 +39,23 @@ export default function ModelField({
   }, [provider]);
 
   useEffect(() => {
-    setAPI({
-      model: model || getDefaultChatModel(provider.name).name || '',
-    });
+    if (provider) {
+      const defaultModel = getDefaultChatModel(provider.name).name || '';
+      setAPI({
+        model: model || defaultModel,
+      });
+    }
   }, [provider]);
 
   useEffect(() => {
-    let toolEnabled = getToolState(provider.name, model);
-    if (isUndefined(toolEnabled)) {
-      const curModel = models.find((m) => m.name === model);
-      toolEnabled = curModel?.toolEnabled || false;
+    if (provider && model) {
+      let newToolEnabled = getToolState(provider.name, model);
+      if (isUndefined(newToolEnabled)) {
+        const curModel = models.find((m) => m.name === model);
+        newToolEnabled = curModel?.toolEnabled || false;
+      }
+      setToolEnabled(newToolEnabled);
     }
-    setToolEnabled(toolEnabled);
   }, [provider, model, toolStates]);
 
   const onOptionSelect = (ev: any, data: any) => {
@@ -62,8 +66,8 @@ export default function ModelField({
     setAPI({ model: evt.target.value });
   };
 
-  const setModel = (model: string) => {
-    setAPI({ model });
+  const setModel = (_model: string) => {
+    setAPI({ model: _model });
   };
 
   const setToolSetting = (
@@ -72,6 +76,16 @@ export default function ModelField({
   ) => {
     setToolState(provider.name, model, data.checked);
   };
+
+  const renderOllamaModelPicker = useCallback(
+    () =>
+      provider.name === 'Ollama' && (
+        <div className="absolute right-1 top-1">
+          <OllamaModelPicker baseUrl={baseUrl} onConfirm={setModel} />
+        </div>
+      ),
+    [provider],
+  );
 
   return (
     <div className="flex justify-start items-center my-3.5 gap-1">
@@ -87,7 +101,7 @@ export default function ModelField({
                 <ToolStatusIndicator
                   provider={provider.name}
                   model={models[0].name}
-                  withTooltip={true}
+                  withTooltip
                 />
                 <span className="latin">{models[0].label}</span>
                 {models[0].description && (
@@ -155,11 +169,7 @@ export default function ModelField({
                 />
               )}
 
-              {provider.name === 'Ollama' && (
-                <div className="absolute right-1 top-1">
-                  <OllamaModelPicker baseUrl={baseUrl} onConfirm={setModel} />
-                </div>
-              )}
+              {renderOllamaModelPicker()}
             </div>
           )}
         </div>

@@ -9,6 +9,7 @@ import {
   Menu,
   MenuItem,
 } from '@fluentui/react-components';
+import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
 
 type Item = {
   name: string;
@@ -100,7 +101,10 @@ export default function OllamaModelPicker({
               disabled={!item.isEnabled}
               onClick={() => onConfirm(item.name)}
             >
-              {item.name}
+              <div className="flex justify-start items-center gap-1">
+                <ToolStatusIndicator model={item.name} provider="Ollama" />{' '}
+                <span> {item.name}</span>
+              </div>
             </MenuItem>
           ))}
         </MenuList>
