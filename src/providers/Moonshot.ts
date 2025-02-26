@@ -38,7 +38,7 @@ export default {
       },
       'moonshot-v1-128k': {
         name: 'moonshot-v1-128k',
-        contextWindow: 131072,
+        contextWindow: 128000,
         maxTokens: 1024,
         inputPrice: 0.06,
         outputPrice: 0.06,
