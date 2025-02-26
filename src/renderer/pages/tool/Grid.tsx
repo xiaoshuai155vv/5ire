@@ -106,7 +106,7 @@ export default function Grid({
                 ) : (
                   <CircleOff16Regular className="text-gray-400 dark:text-gray-600 -mb-0.5" />
                 )}
-                <div className="ml-1.5">{item.key}</div>
+                <div className="ml-1.5">{item.name||item.key}</div>
                 {item.description && (
                   <div className="-mb-0.5">
                     <Tooltip
