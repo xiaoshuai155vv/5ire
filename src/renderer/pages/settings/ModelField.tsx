@@ -38,6 +38,10 @@ export default function ModelField({
     return getChatModels(provider.name);
   }, [provider]);
 
+  const curModelLabel = useMemo(() => {
+    return models.find((m) => m.name === model)?.label || '';
+  }, [model, models]);
+
   useEffect(() => {
     if (provider) {
       const defaultModel = getDefaultChatModel(provider.name).name || '';
@@ -120,8 +124,8 @@ export default function ModelField({
             ) : (
               <Dropdown
                 aria-labelledby="model"
-                value={model}
                 className="w-full"
+                value={curModelLabel}
                 selectedOptions={[model]}
                 onOptionSelect={onOptionSelect}
               >
