@@ -8,6 +8,7 @@ import ChatBro from '../../providers/ChatBro';
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
 import ChatBroReader from 'intellichat/readers/ChatBroReader';
+import { urlJoin } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:ChatBroChatService');
 
@@ -46,7 +47,7 @@ export default class ChatBroChatService
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
-    const url = new URL(`/v1/open/azure/chat`, base);
+    const url = urlJoin(`/v1/open/azure/chat`, base);
     const postResp = await fetch(url.toString(), {
       method: 'POST',
       headers: {

@@ -11,7 +11,7 @@ import {
 } from 'intellichat/types';
 import Anthropic from '../../providers/Anthropic';
 import { isBlank } from 'utils/validators';
-import { getBase64, splitByImg, stripHtmlTags } from 'utils/util';
+import { getBase64, splitByImg, stripHtmlTags, urlJoin } from 'utils/util';
 import INextChatService from './INextCharService';
 import AnthropicReader from 'intellichat/readers/AnthropicReader';
 import NextChatService from './NextChatService';
@@ -200,7 +200,7 @@ export default class AnthropicChatService
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
-    const url = new URL('/v1/messages', base);
+    const url = urlJoin('/v1/messages', base);
     const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {

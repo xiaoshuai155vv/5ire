@@ -17,6 +17,7 @@ import { ITool } from 'intellichat/readers/IChatReader';
 import NextChatService from './NextChatService';
 import INextChatService from './INextCharService';
 import OpenAI from '../../providers/OpenAI';
+import { urlJoin } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:OpenAIChatService');
 
@@ -206,7 +207,7 @@ export default class OpenAIChatService
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
-    const url = new URL('/v1/chat/completions', base);
+    const url = urlJoin('/v1/chat/completions', base);
     const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {

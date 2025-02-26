@@ -1,7 +1,7 @@
 import Debug from 'debug';
 import Baidu from '../../providers/Baidu';
 import { IChatContext, IChatRequestMessage } from '../types';
-import { date2unix } from 'utils/util';
+import { date2unix, urlJoin } from 'utils/util';
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
 
@@ -116,7 +116,7 @@ export default class BaiduChatService
     const token = await this.geToken();
     payload.model = this.context.getModel().name.toLowerCase();
 
-    const url = `${base}/v2/chat/completions`;
+    const url = urlJoin("/v2/chat/completions", base);
     const response = await fetch(url, {
       method: 'POST',
       headers: {

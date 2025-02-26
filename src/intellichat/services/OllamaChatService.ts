@@ -8,6 +8,7 @@ import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
 import OllamaReader from 'intellichat/readers/OllamaChatReader';
 import { ITool } from 'intellichat/readers/IChatReader';
+import { urlJoin } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:OllamaChatService');
 export default class OllamaChatService
@@ -56,7 +57,7 @@ export default class OllamaChatService
     const payload = await this.makePayload(messages);
     debug('Send Request, payload:\r\n', payload);
     const { base } = this.apiSettings;
-    const url = new URL('/api/chat', base);
+    const url = urlJoin('/api/chat', base);
     const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {
