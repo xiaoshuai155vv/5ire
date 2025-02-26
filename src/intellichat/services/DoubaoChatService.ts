@@ -19,7 +19,7 @@ export default class DoubaoChatService
     const payload = await this.makePayload(messages);
     payload.model = deploymentId;
     payload.stream = true;
-    const url = urlJoin('/api/v3/chat/completions', base);
+    const url = urlJoin('/chat/completions', base);
     const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {

@@ -1,8 +1,6 @@
 import Debug from 'debug';
 import {
   IChatContext,
-  IChatRequestMessage,
-  IChatRequestPayload,
 } from 'intellichat/types';
 import Moonshot from 'providers/Moonshot';
 import OpenAIChatService from './OpenAIChatService';

@@ -5,7 +5,7 @@ export default {
   apiBase: 'https://api.moonshot.cn/v1',
   currency: 'CNY',
   options: {
-    apiBaseCustomizable: false,
+    apiBaseCustomizable: true,
     apiKeyCustomizable: true
   },
   chat: {

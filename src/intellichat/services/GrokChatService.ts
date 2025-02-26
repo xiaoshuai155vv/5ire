@@ -1,6 +1,6 @@
 import OpenAIChatService from './OpenAIChatService';
 import Grok from '../../providers/Grok';
-import { IChatContext, IChatRequestMessage } from 'intellichat/types';
+import { IChatContext } from 'intellichat/types';
 import INextChatService from './INextCharService';
 
 export default class GrokChatService

@@ -2,7 +2,7 @@ import { IServiceProvider } from './types';
 
 export default {
   name: 'Mistral',
-  apiBase: 'https://api.mistral.ai',
+  apiBase: 'https://api.mistral.ai/v1',
   currency: 'USD',
   options: {
     apiBaseCustomizable: true,
