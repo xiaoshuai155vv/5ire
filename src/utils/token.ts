@@ -5,6 +5,7 @@ import {
 } from 'tiktoken';
 import { get_encoding as getEncoding } from 'tiktoken/init';
 import { IChatRequestMessage } from 'intellichat/types';
+import { captureException } from 'renderer/logging';
 
 let llama3Tokenizer: any;
 let llamaTokenizer: any;
@@ -49,7 +50,7 @@ export async function countTokensOfGemini(
   messages: IChatRequestMessage[],
   apiBase: string,
   apiKey: string,
-  model: string
+  model: string,
 ) {
   const response = await fetch(
     `${apiBase}/v1beta/models/${model}:countTokens?key=${apiKey}`,
@@ -59,7 +60,7 @@ export async function countTokensOfGemini(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ contents: messages }),
-    }
+    },
   );
   const data = await response.json();
   return data.totalTokens;
@@ -69,26 +70,31 @@ export async function countTokensOfMoonshot(
   messages: IChatRequestMessage[],
   apiBase: string,
   apiKey: string,
-  model: string
+  model: string,
 ) {
-  const response = await fetch(
-    `${apiBase}/v1/tokenizers/estimate-token-count`,
-    {
-      method: 'POST',
-      headers: {
-        Authorization: 'Bearer ' + apiKey,
-        'Content-Type': 'application/json',
+  try {
+    const response = await fetch(
+      `${apiBase}/tokenizers/estimate-token-count`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + apiKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ model, messages }),
       },
-      body: JSON.stringify({ model, messages }),
-    }
-  );
-  const json = await response.json();
-  return json.data.total_tokens;
+    );
+    const json = await response.json();
+    return json.data.total_tokens;
+  } catch (err:any) {
+    captureException(err);
+    return 0;
+  }
 }
 
 export async function countTokenOfLlama(
   messages: IChatRequestMessage[],
-  model: string
+  model: string,
 ) {
   const tokensPerMessage = 3;
   const tokensPerName = 1;
