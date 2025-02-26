@@ -132,7 +132,7 @@ export default function APISettings() {
                 id="apiBase"
                 className="w-4/5 min-w-fit"
                 disabled={!provider.options.apiBaseCustomizable}
-                placeholder={t(provider.chat.placeholders?.base || '')}
+                placeholder={provider.chat.placeholders?.base || provider.apiBase}
                 value={api.base}
                 onChange={onAPIBaseChange}
               />
