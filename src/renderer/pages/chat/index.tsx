@@ -220,7 +220,6 @@ export default function Chat() {
       let files: ICollectionFile[] = [];
       let actualPrompt = prompt;
       const chatCollections = await listChatCollections($chatId);
-      debug('Chat collections:', JSON.stringify(chatCollections));
       if (chatCollections.length) {
         const knowledgeString = await window.electron.knowledge.search(
           chatCollections.map((c) => c.id),
@@ -260,7 +259,6 @@ ${prompt}
       }
 
       const onChatComplete = async (result: IChatResponseMessage) => {
-        debug(JSON.stringify(result, null, 2));
         /**
          * 异常分两种情况，一种是有输出， 但没有正常结束； 一种是没有输出
          * 异常且没有输出，则只更新 isActive 为 0
