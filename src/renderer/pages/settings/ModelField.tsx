@@ -31,7 +31,7 @@ export default function ModelField({
   const { setAPI, setToolState, getToolState, toolStates } = useSettingsStore();
   const { getDefaultChatModel } = useProvider();
   const [toolEnabled, setToolEnabled] = useState(
-    getToolState(provider.name, model),
+    getToolState(provider.name, model) || false,
   );
 
   const models = useMemo(() => {
@@ -160,7 +160,7 @@ export default function ModelField({
             <div className="flex flex-grow justify-start items-center gap-1 relative">
               {provider.chat.options.modelCustomizable && (
                 <Input
-                  value={model}
+                  value={model || ''}
                   placeholder={t(
                     provider.chat.placeholders?.deploymentId || '',
                   )}
