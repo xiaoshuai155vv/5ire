@@ -120,7 +120,7 @@ export default function useChatContext(): IChatContext {
     };
 
     const isToolEnabled = () => {
-      const { getToolState } = useSettingsStore();
+      const { getToolState } = useSettingsStore.getState();
       const model = getModel();
       let toolEnabled = getToolState(getProvider().name, model.name);
       if (isUndefined(toolEnabled)) {
