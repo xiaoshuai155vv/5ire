@@ -227,6 +227,7 @@ export default function Message({ message }: { message: IChatMessage }) {
     isReasoning,
     reasoningSeconds,
     isReasoningShow,
+    message.isActive
   ]);
 
   return (
