@@ -80,10 +80,6 @@ You can perform keyword searches across all conversations, quickly pinpointing t
 > Since 5ire uses native dependencies, it needs to be packaged on the corresponding platform. If it is on Mac OS, you may also need to configure APPLE_TEAM_ID, APPLE_ID, and APPLE_ID_PASS for notarization to avoid security alerts.
 
 
-# License
-
-5ire is licensed under the GNU General Public License version 3.
-
 <hr/>
 
 ##  Discover Exceptional MCP Servers
