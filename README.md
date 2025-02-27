@@ -48,6 +48,8 @@ With tools, you can access the file system, obtain system information, interact 
 
 https://github.com/user-attachments/assets/5aa98f2b-c26d-435e-8196-73fa414066eb
 
+We have created an open [marketplace for MCP Servers](https://github.com/nanbingxyz/mcpsvr). it empowers users to discover exceptional tools while offering a streamlined process for sharing their own MCP server creations.
+
 https://github.com/user-attachments/assets/be66c30e-bb29-4dfe-9f25-8d396470ed60
 
 ## 💡 Local Knowledge Base
