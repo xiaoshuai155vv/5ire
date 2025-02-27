@@ -7,7 +7,7 @@
    <div>
     <img src="https://badge.mcpx.dev/?type=client" />&nbsp;
     <img src="https://badge.mcpx.dev/?type=client&features=tools" />
-     <img src="https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat"/>
+     <img src="https://img.shields.io/badge/license-Apache%202.0-brightgreen?style=flat"/>
      <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"/>
   </div>
    <br />
