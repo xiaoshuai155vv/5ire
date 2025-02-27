@@ -63,22 +63,33 @@ export default function Message({ message }: { message: IChatMessage }) {
     [citedChunks, showCitation],
   );
 
-  const registerCitationClick = useCallback(() => {
-    const links = document.querySelectorAll(`#${message.id} .msg-reply a`);
-    links.forEach((link) => {
-      link.addEventListener('click', onCitationClick);
-    });
-  }, [onCitationClick]);
-
   useEffect(() => {
-    registerCitationClick();
+    if(message.isActive) return; // no need to add event listener when message is active
+    const observer = new MutationObserver((mutations) => {
+      const links = document.querySelectorAll(`#${message.id} .msg-reply a`);
+      if (links.length > 0) {
+        links.forEach((link) => {
+          link.addEventListener('click', onCitationClick);
+        });
+      }
+    });
+
+    const targetNode = document.getElementById(message.id);
+    if (targetNode) {
+      observer.observe(targetNode, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
     return () => {
+      observer.disconnect();
       const links = document.querySelectorAll(`#${message.id} .msg-reply a`);
       links.forEach((link) => {
         link.removeEventListener('click', onCitationClick);
       });
     };
-  }, [message.isActive, keywords, registerCitationClick]);
+  }, [message.id, message.isActive, onCitationClick]);
 
   const [reply, setReply] = useState('');
   const [reasoning, setReasoning] = useState('');
@@ -227,7 +238,6 @@ export default function Message({ message }: { message: IChatMessage }) {
     isReasoning,
     reasoningSeconds,
     isReasoningShow,
-    message.isActive
   ]);
 
   return (
