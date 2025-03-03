@@ -63,20 +63,6 @@ export default function Editor({
     saveRange();
   };
 
-  const onKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLDivElement>) => {
-      if (!event.shiftKey && event.key === 'Enter') {
-        event.preventDefault();
-        setSubmitted(true);
-        onSubmit(removeTagsExceptImg(editorRef.current?.innerHTML || ''));
-        // @ts-ignore
-        editorRef.current.innerHTML = '';
-        editStage(chat.id, { input: '' });
-      }
-    },
-    [onSubmit],
-  );
-
   const insertText = useCallback((text: string) => {
     const selection = window.getSelection();
     if (!selection?.rangeCount) return;
@@ -84,6 +70,29 @@ export default function Editor({
     selection.getRangeAt(0).insertNode(document.createTextNode(text));
     selection.collapseToEnd();
   }, []);
+
+  const onKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter') {
+        // void submit when using IME.
+        if (event.keyCode !== 229) {
+          // void submit when shiftKey, ctrlKey or metaKey is pressed.
+          if (event.shiftKey || event.ctrlKey || event.metaKey) {
+            event.preventDefault();
+            insertText('\n');
+          } else {
+            event.preventDefault();
+            setSubmitted(true);
+            onSubmit(removeTagsExceptImg(editorRef.current?.innerHTML || ''));
+            // @ts-ignore
+            editorRef.current.innerHTML = '';
+            editStage(chat.id, { input: '' });
+          }
+        }
+      }
+    },
+    [insertText, onSubmit, chat.id, editStage],
+  );
 
   const pasteWithoutStyle = useCallback((e: ClipboardEvent) => {
     e.preventDefault(); // 阻止默认粘贴行为
