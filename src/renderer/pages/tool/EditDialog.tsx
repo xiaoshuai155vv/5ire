@@ -134,7 +134,7 @@ export default function ToolEditDialog(options: {
       setName(server.name || '');
       setKey(server.key);
       setDescription(server.description || '');
-      setCommand([server.command, ...server.args].join(' '));
+      setCommand([server.command, ...server.args||[]].join(' '));
       setEnv(server.env || {});
     }
 
