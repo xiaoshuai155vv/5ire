@@ -15,19 +15,16 @@ import { Info16Regular } from '@fluentui/react-icons';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
 import { isUndefined } from 'lodash';
-import OllamaModelPicker from './OllamaModelPicker';
-import LMStudioModelPicker from './LMStudioModelPicker';
-import { IChatModel, IServiceProvider } from '../../../providers/types';
+import RemoteModelPicker from './RemoteModelPicker';
+import { IChatModel } from '../../../providers/types';
 import useSettingsStore from '../../../stores/useSettingsStore';
 
-export default function ModelField({
-  provider,
-}: {
-  provider: IServiceProvider;
-}) {
+export default function ModelField() {
   const { t } = useTranslation();
+  const { getProvider } = useProvider();
+  const providerName = useSettingsStore((state) => state.api.provider);
   const model = useSettingsStore((state) => state.api.model);
-  const baseUrl = useSettingsStore((state) => state.api.base);
+  const provider = getProvider(providerName);
   const { getChatModels } = useProvider();
   const { setAPI, setToolState, getToolState, toolStates } = useSettingsStore();
   const { getDefaultChatModel } = useProvider();
@@ -82,24 +79,13 @@ export default function ModelField({
     setToolState(provider.name, model, data.checked);
   };
 
-  const renderOllamaModelPicker = useCallback(
-    () =>
-      provider.name === 'Ollama' && (
-        <div className="absolute right-1 top-1">
-          <OllamaModelPicker baseUrl={baseUrl} onConfirm={setModel} />
-        </div>
-      ),
-    [provider],
-  );
-
-  const renderLMStudioModelPicker = useCallback(
-    () =>
-      provider.name === 'LMStudio' && (
-        <div className="absolute right-1 top-1">
-          <LMStudioModelPicker baseUrl={baseUrl} onConfirm={setModel} />
-        </div>
-      ),
-  );
+  const renderRemoteModelPicker = useCallback(() => {
+    return provider.options.modelsEndpoint ? (
+      <div className="absolute right-1 top-1">
+        <RemoteModelPicker provider={provider} onConfirm={setModel} />
+      </div>
+    ) : null;
+  }, [provider]);
 
   return (
     <div className="flex justify-start items-center my-3.5 gap-1">
@@ -183,8 +169,7 @@ export default function ModelField({
                 />
               )}
 
-              {renderOllamaModelPicker()}
-              {renderLMStudioModelPicker()}
+              {renderRemoteModelPicker()}
             </div>
           )}
         </div>

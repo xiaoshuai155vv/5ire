@@ -25,7 +25,7 @@ export default function APISettings() {
   const { getProviders, getProvider, getDefaultChatModel } = useProvider();
   const providers = useMemo(() => getProviders(), []);
   const [provider, setProvider] = useState<IServiceProvider>(
-    Object.values(providers)[0]
+    Object.values(providers)[0],
   );
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function APISettings() {
         base: $provider.apiBase,
         model: defaultModel.name || '',
         key: '',
-      }
+      },
     );
 
     if ($provider.isPremium) {
@@ -62,28 +62,28 @@ export default function APISettings() {
 
   const onAPIBaseChange = (
     _: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setAPI({ base: data.value });
   };
 
   const onAPIKeyChange = (
     _: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setAPI({ key: data.value });
   };
 
   const onAPISecretChange = (
     ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setAPI({ secret: data.value });
   };
 
   const onDeploymentIdChange = (
     ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setAPI({ deploymentId: data.value });
   };
@@ -125,14 +125,16 @@ export default function APISettings() {
           <div className="my-3.5">
             <div className="flex justify-start items-center mb-1.5">
               <Label htmlFor="apiBase">{t('Common.APIBase')}</Label>
-              <TooltipIcon tip={t(provider.chat.docs?.base||'')} />
+              <TooltipIcon tip={t(provider.chat.docs?.base || '')} />
             </div>
             <div>
               <Input
                 id="apiBase"
                 className="w-4/5 min-w-fit"
                 disabled={!provider.options.apiBaseCustomizable}
-                placeholder={provider.chat.placeholders?.base || provider.apiBase}
+                placeholder={
+                  provider.chat.placeholders?.base || provider.apiBase
+                }
                 value={api.base}
                 onChange={onAPIBaseChange}
               />
@@ -145,7 +147,7 @@ export default function APISettings() {
               <Label htmlFor="apiKey" className="block">
                 {t('Common.APIKey')}
               </Label>
-              <TooltipIcon tip={t(provider.chat.docs?.key||'')} />
+              <TooltipIcon tip={t(provider.chat.docs?.key || '')} />
             </div>
             <div>
               <MaskableInput
@@ -164,7 +166,7 @@ export default function APISettings() {
               <Label htmlFor="deploymentId">
                 {t(`${provider.name}.DeploymentID`)}
               </Label>
-              <TooltipIcon tip={t(provider.chat.docs?.deploymentId||'')} />
+              <TooltipIcon tip={t(provider.chat.docs?.deploymentId || '')} />
             </div>
             <Input
               value={api.deploymentId || ''}
@@ -178,7 +180,7 @@ export default function APISettings() {
           <div className="my-3.5">
             <div className="flex justify-start items-center mb-1.5">
               <Label htmlFor="apiSecret">{t('Common.SecretKey')}</Label>
-              <TooltipIcon tip={t(provider.chat.docs?.key||'')} />
+              <TooltipIcon tip={t(provider.chat.docs?.key || '')} />
             </div>
             <MaskableInput
               id="apiSecret"
@@ -189,11 +191,9 @@ export default function APISettings() {
             />
           </div>
         ) : null}
-        <ModelField provider={provider} />
+        <ModelField />
         {provider.description && (
-          <div className="tips">
-            {provider.description}
-          </div>
+          <div className="tips">{provider.description}</div>
         )}
         <ModelMappingButton />
       </div>
