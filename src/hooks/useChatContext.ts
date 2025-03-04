@@ -39,7 +39,8 @@ export default function useChatContext(): IChatContext {
     const getModel = () => {
       const { api } = useSettingsStore.getState();
       const defaultModel = { name: api.model, label: api.model } as IChatModel;
-      if (api.provider === 'Ollama' || api.provider === 'LMStudio') {
+      const provider = getChatProvider(api.provider)
+      if (Object.keys(provider.chat.models)) {
         return defaultModel;
       }
       let model = getChatModel(api.provider, api.model) || defaultModel;
