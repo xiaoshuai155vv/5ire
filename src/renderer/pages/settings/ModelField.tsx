@@ -89,7 +89,7 @@ export default function ModelField() {
 
   return (
     <div className="flex justify-start items-center my-3.5 gap-1">
-      <div className="w-72">
+      <div className="w-80">
         <div className="flex justify-start items-center mb-1.5 w-full">
           <Label htmlFor="model">{t('Common.Model')}</Label>
           <TooltipIcon tip={t(provider.chat.docs?.model || '')} />
