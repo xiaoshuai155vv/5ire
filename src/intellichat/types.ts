@@ -1,5 +1,4 @@
 import { IChatModel, IServiceProvider } from 'providers/types';
-import { ICollection } from 'types/knowledge';
 
 export interface IChatResponseMessage {
   reasoning?: string;
