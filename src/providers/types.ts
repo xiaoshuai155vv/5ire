@@ -125,6 +125,7 @@ export interface IServiceProvider {
   options: {
     apiBaseCustomizable?: boolean;
     apiKeyCustomizable?: boolean;
+    modelsEndpoint?:string
   };
   chat: IChatConfig;
   embedding?: IEmbeddingConfig;
