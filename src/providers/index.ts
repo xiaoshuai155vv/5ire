@@ -8,6 +8,7 @@ import ChatBro from './ChatBro';
 import Anthropic from './Anthropic';
 import Fire from './Fire';
 import Ollama from './Ollama';
+import LMStudio from './LMStudio';
 import { merge } from 'lodash';
 import Doubao from './Doubao';
 import Grok from './Grok';
@@ -27,6 +28,7 @@ export const providers: { [key: string]: IServiceProvider } = {
   Ollama,
   Doubao,
   DeepSeek,
+  LMStudio,
   '5ire':Fire,
 };
 

@@ -8,6 +8,7 @@ export type ProviderType =
   | 'Mistral'
   | 'DeepSeek'
   | 'Ollama'
+  | 'LMStudio'
   | 'ChatBro'
   | '5ire'
   | 'Doubao'

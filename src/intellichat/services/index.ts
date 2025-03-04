@@ -3,6 +3,7 @@ import { ProviderType } from '../../providers/types';
 import AnthropicChatService from './AnthropicChatService';
 import AzureChatService from './AzureChatService';
 import OllamaChatService from './OllamaChatService';
+import LMStudioChatService from './LMStudioChatService';
 import OpenAIChatService from './OpenAIChatService';
 import GoogleChatService from './GoogleChatService';
 import BaiduChatService from './BaiduChatService';
@@ -46,6 +47,8 @@ export default function createService(
       return new GrokChatService(chatCtx);
     case 'DeepSeek':
       return new DeepSeekChatService(chatCtx);
+    case 'LMStudio':
+      return new LMStudioChatService(chatCtx);
     default:
       throw new Error(`Invalid provider:${providerName}`);
   }

@@ -16,6 +16,7 @@ import TooltipIcon from 'renderer/components/TooltipIcon';
 import ToolStatusIndicator from 'renderer/components/ToolStatusIndicator';
 import { isUndefined } from 'lodash';
 import OllamaModelPicker from './OllamaModelPicker';
+import LMStudioModelPicker from './LMStudioModelPicker';
 import { IChatModel, IServiceProvider } from '../../../providers/types';
 import useSettingsStore from '../../../stores/useSettingsStore';
 
@@ -89,6 +90,15 @@ export default function ModelField({
         </div>
       ),
     [provider],
+  );
+
+  const renderLMStudioModelPicker = useCallback(
+    () =>
+      provider.name === 'LMStudio' && (
+        <div className="absolute right-1 top-1">
+          <LMStudioModelPicker baseUrl={baseUrl} onConfirm={setModel} />
+        </div>
+      ),
   );
 
   return (
@@ -174,6 +184,7 @@ export default function ModelField({
               )}
 
               {renderOllamaModelPicker()}
+              {renderLMStudioModelPicker()}
             </div>
           )}
         </div>
