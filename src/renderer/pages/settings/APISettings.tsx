@@ -99,7 +99,7 @@ export default function APISettings() {
           <div>
             <Dropdown
               id="provider"
-              className="w-56 latin"
+              className="w-[320px] latin"
               value={api.provider}
               selectedOptions={[api.provider]}
               onOptionSelect={onAPIProviderChange}
@@ -122,7 +122,7 @@ export default function APISettings() {
           </div>
         </div>
         {provider.options.apiBaseCustomizable && (
-          <div className="my-3.5">
+          <div className="my-3.5 w-[400px]">
             <div className="flex justify-start items-center mb-1.5">
               <Label htmlFor="apiBase">{t('Common.APIBase')}</Label>
               <TooltipIcon tip={t(provider.chat.docs?.base || '')} />
