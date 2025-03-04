@@ -201,7 +201,7 @@ export default class AnthropicChatService
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
     const url = urlJoin('/messages', base);
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

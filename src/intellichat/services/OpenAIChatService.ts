@@ -209,7 +209,7 @@ export default class OpenAIChatService
     debug('About to make a request, payload:\r\n', payload);
     const { base, key } = this.apiSettings;
     const url = urlJoin('/chat/completions', base);
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

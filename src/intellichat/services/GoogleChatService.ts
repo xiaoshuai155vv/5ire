@@ -42,14 +42,14 @@ export default class GoogleChatService
   }
 
   protected getReaderType(): new (
-    reader: ReadableStreamDefaultReader<Uint8Array>
+    reader: ReadableStreamDefaultReader<Uint8Array>,
   ) => BaseReader {
     return GoogleReader;
   }
 
   protected makeToolMessages(
     tool: ITool,
-    toolResult: any
+    toolResult: any,
   ): IChatRequestMessage[] {
     return [
       {
@@ -84,7 +84,7 @@ export default class GoogleChatService
   }
 
   protected makeTool(
-    tool: IMCPTool
+    tool: IMCPTool,
   ): IOpenAITool | IAnthropicTool | IGoogleTool {
     if (Object.keys(tool.inputSchema.properties).length === 0) {
       return {
@@ -120,7 +120,7 @@ export default class GoogleChatService
   }
 
   protected async convertPromptContent(
-    content: string
+    content: string,
   ): Promise<IGeminiChatRequestMessagePart[]> {
     if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content, false);
@@ -161,7 +161,7 @@ export default class GoogleChatService
    * 由于  gemini-pro-vision  不支持多轮对话，因此如果提示词包含图片，则不包含历史信息。
    */
   protected async makeMessages(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<IChatRequestMessage[]> {
     let result: IChatRequestMessage[] = [];
     const systemMessage = this.context.getSystemMessage();
@@ -202,7 +202,7 @@ export default class GoogleChatService
   }
 
   protected async makePayload(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
       contents: await this.makeMessages(messages),
@@ -237,23 +237,23 @@ export default class GoogleChatService
   }
 
   protected async makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response> {
     const payload = await this.makePayload(messages);
     const isStream = this.context.isStream();
     debug(
       `About to make a request,stream:${isStream},  payload: ${JSON.stringify(
-        payload
-      )}\r\n`
+        payload,
+      )}\r\n`,
     );
     const { base, key } = this.apiSettings;
     const url = urlJoin(
       `/v1beta/models/${this.getModelName()}:${
         isStream ? 'streamGenerateContent' : 'generateContent'
       }?key=${key}`,
-      base
+      base,
     );
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

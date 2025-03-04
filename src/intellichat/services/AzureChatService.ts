@@ -19,7 +19,7 @@ export default class AzureChatService
     const { base, deploymentId, key } = this.apiSettings;
     const url = urlJoin(`/openai/deployments/${deploymentId}/chat/completions?api-version=${apiVersion}`, base);
     const response = await fetch(
-      url.toString(),
+      url,
       {
         method: 'POST',
         headers: {

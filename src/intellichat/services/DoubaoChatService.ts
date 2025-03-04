@@ -20,7 +20,7 @@ export default class DoubaoChatService
     payload.model = deploymentId;
     payload.stream = true;
     const url = urlJoin('/chat/completions', base);
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

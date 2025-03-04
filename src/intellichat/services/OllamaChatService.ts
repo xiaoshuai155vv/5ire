@@ -58,7 +58,7 @@ export default class OllamaChatService
     debug('Send Request, payload:\r\n', payload);
     const { base } = this.apiSettings;
     const url = urlJoin('/api/chat', base);
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

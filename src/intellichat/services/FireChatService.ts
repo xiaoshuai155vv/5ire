@@ -43,7 +43,7 @@ export default class FireChatService
       throw new Error('User is not authenticated');
     }
     const url = urlJoin(`/v1/chat/completions`, base);
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

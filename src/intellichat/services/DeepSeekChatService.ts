@@ -18,7 +18,7 @@ export default class DeepSeekChatService
   ): Promise<Response> {
     const { base, key } = this.apiSettings;
     const url = urlJoin('/chat/completions', base)
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
