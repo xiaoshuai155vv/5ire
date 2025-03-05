@@ -305,8 +305,8 @@ export default function ToolEditDialog(options: {
                           key={key}
                           className="flex flex-start items-center [&:not(:last-child)]:border-b w-full px-1"
                         >
-                          <div className="w-5/12 px-2">{key}</div>
-                          <div className="w-6/12 px-2">{env[key]}</div>
+                          <div className="w-5/12 px-2 text-xs overflow-hidden text-nowrap truncate">{key}</div>
+                          <div className="w-6/12 px-2 text-xs overflow-hidden text-nowrap truncate">{env[key]}</div>
                           <div>
                             <Button
                               appearance="subtle"
@@ -328,7 +328,7 @@ export default function ToolEditDialog(options: {
               <div>
                 <Field label={t('Tools.ConfigPreview')} hint="in JSON format">
                   <div
-                    className="border rounded border-base"
+                    className="border rounded border-base text-xs"
                     dangerouslySetInnerHTML={{
                       __html: render(`\`\`\`json\n${JSON.stringify(config, null, 2)}\n\`\`\``),
                     }}
