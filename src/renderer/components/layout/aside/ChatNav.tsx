@@ -7,6 +7,7 @@ import Mousetrap from 'mousetrap';
 import { findIndex } from 'lodash';
 import ChatIcon from 'renderer/components/ChatIcon';
 import ChatFolders from 'renderer/components/ChatFolders';
+import ChatItem from 'renderer/components/ChatItem';
 
 export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const chats = useChatStore((state) => state.chats);
@@ -57,32 +58,13 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
       <div
         className={`flex flex-col pt-2 ${collapsed ? 'content-center' : ''}`}
       >
-        <ChatFolders chats={chatsWithFolder} collapsed={collapsed} />
+        <div className={`-mt-2 mb-3 ${collapsed ? 'mx-auto' : ''}`}>
+          <ChatFolders chats={chatsWithFolder} collapsed={collapsed} />
+        </div>
         {chatsWithoutFolder.map((chat: IChat) => {
           return (
-            <div
-              className={`px-0.5 ${collapsed ? 'mx-auto' : ''} ${
-                currentChat && currentChat.id === chat.id ? 'active' : ''
-              }`}
-              key={chat.id}
-            >
-              <Button
-                icon={
-                  <ChatIcon
-                    chat={chat}
-                    isActive={currentChat && currentChat.id === chat.id}
-                  />
-                }
-                appearance="subtle"
-                className="w-full justify-start latin"
-                onClick={() => navigate(`/chats/${chat.id}`)}
-              >
-                {collapsed ? null : (
-                  <div className="text-sm truncate ...">
-                    {chat.summary?.substring(0, 40)}
-                  </div>
-                )}
-              </Button>
+            <div className={collapsed ? ' mx-auto' : 'px-0.5'} key={chat.id}>
+              <ChatItem key={chat.id} chat={chat} collapsed={collapsed} />
             </div>
           );
         })}

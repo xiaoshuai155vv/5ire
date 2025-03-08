@@ -167,6 +167,3 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
     </div>
   );
 }
-function Folder25AddFill(props: FluentIconsProps): Element {
-  throw new Error('Function not implemented.');
-}

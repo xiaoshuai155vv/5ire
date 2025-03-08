@@ -40,3 +40,9 @@
     Barlow, -apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB,
     Roboto, helvetica neue, helvetica, segoe ui, Arial, sans-serif !important;
 }
+.collapsed .fui-AccordionHeader__button {
+  padding: 0 18px !important;
+}
+.collapsed .fui-AccordionHeader__button > span {
+  padding-right: 0 !important;
+}
