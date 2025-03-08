@@ -8,12 +8,35 @@ import { isOneDimensionalArray } from '../utils/util';
 const dbPath = path.join(app.getPath('userData'), '5ire.db');
 const database = new Database(dbPath);
 
+
+function createTableFolders() {
+  database
+    .prepare(
+      `
+  CREATE TABLE IF NOT EXISTS "folders" (
+    "id" text(31) NOT NULL,
+    "name" text,
+    "model" text,
+    "systemMessage" text,
+    "temperature" real,
+    "maxTokens" integer,
+    "knowledgeCollectionIds" text,
+    "stream" integer(1) DEFAULT 1,
+    "maxCtxMessages" integer DEFAULT 10,
+    "createdAt" integer,
+    PRIMARY KEY ("id")
+  )`,
+    )
+    .run();
+}
+
 function createTableChats() {
   database
     .prepare(
       `
   CREATE TABLE IF NOT EXISTS "chats" (
     "id" text(31) NOT NULL,
+    "folderId" text(31),
     "summary" text,
     "model" text,
     "systemMessage" text,
@@ -21,7 +44,7 @@ function createTableChats() {
     "maxTokens" integer,
     "stream" integer(1) DEFAULT 1,
     "context" text,
-    "maxCtxMessages" integer DEFAULT 5,
+    "maxCtxMessages" integer DEFAULT 10,
     "prompt" TEXT,
     "input" TEXT,
     "createdAt" integer,
@@ -41,7 +64,7 @@ function createTableMessages() {
       "reasoning" TEXT,
       "inputTokens" integer,
       "outputTokens" integer,
-      "chatId" real(31),
+      "chatId" text(31),
       "temperature" real,
       "model" text,
       "memo" text,
@@ -189,6 +212,13 @@ function alertTableChats() {
   } else {
     logging.debug('[input] column already exists in [chats] table');
   }
+  const hasFolderIdColumn = columns.some((column: any) => column.name === 'folderId');
+  if (!hasFolderIdColumn) {
+    database.prepare(`ALTER TABLE chats ADD COLUMN folderId TEXT`).run();
+    logging.debug('Added [folderId] column to [chats] table');
+  } else {
+    logging.debug('[folderId] column already exists in [chats] table');
+  }
 }
 
 function alertTableMessages() {
@@ -221,6 +251,7 @@ const initDatabase = database.transaction(() => {
   logging.debug('Init database...');
 
   database.pragma('foreign_keys = ON');
+  createTableFolders();
   createTableChats();
   createTableMessages();
   createTableBookmarks();
