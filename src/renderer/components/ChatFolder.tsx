@@ -52,7 +52,7 @@ export default function ChatFolder({
           {chats.length > 0 && (
             <div
               className={`pt-0.5 ${collapsed ? 'ml-0' : 'border-l border-base ml-3'}`}
-              style={{ paddingLeft: collapsed ? 0 : 7 }}
+              style={{ paddingLeft: collapsed ? 0 : 4 }}
             >
               {chats.map((chat) => (
                 <ChatItem key={chat.id} chat={chat} collapsed={collapsed} />

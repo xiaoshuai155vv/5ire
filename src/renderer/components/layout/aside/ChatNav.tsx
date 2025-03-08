@@ -53,6 +53,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   }, [fetchChat, chats.length, curChat?.id]);
 
   const handleDragEnd = (event: any) => {
+    console.log(event);
     const { active, over } = event;
     updateChat({ id: active.id, folderId: over?.id || null });
     selectFolder(over?.id || null);
