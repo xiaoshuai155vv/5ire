@@ -15,7 +15,7 @@ export default function ChatFolders({
   collapsed: boolean;
 }) {
   const folders = useChatStore((state) => state.folders);
-
+  const { selectFolder } = useChatStore();
   const [openItems, setOpenItems] = useState<string[]>([]);
 
   const chatsGroupByFolder = useMemo(() => {
@@ -34,18 +34,21 @@ export default function ChatFolders({
   }, [chats]);
 
   const handleToggle = useCallback<AccordionToggleEventHandler>((_, data) => {
+    if (data.openItems.includes(data.value)) {
+      selectFolder(data.value as string);
+    }
     setOpenItems(data.openItems as string[]);
   }, []);
 
   return (
     <Accordion multiple collapsible onToggle={handleToggle}>
-      {Object.keys(chatsGroupByFolder).map((folderId) => {
+      {Object.keys(folders).map((folderId) => {
         const folder = folders[folderId];
         const chatsInFolder = chatsGroupByFolder[folderId];
         return (
           <ChatFolder
             key={folderId}
-            chats={chatsInFolder}
+            chats={chatsInFolder||[]}
             collapsed={collapsed}
             folder={folder}
             openItems={openItems}

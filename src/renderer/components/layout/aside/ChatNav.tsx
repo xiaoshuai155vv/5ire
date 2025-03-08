@@ -12,7 +12,7 @@ import ChatItem from 'renderer/components/ChatItem';
 export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const chats = useChatStore((state) => state.chats);
   const curChat = useChatStore((state) => state.chat);
-  const { updateChat, fetchFolder, fetchChat } = useChatStore();
+  const { updateChat, fetchFolder, selectFolder, fetchChat } = useChatStore();
   const navigate = useNav();
 
   const chatsWithFolder = chats.filter((chat: IChat) => chat.folderId);
@@ -54,11 +54,8 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
-    if (over) {
-      updateChat({ id: active.id, folderId: over.id });
-    } else {
-      updateChat({ id: active.id, folderId: null });
-    }
+    updateChat({ id: active.id, folderId: over?.id || null });
+    selectFolder(over?.id || null);
     navigate(`/chats/${active.id}`);
   };
 

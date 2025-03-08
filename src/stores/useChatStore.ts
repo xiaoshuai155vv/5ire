@@ -45,6 +45,7 @@ if (!isPlainObject(tempStage)) {
 }
 export interface IChatStore {
   folders: Record<string, IChatFolder>;
+  folder: IChatFolder | null;
   chats: IChat[];
   chat: {
     id: string;
@@ -59,6 +60,7 @@ export interface IChatStore {
   };
   tempStage: Partial<IStage>;
   fetchFolder: (limit?: number) => Promise<Record<string, IChatFolder>>;
+  selectFolder: (id: string | null) => void;
   updateStates: (
     chatId: string,
     states: { loading?: boolean; runningTool?: string | null },
@@ -102,6 +104,7 @@ export interface IChatStore {
 
 const useChatStore = create<IChatStore>((set, get) => ({
   folders: {},
+  folder: null,
   keywords: {},
   chats: [],
   chat: { id: tempChatId, ...tempStage },
@@ -124,6 +127,12 @@ const useChatStore = create<IChatStore>((set, get) => ({
     );
     set({ folders });
     return folders;
+  },
+  selectFolder: (id: string | null) => {
+    if (!id) {
+      return set({ folder: null });
+    }
+    set((state) => ({ folder: state.folders[id] || null }));
   },
   updateStates: (
     chatId: string,
@@ -253,7 +262,6 @@ const useChatStore = create<IChatStore>((set, get) => ({
     return $chat;
   },
   updateChat: async (chat: { id: string } & Partial<IChat>) => {
-    console.log('updateChat', chat);
     const $chat = { id: chat.id } as IChat;
     const stats: string[] = [];
     const params: (string | number | null)[] = [];
