@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 import useNav from 'hooks/useNav';
-import { Button } from '@fluentui/react-components';
 import useChatStore from 'stores/useChatStore';
 import { IChat } from 'intellichat/types';
 import Mousetrap from 'mousetrap';
 import { findIndex } from 'lodash';
-import ChatIcon from 'renderer/components/ChatIcon';
+import { DndContext } from '@dnd-kit/core';
 import ChatFolders from 'renderer/components/ChatFolders';
 import ChatItem from 'renderer/components/ChatItem';
 
@@ -53,22 +52,28 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
     };
   }, [fetchChat, chats.length, currentChat?.id]);
 
+  const handleDragEnd = (event: any) => {
+    console.log(event);
+  };
+
   return (
-    <div className="h-full overflow-y-auto bg-brand-sidebar">
-      <div
-        className={`flex flex-col pt-2 ${collapsed ? 'content-center' : ''}`}
-      >
-        <div className={`-mt-2 mb-3 ${collapsed ? 'mx-auto' : ''}`}>
-          <ChatFolders chats={chatsWithFolder} collapsed={collapsed} />
+    <DndContext onDragEnd={handleDragEnd}>
+      <div className="h-full overflow-y-auto overflow-x-hidden bg-brand-sidebar">
+        <div
+          className={`flex flex-col pt-2 ${collapsed ? 'content-center' : ''}`}
+        >
+          <div className={`-mt-2 mb-3 ${collapsed ? 'mx-auto' : ''}`}>
+            <ChatFolders chats={chatsWithFolder} collapsed={collapsed} />
+          </div>
+          {chatsWithoutFolder.map((chat: IChat) => {
+            return (
+              <div className={collapsed ? ' mx-auto' : 'px-0.5'} key={chat.id}>
+                <ChatItem key={chat.id} chat={chat} collapsed={collapsed} />
+              </div>
+            );
+          })}
         </div>
-        {chatsWithoutFolder.map((chat: IChat) => {
-          return (
-            <div className={collapsed ? ' mx-auto' : 'px-0.5'} key={chat.id}>
-              <ChatItem key={chat.id} chat={chat} collapsed={collapsed} />
-            </div>
-          );
-        })}
       </div>
-    </div>
+    </DndContext>
   );
 }

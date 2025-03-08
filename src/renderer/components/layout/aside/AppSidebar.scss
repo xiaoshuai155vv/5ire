@@ -2,6 +2,7 @@
   height:100vh;
   --tw-bg-opacity: 0.9;
   --tw-border-opacity:1;
+  overflow-x: hidden;
   background-color: rgba(var(--color-bg-sidebar),var(--tw-bg-opacity));
   border-color: rgba(var(--color-border),var(--tw-border-opacity));
 }

@@ -23,30 +23,32 @@ export default function ChatFolder({
     id: folder.id,
   });
   return (
-    <AccordionItem key={folder.id} value={folder.id} ref={setNodeRef}>
-      <AccordionHeader
-        style={{ height: 28 }}
-        className={collapsed ? 'collapsed' : 'px-1'}
-        expandIcon={
-          openItems.includes(folder.id) ? (
-            <FolderOpenFilled />
-          ) : (
-            <FolderRegular />
-          )
-        }
-      >
-        {collapsed ? '' : folder.name}
-      </AccordionHeader>
-      <AccordionPanel>
-        <div
-          className={`pt-3  ${collapsed ? 'ml-0' : 'border-l border-base ml-3'}`}
-          style={{ paddingLeft: collapsed ? 0 : 7}}
+    <div ref={setNodeRef}>
+      <AccordionItem value={folder.id}>
+        <AccordionHeader
+          style={{ height: 28 }}
+          className={collapsed ? 'collapsed' : 'px-1'}
+          expandIcon={
+            openItems.includes(folder.id) ? (
+              <FolderOpenFilled />
+            ) : (
+              <FolderRegular />
+            )
+          }
         >
-          {chats.map((chat) => (
-            <ChatItem key={chat.id} chat={chat} collapsed={collapsed} />
-          ))}
-        </div>
-      </AccordionPanel>
-    </AccordionItem>
+          {collapsed ? '' : folder.name}
+        </AccordionHeader>
+        <AccordionPanel>
+          <div
+            className={`pt-3  ${collapsed ? 'ml-0' : 'border-l border-base ml-3'}`}
+            style={{ paddingLeft: collapsed ? 0 : 7 }}
+          >
+            {chats.map((chat) => (
+              <ChatItem key={chat.id} chat={chat} collapsed={collapsed} />
+            ))}
+          </div>
+        </AccordionPanel>
+      </AccordionItem>
+    </div>
   );
 }
