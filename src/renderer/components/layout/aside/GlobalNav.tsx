@@ -14,6 +14,8 @@ import {
   bundleIcon,
   Wand24Filled,
   Wand24Regular,
+  Folder24Filled,
+  Folder24Regular,
 } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
 import useNav from 'hooks/useNav';
@@ -36,6 +38,7 @@ const EmojiSparkleIcon = bundleIcon(
 const ChatAddIcon = bundleIcon(ChatAdd24Filled, ChatAdd24Regular);
 const KnowledgeIcon = bundleIcon(Library24Filled, Library24Regular);
 const WandIcon = bundleIcon(Wand24Filled, Wand24Regular);
+const FolderIcon = bundleIcon(Folder24Filled, Folder24Regular);
 
 const IS_ASSISTANTS_ENABLED = false;
 
@@ -73,11 +76,11 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
         collapsed ? 'text-center' : ''
       } border-b border-base py-2`}
     >
-      <div className={`px-2 my-1 ${collapsed ? 'mx-auto' : ''}`}>
+      <div className="px-2">
         <WorkspaceMenu collapsed={collapsed} />
       </div>
       {IS_ASSISTANTS_ENABLED && (
-        <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
+        <div className="px-2">
           <Button
             appearance="subtle"
             icon={<EmojiSparkleIcon />}
@@ -88,7 +91,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
         </div>
       )}
       {false && (
-        <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
+        <div className="px-2">
           <Button
             appearance="subtle"
             icon={<AppsIcon />}
@@ -99,7 +102,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           </Button>
         </div>
       )}
-      <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
+      <div className="px-2">
         <Button
           appearance="subtle"
           title="Alt+1"
@@ -121,7 +124,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           )}
         </Button>
       </div>
-      <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
+      <div className="px-2">
         <Button
           appearance="subtle"
           title="Alt+2"
@@ -132,7 +135,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           {collapsed ? null : t('Common.Knowledge')}
         </Button>
       </div>
-      <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
+      <div className="px-2">
         <Button
           appearance="subtle"
           title="Alt+3"
@@ -145,16 +148,21 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           {collapsed ? null : t('Common.Bookmarks')}
         </Button>
       </div>
-      <div className={`px-2  my-1 ${collapsed ? 'mx-auto' : ''}`}>
+      <div
+        className={`px-2 ${collapsed ? '' : 'flex flex-row  justify-between'}`}
+      >
         <Button
           appearance="subtle"
           title="Mod+n"
           icon={<ChatAddIcon />}
-          className="w-full justify-start"
+          className="w-full mx-auto justify-start flex-grow"
           onClick={async () => navigate(`/chats/${tempChatId}`)}
         >
           {collapsed ? null : t('Chat.New')}
         </Button>
+        <div>
+          <Button appearance="subtle" icon={<FolderIcon />} />
+        </div>
       </div>
     </div>
   );
