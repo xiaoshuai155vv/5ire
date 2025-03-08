@@ -76,11 +76,11 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
         collapsed ? 'text-center' : ''
       } border-b border-base py-2`}
     >
-      <div className="px-2">
+      <div className="px-1">
         <WorkspaceMenu collapsed={collapsed} />
       </div>
       {IS_ASSISTANTS_ENABLED && (
-        <div className="px-2">
+        <div className="px-1">
           <Button
             appearance="subtle"
             icon={<EmojiSparkleIcon />}
@@ -91,7 +91,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
         </div>
       )}
       {false && (
-        <div className="px-2">
+        <div className="px-1">
           <Button
             appearance="subtle"
             icon={<AppsIcon />}
@@ -102,7 +102,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           </Button>
         </div>
       )}
-      <div className="px-2">
+      <div className="px-1">
         <Button
           appearance="subtle"
           title="Alt+1"
@@ -124,7 +124,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           )}
         </Button>
       </div>
-      <div className="px-2">
+      <div className="px-1">
         <Button
           appearance="subtle"
           title="Alt+2"
@@ -135,7 +135,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           {collapsed ? null : t('Common.Knowledge')}
         </Button>
       </div>
-      <div className="px-2">
+      <div className="px-1">
         <Button
           appearance="subtle"
           title="Alt+3"
@@ -149,7 +149,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
         </Button>
       </div>
       <div
-        className={`px-2 ${collapsed ? '' : 'flex flex-row  justify-between'}`}
+        className={`px-1 ${collapsed ? '' : 'flex flex-row  justify-between'}`}
       >
         <Button
           appearance="subtle"
