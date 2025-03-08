@@ -63,12 +63,12 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   return (
     <div className="h-full overflow-y-auto bg-brand-sidebar">
       <div
-        className={`flex flex-col pt-2.5 ${collapsed ? 'content-center' : ''}`}
+        className={`flex flex-col pt-2 ${collapsed ? 'content-center' : ''}`}
       >
         {chats.map((chat: IChat) => {
           return (
             <div
-              className={`px-2 ${collapsed ? 'mx-auto' : ''} ${
+              className={`px-0.5 ${collapsed ? 'mx-auto' : ''} ${
                 currentChat && currentChat.id === chat.id ? 'active' : ''
               }`}
               key={chat.id}

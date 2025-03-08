@@ -76,11 +76,11 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
         collapsed ? 'text-center' : ''
       } border-b border-base py-2`}
     >
-      <div className="px-1">
+      <div className="px-0.5">
         <WorkspaceMenu collapsed={collapsed} />
       </div>
       {IS_ASSISTANTS_ENABLED && (
-        <div className="px-1">
+        <div className="px-0.5">
           <Button
             appearance="subtle"
             icon={<EmojiSparkleIcon />}
@@ -91,7 +91,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
         </div>
       )}
       {false && (
-        <div className="px-1">
+        <div className="px-0.5">
           <Button
             appearance="subtle"
             icon={<AppsIcon />}

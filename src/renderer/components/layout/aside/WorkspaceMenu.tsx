@@ -25,7 +25,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import useAppearanceStore from 'stores/useAppearanceStore';
 import useNav from 'hooks/useNav';
-import { useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import useToast from 'hooks/useToast';
 import useAuthStore from 'stores/useAuthStore';
 
@@ -74,7 +74,7 @@ export default function WorkspaceMenu({ collapsed }: { collapsed: boolean }) {
   }, []);
 
   return (
-    <div>
+    <div className='pr-0.5'>
       <Menu open={open} onOpenChange={onOpenChange}>
         <div
           className={`${collapsed ? '' : 'flex items-center justify-between '}`}
@@ -83,7 +83,7 @@ export default function WorkspaceMenu({ collapsed }: { collapsed: boolean }) {
             <MenuButton
               icon={<FireIcon />}
               appearance="subtle"
-              style={{borderColor: 'transparent', boxShadow: 'none'}}
+              style={{ borderColor: 'transparent', boxShadow: 'none' }}
               className="w-full justify-start outline-none"
               onClick={() => setOpen(true)}
             >
@@ -103,7 +103,7 @@ export default function WorkspaceMenu({ collapsed }: { collapsed: boolean }) {
                   size={24}
                 />
               }
-            ></Button>
+            />
           ) : null}
         </div>
         <MenuPopover
@@ -151,7 +151,7 @@ export default function WorkspaceMenu({ collapsed }: { collapsed: boolean }) {
           <MenuList>
             <MenuDivider className="border-base" />
             <MenuItem
-              title='mod+k'
+              title="mod+k"
               icon={<Settings24Regular />}
               onClick={() => {
                 navigate('/settings');
