@@ -14,8 +14,8 @@ import {
   bundleIcon,
   Wand24Filled,
   Wand24Regular,
-  Folder24Filled,
-  Folder24Regular,
+  FolderAdd24Regular,
+  FolderAdd24Filled,
 } from '@fluentui/react-icons';
 import { useTranslation } from 'react-i18next';
 import useNav from 'hooks/useNav';
@@ -38,7 +38,7 @@ const EmojiSparkleIcon = bundleIcon(
 const ChatAddIcon = bundleIcon(ChatAdd24Filled, ChatAdd24Regular);
 const KnowledgeIcon = bundleIcon(Library24Filled, Library24Regular);
 const WandIcon = bundleIcon(Wand24Filled, Wand24Regular);
-const FolderIcon = bundleIcon(Folder24Filled, Folder24Regular);
+const FolderAddIcon = bundleIcon(FolderAdd24Filled, FolderAdd24Regular);
 
 const IS_ASSISTANTS_ENABLED = false;
 
@@ -161,9 +161,12 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           {collapsed ? null : t('Chat.New')}
         </Button>
         <div>
-          <Button appearance="subtle" icon={<FolderIcon />} />
+          <Button appearance="subtle" icon={<FolderAddIcon />} />
         </div>
       </div>
     </div>
   );
+}
+function Folder25AddFill(props: FluentIconsProps): Element {
+  throw new Error('Function not implemented.');
 }

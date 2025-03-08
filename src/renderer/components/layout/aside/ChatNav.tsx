@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import useNav from 'hooks/useNav';
-import { Button, Tooltip } from '@fluentui/react-components';
-import { Chat20Regular, Chat20Filled } from '@fluentui/react-icons';
+import { Button } from '@fluentui/react-components';
 import useChatStore from 'stores/useChatStore';
 import { IChat } from 'intellichat/types';
 import Mousetrap from 'mousetrap';
