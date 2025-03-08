@@ -11,16 +11,18 @@ import {
   isUndefined,
   pick,
 } from 'lodash';
-import {
-  DEFAULT_MAX_TOKENS,
-  NUM_CTX_MESSAGES,
-  tempChatId,
-} from 'consts';
+import { DEFAULT_MAX_TOKENS, NUM_CTX_MESSAGES, tempChatId } from 'consts';
 import { captureException } from '../renderer/logging';
 import { date2unix } from 'utils/util';
 import { isBlank, isNotBlank } from 'utils/validators';
 import useSettingsStore from './useSettingsStore';
-import { IChat, IChatMessage, IPrompt, IStage } from 'intellichat/types';
+import {
+  IChat,
+  IChatFolder,
+  IChatMessage,
+  IPrompt,
+  IStage,
+} from 'intellichat/types';
 import { isValidTemperature } from 'intellichat/validators';
 import { getProvider } from 'providers';
 
@@ -42,6 +44,7 @@ if (!isPlainObject(tempStage)) {
   console.log('tempStage', tempStage);
 }
 export interface IChatStore {
+  folders: Record<string, IChatFolder>;
   chats: IChat[];
   chat: {
     id: string;
@@ -55,6 +58,7 @@ export interface IChatStore {
     };
   };
   tempStage: Partial<IStage>;
+  fetchFolder: (limit?: number) => Promise<Record<string, IChatFolder>>;
   updateStates: (
     chatId: string,
     states: { loading?: boolean; runningTool?: string | null },
@@ -74,7 +78,7 @@ export interface IChatStore {
   getChat: (id: string) => Promise<IChat>;
   // message
   createMessage: (message: Partial<IChatMessage>) => Promise<IChatMessage>;
-  appendReply: (chatId: string, reply: string, reasoning:string) => void;
+  appendReply: (chatId: string, reply: string, reasoning: string) => void;
   updateMessage: (
     message: { id: string } & Partial<IChatMessage>,
   ) => Promise<boolean>;
@@ -97,6 +101,7 @@ export interface IChatStore {
 }
 
 const useChatStore = create<IChatStore>((set, get) => ({
+  folders: {},
   keywords: {},
   chats: [],
   chat: { id: tempChatId, ...tempStage },
@@ -104,6 +109,22 @@ const useChatStore = create<IChatStore>((set, get) => ({
   states: {},
   // only for temp chat
   tempStage,
+  fetchFolder: async (limit = 100) => {
+    const offset = 0;
+    const rows = (await window.electron.db.all(
+      'SELECT id, name, model, systemMessage, temperature, maxTokens, knowledgeCollectionIds, maxCtxMessages FROM folders ORDER BY name ASC  limit ? offset ?',
+      [limit, offset],
+    )) as IChatFolder[];
+    const folders = rows.reduce(
+      (acc, folder) => {
+        acc[folder.id] = folder;
+        return acc;
+      },
+      {} as Record<string, IChatFolder>,
+    );
+    set({ folders });
+    return folders;
+  },
   updateStates: (
     chatId: string,
     states: { loading?: boolean; runningTool?: string | null },
@@ -318,7 +339,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
   },
   getChat: async (id: string) => {
     const chat = (await window.electron.db.get(
-      'SELECT id, summary, model, systemMessage, maxTokens, temperature, context, maxCtxMessages, stream, prompt, input, createdAt FROM chats where id = ?',
+      'SELECT id, summary, model, systemMessage, maxTokens, temperature, context, maxCtxMessages, stream, prompt, input, folderId, createdAt FROM chats where id = ?',
       id,
     )) as IChat;
     if (chat) {
@@ -334,7 +355,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
   },
   fetchChat: async (limit: number = 100, offset = 0) => {
     const rows = (await window.electron.db.all(
-      'SELECT id, summary, createdAt FROM chats ORDER BY createdAt DESC limit ? offset ?',
+      'SELECT id, summary, folderId, createdAt FROM chats ORDER BY createdAt DESC limit ? offset ?',
       [limit, offset],
     )) as IChat[];
     const chats = rows.map((chat) => {
@@ -463,7 +484,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
       msg.citedChunks = message.citedChunks as string;
       params.push(msg.citedChunks);
     }
-    if(!isBlank(message.reasoning)){
+    if (!isBlank(message.reasoning)) {
       stats.push('reasoning = ?');
       msg.reasoning = message.reasoning as string;
       params.push(msg.reasoning);
