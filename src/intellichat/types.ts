@@ -162,9 +162,24 @@ export interface IChatContext {
   isToolEnabled: () => boolean;
 }
 
+export interface IChatFolder {
+  id: string;
+  name: string;
+  model?: string;
+  systemMessage?: string | null;
+  maxCtxMessages?: number;
+  temperature?: number;
+  stream?: boolean;
+  knowledgeCollectionIds?: string | null;
+  maxTokens?: number | null;
+  createdAt: number | null;
+  isPersisted?: boolean;
+}
+
 export interface IChat {
   id: string;
   summary: string;
+  folderId: string | null;
   model?: string;
   systemMessage?: string | null;
   maxCtxMessages?: number;
@@ -231,5 +246,5 @@ export interface IStage {
   temperature?: number;
   maxTokens?: number | null;
   maxCtxMessages?: number;
-  stream?:boolean
+  stream?: boolean;
 }

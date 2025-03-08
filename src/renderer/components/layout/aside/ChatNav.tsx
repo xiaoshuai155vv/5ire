@@ -6,6 +6,7 @@ import useChatStore from 'stores/useChatStore';
 import { IChat } from 'intellichat/types';
 import Mousetrap from 'mousetrap';
 import { findIndex } from 'lodash';
+import ChatIcon from 'renderer/components/ChatIcon';
 
 export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const chats = useChatStore((state) => state.chats);
@@ -20,7 +21,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
         if (currentChat) {
           const curIdx = findIndex(
             chats,
-            (item: IChat) => item.id === currentChat.id
+            (item: IChat) => item.id === currentChat.id,
           );
           index = Math.max(curIdx - 1, 0);
         }
@@ -33,7 +34,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
         if (currentChat) {
           const curIdx = findIndex(
             chats,
-            (item: IChat) => item.id === currentChat.id
+            (item: IChat) => item.id === currentChat.id,
           );
           index = Math.min(curIdx + 1, chats.length - 1);
         }
@@ -45,20 +46,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
       Mousetrap.unbind('mod+up');
       Mousetrap.unbind('mod+down');
     };
-  }, [fetchChat,chats.length, currentChat?.id]);
-
-  const renderIconWithTooltip = (isActiveChat: boolean, summary: string) => {
-    return (
-      <Tooltip
-        withArrow
-        content={summary?.substring(0, 200)}
-        relationship="label"
-        positioning="above-start"
-      >
-        {isActiveChat ? <Chat20Filled /> : <Chat20Regular />}
-      </Tooltip>
-    );
-  };
+  }, [fetchChat, chats.length, currentChat?.id]);
 
   return (
     <div className="h-full overflow-y-auto bg-brand-sidebar">
@@ -74,10 +62,12 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
               key={chat.id}
             >
               <Button
-                icon={renderIconWithTooltip(
-                  currentChat && currentChat.id === chat.id,
-                  chat.summary
-                )}
+                icon={
+                  <ChatIcon
+                    chat={chat}
+                    isActive={currentChat && currentChat.id === chat.id}
+                  />
+                }
                 appearance="subtle"
                 className="w-full justify-start latin"
                 onClick={() => navigate(`/chats/${chat.id}`)}

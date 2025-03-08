@@ -11,7 +11,7 @@
 .fui-Listbox {
   max-height: 360px !important;
 }
-.fui-Label{
+.fui-Label {
   font-family: Barlow;
 }
 .toast-content {
@@ -33,4 +33,10 @@
 
 .fui-PopoverSurface {
   max-width: 400px;
+}
+
+.fui-AccordionHeader__button {
+  --fontFamilyBase:
+    Barlow, -apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB,
+    Roboto, helvetica neue, helvetica, segoe ui, Arial, sans-serif !important;
 }
