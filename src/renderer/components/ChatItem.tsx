@@ -1,5 +1,4 @@
 import { Button } from '@fluentui/react-components';
-import useNav from 'hooks/useNav';
 import { IChat } from 'intellichat/types';
 import useChatStore from 'stores/useChatStore';
 import ChatIcon from './ChatIcon';
@@ -14,7 +13,7 @@ export default function ChatItem({
   collapsed: boolean;
 }) {
   const curChat = useChatStore((state) => state.chat);
-  const navigate = useNav();
+
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: chat.id,
   });
@@ -23,20 +22,17 @@ export default function ChatItem({
   };
 
   return (
-    <div
-      key={chat.id}
-      ref={setNodeRef}
-      style={style}
-      {...listeners}
-      {...attributes}
-    >
+    <div key={chat.id}>
       <Button
+        style={style}
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
         icon={
           <ChatIcon chat={chat} isActive={curChat && curChat.id === chat.id} />
         }
         appearance="subtle"
         className="w-full justify-start latin"
-        onClick={() => navigate(`/chats/${chat.id}`)}
       >
         {collapsed ? null : (
           <div className="text-sm truncate ...">

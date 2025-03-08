@@ -40,7 +40,7 @@ export default function ChatFolder({
         </AccordionHeader>
         <AccordionPanel>
           <div
-            className={`pt-3  ${collapsed ? 'ml-0' : 'border-l border-base ml-3'}`}
+            className={`pt-0.5 ${collapsed ? 'ml-0' : 'border-l border-base ml-3'}`}
             style={{ paddingLeft: collapsed ? 0 : 7 }}
           >
             {chats.map((chat) => (

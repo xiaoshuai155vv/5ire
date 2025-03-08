@@ -313,6 +313,11 @@ const useChatStore = create<IChatStore>((set, get) => ({
         captureException(err);
       }
     }
+    if (!isUndefined(chat.folderId)) {
+      stats.push('folderId = ?');
+      $chat.folderId = chat.folderId;
+      params.push($chat.folderId);
+    }
     if ($chat.id && stats.length) {
       params.push($chat.id);
       await window.electron.db.run(

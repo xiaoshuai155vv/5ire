@@ -44,6 +44,7 @@ export default function ChatFolders({
         const chatsInFolder = chatsGroupByFolder[folderId];
         return (
           <ChatFolder
+            key={folderId}
             chats={chatsInFolder}
             collapsed={collapsed}
             folder={folder}
