@@ -6,7 +6,7 @@ exports.default = async function signArtifacts(context) {
 
   console.info(`Artifact Paths: ${JSON.stringify(artifactPaths)}`);
 
-  // Check if this is a Linux build by looking for an AppImage
+  // Check if this is a Linux build by looking for any AppImage
   const isLinux = artifactPaths.some((artifact) =>
     artifact.endsWith('.AppImage'),
   );
@@ -21,27 +21,29 @@ exports.default = async function signArtifacts(context) {
     );
   }
 
-  // Find the AppImage in artifactPaths
-  const appImagePath = artifactPaths.find((artifact) =>
+  // Filter all AppImages from artifactPaths
+  const appImages = artifactPaths.filter((artifact) =>
     artifact.endsWith('.AppImage'),
   );
 
-  if (!appImagePath) {
-    throw new Error('No AppImage found in artifact paths');
+  if (!appImages.length) {
+    throw new Error('No AppImages found in artifact paths');
   }
 
-  console.info(
-    `Signing AppImage with key ${process.env.GPG_KEY_ID}: ${appImagePath}`,
-  );
-  try {
-    // Sign the AppImage with GPG, forcing overwrite with --yes
-    execSync(
-      `gpg --detach-sign --armor --yes --default-key ${process.env.GPG_KEY_ID} "${appImagePath}"`,
-      { stdio: 'inherit' },
+  // Sign each AppImage using forEach
+  appImages.forEach((appImagePath) => {
+    console.info(
+      `Signing AppImage with key ${process.env.GPG_KEY_ID}: ${appImagePath}`,
     );
-    console.info(`AppImage signed successfully: ${appImagePath}.asc`);
-  } catch (error) {
-    console.error(`Failed to sign AppImage: ${error.message}`);
-    throw error;
-  }
+    try {
+      execSync(
+        `gpg --detach-sign --armor --yes --default-key ${process.env.GPG_KEY_ID} "${appImagePath}"`,
+        { stdio: 'inherit' },
+      );
+      console.info(`AppImage signed successfully: ${appImagePath}.asc`);
+    } catch (error) {
+      console.error(`Failed to sign AppImage: ${error.message}`);
+      throw error; // This will stop the build and report the error
+    }
+  });
 };
