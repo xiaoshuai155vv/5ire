@@ -25,6 +25,7 @@ import useMCPStore from 'stores/useMCPStore';
 import { useEffect, useMemo } from 'react';
 import Spinner from 'renderer/components/Spinner';
 import { IMCPServer } from 'types/mcp';
+import useChatStore from 'stores/useChatStore';
 
 const AppsIcon = bundleIcon(Apps24Filled, Apps24Regular);
 const BookmarkMultipleIcon = bundleIcon(
@@ -48,6 +49,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
   const config = useMCPStore((store) => store.config);
   const loadConfig = useMCPStore((state) => state.loadConfig);
   const isMCPServersLoading = useMCPStore((state) => state.isLoading);
+  const { createFolder } = useChatStore();
 
   const numOfActiveServers = useMemo(
     () => config.servers.filter((server: IMCPServer) => server.isActive).length,
@@ -161,7 +163,11 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           {collapsed ? null : t('Chat.New')}
         </Button>
         <div>
-          <Button appearance="subtle" icon={<FolderAddIcon />} />
+          <Button
+            appearance="subtle"
+            icon={<FolderAddIcon />}
+            onClick={() => createFolder()}
+          />
         </div>
       </div>
     </div>

@@ -61,6 +61,7 @@ export interface IChatStore {
   tempStage: Partial<IStage>;
   fetchFolder: (limit?: number) => Promise<Record<string, IChatFolder>>;
   selectFolder: (id: string | null) => void;
+  createFolder: (name?: string) => Promise<IChatFolder>;
   updateStates: (
     chatId: string,
     states: { loading?: boolean; runningTool?: string | null },
@@ -133,6 +134,26 @@ const useChatStore = create<IChatStore>((set, get) => ({
       return set({ folder: null });
     }
     set((state) => ({ folder: state.folders[id] || null }));
+  },
+  createFolder: async (name = 'New Folder') => {
+    const folder = {
+      id: typeid('dir').toString(),
+      name,
+      createdAt: date2unix(new Date()),
+    } as IChatFolder;
+    const ok = await window.electron.db.run(
+      `INSERT INTO folders (id, name, createdAt) VALUES (?, ?, ?)`,
+      [folder.id, folder.name, folder.createdAt],
+    );
+    if (!ok) {
+      throw new Error('Write the folder into database failed');
+    }
+    set(
+      produce((state: IChatStore) => {
+        state.folders[folder.id] = folder;
+      }),
+    );
+    return folder;
   },
   updateStates: (
     chatId: string,
