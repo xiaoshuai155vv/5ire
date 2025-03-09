@@ -53,6 +53,7 @@ export default function Chat() {
   const ref = useRef<HTMLDivElement>(null);
   const navigate = useNav();
 
+  const folder = useChatStore((state) => state.folder);
   const keywords = useChatStore((state) => state.keywords);
   const messages = useChatStore((state) => state.messages);
   const setKeyword = useChatStore((state) => state.setKeyword);
@@ -118,7 +119,7 @@ export default function Chat() {
     if (activeChatId !== tempChatId) {
       getChat(activeChatId);
     } else if (chatService?.isReady()) {
-      initChat({});
+      initChat({ folderId: folder?.id || null });
     }
     return () => {
       isUserScrollingRef.current = false;
@@ -180,6 +181,7 @@ export default function Chat() {
         const $chat = await createChat(
           {
             summary: prompt.substring(0, 50),
+            folderId: folder?.id || null,
           },
           async (newChat: IChat) => {
             const knowledgeCollections = moveChatCollections(

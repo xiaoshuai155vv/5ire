@@ -337,8 +337,8 @@ const useChatStore = create<IChatStore>((set, get) => ({
       captureException(err);
     }
     const ok = await window.electron.db.run(
-      `INSERT INTO chats (id, summary, model, systemMessage, temperature, maxCtxMessages, maxTokens, stream, prompt, input, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)`,
+      `INSERT INTO chats (id, summary, model, systemMessage, temperature, maxCtxMessages, maxTokens, stream, prompt, input, folderId, createdAt)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)`,
       [
         $chat.id,
         $chat.summary,
@@ -350,6 +350,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
         isNil($chat.stream) ? 1 : $chat.stream ? 1 : 0,
         prompt,
         $chat.input,
+        $chat.folderId || null,
         $chat.createdAt,
       ],
     );
