@@ -65,6 +65,7 @@ export interface IChatStore {
   updateFolder: (
     folder: { id: string } & Partial<IChatFolder>,
   ) => Promise<boolean>;
+  deleteFolder: (id: string) => Promise<boolean>;
   updateStates: (
     chatId: string,
     states: { loading?: boolean; runningTool?: string | null },
@@ -157,6 +158,24 @@ const useChatStore = create<IChatStore>((set, get) => ({
       }),
     );
     return folder;
+  },
+  deleteFolder: async (id: string) => {
+    let ok = await window.electron.db.run(`DELETE FROM folders WHERE id = ?`, [
+      id,
+    ]);
+    if (!ok) {
+      throw new Error('Delete folder failed');
+    }
+    ok = await window.electron.db.run(`DELETE FROM chats WHERE folderId = ?`, [
+      id,
+    ]);
+    set(
+      produce((state: IChatStore) => {
+        delete state.folders[id];
+        state.chats = state.chats.filter((chat) => chat.folderId !== id);
+      }),
+    );
+    return ok;
   },
   updateFolder: async (folder: { id: string } & Partial<IChatFolder>) => {
     const $folder = { id: folder.id } as IChatFolder;

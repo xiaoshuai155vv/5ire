@@ -25,6 +25,7 @@ import useChatStore from 'stores/useChatStore';
 import { t } from 'i18next';
 import { useRef, useState } from 'react';
 import Mousetrap from 'mousetrap';
+import ConfirmDialog from './ConfirmDialog';
 
 const MoreVerticalIcon = bundleIcon(MoreVerticalFilled, MoreVerticalRegular);
 
@@ -43,10 +44,11 @@ export default function ChatFolder({
     id: folder.id,
   });
   const inputRef = useRef<HTMLInputElement>(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [name, setName] = useState(folder.name);
   const [editable, setEditable] = useState(false);
   const selectedFolder = useChatStore((state) => state.folder);
-  const { updateFolder } = useChatStore();
+  const { updateFolder, deleteFolder } = useChatStore();
 
   return (
     <div ref={setNodeRef}>
@@ -119,7 +121,9 @@ export default function ChatFolder({
               </MenuTrigger>
               <MenuPopover>
                 <MenuList>
-                  <MenuItem>{t('Common.Delete')}</MenuItem>
+                  <MenuItem onClick={() => setConfirmDialogOpen(true)}>
+                    {t('Common.Delete')}
+                  </MenuItem>
                   <MenuItem>{t('Common.Settings')}</MenuItem>
                 </MenuList>
               </MenuPopover>
@@ -139,6 +143,13 @@ export default function ChatFolder({
           )}
         </AccordionPanel>
       </AccordionItem>
+      <ConfirmDialog
+        title={`${t('Chat.Confirmation.DeleteFolder')} [${folder.name}]`}
+        message={t('Chat.DeleteConfirmation.DeleteFolderInfo')}
+        open={confirmDialogOpen}
+        setOpen={setConfirmDialogOpen}
+        onConfirm={() => deleteFolder(folder.id)}
+      />
     </div>
   );
 }

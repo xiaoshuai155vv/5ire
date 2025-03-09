@@ -256,5 +256,6 @@
   "Common.Validation.MustBeNumber": "必须位数字",
   "Bookmarks.Notification.Removed": "已从书签中移除",
   "Bookmarks.Notification.Added": "已添加至书签",
-  "Bookmarks.Notification.RemovedFavarites": "已从收藏中移除书签"
+  "Bookmarks.Notification.RemovedFavarites": "已从收藏中移除书签",
+  "Chat.DeleteConfirmation.DeleteFolderInfo": "删除文件夹将同时删除下面所有的对话，该操作不可可撤销。"
 }

@@ -260,5 +260,7 @@
   "Common.Validation.MustBeNumber": "Must be a number",
   "Bookmarks.Notification.Removed": "Removed from your Bookmarks",
   "Bookmarks.Notification.Added": "Added to your Favorites",
-  "Bookmarks.Notification.RemovedFavarites": "Removed from your Favorites"
+  "Bookmarks.Notification.RemovedFavarites": "Removed from your Favorites",
+  "Chat.Confirmation.DeleteFolder": "Delete folder",
+  "Chat.DeleteConfirmation.DeleteFolderInfo": "Deleting this folder will permanently remove all conversations within it. This action cannot be undone."
 }
