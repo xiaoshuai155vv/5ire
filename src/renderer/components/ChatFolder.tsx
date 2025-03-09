@@ -8,6 +8,7 @@ import {
   MenuList,
   MenuPopover,
   MenuTrigger,
+  Input,
 } from '@fluentui/react-components';
 import {
   bundleIcon,
@@ -22,6 +23,8 @@ import { useDroppable } from '@dnd-kit/core';
 import ChatItem from './ChatItem';
 import useChatStore from 'stores/useChatStore';
 import { t } from 'i18next';
+import { useRef, useState } from 'react';
+import Mousetrap from 'mousetrap';
 
 const MoreVerticalIcon = bundleIcon(MoreVerticalFilled, MoreVerticalRegular);
 
@@ -39,14 +42,31 @@ export default function ChatFolder({
   const { setNodeRef } = useDroppable({
     id: folder.id,
   });
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState(folder.name);
+  const [editable, setEditable] = useState(false);
   const selectedFolder = useChatStore((state) => state.folder);
+  const { updateFolder } = useChatStore();
+
   return (
     <div ref={setNodeRef}>
-      <AccordionItem value={folder.id}>
+      <AccordionItem value={folder.id} disabled={editable}>
         <div className="flex justify-between items-center">
           <AccordionHeader
             style={{ height: 28 }}
             className={collapsed ? 'collapsed' : 'px-1 flex-grow'}
+            onDoubleClick={(e: any) => {
+              if (!collapsed) {
+                setEditable(true);
+                setTimeout(() => {
+                  inputRef.current?.focus();
+                }, 0);
+                Mousetrap.bind('esc', () => {
+                  setName(folder.name);
+                  setEditable(false);
+                });
+              }
+            }}
             expandIcon={
               openItems.includes(folder.id) ? (
                 folder.id === selectedFolder?.id ? (
@@ -59,7 +79,34 @@ export default function ChatFolder({
               )
             }
           >
-            {collapsed ? '' : folder.name}
+            {editable ? (
+              <Input
+                ref={inputRef}
+                value={name}
+                appearance="underline"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    setEditable(false);
+                    updateFolder({
+                      id: folder.id,
+                      name: name.trim() || 'New Folder',
+                    });
+                    Mousetrap.unbind('esc');
+                  }
+                }}
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+                onBlur={() => {
+                  setEditable(false);
+                  Mousetrap.unbind('esc');
+                }}
+              />
+            ) : collapsed ? (
+              ''
+            ) : (
+              folder.name
+            )}
           </AccordionHeader>
           {!collapsed && (
             <Menu>

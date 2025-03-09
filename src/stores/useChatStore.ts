@@ -62,6 +62,9 @@ export interface IChatStore {
   fetchFolder: (limit?: number) => Promise<Record<string, IChatFolder>>;
   selectFolder: (id: string | null) => void;
   createFolder: (name?: string) => Promise<IChatFolder>;
+  updateFolder: (
+    folder: { id: string } & Partial<IChatFolder>,
+  ) => Promise<boolean>;
   updateStates: (
     chatId: string,
     states: { loading?: boolean; runningTool?: string | null },
@@ -154,6 +157,59 @@ const useChatStore = create<IChatStore>((set, get) => ({
       }),
     );
     return folder;
+  },
+  updateFolder: async (folder: { id: string } & Partial<IChatFolder>) => {
+    const $folder = { id: folder.id } as IChatFolder;
+    const stats: string[] = [];
+    const params: (string | number)[] = [];
+    if (isNotBlank(folder.name)) {
+      stats.push('name = ?');
+      $folder.name = folder.name as string;
+      params.push($folder.name);
+    }
+    if (isNotBlank(folder.model)) {
+      stats.push('model = ?');
+      $folder.model = folder.model as string;
+      params.push($folder.model);
+    }
+    if (isNotBlank(folder.systemMessage)) {
+      stats.push('systemMessage = ?');
+      $folder.systemMessage = folder.systemMessage as string;
+      params.push($folder.systemMessage);
+    }
+    if (isNumber(folder.temperature)) {
+      stats.push('temperature = ?');
+      $folder.temperature = folder.temperature as number;
+      params.push($folder.temperature);
+    }
+    if (isNumber(folder.maxTokens)) {
+      stats.push('maxTokens = ?');
+      $folder.maxTokens = folder.maxTokens as number;
+      params.push($folder.maxTokens);
+    }
+    if (isNumber(folder.maxCtxMessages)) {
+      stats.push('maxCtxMessages = ?');
+      $folder.maxCtxMessages = folder.maxCtxMessages as number;
+      params.push($folder.maxCtxMessages);
+    }
+    if (folder.id && stats.length) {
+      params.push($folder.id);
+      await window.electron.db.run(
+        `UPDATE folders SET ${stats.join(', ')} WHERE id = ?`,
+        params,
+      );
+      set(
+        produce((state: IChatStore) => {
+          state.folders[$folder.id] = {
+            ...state.folders[$folder.id],
+            ...$folder,
+          };
+        }),
+      );
+      debug('Update folder ', JSON.stringify($folder));
+      return true;
+    }
+    return false;
   },
   updateStates: (
     chatId: string,
