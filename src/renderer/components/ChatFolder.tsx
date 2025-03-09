@@ -2,16 +2,28 @@ import {
   AccordionItem,
   AccordionHeader,
   AccordionPanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
 } from '@fluentui/react-components';
 import {
+  bundleIcon,
   FolderOpenFilled,
   FolderOpenRegular,
   FolderRegular,
+  MoreVerticalFilled,
+  MoreVerticalRegular,
 } from '@fluentui/react-icons';
 import { IChat, IChatFolder } from 'intellichat/types';
 import { useDroppable } from '@dnd-kit/core';
 import ChatItem from './ChatItem';
 import useChatStore from 'stores/useChatStore';
+import { t } from 'i18next';
+
+const MoreVerticalIcon = bundleIcon(MoreVerticalFilled, MoreVerticalRegular);
 
 export default function ChatFolder({
   folder,
@@ -31,23 +43,42 @@ export default function ChatFolder({
   return (
     <div ref={setNodeRef}>
       <AccordionItem value={folder.id}>
-        <AccordionHeader
-          style={{ height: 28 }}
-          className={collapsed ? 'collapsed' : 'px-1'}
-          expandIcon={
-            openItems.includes(folder.id) ? (
-              folder.id === selectedFolder?.id ? (
-                <FolderOpenFilled />
+        <div className="flex justify-between items-center">
+          <AccordionHeader
+            style={{ height: 28 }}
+            className={collapsed ? 'collapsed' : 'px-1 flex-grow'}
+            expandIcon={
+              openItems.includes(folder.id) ? (
+                folder.id === selectedFolder?.id ? (
+                  <FolderOpenFilled />
+                ) : (
+                  <FolderOpenRegular />
+                )
               ) : (
-                <FolderOpenRegular />
+                <FolderRegular />
               )
-            ) : (
-              <FolderRegular />
-            )
-          }
-        >
-          {collapsed ? '' : folder.name}
-        </AccordionHeader>
+            }
+          >
+            {collapsed ? '' : folder.name}
+          </AccordionHeader>
+          {!collapsed && (
+            <Menu>
+              <MenuTrigger disableButtonEnhancement>
+                <MenuButton
+                  icon={<MoreVerticalIcon />}
+                  appearance="transparent"
+                  size="small"
+                />
+              </MenuTrigger>
+              <MenuPopover>
+                <MenuList>
+                  <MenuItem>{t('Common.Delete')}</MenuItem>
+                  <MenuItem>{t('Common.Settings')}</MenuItem>
+                </MenuList>
+              </MenuPopover>
+            </Menu>
+          )}
+        </div>
         <AccordionPanel>
           {chats.length > 0 && (
             <div
