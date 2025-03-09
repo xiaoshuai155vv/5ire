@@ -173,7 +173,7 @@ export interface IChatFolder {
   knowledgeCollectionIds?: string | null;
   maxTokens?: number | null;
   createdAt: number | null;
-  isPersisted?: boolean;
+  isNew?: boolean;
 }
 
 export interface IChat {

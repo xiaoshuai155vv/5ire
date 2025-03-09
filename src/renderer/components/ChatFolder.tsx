@@ -23,7 +23,7 @@ import { useDroppable } from '@dnd-kit/core';
 import ChatItem from './ChatItem';
 import useChatStore from 'stores/useChatStore';
 import { t } from 'i18next';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Mousetrap from 'mousetrap';
 import ConfirmDialog from './ConfirmDialog';
 
@@ -48,7 +48,20 @@ export default function ChatFolder({
   const [name, setName] = useState(folder.name);
   const [editable, setEditable] = useState(false);
   const selectedFolder = useChatStore((state) => state.folder);
-  const { updateFolder, deleteFolder } = useChatStore();
+  const { updateFolder, deleteFolder, markFolderAsOld } = useChatStore();
+
+  useEffect(() => {
+    if (folder.isNew) {
+      setEditable(true);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
+    return () => {
+      Mousetrap.unbind('esc');
+      markFolderAsOld(folder.id);
+    };
+  }, [folder.isNew]);
 
   return (
     <div ref={setNodeRef}>

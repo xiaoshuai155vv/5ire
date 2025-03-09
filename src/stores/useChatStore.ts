@@ -66,6 +66,7 @@ export interface IChatStore {
     folder: { id: string } & Partial<IChatFolder>,
   ) => Promise<boolean>;
   deleteFolder: (id: string) => Promise<boolean>;
+  markFolderAsOld: (id: string) => void;
   updateStates: (
     chatId: string,
     states: { loading?: boolean; runningTool?: string | null },
@@ -139,6 +140,15 @@ const useChatStore = create<IChatStore>((set, get) => ({
     }
     set((state) => ({ folder: state.folders[id] || null }));
   },
+  markFolderAsOld: (id: string) => {
+    set(
+      produce((state: IChatStore) => {
+        if (state.folders[id]) {
+          state.folders[id].isNew = false;
+        }
+      }),
+    );
+  },
   createFolder: async (name = 'New Folder') => {
     const folder = {
       id: typeid('dir').toString(),
@@ -152,6 +162,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
     if (!ok) {
       throw new Error('Write the folder into database failed');
     }
+    folder.isNew = true;
     set(
       produce((state: IChatStore) => {
         state.folders[folder.id] = folder;
