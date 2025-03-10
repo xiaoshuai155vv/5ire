@@ -21,28 +21,28 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   useEffect(() => {
     Mousetrap.bind('mod+shift+up', () => {
       let index = 0;
-      if (chats.length) {
+      if (chatsWithoutFolder.length) {
         if (curChat) {
           const curIdx = findIndex(
-            chats,
+            chatsWithoutFolder,
             (item: IChat) => item.id === curChat.id,
           );
           index = Math.max(curIdx - 1, 0);
         }
-        navigate(`/chats/${chats[index].id}`);
+        navigate(`/chats/${chatsWithoutFolder[index].id}`);
       }
     });
     Mousetrap.bind('mod+shift+down', () => {
       let index = 0;
-      if (chats.length) {
+      if (chatsWithoutFolder.length) {
         if (curChat) {
           const curIdx = findIndex(
-            chats,
+            chatsWithoutFolder,
             (item: IChat) => item.id === curChat.id,
           );
           index = Math.min(curIdx + 1, chats.length - 1);
         }
-        navigate(`/chats/${chats[index].id}`);
+        navigate(`/chats/${chatsWithoutFolder[index].id}`);
       }
     });
     Promise.all([fetchFolder(), fetchChat()]);
