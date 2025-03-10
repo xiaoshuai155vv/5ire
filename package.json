@@ -254,6 +254,7 @@
     ],
     "afterPack": ".erb/scripts/remove-useless.js",
     "afterSign": ".erb/scripts/notarize.js",
+    "afterAllArtifactBuild": ".erb/scripts/sign.js",
     "mac": {
       "target": {
         "target": "default",
@@ -301,7 +302,8 @@
       "target": [
         "AppImage"
       ],
-      "category": "Development"
+      "category": "Development",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "directories": {
       "app": "release/app",
