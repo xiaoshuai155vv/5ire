@@ -80,6 +80,7 @@ export default function FolderSettingsDialog({
         <DialogBody>
           <DialogTitle>{folder?.name}</DialogTitle>
           <DialogContent>
+            <div className='tips mb-4'>{t('Folder.Settings.Description')}</div>
             <div className="flex flex-col gap-4">
               <div>
                 {models.length > 0 ? (
@@ -88,18 +89,18 @@ export default function FolderSettingsDialog({
                       placeholder="Select an model"
                       value={curModelLabel}
                       onOptionSelect={(
-                        event: SelectionEvents,
+                        _: SelectionEvents,
                         data: OptionOnSelectData,
                       ) => {
-                        console.log(data.optionValue )
+                        console.log(data.optionValue);
                         setFolderModel(data.optionValue as string);
                       }}
                     >
                       {models.map((model: IChatModel) => (
                         <Option
-                          key={model.name}
-                          value={model.name}
-                          text={model.label || model.name}
+                          key={model.name as string}
+                          value={model.name as string}
+                          text={model.label || (model.name as string)}
                         >
                           <div className="flex justify-start items-center gap-1">
                             <ToolStatusIndicator

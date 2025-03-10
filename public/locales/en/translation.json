@@ -269,5 +269,6 @@
   "Upgrade.FailedInfo": "There was a problem updating the application, you can try again later or download the latest version from our website.",
   "Upgrade.Ready": "Ready",
   "Upgrade.Install": "Install",
-  "Upgrade.QuitAndInstall": "Quit and install new version."
+  "Upgrade.QuitAndInstall": "Quit and install new version.",
+  "Folder.Settings.Description": "Folder settings are automatically applied to all conversations inside. Changes to folder settings will overwrite individual conversation settings."
 }

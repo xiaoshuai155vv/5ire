@@ -262,5 +262,6 @@
   "Upgrade.FailedInfo": "应用更新失败，请稍后再试或直接前往官网下载最新版。",
   "Upgrade.Ready": "已就绪",
   "Upgrade.Install": "安装",
-  "Upgrade.QuitAndInstall": "退出并安装新版本"
+  "Upgrade.QuitAndInstall": "退出并安装新版本",
+  "Folder.Settings.Description": "对话默认继承文件夹设置。修改文件夹设置将覆盖其内部对话的相关配置。"
 }
