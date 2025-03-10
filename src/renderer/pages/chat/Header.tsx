@@ -34,7 +34,7 @@ export default function Header() {
   const { t } = useTranslation();
   const { notifySuccess } = useToast();
   const navigate = useNav();
-
+  const folder = useChatStore((state) => state.folder);
   const activeChat = useChatContext().getActiveChat();
   const collapsed = useAppearanceStore((state) => state.sidebar.collapsed);
   const chatSidebarHidden = useAppearanceStore(
@@ -74,12 +74,13 @@ export default function Header() {
 
   return (
     <div
-      className={`chat-header absolute p-2.5 -mx-2.5 flex justify-end items-center ${
+      className={`chat-header absolute p-2.5 -mx-2.5 flex justify-between items-center ${
         collapsed
           ? 'left-[12rem] md:left-[5rem]'
           : 'left-[12rem] md:left-0 lg:left-0'
       }`}
     >
+      <div className='flex-grow text-sm text-gray-300 dark:text-gray-600'>{folder?.name}</div>
       <div className="flex justify-end items-center gap-1">
         {activeChat.isPersisted ? (
           <>
