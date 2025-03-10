@@ -11,7 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@fluentui/react-components';
-import { set } from 'lodash';
 import { CheckmarkCircle16Regular } from '@fluentui/react-icons';
 
 export default function UpgradeIndicator() {
@@ -84,7 +83,7 @@ export default function UpgradeIndicator() {
     return upgrading ? (
       <div className="upgrade-indicator flex justify-center items-center rounded-full pl-1 pr-2 py-0.5 bg-orange-200 dark:bg-yellow-800 text-orange-800 dark:text-orange-200 text-xs">
         <Spinner size={14} className="mr-2" />
-        <span>{version}</span>
+        <span>v{version}</span>
       </div>
     ) : completed ? (
       <Dialog>
@@ -92,14 +91,14 @@ export default function UpgradeIndicator() {
           <button className="upgrade-indicator flex justify-center items-center rounded-full pl-1 pr-2 py-0.5 bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 text-xs">
             <CheckmarkCircle16Regular className="mr-1" />
             <span>
-              {version} {t('Upgrade.Ready')}
+              v{version} {t('Upgrade.Ready')}
             </span>
           </button>
         </DialogTrigger>
         <DialogSurface>
           <DialogBody>
             <DialogTitle>
-              {version} {t('Upgrade.Ready')}
+              v{version} {t('Upgrade.Ready')}
             </DialogTitle>
             <DialogContent>{t('Upgrade.QuitAndInstall')}</DialogContent>
             <DialogActions>
