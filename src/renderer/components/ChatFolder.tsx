@@ -102,10 +102,12 @@ export default function ChatFolder({
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     setEditable(false);
+                    const folderName = name.trim() || 'New Folder';
                     updateFolder({
                       id: folder.id,
-                      name: name.trim() || 'New Folder',
+                      name: folderName,
                     });
+                    setName(folderName);
                     Mousetrap.unbind('esc');
                   }
                 }}
