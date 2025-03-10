@@ -1,6 +1,6 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 // import 'v8-compile-cache';
-import os from 'node:os';
+import os, { version } from 'node:os';
 import fs from 'node:fs';
 import path from 'path';
 import dotenv from 'dotenv';
@@ -71,6 +71,7 @@ class AppUpdater {
 
     autoUpdater.on('update-available', (info: any) => {
       store.set('updateInfo', {
+        version: info.version,
         isDownloading: true,
       });
       if (mainWindow) {
