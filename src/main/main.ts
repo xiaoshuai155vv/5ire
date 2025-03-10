@@ -39,8 +39,6 @@ import {
   MAX_FILE_SIZE,
   SUPPORTED_IMAGE_TYPES,
 } from '../consts';
-import { IMCPConfig } from 'stores/useMCPStore';
-import mcpConfig from '../mcp.config';
 
 logging.init();
 
@@ -64,19 +62,26 @@ const store = new Store();
 
 class AppUpdater {
   constructor() {
+    autoUpdater.forceDevUpdateConfig = true;
     autoUpdater.setFeedURL({
       provider: 'generic',
       url: 'https://github.com/nanbingxyz/5ire/releases/latest/download/',
     });
 
-    autoUpdater.on('update-available', () => {
+    autoUpdater.on('update-available', (info: any) => {
       store.set('updateInfo', {
         isDownloading: true,
       });
+      if (mainWindow) {
+        mainWindow.webContents.send('app-upgrade-start', info);
+      }
     });
 
     autoUpdater.on('update-not-available', () => {
       store.delete('updateInfo');
+      if (mainWindow) {
+        mainWindow.webContents.send('app-upgrade-not-available');
+      }
     });
 
     autoUpdater.on(
@@ -89,6 +94,9 @@ class AppUpdater {
           releaseName,
           isDownloading: false,
         });
+        if (mainWindow) {
+          mainWindow.webContents.send('app-upgrade-end');
+        }
         const dialogOpts = {
           type: 'info',
           buttons: ['Restart', 'Later'],
@@ -107,6 +115,7 @@ class AppUpdater {
     );
 
     autoUpdater.on('error', (message) => {
+      /**
       const dialogOpts = {
         type: 'error',
         buttons: ['Go to website', 'Ok'],
@@ -120,11 +129,16 @@ class AppUpdater {
           shell.openExternal('https://5ire.app');
         }
       });
+      */
+      if (mainWindow) {
+        mainWindow.webContents.send('app-upgrade-error');
+      }
       logging.captureException(message);
     });
-    if (process.env.NODE_ENV === 'production') {
-      autoUpdater.checkForUpdates();
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    //   autoUpdater.checkForUpdates();
+    // }
+    autoUpdater.checkForUpdates();
   }
 }
 let downloader: Downloader;

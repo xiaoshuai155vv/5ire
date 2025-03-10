@@ -23,6 +23,7 @@ import useAppearanceStore from '../../../stores/useAppearanceStore';
 import './AppHeader.scss';
 import SearchDialog from '../SearchDialog';
 import TrafficLights from '../TrafficLights';
+import UpgradeIndicator from '../UpgradeIndicator';
 
 const PanelLeftIcon = bundleIcon(PanelLeftText24Filled, PanelLeftText24Regular);
 const SearchIcon = bundleIcon(Search24Filled, Search24Regular);
@@ -79,14 +80,15 @@ export default function AppHeader() {
             onClick={() => toggleSidebarVisibility()}
           />
         </div>
-        <div className="pl-1">
+        <div>
           <Button
             icon={<SearchIcon />}
             appearance="transparent"
             onClick={() => setSearchOpen(true)}
           />
         </div>
-        <div className="pl-1">{NetworkStatusIcon}</div>
+        <div>{NetworkStatusIcon}</div>
+        <div className='ml-1'><UpgradeIndicator /></div>
       </div>
       <SearchDialog open={searchOpen} setOpen={setSearchOpen} />
     </div>

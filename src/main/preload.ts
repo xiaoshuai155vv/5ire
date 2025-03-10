@@ -13,6 +13,10 @@ v8.setFlagsFromString('--max-old-space-size=4096');
 
 export type Channels =
   | 'ipc-5ire'
+  | 'app-upgrade-start'
+  | 'app-upgrade-end'
+  | 'app-upgrade-error'
+  | 'app-upgrade-not-available'
   | 'native-theme-change'
   | 'sign-in'
   | 'minimize-app'

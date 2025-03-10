@@ -257,5 +257,9 @@
   "Bookmarks.Notification.Removed": "已从书签中移除",
   "Bookmarks.Notification.Added": "已添加至书签",
   "Bookmarks.Notification.RemovedFavarites": "已从收藏中移除书签",
-  "Chat.DeleteConfirmation.DeleteFolderInfo": "删除文件夹将同时删除下面所有的对话，该操作不可可撤销。"
+  "Chat.DeleteConfirmation.DeleteFolderInfo": "删除文件夹将同时删除下面所有的对话，该操作不可可撤销。",
+  "Common.Upgrading": "更新中",
+  "Common.UpgradeErrorInfo": "更新检查失败，你可以稍后再试或直接访问 https://5ire.app 官网下载",
+  "Common.Action.Close": "关闭",
+  "Common.Action.GoWebsite": "进入官网"
 }
