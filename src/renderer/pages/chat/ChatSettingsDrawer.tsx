@@ -36,7 +36,7 @@ export default function ChatSettingsDrawer({
   const activeChat = useChatContext().getActiveChat();
   useEffect(() => {
     setSystemMessage(activeChat.systemMessage || '');
-  }, [activeChat?.id]);
+  }, [activeChat?.id, activeChat.systemMessage]);
 
   const setKeyword = useChatStore((state) => state.setKeyword);
   const keywords = useChatStore((state) => state.keywords);

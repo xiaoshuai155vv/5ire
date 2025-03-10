@@ -53,10 +53,6 @@ export default function ChatFolder({
     useChatStore();
   const [folderSettingsOpen, setFolderSettingsOpen] = useState(false);
 
-  const saveFolderSettings = async () => {
-    setFolderSettingsOpen(false);
-  };
-
   useEffect(() => {
     if (folder.isNew) {
       setEditable(true);
@@ -182,7 +178,6 @@ export default function ChatFolder({
       <FolderSettingsDialog
         open={folderSettingsOpen}
         setOpen={setFolderSettingsOpen}
-        onConfirm={saveFolderSettings}
       />
     </div>
   );

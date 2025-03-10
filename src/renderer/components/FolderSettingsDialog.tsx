@@ -25,17 +25,16 @@ import { getProvider } from 'providers';
 import { IChatModel } from 'providers/types';
 import useProvider from 'hooks/useProvider';
 import ToolStatusIndicator from './ToolStatusIndicator';
-import { set } from 'lodash';
 
 export default function FolderSettingsDialog({
   open,
   setOpen,
-  onConfirm,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onConfirm: () => void;
 }) {
+  const chats = useChatStore((state) => state.chats);
+  const { updateFolder, updateChat } = useChatStore();
   const folder = useChatStore((state) => state.folder);
   const api = useSettingsStore((state) => state.api);
   const session = useAuthStore((state) => state.session);
@@ -51,22 +50,38 @@ export default function FolderSettingsDialog({
     return [];
   }, [api.provider, session]);
 
+  const subChats = useMemo(() => {
+    if (!folder) return [];
+    return chats.filter((c) => c.folderId === folder.id);
+  }, [chats, folder]);
+
   const curModelLabel = useMemo(() => {
     return models.find((m) => m.name === folderModel)?.label || '';
   }, [folderModel, models]);
 
   const { t } = useTranslation();
-  const confirm = useCallback(() => {
-    async function confirmAndClose() {
-      await onConfirm();
-      setOpen(false);
-    }
-    confirmAndClose();
-  }, [setOpen, onConfirm]);
+  const onConfirm = useCallback(async () => {
+    await updateFolder({
+      id: folder?.id as string,
+      model: folderModel,
+      systemMessage: folderSystemMessage,
+    });
+    await Promise.all(
+      subChats.map((chat) => {
+        updateChat({
+          id: chat.id,
+          model: folderModel,
+          systemMessage: folderSystemMessage,
+        });
+      }),
+    );
+    setOpen(false);
+  }, [setOpen, folderModel, folderSystemMessage, folder, subChats]);
 
   useEffect(() => {
     if (open) {
-      setFolderModel(api.model);
+      setFolderModel(folder?.model || api.model);
+      setFolderSystemMessage(folder?.systemMessage || '');
       Mousetrap.bind('esc', () => setOpen(false));
     }
     return () => {
@@ -80,7 +95,7 @@ export default function FolderSettingsDialog({
         <DialogBody>
           <DialogTitle>{folder?.name}</DialogTitle>
           <DialogContent>
-            <div className='tips mb-4'>{t('Folder.Settings.Description')}</div>
+            <div className="tips mb-4">{t('Folder.Settings.Description')}</div>
             <div className="flex flex-col gap-4">
               <div>
                 {models.length > 0 ? (
@@ -143,7 +158,7 @@ export default function FolderSettingsDialog({
               </Button>
             </DialogTrigger>
             <DialogTrigger disableButtonEnhancement>
-              <Button appearance="primary" onClick={() => confirm()}>
+              <Button appearance="primary" onClick={() => onConfirm()}>
                 {t('Common.Save')}
               </Button>
             </DialogTrigger>
