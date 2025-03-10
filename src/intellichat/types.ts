@@ -51,7 +51,6 @@ export interface IAnthropicTool {
     type: string;
     properties: any;
     required: any;
-    additionalProperties: any;
   };
 }
 
