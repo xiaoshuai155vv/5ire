@@ -52,7 +52,7 @@ export interface IChatModelVision{
 }
 export interface IChatModel {
   label?: string;
-  name: string;
+  name?: string;
   description?: string | null;
   maxTokens?: number | null;
   defaultMaxTokens?: number | null;
@@ -95,7 +95,8 @@ export interface IChatConfig {
 }
 
 export interface IEmbeddingModel {
-  name: string;
+  name?: string;
+  label?: string;
   price: number;
   dimension?: number;
   description?: string;

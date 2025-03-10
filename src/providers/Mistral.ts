@@ -18,7 +18,7 @@ export default {
     },
     models: {
       'codestral-latest': {
-        name: 'codestral-latest',
+        label: 'codestral-latest',
         contextWindow: 32000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
@@ -30,7 +30,7 @@ export default {
         group: 'Codestral',
       },
       'mistral-large-latest': {
-        name: 'mistral-large-latest',
+        label: 'mistral-large-latest',
         contextWindow: 131000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
@@ -41,7 +41,7 @@ export default {
         group: 'Mistral',
       },
       'mistral-small-latest': {
-        name: 'mistral-small-latest',
+        label: 'mistral-small-latest',
         contextWindow: 32000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
@@ -52,7 +52,7 @@ export default {
         group: 'Mistral',
       },
       'pixtral-large-latest': {
-        name: 'pixtral-large-latest',
+        label: 'pixtral-large-latest',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
@@ -68,7 +68,7 @@ export default {
         group: 'Pixtral',
       },
       'ministral-8b-latest': {
-        name: 'ministral-8b-latest',
+        label: 'ministral-8b-latest',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,
@@ -80,7 +80,7 @@ export default {
         group: 'Ministral',
       },
       'ministral-3b-latest': {
-        name: 'ministral-3b-latest',
+        label: 'ministral-3b-latest',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 2048,

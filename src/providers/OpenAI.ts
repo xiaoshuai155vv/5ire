@@ -18,7 +18,7 @@ export default {
     },
     models: {
       o1: {
-        name: 'o1',
+        label: 'o1',
         contextWindow: 200000,
         maxTokens: 100000,
         inputPrice: 0.015,
@@ -33,7 +33,7 @@ export default {
         group: 'O',
       },
       'o1-mini': {
-        name: 'o1-mini',
+        label: 'o1-mini',
         contextWindow: 128000,
         maxTokens: 65536,
         defaultMaxTokens: 60000,
@@ -49,7 +49,7 @@ export default {
         group: 'O',
       },
       'o3-mini': {
-        name: 'o3-mini',
+        label: 'o3-mini',
         contextWindow: 200000,
         maxTokens: 100000,
         defaultMaxTokens: 100000,
@@ -61,7 +61,7 @@ export default {
         group: 'O',
       },
       'gpt-4o': {
-        name: 'gpt-4o',
+        label: 'gpt-4o',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -78,7 +78,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-4o-mini': {
-        name: 'gpt-4o-mini',
+        label: 'gpt-4o-mini',
         contextWindow: 128000,
         maxTokens: 16384,
         defaultMaxTokens: 16000,
@@ -94,7 +94,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-4-turbo': {
-        name: 'gpt-4-turbo',
+        label: 'gpt-4-turbo',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -113,7 +113,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-4': {
-        name: 'gpt-4',
+        label: 'gpt-4',
         contextWindow: 8129,
         maxTokens: 8129,
         defaultMaxTokens: 8000,
@@ -124,7 +124,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-3.5-turbo': {
-        name: 'gpt-3.5-turbo',
+        label: 'gpt-3.5-turbo',
         contextWindow: 16385,
         maxTokens:4096,
         defaultMaxTokens: 4000,
@@ -141,7 +141,7 @@ export default {
     apiSchema: ['base', 'key', 'model'],
     models: {
       'text-embedding-3-large': {
-        name: 'text-embedding-3-large',
+        label: 'text-embedding-3-large',
         dimension: 3072,
         price: 0.00013,
         maxTokens: 8191,
@@ -150,7 +150,7 @@ export default {
         isDefault: true,
       },
       'text-embedding-3-small': {
-        name: 'text-embedding-3-small',
+        label: 'text-embedding-3-small',
         dimension: 1536,
         price: 0.00002,
         maxTokens: 8191,
@@ -158,7 +158,7 @@ export default {
           'Increased performance over 2nd generation ada embedding model',
       },
       'text-embedding-ada-002': {
-        name: 'text-embedding-ada-002',
+        label: 'text-embedding-ada-002',
         dimension: 1536,
         price: 0.0001,
         maxTokens: 8191,

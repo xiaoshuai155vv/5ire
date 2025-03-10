@@ -48,7 +48,7 @@ export default {
       },
       */
       'gpt-4o': {
-        name: 'gpt-4o',
+        label: 'gpt-4o',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -62,7 +62,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-4': {
-        name: 'gpt-4',
+        label: 'gpt-4',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -71,7 +71,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-3.5-turbo': {
-        name: 'gpt-35-turbo',
+        label: 'gpt-35-turbo',
         contextWindow: 16385,
         maxTokens: 4096,
         defaultMaxTokens: 4000,

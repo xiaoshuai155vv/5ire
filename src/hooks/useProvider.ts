@@ -37,27 +37,27 @@ export default function useProvider() {
 
   function getChatModels(providerName: ProviderType): IChatModel[] {
     const provider = getProvider(providerName);
-    return Object.keys(provider.chat.models).map((modelKey) => {
-      const model = provider.chat.models[modelKey];
-      model.label = modelKey;
+    return Object.keys(provider.chat.models).map((name) => {
+      const model = provider.chat.models[name];
+      model.name = name;
       return model;
     });
   }
 
   function getChatModel(
     providerName: ProviderType,
-    modelLabel: string
+    modelName: string
   ): IChatModel {
     const _providers = getProviders();
     let provider = _providers[providerName];
     if (!provider) {
       provider = Object.values(_providers)[0];
     }
-    let model = provider.chat.models[modelLabel];
+    let model = provider.chat.models[modelName];
     if (!model) {
       model = getDefaultChatModel(providerName);
     }else{
-      model.label = modelLabel;
+      model.name = modelName;
     }
     return model;
   }

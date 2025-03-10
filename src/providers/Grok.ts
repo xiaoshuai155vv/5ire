@@ -18,7 +18,7 @@ export default {
     },
     models: {
       'grok-2-vision': {
-        name: 'grok-2-vision',
+        label: 'grok-2-vision',
         contextWindow: 32768,
         defaultMaxTokens:4000,
         maxTokens: 4096,
@@ -35,7 +35,7 @@ export default {
         group: 'Grok',
       },
       'grok-2': {
-        name: 'grok-2',
+        label: 'grok-2',
         contextWindow: 128000,
         defaultMaxTokens:128000,
         maxTokens: 128000,

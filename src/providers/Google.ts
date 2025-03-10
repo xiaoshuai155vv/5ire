@@ -18,8 +18,8 @@ export default {
       streamCustomizable: false,
     },
     models: {
-      'gemini-2.0-flash': {
-        name: 'gemini-2.0-flash-001',
+      'gemini-2.0-flash-001': {
+        label: 'gemini-2.0-flash',
         contextWindow: 1048576,
         maxTokens: 8192,
         defaultMaxTokens:8000,
@@ -34,7 +34,7 @@ export default {
         group: 'Gemini',
       },
       'gemini-2.0-pro-exp-02-05': {
-        name: 'gemini-2.0-pro-exp-02-05',
+        label: 'gemini-2.0-pro-exp-02-05',
         contextWindow: 1048576,
         maxTokens: 8192,
         defaultMaxTokens:8000,
@@ -49,7 +49,7 @@ export default {
         group: 'Gemini',
       },
       'gemini-2.0-flash-thinking-exp': {
-        name: 'gemini-2.0-flash-thinking-exp',
+        label: 'gemini-2.0-flash-thinking-exp',
         contextWindow: 1048576,
         maxTokens: 8192,
         defaultMaxTokens:8000,
@@ -63,8 +63,8 @@ export default {
         description: `Capable of reasoning about complex problems and possessing new thinking abilities`,
         group: 'Gemini',
       },
-      'gemini-2.0-flash-lite': {
-        name: 'gemini-2.0-flash-lite-preview-02-05',
+      'gemini-2.0-flash-lite-preview-02-05': {
+        label: 'gemini-2.0-flash-lite',
         contextWindow: 1048576,
         maxTokens: 8192,
         defaultMaxTokens:8000,
@@ -80,7 +80,7 @@ export default {
         group: 'Gemini',
       },
       'gemini-1.5-pro': {
-        name: 'gemini-1.5-pro',
+        label: 'gemini-1.5-pro',
         contextWindow: 1048576,
         maxTokens: 8192,
         defaultMaxTokens:8000,
@@ -95,7 +95,7 @@ export default {
         group: 'Gemini',
       },
       'gemini-1.5-flash': {
-        name: 'gemini-1.5-flash',
+        label: 'gemini-1.5-flash',
         contextWindow: 1048576,
         maxTokens: 8192,
         defaultMaxTokens:8000,
@@ -110,7 +110,7 @@ export default {
         group: 'Gemini',
       },
       'gemini-1.5-flash-8b': {
-        name: 'gemini-1.5-flash-8b',
+        label: 'gemini-1.5-flash-8b',
         contextWindow: 1048576,
         maxTokens: 8192,
         defaultMaxTokens:8000,

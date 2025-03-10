@@ -29,7 +29,7 @@ export default {
     },
     models: {
       'gpt-4o': {
-        name: 'gpt-4o',
+        label: 'gpt-4o',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -44,7 +44,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-4o-mini': {
-        name: 'gpt-4o-mini',
+        label: 'gpt-4o-mini',
         contextWindow: 128000,
         maxTokens: 16384,
         defaultMaxTokens: 16000,
@@ -60,7 +60,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-4': {
-        name: 'gpt-4',
+        label: 'gpt-4',
         contextWindow: 8192,
         maxTokens: 8192,
         defaultMaxTokens: 8000,
@@ -70,7 +70,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-4-turbo': {
-        name: 'gpt-4-turbo',
+        label: 'gpt-4-turbo',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -80,7 +80,7 @@ export default {
         group: 'GPT-4',
       },
       'gpt-4-32k': {
-        name: 'gpt-4-32k',
+        label: 'gpt-4-32k',
         contextWindow: 32000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,

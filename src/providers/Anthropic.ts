@@ -16,8 +16,8 @@ export default {
       modelCustomizable: true,
     },
     models: {
-      'claude-3.7-sonnet-latest': {
-        name: 'claude-3-7-sonnet-20250219',
+      'claude-3-7-sonnet-20250219': {
+        label: 'claude-3.7-sonnet-latest',
         contextWindow: 200000,
         maxTokens: 8192,
         defaultMaxTokens: 8000,
@@ -37,8 +37,8 @@ export default {
         description: `Highest level of intelligence and capability with toggleable extended thinking`,
         group: 'Claude-3.5',
       },
-      'claude-3.5-sonnet-latest': {
-        name: 'claude-3-5-sonnet-20241022',
+      'claude-3-5-sonnet-20241022': {
+        label: 'claude-3.5-sonnet-latest',
         contextWindow: 200000,
         maxTokens: 8192,
         defaultMaxTokens: 8000,
@@ -58,8 +58,8 @@ export default {
         description: `High level of intelligence and capability`,
         group: 'Claude-3.5',
       },
-      'claude-3.5-haiku': {
-        name: 'claude-3-5-haiku-20241022',
+      'claude-3-5-haiku-20241022': {
+        label: 'claude-3.5-haiku',
         contextWindow: 200000,
         maxTokens: 8192,
         defaultMaxTokens: 8000,
@@ -69,8 +69,8 @@ export default {
         toolEnabled: true,
         group: 'Claude-3.5',
       },
-      'claude-3-opus': {
-        name: 'claude-3-opus-20240229',
+      'claude-3-opus-20240229': {
+        label: 'claude-3-opus',
         contextWindow: 200000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -90,8 +90,8 @@ export default {
         description: `Powerful multilingual model for highly complex tasks, top-level performance, intelligence, fluency, and understanding`,
         group: 'Claude-3',
       },
-      'claude-3-sonnet': {
-        name: 'claude-3-sonnet-20240229',
+      'claude-3-sonnet-20240229': {
+        label: 'claude-3-sonnet',
         contextWindow: 200000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -112,8 +112,8 @@ export default {
           'A multilingual model with balance of intelligence and speed, strong utility, balanced for scaled deployments',
         group: 'Claude-3',
       },
-      'claude-3-haiku': {
-        name: 'claude-3-haiku-20240307',
+      'claude-3-haiku-20240307': {
+        label: 'claude-3-haiku',
         contextWindow: 200000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,

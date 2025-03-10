@@ -32,7 +32,7 @@ export default {
     },
     models: {
       'ERNIE-4.0-8K': {
-        name: 'ERNIE-4.0-8K',
+        label: 'ERNIE-4.0-8K',
         contextWindow: 5120,
         maxTokens: 2048,
         inputPrice: 0.03,
@@ -42,7 +42,7 @@ export default {
         group: 'ERNIE',
       },
       'ERNIE-4.0-8K-Preview': {
-        name: 'ERNIE-4.0-8K-Preview',
+        label: 'ERNIE-4.0-8K-Preview',
         contextWindow: 5120,
         maxTokens: 2048,
         inputPrice: 0.03,
@@ -52,7 +52,7 @@ export default {
         group: 'ERNIE',
       },
       'ERNIE-4.0-8K-Latest': {
-        name: 'ERNIE-4.0-8K-Latest',
+        label: 'ERNIE-4.0-8K-Latest',
         contextWindow: 5120,
         maxTokens: 2048,
         inputPrice: 0.03,
@@ -62,7 +62,7 @@ export default {
         group: 'ERNIE',
       },
       'ERNIE-4.0-Turbo-8K': {
-        name: 'ERNIE-4.0-Turbo-8K',
+        label: 'ERNIE-4.0-Turbo-8K',
         contextWindow: 5120,
         maxTokens: 2048,
         inputPrice: 0.03,
@@ -71,7 +71,7 @@ export default {
         group: 'ERNIE',
       },
       'ERNIE-4.0-Turbo-8K-Preview': {
-        name: 'ERNIE-4.0-Turbo-8K-Preview',
+        label: 'ERNIE-4.0-Turbo-8K-Preview',
         contextWindow: 5120,
         maxTokens: 2048,
         inputPrice: 0.03,
@@ -80,7 +80,7 @@ export default {
         group: 'ERNIE',
       },
       'ERNIE-4.0-Turbo-8K-Latest': {
-        name: 'ERNIE-4.0-Turbo-8K-Latest',
+        label: 'ERNIE-4.0-Turbo-8K-Latest',
         contextWindow: 5120,
         maxTokens: 2048,
         inputPrice: 0.03,
@@ -89,7 +89,7 @@ export default {
         group: 'ERNIE',
       },
       'ERNIE-3.5-8K': {
-        name: 'ERNIE-3.5-8K',
+        label: 'ERNIE-3.5-8K',
         contextWindow: 124000,
         maxTokens: 4096,
         inputPrice: 0.0008,
@@ -103,7 +103,7 @@ export default {
     apiSchema: ['base', 'key', 'secret', 'model'],
     models: {
       'Embedding-V1': {
-        name: 'Embedding-V1',
+        label: 'Embedding-V1',
         price: 0.002,
         maxTokens: 384,
         maxChars: 1000,

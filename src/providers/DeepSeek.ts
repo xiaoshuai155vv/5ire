@@ -18,7 +18,7 @@ export default {
     },
     models: {
       'deepseek-chat': {
-        name: 'deepseek-chat',
+        label: 'deepseek-chat',
         contextWindow: 65536,
         maxTokens: 8192,
         defaultMaxTokens: 8000,
@@ -30,7 +30,7 @@ export default {
         group: 'DeepSeek',
       },
       'deepseek-reasoner': {
-        name: 'deepseek-reasoner',
+        label: 'deepseek-reasoner',
         contextWindow: 65536,
         maxTokens: 8192,
         defaultMaxTokens: 8000,

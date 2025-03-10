@@ -18,7 +18,7 @@ export default {
     },
     models: {
       'moonshot-v1-8k': {
-        name: 'moonshot-v1-8k',
+        label: 'moonshot-v1-8k',
         contextWindow: 8192,
         maxTokens: 1024,
         inputPrice: 0.012,
@@ -28,7 +28,7 @@ export default {
         group: 'Moonshot',
       },
       'moonshot-v1-32k': {
-        name: 'moonshot-v1-32k',
+        label: 'moonshot-v1-32k',
         contextWindow: 32768,
         maxTokens: 1024,
         inputPrice: 0.024,
@@ -37,7 +37,7 @@ export default {
         group: 'Moonshot',
       },
       'moonshot-v1-128k': {
-        name: 'moonshot-v1-128k',
+        label: 'moonshot-v1-128k',
         contextWindow: 128000,
         maxTokens: 1024,
         inputPrice: 0.06,

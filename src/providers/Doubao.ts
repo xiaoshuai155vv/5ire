@@ -27,7 +27,7 @@ export default {
     },
     models: {
       'doubao-vision-pro-32k': {
-        name: 'doubao-vision-pro-32k',
+        label: 'doubao-vision-pro-32k',
         contextWindow: 32000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -41,7 +41,7 @@ export default {
         group: 'Doubao-Pro',
       },
       'doubao-pro-256k': {
-        name: 'doubao-pro-256k',
+        label: 'doubao-pro-256k',
         contextWindow: 256000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -51,7 +51,7 @@ export default {
         group: 'Doubao-Pro',
       },
       'doubao-pro-128k': {
-        name: 'doubao-pro-128k',
+        label: 'doubao-pro-128k',
         contextWindow: 128000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -62,7 +62,7 @@ export default {
         group: 'Doubao-Pro',
       },
       'doubao-pro-32k': {
-        name: 'doubao-pro-32k',
+        label: 'doubao-pro-32k',
         contextWindow: 32000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -72,7 +72,7 @@ export default {
         group: 'Doubao-Pro',
       },
       'doubao-pro-4k': {
-        name: 'doubao-pro-4k',
+        label: 'doubao-pro-4k',
         contextWindow: 4000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -82,7 +82,7 @@ export default {
         group: 'Doubao-Pro',
       },
       'doubao-lite-128k': {
-        name: 'doubao-lite-128k',
+        label: 'doubao-lite-128k',
         contextWindow: 128000,
         defaultMaxTokens: 4000,
         maxTokens: 4096,
@@ -92,7 +92,7 @@ export default {
         group: 'Doubao-Lite',
       },
       'doubao-lite-32k': {
-        name: 'doubao-lite-32k',
+        label: 'doubao-lite-32k',
         contextWindow: 32000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
@@ -102,7 +102,7 @@ export default {
         group: 'Doubao-Lite',
       },
       'doubao-lite-4k': {
-        name: 'doubao-lite-4k',
+        label: 'doubao-lite-4k',
         contextWindow: 4000,
         maxTokens: 4096,
         defaultMaxTokens: 4000,
