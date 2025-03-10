@@ -80,7 +80,10 @@ export default function Header() {
           : 'left-[12rem] md:left-0 lg:left-0'
       }`}
     >
-      <div className='flex-grow text-sm text-gray-300 dark:text-gray-600'>{folder?.name}</div>
+      <div className="flex-grow text-sm text-gray-300 dark:text-gray-600">
+        {(activeChat.id === tempChatId || activeChat.folderId === folder?.id) &&
+          folder?.name}
+      </div>
       <div className="flex justify-end items-center gap-1">
         {activeChat.isPersisted ? (
           <>
@@ -116,7 +119,7 @@ export default function Header() {
           />
         </div>
         <Button
-          icon={<MoreHorizontalIcon className="text-color-tertiary"/>}
+          icon={<MoreHorizontalIcon className="text-color-tertiary" />}
           appearance="subtle"
           onClick={() => setDrawerOpen(true)}
         />
