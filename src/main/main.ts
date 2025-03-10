@@ -39,6 +39,7 @@ import {
   MAX_FILE_SIZE,
   SUPPORTED_IMAGE_TYPES,
 } from '../consts';
+import { update } from 'lodash';
 
 logging.init();
 
@@ -97,6 +98,7 @@ class AppUpdater {
         if (mainWindow) {
           mainWindow.webContents.send('app-upgrade-end');
         }
+        /**
         const dialogOpts = {
           type: 'info',
           buttons: ['Restart', 'Later'],
@@ -109,27 +111,13 @@ class AppUpdater {
         dialog.showMessageBox(dialogOpts).then((returnValue) => {
           if (returnValue.response === 0) autoUpdater.quitAndInstall();
         });
+        */
 
         axiom.ingest([{ app: 'upgrade' }, { version: releaseName }]);
       },
     );
 
     autoUpdater.on('error', (message) => {
-      /**
-      const dialogOpts = {
-        type: 'error',
-        buttons: ['Go to website', 'Ok'],
-        title: 'Something went wrong',
-        message:
-          'There was a problem updating the application, you can try again later or download the latest version from our website.',
-      } as MessageBoxOptions;
-
-      dialog.showMessageBox(dialogOpts).then((returnValue) => {
-        if (returnValue.response === 0) {
-          shell.openExternal('https://5ire.app');
-        }
-      });
-      */
       if (mainWindow) {
         mainWindow.webContents.send('app-upgrade-error');
       }
@@ -173,6 +161,10 @@ ipcMain.on('maximize-app', () => {
 });
 ipcMain.on('close-app', () => {
   mainWindow?.close();
+});
+
+ipcMain.handle('quit-and-upgrade', () => {
+  autoUpdater.quitAndInstall();
 });
 
 ipcMain.handle('encrypt', (_event, text: string, key: string) => {
@@ -586,6 +578,7 @@ app
     // Remove this if your app does not use auto updates
     // eslint-disable-next-line
     new AppUpdater();
+
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.

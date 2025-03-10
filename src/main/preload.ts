@@ -34,6 +34,7 @@ export type Channels =
   | 'mcp-server-loaded';
 
 const electronHandler = {
+  upgrade: () => ipcRenderer.invoke('quit-and-upgrade'),
   store: {
     get(key: string, defaultValue?: any | undefined): any {
       return ipcRenderer.sendSync('get-store', key, defaultValue);

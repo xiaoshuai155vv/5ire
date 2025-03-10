@@ -88,7 +88,7 @@ export default function AppHeader() {
           />
         </div>
         <div>{NetworkStatusIcon}</div>
-        <div className='ml-1'><UpgradeIndicator /></div>
+        <div className='ml-2'><UpgradeIndicator /></div>
       </div>
       <SearchDialog open={searchOpen} setOpen={setSearchOpen} />
     </div>

@@ -11,8 +11,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@fluentui/react-components';
+import { set } from 'lodash';
+import { CheckmarkCircle16Regular } from '@fluentui/react-icons';
 
 export default function UpgradeIndicator() {
+  const [completed, setCompleted] = useState<boolean>(false);
   const [upgrading, setUpgrading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [version, setVersion] = useState<string>('');
@@ -20,17 +23,28 @@ export default function UpgradeIndicator() {
   useEffect(() => {
     window.electron.ipcRenderer.on('app-upgrade-start', (info: any) => {
       setUpgrading(true);
+      setCompleted(false);
       setVersion(info.version);
     });
     window.electron.ipcRenderer.on('app-upgrade-not-available', (info: any) => {
-      console.log('app-upgrade-not-available');
+      setVersion('');
+      setCompleted(false);
+      setUpgrading(false);
     });
     window.electron.ipcRenderer.on('app-upgrade-end', (info: any) => {
       setUpgrading(false);
+      setCompleted(true);
     });
     window.electron.ipcRenderer.on('app-upgrade-error', () => {
       setError(true);
     });
+
+    return () => {
+      window.electron.ipcRenderer.unsubscribeAll('app-upgrade-start');
+      window.electron.ipcRenderer.unsubscribeAll('app-upgrade-not-available');
+      window.electron.ipcRenderer.unsubscribeAll('app-upgrade-end');
+      window.electron.ipcRenderer.unsubscribeAll('app-upgrade-error');
+    };
   }, []);
 
   if (error) {
@@ -41,13 +55,13 @@ export default function UpgradeIndicator() {
             className="upgrade-indicator flex justify-center items-center rounded-full px-2 py-0.5 bg-red-200 dark:bg-red-900 text-red-800  dark:text-red-400 text-xs"
             style={{ paddingBottom: 3 }}
           >
-            <span>{t('Common.UpgradeFailed')}</span>
+            <span>{t('Upgrade.Failed')}</span>
           </button>
         </DialogTrigger>
         <DialogSurface>
           <DialogBody>
-            <DialogTitle>{t('Common.UpgradeFailed')}</DialogTitle>
-            <DialogContent>{t('Common.UpgradeErrorInfo')}</DialogContent>
+            <DialogTitle>{t('Upgrade.Failed')}</DialogTitle>
+            <DialogContent>{t('Upgrade.FailedInfo')}</DialogContent>
             <DialogActions>
               <DialogTrigger disableButtonEnhancement>
                 <Button appearance="secondary">
@@ -66,11 +80,45 @@ export default function UpgradeIndicator() {
       </Dialog>
     );
   }
-
-  return upgrading ? (
-    <div className="upgrade-indicator flex justify-center items-center rounded-full pl-1 pr-2 py-0.5 bg-orange-200 text-orange-800 text-xs">
-      <Spinner size={14} className="mr-2" />
-      <span>{version}</span>
-    </div>
-  ) : null;
+  if (version) {
+    return upgrading ? (
+      <div className="upgrade-indicator flex justify-center items-center rounded-full pl-1 pr-2 py-0.5 bg-orange-200 dark:bg-yellow-800 text-orange-800 dark:text-orange-200 text-xs">
+        <Spinner size={14} className="mr-2" />
+        <span>{version}</span>
+      </div>
+    ) : completed ? (
+      <Dialog>
+        <DialogTrigger disableButtonEnhancement>
+          <button className="upgrade-indicator flex justify-center items-center rounded-full pl-1 pr-2 py-0.5 bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 text-xs">
+            <CheckmarkCircle16Regular className="mr-1" />
+            <span>
+              {version} {t('Upgrade.Ready')}
+            </span>
+          </button>
+        </DialogTrigger>
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle>
+              {version} {t('Upgrade.Ready')}
+            </DialogTitle>
+            <DialogContent>{t('Upgrade.QuitAndInstall')}</DialogContent>
+            <DialogActions>
+              <DialogTrigger disableButtonEnhancement>
+                <Button appearance="secondary">
+                  {t('Common.Action.Close')}
+                </Button>
+              </DialogTrigger>
+              <Button
+                appearance="primary"
+                onClick={() => window.electron.upgrade()}
+              >
+                {t('Upgrade.Install')}
+              </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
+    ) : null;
+  }
+  return null;
 }

@@ -263,9 +263,11 @@
   "Bookmarks.Notification.RemovedFavarites": "Removed from your Favorites",
   "Chat.Confirmation.DeleteFolder": "Delete folder",
   "Chat.DeleteConfirmation.DeleteFolderInfo": "Deleting this folder will permanently remove all conversations within it. This action cannot be undone.",
-  "Common.Upgrading": "Upgrading",
-  "Common.UpgradeFailed": "Upgrade failed",
-  "Common.UpgradeErrorInfo": "There was a problem updating the application, you can try again later or download the latest version from our website.'",
   "Common.Action.Close": "Close",
-  "Common.Action.GoWebsite": "Go to website"
+  "Common.Action.GoWebsite": "Go to website",
+  "Upgrade.Failed": "Upgrade failed",
+  "Upgrade.FailedInfo": "There was a problem updating the application, you can try again later or download the latest version from our website.",
+  "Upgrade.Ready": "Ready",
+  "Upgrade.Install": "Install",
+  "Upgrade.QuitAndInstall": "Quit and install new version."
 }
