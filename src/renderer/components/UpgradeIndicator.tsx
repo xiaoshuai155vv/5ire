@@ -20,10 +20,20 @@ export default function UpgradeIndicator() {
   const [version, setVersion] = useState<string>('');
 
   useEffect(() => {
+    // on windows. event will be sent before the listener is added, so we need to check if there is an update info
+    window.electron.store.get('updateInfo').then((info: any) => {
+      if (info) {
+        setUpgrading(info.isDownloading);
+        setCompleted(!info.isDownloading);
+        setVersion(info.version);
+      }
+    });
     window.electron.ipcRenderer.on('app-upgrade-start', (info: any) => {
-      setUpgrading(true);
-      setCompleted(false);
-      setVersion(info.version);
+      if (info) {
+        setUpgrading(true);
+        setCompleted(false);
+        setVersion(info.version);
+      }
     });
     window.electron.ipcRenderer.on('app-upgrade-not-available', (info: any) => {
       setVersion('');
