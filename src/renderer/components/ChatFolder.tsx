@@ -26,6 +26,7 @@ import { t } from 'i18next';
 import { useEffect, useRef, useState } from 'react';
 import Mousetrap from 'mousetrap';
 import ConfirmDialog from './ConfirmDialog';
+import FolderSettingsDialog from './FolderSettingsDialog';
 
 const MoreVerticalIcon = bundleIcon(MoreVerticalFilled, MoreVerticalRegular);
 
@@ -48,7 +49,13 @@ export default function ChatFolder({
   const [name, setName] = useState(folder.name);
   const [editable, setEditable] = useState(false);
   const selectedFolder = useChatStore((state) => state.folder);
-  const { updateFolder, deleteFolder, markFolderAsOld } = useChatStore();
+  const { updateFolder, deleteFolder, markFolderAsOld, selectFolder } =
+    useChatStore();
+  const [folderSettingsOpen, setFolderSettingsOpen] = useState(false);
+
+  const saveFolderSettings = async () => {
+    setFolderSettingsOpen(false);
+  };
 
   useEffect(() => {
     if (folder.isNew) {
@@ -139,7 +146,14 @@ export default function ChatFolder({
                   <MenuItem onClick={() => setConfirmDialogOpen(true)}>
                     {t('Common.Delete')}
                   </MenuItem>
-                  <MenuItem>{t('Common.Settings')}</MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      selectFolder(folder.id);
+                      setFolderSettingsOpen(true);
+                    }}
+                  >
+                    {t('Common.Settings')}
+                  </MenuItem>
                 </MenuList>
               </MenuPopover>
             </Menu>
@@ -164,6 +178,11 @@ export default function ChatFolder({
         open={confirmDialogOpen}
         setOpen={setConfirmDialogOpen}
         onConfirm={() => deleteFolder(folder.id)}
+      />
+      <FolderSettingsDialog
+        open={folderSettingsOpen}
+        setOpen={setFolderSettingsOpen}
+        onConfirm={saveFolderSettings}
       />
     </div>
   );

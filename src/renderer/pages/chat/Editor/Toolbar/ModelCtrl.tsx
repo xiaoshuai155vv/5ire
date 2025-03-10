@@ -117,8 +117,8 @@ export default function ModelCtrl({
           <div className="flex-shrink overflow-hidden whitespace-nowrap text-ellipsis min-w-12">
             {providerName} /
             {models
-              .map((mod: IChatModel) => mod.label)
-              .includes(activeModel.label) ? (
+              .map((mod: IChatModel) => mod.name)
+              .includes(activeModel.name) ? (
               <span>{activeModel.label}</span>
             ) : (
               <span className="text-gray-300 dark:text-gray-600">
@@ -136,15 +136,15 @@ export default function ModelCtrl({
       <MenuPopover>
         <MenuList>
           {models.map((item) => {
-            let toolEnabled = getToolState(providerName, item.name);
+            let toolEnabled = getToolState(providerName, item.name as string);
             if (isUndefined(toolEnabled)) {
               toolEnabled = item.toolEnabled;
             }
             return (
               <MenuItemRadio
                 name="model"
-                value={item.label as string}
-                key={item.label}
+                value={item.name as string}
+                key={item.name}
               >
                 <div className="flex justify-start items-baseline gap-1">
                   <ToolStatusIndicator

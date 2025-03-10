@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useNav from 'hooks/useNav';
 import useChatStore from 'stores/useChatStore';
 import { IChat } from 'intellichat/types';
@@ -8,6 +8,7 @@ import { DndContext } from '@dnd-kit/core';
 import ChatFolders from 'renderer/components/ChatFolders';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import ChatItem from 'renderer/components/ChatItem';
+import FolderSettingsDialog from 'renderer/components/FolderSettingsDialog';
 
 export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const chats = useChatStore((state) => state.chats);
@@ -58,7 +59,6 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
     selectFolder(over?.id || null);
     navigate(`/chats/${active.id}`);
   };
-
   return (
     <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToVerticalAxis]}>
       <div className="h-full overflow-y-auto overflow-x-hidden bg-brand-sidebar chat-nav">
