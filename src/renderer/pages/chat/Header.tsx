@@ -48,8 +48,11 @@ export default function Header() {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const chatFolder: Partial<IChatFolder> = useMemo(() => {
-    if (activeChat.id!==tempChatId && activeChat.folderId) {
-      return folders[activeChat.folderId] || {};
+    if(activeChat.id!==tempChatId){
+      if(activeChat.folderId){
+        return folders[activeChat.folderId] || {};
+      }
+      return {}
     }
     return folder || {};
   }, [folder, activeChat.id]);
