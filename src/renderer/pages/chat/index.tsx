@@ -120,6 +120,9 @@ export default function Chat() {
       getChat(activeChatId);
     } else if (chatService?.isReady()) {
       const payload: any = { folderId: folder?.id || null };
+      if(folder?.model){
+        payload.model = folder.model
+      }
       if (folder?.systemMessage) {
         payload.systemMessage = folder.systemMessage;
       }
