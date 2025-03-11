@@ -57,11 +57,14 @@ export default function Chat() {
   const keywords = useChatStore((state) => state.keywords);
   const messages = useChatStore((state) => state.messages);
   const setKeyword = useChatStore((state) => state.setKeyword);
-  const fetchMessages = useChatStore((state) => state.fetchMessages);
-  const initChat = useChatStore((state) => state.initChat);
-  const getChat = useChatStore((state) => state.getChat);
-  const updateChat = useChatStore((state) => state.updateChat);
-  const updateStates = useChatStore((state) => state.updateStates);
+  const {
+    fetchMessages,
+    initChat,
+    getChat,
+    updateChat,
+    updateStates,
+    getCurFolderSettings,
+  } = useChatStore();
   const clearTrace = useInspectorStore((state) => state.clearTrace);
   const modelMapping = useSettingsStore((state) => state.modelMapping);
   const [chatService] = useState<INextChatService>(useChatService());
@@ -119,17 +122,7 @@ export default function Chat() {
     if (activeChatId !== tempChatId) {
       getChat(activeChatId);
     } else if (chatService?.isReady()) {
-      const payload: any = { folderId: folder?.id || null };
-      if(folder?.model){
-        payload.model = folder.model
-      }
-      if (folder?.systemMessage) {
-        payload.systemMessage = folder.systemMessage;
-      }
-      if (isNumber(folder?.temperature)) {
-        payload.temperature = folder.temperature;
-      }
-      initChat(payload);
+      initChat(getCurFolderSettings());
     }
     return () => {
       isUserScrollingRef.current = false;

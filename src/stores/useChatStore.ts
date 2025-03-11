@@ -66,6 +66,7 @@ export interface IChatStore {
     folder: { id: string } & Partial<IChatFolder>,
   ) => Promise<boolean>;
   deleteFolder: (id: string) => Promise<boolean>;
+  getCurFolderSettings: () => Partial<IChatFolder>;
   markFolderAsOld: (id: string) => void;
   updateStates: (
     chatId: string,
@@ -243,6 +244,20 @@ const useChatStore = create<IChatStore>((set, get) => ({
       return true;
     }
     return false;
+  },
+  getCurFolderSettings: () => {
+    const { folder } = get();
+    const settings: any = { folderId: folder?.id || null };
+    if (folder?.model) {
+      settings.model = folder.model;
+    }
+    if (folder?.systemMessage) {
+      settings.systemMessage = folder.systemMessage;
+    }
+    if (isNumber(folder?.temperature)) {
+      settings.temperature = folder.temperature;
+    }
+    return settings;
   },
   updateStates: (
     chatId: string,

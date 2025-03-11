@@ -6,7 +6,7 @@ import { IChat } from 'intellichat/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useChatStore from 'stores/useChatStore';
 import ChatFolder from './ChatFolder';
-import { debounce, isNumber, set } from 'lodash';
+import { isNumber } from 'lodash';
 import { tempChatId } from 'consts';
 
 export default function ChatFolders({
@@ -19,8 +19,7 @@ export default function ChatFolders({
   const chat = useChatStore((state) => state.chat);
   const folder = useChatStore((state) => state.folder);
   const folders = useChatStore((state) => state.folders);
-  const { editStage } = useChatStore();
-  const { selectFolder } = useChatStore();
+  const { editStage, selectFolder, getCurFolderSettings } = useChatStore();
   const [openItems, setOpenItems] = useState<string[]>([]);
   const clickCountRef = useRef(0);
 
@@ -62,17 +61,7 @@ export default function ChatFolders({
 
   useEffect(() => {
     if (folder && chat.id === tempChatId) {
-      const payload: any = { folderId: folder?.id || null };
-      if (folder?.model) {
-        payload.model = folder.model;
-      }
-      if (folder?.systemMessage) {
-        payload.systemMessage = folder.systemMessage;
-      }
-      if (isNumber(folder?.temperature)) {
-        payload.temperature = folder.temperature;
-      }
-      editStage(chat.id, payload);
+      editStage(chat.id, getCurFolderSettings());
     }
   }, [folder]);
 
