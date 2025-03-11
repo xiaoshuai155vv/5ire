@@ -21,7 +21,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import useChatStore from 'stores/useChatStore';
 import useSettingsStore from 'stores/useSettingsStore';
 import useAuthStore from 'stores/useAuthStore';
-import { getProvider } from 'providers';
+import { getChatModel, getProvider } from 'providers';
 import { IChatModel } from 'providers/types';
 import useProvider from 'hooks/useProvider';
 import ToolStatusIndicator from './ToolStatusIndicator';
@@ -55,9 +55,17 @@ export default function FolderSettingsDialog({
     return chats.filter((c) => c.folderId === folder.id);
   }, [chats, folder]);
 
-  const curModelLabel = useMemo(() => {
-    return models.find((m) => m.name === folderModel)?.label || '';
+  const curModel = useMemo(() => {
+    let curModel = models.find((m) => m.name === folderModel)
+    if (!curModel) {
+      curModel = getChatModel(api.provider, folderModel);
+    }
+    return curModel || {};
   }, [folderModel, models]);
+
+  const curModelLabel = useMemo(() => {
+    return curModel?.label||curModel?.name || '';
+  }, [curModel]);
 
   const { t } = useTranslation();
   const onConfirm = useCallback(async () => {
@@ -80,7 +88,8 @@ export default function FolderSettingsDialog({
 
   useEffect(() => {
     if (open) {
-      setFolderModel(folder?.model || api.model);
+      const model = getChatModel(api.provider, folder?.model || api.model);
+      setFolderModel(model.name || api.model);
       setFolderSystemMessage(folder?.systemMessage || '');
       Mousetrap.bind('esc', () => setOpen(false));
     }
@@ -107,7 +116,6 @@ export default function FolderSettingsDialog({
                         _: SelectionEvents,
                         data: OptionOnSelectData,
                       ) => {
-                        console.log(data.optionValue);
                         setFolderModel(data.optionValue as string);
                       }}
                     >
