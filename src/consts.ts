@@ -2,6 +2,8 @@ export const tempChatId = 'temp';
 
 export const EARLIEST_DATE = new Date('2023-08-01');
 
+export const DEFAULT_TEMPERATURE = 0.9;
+
 export const DEFAULT_MAX_TOKENS = 2048;
 export const MAX_TOKENS = 16384
 

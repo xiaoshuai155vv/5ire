@@ -14,6 +14,9 @@ import {
   Textarea,
   OptionOnSelectData,
   SelectionEvents,
+  SpinButton,
+  SpinButtonChangeEvent,
+  SpinButtonOnChangeData,
 } from '@fluentui/react-components';
 import Mousetrap from 'mousetrap';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +28,7 @@ import { getChatModel, getProvider } from 'providers';
 import { IChatModel } from 'providers/types';
 import useProvider from 'hooks/useProvider';
 import ToolStatusIndicator from './ToolStatusIndicator';
+import { DEFAULT_TEMPERATURE } from 'consts';
 
 export default function FolderSettingsDialog({
   open,
@@ -40,7 +44,13 @@ export default function FolderSettingsDialog({
   const session = useAuthStore((state) => state.session);
   const [folderModel, setFolderModel] = useState(api.model);
   const [folderSystemMessage, setFolderSystemMessage] = useState('');
+  const [folderTemperature, setFolderTemperature] = useState(1);
   const { getChatModels } = useProvider();
+
+  const temperatureConfig = useMemo(() => {
+    return getProvider(api.provider).chat.temperature;
+  }, [api.provider]);
+
   const models = useMemo<IChatModel[]>(() => {
     if (!api.provider || api.provider === 'Azure') return [];
     const provider = getProvider(api.provider);
@@ -56,7 +66,7 @@ export default function FolderSettingsDialog({
   }, [chats, folder]);
 
   const curModel = useMemo(() => {
-    let curModel = models.find((m) => m.name === folderModel)
+    let curModel = models.find((m) => m.name === folderModel);
     if (!curModel) {
       curModel = getChatModel(api.provider, folderModel);
     }
@@ -64,7 +74,7 @@ export default function FolderSettingsDialog({
   }, [folderModel, models]);
 
   const curModelLabel = useMemo(() => {
-    return curModel?.label||curModel?.name || '';
+    return curModel?.label || curModel?.name || '';
   }, [curModel]);
 
   const { t } = useTranslation();
@@ -72,6 +82,7 @@ export default function FolderSettingsDialog({
     await updateFolder({
       id: folder?.id as string,
       model: folderModel,
+      temperature: folderTemperature,
       systemMessage: folderSystemMessage,
     });
     await Promise.all(
@@ -79,18 +90,50 @@ export default function FolderSettingsDialog({
         updateChat({
           id: chat.id,
           model: folderModel,
+          temperature: folderTemperature,
           systemMessage: folderSystemMessage,
         });
       }),
     );
     setOpen(false);
-  }, [setOpen, folderModel, folderSystemMessage, folder, subChats]);
+  }, [
+    setOpen,
+    folderModel,
+    folderSystemMessage,
+    folderTemperature,
+    folder,
+    subChats,
+  ]);
+
+  const onTemperatureChange = useCallback(
+    (ev: SpinButtonChangeEvent, data: SpinButtonOnChangeData) => {
+      const value = data.value
+        ? data.value
+        : parseFloat(data.displayValue as string);
+      const $temperature = Math.max(
+        Math.min(value as number, temperatureConfig.max),
+        temperatureConfig.min,
+      );
+      setFolderTemperature($temperature);
+    },
+    [api.provider],
+  );
 
   useEffect(() => {
     if (open) {
       const model = getChatModel(api.provider, folder?.model || api.model);
       setFolderModel(model.name || api.model);
       setFolderSystemMessage(folder?.systemMessage || '');
+      let temperature =
+        folder?.temperature || temperatureConfig.default || DEFAULT_TEMPERATURE;
+      if (
+        temperature < temperatureConfig.min ||
+        temperature > temperatureConfig.max
+      ) {
+        temperature = temperatureConfig.default || DEFAULT_TEMPERATURE;
+      }
+      console.log('temperature', temperature);
+      setFolderTemperature(temperature);
       Mousetrap.bind('esc', () => setOpen(false));
     }
     return () => {
@@ -105,11 +148,12 @@ export default function FolderSettingsDialog({
           <DialogTitle>{folder?.name}</DialogTitle>
           <DialogContent>
             <div className="tips mb-4">{t('Folder.Settings.Description')}</div>
-            <div className="flex flex-col gap-4">
-              <div>
-                {models.length > 0 ? (
-                  <Field>
+            <div className="flex flex-col gap-4 w-full">
+              <div className="flex justify-evenly gap-2">
+                <Field label={t('Common.Model')} className="w-full">
+                  {models.length > 0 ? (
                     <Dropdown
+                      className="w-full"
                       placeholder="Select an model"
                       value={curModelLabel}
                       onOptionSelect={(
@@ -123,7 +167,7 @@ export default function FolderSettingsDialog({
                         <Option
                           key={model.name as string}
                           value={model.name as string}
-                          text={model.label || (model.name as string)}
+                          text={(model.label || model.name) as string}
                         >
                           <div className="flex justify-start items-center gap-1">
                             <ToolStatusIndicator
@@ -136,17 +180,35 @@ export default function FolderSettingsDialog({
                         </Option>
                       ))}
                     </Dropdown>
-                  </Field>
-                ) : (
-                  <div className="flex justify-start items-center gap-2">
-                    <ToolStatusIndicator
-                      provider={api.provider}
-                      model={api.model}
-                      withTooltip={true}
+                  ) : (
+                    <div
+                      className="flex justify-start items-center gap-2 border border-gray-400 dark:border-gray-500 px-2 rounded flex-grow w-full"
+                      style={{ height: 33 }}
+                    >
+                      <ToolStatusIndicator
+                        provider={api.provider}
+                        model={api.model}
+                        withTooltip={true}
+                      />
+                      <span>{api.model}</span>
+                    </div>
+                  )}
+                </Field>
+                <div className="w-full">
+                  <Field
+                    label={`${t('Common.Temperature')}[${temperatureConfig.min},${temperatureConfig.max}]`}
+                  >
+                    <SpinButton
+                      precision={1}
+                      step={0.1}
+                      value={folderTemperature || DEFAULT_TEMPERATURE}
+                      max={temperatureConfig.max}
+                      min={temperatureConfig.min}
+                      onChange={onTemperatureChange}
+                      id="temperature"
                     />
-                    <span>{api.model}</span>
-                  </div>
-                )}
+                  </Field>
+                </div>
               </div>
               <div>
                 <Field label={t('Common.SystemMessage')}>

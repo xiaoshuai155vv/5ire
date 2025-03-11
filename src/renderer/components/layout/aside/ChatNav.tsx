@@ -3,12 +3,11 @@ import useNav from 'hooks/useNav';
 import useChatStore from 'stores/useChatStore';
 import { IChat } from 'intellichat/types';
 import Mousetrap from 'mousetrap';
-import { findIndex } from 'lodash';
+import { findIndex, set } from 'lodash';
 import { DndContext } from '@dnd-kit/core';
 import ChatFolders from 'renderer/components/ChatFolders';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import ChatItem from 'renderer/components/ChatItem';
-import FolderSettingsDialog from 'renderer/components/FolderSettingsDialog';
 
 export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const chats = useChatStore((state) => state.chats);
@@ -55,9 +54,13 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
-    updateChat({ id: active.id, folderId: over?.id || null });
-    selectFolder(over?.id || null);
     navigate(`/chats/${active.id}`);
+    setTimeout(() => {
+      if (active.data.current.folderId !== (over?.id || null)) {
+        updateChat({ id: active.id, folderId: over?.id || null });
+        selectFolder(over?.id || null);
+      }
+    }, 0);
   };
   return (
     <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToVerticalAxis]}>

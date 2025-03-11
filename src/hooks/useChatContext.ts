@@ -39,8 +39,8 @@ export default function useChatContext(): IChatContext {
     const getModel = () => {
       const { api } = useSettingsStore.getState();
       const defaultModel = { name: api.model, label: api.model } as IChatModel;
-      const provider = getChatProvider(api.provider)
-      if (Object.keys(provider.chat.models).length===0) {
+      const provider = getChatProvider(api.provider);
+      if (Object.keys(provider.chat.models).length === 0) {
         return defaultModel;
       }
       let model = getChatModel(api.provider, api.model) || defaultModel;
@@ -66,6 +66,7 @@ export default function useChatContext(): IChatContext {
 
     const getTemperature = (): number => {
       const { chat } = useChatStore.getState();
+      console.log('chat', chat);
       const { api } = useSettingsStore.getState();
       let temperature = getChatProvider(api.provider).chat.temperature
         .default as number;

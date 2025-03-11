@@ -234,6 +234,11 @@ main {
   border-color: rgba(var(--color-border), var(--tw-border-opacity));
 }
 
+.border-secondary {
+  --tw-border-opacity: 1;
+  border-color: rgba(var(--color-border-secondary), var(--tw-border-opacity))!important;
+}
+
 .text-color-secondary {
   --tw-text-opacity: 1;
   color: rgba(var(--color-text-secondary), var(--tw-text-opacity)) !important;

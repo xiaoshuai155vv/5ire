@@ -16,6 +16,7 @@ export default function ChatItem({
 
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: chat.id,
+    data: { folderId: chat.folderId || null },
   });
   const style = {
     transform: CSS.Translate.toString(transform),

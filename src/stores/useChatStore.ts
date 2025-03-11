@@ -393,7 +393,7 @@ const useChatStore = create<IChatStore>((set, get) => ({
       $chat.maxCtxMessages = chat.maxCtxMessages;
       params.push($chat.maxCtxMessages);
     }
-    if (isNumber(chat.temperature) && chat.temperature >= 0) {
+    if (isNumber(chat.temperature)) {
       stats.push('temperature = ?');
       $chat.temperature = chat.temperature;
       params.push($chat.temperature);

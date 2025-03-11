@@ -57,7 +57,7 @@ export default function TemperatureCtrl({
     return () => {
       Mousetrap.unbind('mod+shift+5');
     };
-  }, [providerName, chat.id]);
+  }, [providerName, chat.id, chat.temperature]);
 
   const updateTemperature = (
     ev: ChangeEvent<HTMLInputElement>,
