@@ -12,6 +12,7 @@ import {
 } from '@fluentui/react-components';
 import {
   bundleIcon,
+  FolderFilled,
   FolderOpenFilled,
   FolderOpenRegular,
   FolderRegular,
@@ -92,6 +93,8 @@ export default function ChatFolder({
                 ) : (
                   <FolderOpenRegular />
                 )
+              ) : folder.id === selectedFolder?.id ? (
+                <FolderFilled />
               ) : (
                 <FolderRegular />
               )

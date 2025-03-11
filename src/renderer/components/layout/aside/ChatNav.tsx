@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useNav from 'hooks/useNav';
 import useChatStore from 'stores/useChatStore';
 import { IChat } from 'intellichat/types';
@@ -15,8 +15,8 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const { updateChat, fetchFolder, selectFolder, fetchChat } = useChatStore();
   const navigate = useNav();
 
-  const chatsWithFolder = chats.filter((chat: IChat) => chat.folderId);
-  const chatsWithoutFolder = chats.filter((chat: IChat) => !chat.folderId);
+  const chatsWithFolder = useMemo(()=>chats.filter((chat: IChat) => chat.folderId),[chats]);
+  const chatsWithoutFolder = useMemo(()=>chats.filter((chat: IChat) => !chat.folderId),[chats]);
 
   useEffect(() => {
     Mousetrap.bind('mod+shift+up', () => {
@@ -55,7 +55,9 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     navigate(`/chats/${active.id}`);
+
     setTimeout(() => {
+      selectFolder(active.data.current.folderId|| null);
       if (active.data.current.folderId !== (over?.id || null)) {
         updateChat({ id: active.id, folderId: over?.id || null });
         selectFolder(over?.id || null);

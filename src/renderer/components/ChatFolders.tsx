@@ -3,10 +3,11 @@ import {
   AccordionToggleEventHandler,
 } from '@fluentui/react-components';
 import { IChat } from 'intellichat/types';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useChatStore from 'stores/useChatStore';
 import ChatFolder from './ChatFolder';
-import { debounce, set } from 'lodash';
+import { debounce, isNumber, set } from 'lodash';
+import { tempChatId } from 'consts';
 
 export default function ChatFolders({
   chats,
@@ -16,7 +17,9 @@ export default function ChatFolders({
   collapsed: boolean;
 }) {
   const chat = useChatStore((state) => state.chat);
+  const folder = useChatStore((state) => state.folder);
   const folders = useChatStore((state) => state.folders);
+  const { editStage } = useChatStore();
   const { selectFolder } = useChatStore();
   const [openItems, setOpenItems] = useState<string[]>([]);
   const clickCountRef = useRef(0);
@@ -46,14 +49,7 @@ export default function ChatFolders({
 
       const timer = setTimeout(() => {
         if (clickCountRef.current % 2 !== 0) {
-          if (data.openItems.includes(data.value)) {
-            selectFolder(data.value as string);
-          } else if (
-            chat?.folderId &&
-            data.openItems.includes(chat?.folderId)
-          ) {
-            selectFolder(chat?.folderId);
-          }
+          selectFolder(data.value as string);
           setOpenItems(data.openItems as string[]);
         }
         clickCountRef.current = 0;
@@ -63,6 +59,22 @@ export default function ChatFolders({
     },
     [chat.id],
   );
+
+  useEffect(() => {
+    if (folder && chat.id === tempChatId) {
+      const payload: any = { folderId: folder?.id || null };
+      if (folder?.model) {
+        payload.model = folder.model;
+      }
+      if (folder?.systemMessage) {
+        payload.systemMessage = folder.systemMessage;
+      }
+      if (isNumber(folder?.temperature)) {
+        payload.temperature = folder.temperature;
+      }
+      editStage(chat.id, payload);
+    }
+  }, [folder]);
 
   return (
     <Accordion

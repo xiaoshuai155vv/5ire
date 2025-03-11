@@ -28,7 +28,7 @@ import { getChatModel, getProvider } from 'providers';
 import { IChatModel } from 'providers/types';
 import useProvider from 'hooks/useProvider';
 import ToolStatusIndicator from './ToolStatusIndicator';
-import { DEFAULT_TEMPERATURE } from 'consts';
+import { DEFAULT_TEMPERATURE, tempChatId } from 'consts';
 
 export default function FolderSettingsDialog({
   open,
@@ -37,8 +37,9 @@ export default function FolderSettingsDialog({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  const chat = useChatStore((state) => state.chat);
   const chats = useChatStore((state) => state.chats);
-  const { updateFolder, updateChat } = useChatStore();
+  const { updateFolder, updateChat, editStage } = useChatStore();
   const folder = useChatStore((state) => state.folder);
   const api = useSettingsStore((state) => state.api);
   const session = useAuthStore((state) => state.session);
@@ -85,6 +86,13 @@ export default function FolderSettingsDialog({
       temperature: folderTemperature,
       systemMessage: folderSystemMessage,
     });
+    if (chat.id === tempChatId) {
+      editStage(chat.id, {
+        model: folderModel,
+        temperature: folderTemperature,
+        systemMessage: folderSystemMessage,
+      });
+    }
     await Promise.all(
       subChats.map((chat) => {
         updateChat({
@@ -101,7 +109,7 @@ export default function FolderSettingsDialog({
     folderModel,
     folderSystemMessage,
     folderTemperature,
-    folder,
+    folder?.id,
     subChats,
   ]);
 

@@ -440,17 +440,19 @@ const useChatStore = create<IChatStore>((set, get) => ({
         `UPDATE chats SET ${stats.join(', ')} WHERE id = ?`,
         params,
       );
-      const updatedChat = { ...get().chat, ...$chat } as IChat;
-      const updatedChats = get().chats.map((c: IChat) => {
-        if (c.id === updatedChat.id) {
-          return updatedChat;
-        }
-        return c;
-      });
+      const chat = get().chats.find((c) => c.id === $chat.id);
+      const updatedChat = { ...chat, ...$chat } as IChat;
       set(
         produce((state: IChatStore) => {
-          state.chat = updatedChat;
-          state.chats = updatedChats;
+          if (updatedChat.id === state.chat.id) {
+            state.chat = updatedChat;
+          }
+          state.chats = state.chats.map((c: IChat) => {
+            if (c.id === updatedChat.id) {
+              return updatedChat;
+            }
+            return c;
+          });
         }),
       );
       debug('Update chat ', updatedChat);

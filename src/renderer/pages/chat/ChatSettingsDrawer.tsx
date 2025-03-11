@@ -33,7 +33,8 @@ export default function ChatSettingsDrawer({
   setOpen: (open: boolean) => void;
 }) {
   const { t } = useTranslation();
-  const activeChat = useChatContext().getActiveChat();
+  const activeChat = useChatStore((state) => state.chat);
+
   useEffect(() => {
     setSystemMessage(activeChat.systemMessage || '');
   }, [activeChat?.id, activeChat.systemMessage]);

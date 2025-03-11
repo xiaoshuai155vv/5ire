@@ -49,7 +49,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
   const config = useMCPStore((store) => store.config);
   const loadConfig = useMCPStore((state) => state.loadConfig);
   const isMCPServersLoading = useMCPStore((state) => state.isLoading);
-  const { createFolder } = useChatStore();
+  const { createFolder,selectFolder } = useChatStore();
 
   const numOfActiveServers = useMemo(
     () => config.servers.filter((server: IMCPServer) => server.isActive).length,
@@ -166,7 +166,10 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
           <Button
             appearance="subtle"
             icon={<FolderAddIcon />}
-            onClick={() => createFolder()}
+            onClick={async () => {
+              const folder = await createFolder()
+              selectFolder(folder.id)
+            }}
           />
         </div>
       </div>

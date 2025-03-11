@@ -1,7 +1,7 @@
 import Debug from 'debug';
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { debounce } from 'lodash';
+import { debounce, isNumber } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import SplitPane, { Pane } from 'split-pane-react';
 import useChatStore from 'stores/useChatStore';
@@ -119,7 +119,14 @@ export default function Chat() {
     if (activeChatId !== tempChatId) {
       getChat(activeChatId);
     } else if (chatService?.isReady()) {
-      initChat({ folderId: folder?.id || null });
+      const payload: any = { folderId: folder?.id || null };
+      if (folder?.systemMessage) {
+        payload.systemMessage = folder.systemMessage;
+      }
+      if (isNumber(folder?.temperature)) {
+        payload.temperature = folder.temperature;
+      }
+      initChat(payload);
     }
     return () => {
       isUserScrollingRef.current = false;

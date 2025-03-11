@@ -66,7 +66,6 @@ export default function useChatContext(): IChatContext {
 
     const getTemperature = (): number => {
       const { chat } = useChatStore.getState();
-      console.log('chat', chat);
       const { api } = useSettingsStore.getState();
       let temperature = getChatProvider(api.provider).chat.temperature
         .default as number;
