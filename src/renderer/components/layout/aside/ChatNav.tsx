@@ -59,12 +59,15 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
         navigate(`/chats/${chatsWithoutFolder[index].id}`);
       }
     });
-    loadData();
     return () => {
       Mousetrap.unbind('mod+up');
       Mousetrap.unbind('mod+down');
     };
-  }, [fetchChat, chats.length, curChat?.id]);
+  }, [chats.length, curChat?.id]);
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
@@ -79,22 +82,25 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
     }, 0);
   };
   return (
-    <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToVerticalAxis]}>
-      <div className="h-full overflow-y-auto overflow-x-hidden bg-brand-sidebar chat-nav">
-        {loading ? (
-          <Skeleton
-            aria-label="Loading chats"
-            appearance="translucent"
-            className="flex flex-col gap-2 pt-3 mx-2"
-          >
-            <SkeletonItem size={20} />
-            <SkeletonItem size={20} style={{width:200}} />
-            <SkeletonItem size={20} style={{width:120}}/>
-            <SkeletonItem size={20} style={{width:220}}/>
-            <SkeletonItem size={20} style={{width:200}}/>
-            <SkeletonItem size={20} style={{width:240}}/>
-          </Skeleton>
-        ) : (
+    <div className="h-full overflow-y-auto overflow-x-hidden bg-brand-sidebar chat-nav">
+      {loading ? (
+        <Skeleton
+          aria-label="Loading chats"
+          appearance="translucent"
+          className="flex flex-col gap-2 pt-3 mx-2"
+        >
+          <SkeletonItem size={20} />
+          <SkeletonItem size={20} style={{ width: 200 }} />
+          <SkeletonItem size={20} style={{ width: 120 }} />
+          <SkeletonItem size={20} style={{ width: 220 }} />
+          <SkeletonItem size={20} style={{ width: 200 }} />
+          <SkeletonItem size={20} style={{ width: 200 }} />
+        </Skeleton>
+      ) : (
+        <DndContext
+          onDragEnd={handleDragEnd}
+          modifiers={[restrictToVerticalAxis]}
+        >
           <div
             className={`flex flex-col pt-2 ${collapsed ? 'content-center' : ''}`}
           >
@@ -112,8 +118,8 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
               );
             })}
           </div>
-        )}
-      </div>
-    </DndContext>
+        </DndContext>
+      )}
+    </div>
   );
 }
