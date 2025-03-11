@@ -37,7 +37,7 @@ export default function Header() {
   const navigate = useNav();
   const folder = useChatStore((state) => state.folder);
   const folders = useChatStore((state) => state.folders);
-  const activeChat = useChatContext().getActiveChat();
+  const activeChat = useChatStore((state) => state.chat);
   const collapsed = useAppearanceStore((state) => state.sidebar.collapsed);
   const chatSidebarHidden = useAppearanceStore(
     (state) => state.chatSidebar.show,
@@ -55,7 +55,7 @@ export default function Header() {
       return {}
     }
     return folder || {};
-  }, [folder, activeChat.id]);
+  }, [folder, activeChat.id, activeChat.folderId, folders]);
 
   const [delConfirmDialogOpen, setDelConfirmDialogOpen] =
     useState<boolean>(false);
