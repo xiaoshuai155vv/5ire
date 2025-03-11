@@ -41,7 +41,6 @@ if (!isPlainObject(tempStage)) {
   tempStage = defaultTempStage;
 } else {
   tempStage = pick(tempStage, Object.keys(defaultTempStage));
-  console.log('tempStage', tempStage);
 }
 export interface IChatStore {
   openFolders: string[];
@@ -61,6 +60,7 @@ export interface IChatStore {
   };
   tempStage: Partial<IStage>;
   setOpenFolders: (folders: string[]) => void;
+  openFolder: (id: string) => void;
   fetchFolder: (limit?: number) => Promise<Record<string, IChatFolder>>;
   selectFolder: (id: string | null) => void;
   createFolder: (name?: string) => Promise<IChatFolder>;
@@ -124,6 +124,15 @@ const useChatStore = create<IChatStore>((set, get) => ({
   tempStage,
   setOpenFolders: (folders) => {
     set({ openFolders: folders });
+  },
+  openFolder: (id: string) => {
+    set(
+      produce((state: IChatStore) => {
+        if (!state.openFolders.includes(id)) {
+          state.openFolders.push(id);
+        }
+      }),
+    );
   },
   fetchFolder: async (limit = 100) => {
     const offset = 0;

@@ -19,7 +19,8 @@ export default function ChatFolders({
   const folder = useChatStore((state) => state.folder);
   const folders = useChatStore((state) => state.folders);
   const openFolders = useChatStore((state) => state.openFolders);
-  const { editStage, selectFolder, getCurFolderSettings, setOpenFolders } =
+  const tempStage = useChatStore((state) => state.tempStage);
+  const { initChat, selectFolder, getCurFolderSettings, setOpenFolders } =
     useChatStore();
   const clickCountRef = useRef(0);
 
@@ -61,7 +62,7 @@ export default function ChatFolders({
 
   useEffect(() => {
     if (folder && chat.id === tempChatId) {
-      editStage(chat.id, getCurFolderSettings());
+      initChat(getCurFolderSettings());
     }
   }, [folder]);
 

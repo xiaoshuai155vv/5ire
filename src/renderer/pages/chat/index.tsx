@@ -52,11 +52,11 @@ export default function Chat() {
   const [sizes, setSizes] = useState(['auto', 200]);
   const ref = useRef<HTMLDivElement>(null);
   const navigate = useNav();
-
   const folder = useChatStore((state) => state.folder);
   const keywords = useChatStore((state) => state.keywords);
   const messages = useChatStore((state) => state.messages);
   const setKeyword = useChatStore((state) => state.setKeyword);
+  const tempStage = useChatStore((state) => state.tempStage);
   const {
     fetchMessages,
     initChat,
@@ -64,6 +64,7 @@ export default function Chat() {
     updateChat,
     updateStates,
     getCurFolderSettings,
+    openFolder,
   } = useChatStore();
   const clearTrace = useInspectorStore((state) => state.clearTrace);
   const modelMapping = useSettingsStore((state) => state.modelMapping);
@@ -122,7 +123,11 @@ export default function Chat() {
     if (activeChatId !== tempChatId) {
       getChat(activeChatId);
     } else if (chatService?.isReady()) {
-      initChat(getCurFolderSettings());
+      if (folder) {
+        initChat(getCurFolderSettings());
+      } else {
+        initChat(tempStage);
+      }
     }
     return () => {
       isUserScrollingRef.current = false;
@@ -197,6 +202,9 @@ export default function Chat() {
         $chatId = $chat.id;
         setActiveChatId($chatId);
         navigate(`/chats/${$chatId}`);
+        if (folder) {
+          openFolder(folder.id);
+        }
         deleteStage(tempChatId);
       } else {
         await updateChat({

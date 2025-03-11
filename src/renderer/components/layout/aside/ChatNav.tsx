@@ -9,13 +9,13 @@ import ChatFolders from 'renderer/components/ChatFolders';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import ChatItem from 'renderer/components/ChatItem';
 import { Skeleton, SkeletonItem } from '@fluentui/react-components';
+import { tempChatId } from 'consts';
 
 export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const [loading, setLoading] = useState(true);
   const chats = useChatStore((state) => state.chats);
   const curChat = useChatStore((state) => state.chat);
-  const openFolders = useChatStore((state) => state.openFolders);
-  const { updateChat, fetchFolder, selectFolder, fetchChat, setOpenFolders } =
+  const { updateChat, fetchFolder, selectFolder, fetchChat, openFolder } =
     useChatStore();
   const navigate = useNav();
 
@@ -80,7 +80,7 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
         updateChat({ id: active.id, folderId: over?.id || null });
         selectFolder(over?.id || null);
         if (over?.id) {
-          setOpenFolders(uniq([...openFolders, over?.id]));
+          openFolder(over?.id);
         }
       }
     }, 0);
