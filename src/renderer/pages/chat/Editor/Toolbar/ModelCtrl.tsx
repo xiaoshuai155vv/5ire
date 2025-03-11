@@ -174,7 +174,7 @@ export default function ModelCtrl({
           />
         </div>
         <span className="latin">
-          {api.provider} / {activeModel.label}
+          {api.provider} / {activeModel.label||activeModel.name}
         </span>
         {modelMapping[activeModel.label || ''] && (
           <span className="text-gray-300 dark:text-gray-600 -ml-1">

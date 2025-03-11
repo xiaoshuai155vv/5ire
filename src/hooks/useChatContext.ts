@@ -40,7 +40,7 @@ export default function useChatContext(): IChatContext {
       const { api } = useSettingsStore.getState();
       const defaultModel = { name: api.model, label: api.model } as IChatModel;
       const provider = getChatProvider(api.provider)
-      if (!Object.keys(provider.chat.models)) {
+      if (Object.keys(provider.chat.models).length===0) {
         return defaultModel;
       }
       let model = getChatModel(api.provider, api.model) || defaultModel;
