@@ -28,6 +28,8 @@ import { useEffect, useRef, useState } from 'react';
 import Mousetrap from 'mousetrap';
 import ConfirmDialog from './ConfirmDialog';
 import FolderSettingsDialog from './FolderSettingsDialog';
+import useNav from 'hooks/useNav';
+import { tempChatId } from 'consts';
 
 const MoreVerticalIcon = bundleIcon(MoreVerticalFilled, MoreVerticalRegular);
 
@@ -46,10 +48,12 @@ export default function ChatFolder({
     id: folder.id,
   });
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNav();
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [name, setName] = useState(folder.name);
   const [editable, setEditable] = useState(false);
   const selectedFolder = useChatStore((state) => state.folder);
+  const chat = useChatStore((state) => state.chat);
   const { updateFolder, deleteFolder, markFolderAsOld, selectFolder } =
     useChatStore();
   const [folderSettingsOpen, setFolderSettingsOpen] = useState(false);
@@ -176,7 +180,12 @@ export default function ChatFolder({
         message={t('Chat.DeleteConfirmation.DeleteFolderInfo')}
         open={confirmDialogOpen}
         setOpen={setConfirmDialogOpen}
-        onConfirm={() => deleteFolder(folder.id)}
+        onConfirm={async () => {
+          await deleteFolder(folder.id);
+          if (chat.folderId === folder.id) {
+            navigate(`/chats/${tempChatId}`);
+          }
+        }}
       />
       <FolderSettingsDialog
         open={folderSettingsOpen}

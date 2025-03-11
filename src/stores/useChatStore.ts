@@ -184,6 +184,9 @@ const useChatStore = create<IChatStore>((set, get) => ({
       produce((state: IChatStore) => {
         delete state.folders[id];
         state.chats = state.chats.filter((chat) => chat.folderId !== id);
+        if (state.folder?.id === id) {
+          state.folder = null;
+        }
       }),
     );
     return ok;
