@@ -3,7 +3,7 @@ import useNav from 'hooks/useNav';
 import useChatStore from 'stores/useChatStore';
 import { IChat } from 'intellichat/types';
 import Mousetrap from 'mousetrap';
-import { findIndex, set } from 'lodash';
+import { findIndex, set, uniq } from 'lodash';
 import { DndContext } from '@dnd-kit/core';
 import ChatFolders from 'renderer/components/ChatFolders';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
@@ -14,7 +14,9 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const [loading, setLoading] = useState(true);
   const chats = useChatStore((state) => state.chats);
   const curChat = useChatStore((state) => state.chat);
-  const { updateChat, fetchFolder, selectFolder, fetchChat } = useChatStore();
+  const openFolders = useChatStore((state) => state.openFolders);
+  const { updateChat, fetchFolder, selectFolder, fetchChat, setOpenFolders } =
+    useChatStore();
   const navigate = useNav();
 
   const chatsWithFolder = useMemo(
@@ -72,12 +74,14 @@ export default function ChatNav({ collapsed }: { collapsed: boolean }) {
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     navigate(`/chats/${active.id}`);
-
     setTimeout(() => {
       selectFolder(active.data.current.folderId || null);
       if (active.data.current.folderId !== (over?.id || null)) {
         updateChat({ id: active.id, folderId: over?.id || null });
         selectFolder(over?.id || null);
+        if (over?.id) {
+          setOpenFolders(uniq([...openFolders, over?.id]));
+        }
       }
     }, 0);
   };

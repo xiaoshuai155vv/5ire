@@ -3,10 +3,9 @@ import {
   AccordionToggleEventHandler,
 } from '@fluentui/react-components';
 import { IChat } from 'intellichat/types';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import useChatStore from 'stores/useChatStore';
 import ChatFolder from './ChatFolder';
-import { isNumber } from 'lodash';
 import { tempChatId } from 'consts';
 
 export default function ChatFolders({
@@ -19,8 +18,9 @@ export default function ChatFolders({
   const chat = useChatStore((state) => state.chat);
   const folder = useChatStore((state) => state.folder);
   const folders = useChatStore((state) => state.folders);
-  const { editStage, selectFolder, getCurFolderSettings } = useChatStore();
-  const [openItems, setOpenItems] = useState<string[]>([]);
+  const openFolders = useChatStore((state) => state.openFolders);
+  const { editStage, selectFolder, getCurFolderSettings, setOpenFolders } =
+    useChatStore();
   const clickCountRef = useRef(0);
 
   const chatsGroupByFolder = useMemo(() => {
@@ -49,7 +49,7 @@ export default function ChatFolders({
       const timer = setTimeout(() => {
         if (clickCountRef.current % 2 !== 0) {
           selectFolder(data.value as string);
-          setOpenItems(data.openItems as string[]);
+          setOpenFolders(data.openItems as string[]);
         }
         clickCountRef.current = 0;
       }, 200);
@@ -70,7 +70,7 @@ export default function ChatFolders({
       multiple
       collapsible
       onToggle={handleToggle}
-      openItems={openItems}
+      openItems={openFolders}
     >
       {Object.keys(folders)
         .sort()
@@ -83,7 +83,6 @@ export default function ChatFolders({
               chats={chatsInFolder || []}
               collapsed={collapsed}
               folder={folder}
-              openItems={openItems}
             />
           );
         })}

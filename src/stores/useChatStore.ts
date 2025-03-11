@@ -44,6 +44,7 @@ if (!isPlainObject(tempStage)) {
   console.log('tempStage', tempStage);
 }
 export interface IChatStore {
+  openFolders: string[];
   folders: Record<string, IChatFolder>;
   folder: IChatFolder | null;
   chats: IChat[];
@@ -59,6 +60,7 @@ export interface IChatStore {
     };
   };
   tempStage: Partial<IStage>;
+  setOpenFolders: (folders: string[]) => void;
   fetchFolder: (limit?: number) => Promise<Record<string, IChatFolder>>;
   selectFolder: (id: string | null) => void;
   createFolder: (name?: string) => Promise<IChatFolder>;
@@ -111,6 +113,7 @@ export interface IChatStore {
 
 const useChatStore = create<IChatStore>((set, get) => ({
   folders: {},
+  openFolders: [],
   folder: null,
   keywords: {},
   chats: [],
@@ -119,6 +122,9 @@ const useChatStore = create<IChatStore>((set, get) => ({
   states: {},
   // only for temp chat
   tempStage,
+  setOpenFolders: (folders) => {
+    set({ openFolders: folders });
+  },
   fetchFolder: async (limit = 100) => {
     const offset = 0;
     const rows = (await window.electron.db.all(

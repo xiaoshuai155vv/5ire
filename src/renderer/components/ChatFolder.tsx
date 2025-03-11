@@ -37,12 +37,10 @@ export default function ChatFolder({
   folder,
   chats,
   collapsed,
-  openItems,
 }: {
   folder: IChatFolder;
   chats: IChat[];
   collapsed: boolean;
-  openItems: string[];
 }) {
   const { setNodeRef } = useDroppable({
     id: folder.id,
@@ -52,6 +50,7 @@ export default function ChatFolder({
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [name, setName] = useState(folder.name);
   const [editable, setEditable] = useState(false);
+  const openFolders = useChatStore((state) => state.openFolders);
   const selectedFolder = useChatStore((state) => state.folder);
   const chat = useChatStore((state) => state.chat);
   const { updateFolder, deleteFolder, markFolderAsOld, selectFolder } =
@@ -91,7 +90,7 @@ export default function ChatFolder({
               }
             }}
             expandIcon={
-              openItems.includes(folder.id) ? (
+              openFolders.includes(folder.id) ? (
                 folder.id === selectedFolder?.id ? (
                   <FolderOpenFilled />
                 ) : (
