@@ -43,13 +43,13 @@ export default function useChatContext(): IChatContext {
       if (Object.keys(provider.chat.models).length === 0) {
         return defaultModel;
       }
-      let model = getChatModel(api.provider, api.model) || defaultModel;
+      let model = getChatModel(api.provider, api.model, defaultModel);
       if (api.provider === 'Azure') {
         return model;
       }
       const { chat } = useChatStore.getState();
       if (chat?.model) {
-        model = getChatModel(api.provider, chat.model) || model;
+        model = getChatModel(api.provider, chat.model, model);
       }
       // debug(`Chat(${chat.id}):getModel: ${model.label}`);
       return model;

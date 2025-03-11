@@ -182,6 +182,7 @@ export default function ChatFolder({
         setOpen={setConfirmDialogOpen}
         onConfirm={async () => {
           await deleteFolder(folder.id);
+          // If the current chat is in the folder being deleted, navigate to the temp chat
           if (chat.folderId === folder.id) {
             navigate(`/chats/${tempChatId}`);
           }

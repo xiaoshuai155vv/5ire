@@ -46,7 +46,8 @@ export default function useProvider() {
 
   function getChatModel(
     providerName: ProviderType,
-    modelName: string
+    modelName: string,
+    defaultModel: IChatModel = getDefaultChatModel(providerName)
   ): IChatModel {
     const _providers = getProviders();
     let provider = _providers[providerName];
@@ -55,7 +56,7 @@ export default function useProvider() {
     }
     let model = provider.chat.models[modelName];
     if (!model) {
-      model = getDefaultChatModel(providerName);
+      model = defaultModel
     }else{
       model.name = modelName;
     }
