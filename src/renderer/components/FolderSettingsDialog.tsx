@@ -116,8 +116,8 @@ export default function FolderSettingsDialog({
   const onTemperatureChange = useCallback(
     (ev: SpinButtonChangeEvent, data: SpinButtonOnChangeData) => {
       const value = data.value
-        ? data.value
-        : parseFloat(data.displayValue as string);
+        ? Math.round(data.value * 10) / 10
+        : Math.round(parseFloat(data.displayValue as string) * 10) / 10;
       const $temperature = Math.max(
         Math.min(value as number, temperatureConfig.max),
         temperatureConfig.min,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, Tooltip } from '@fluentui/react-components';
 import Mousetrap from 'mousetrap';
 import {
@@ -21,6 +21,7 @@ import { tempChatId } from 'consts';
 import useNav from 'hooks/useNav';
 import useToast from 'hooks/useToast';
 import ChatSettingsDrawer from './ChatSettingsDrawer';
+import { IChatFolder } from 'intellichat/types';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const MoreHorizontalIcon = bundleIcon(
@@ -35,6 +36,7 @@ export default function Header() {
   const { notifySuccess } = useToast();
   const navigate = useNav();
   const folder = useChatStore((state) => state.folder);
+  const folders = useChatStore((state) => state.folders);
   const activeChat = useChatContext().getActiveChat();
   const collapsed = useAppearanceStore((state) => state.sidebar.collapsed);
   const chatSidebarHidden = useAppearanceStore(
@@ -44,6 +46,13 @@ export default function Header() {
     (state) => state.toggleChatSidebarVisibility,
   );
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+
+  const chatFolder: Partial<IChatFolder> = useMemo(() => {
+    if (activeChat.id!==tempChatId && activeChat.folderId) {
+      return folders[activeChat.folderId] || {};
+    }
+    return folder || {};
+  }, [folder, activeChat.id]);
 
   const [delConfirmDialogOpen, setDelConfirmDialogOpen] =
     useState<boolean>(false);
@@ -81,8 +90,7 @@ export default function Header() {
       }`}
     >
       <div className="flex-grow text-sm text-gray-300 dark:text-gray-600">
-        {(activeChat.id === tempChatId || activeChat.folderId === folder?.id) &&
-          folder?.name}
+        {chatFolder.name}
       </div>
       <div className="flex justify-end items-center gap-1">
         {activeChat.isPersisted ? (
