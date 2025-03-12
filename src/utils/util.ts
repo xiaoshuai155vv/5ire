@@ -1,4 +1,6 @@
+import { tempChatId } from 'consts';
 import {
+  IChat,
   IChatMessage,
   IChatResponseMessage,
   IPromptDef,
@@ -31,6 +33,9 @@ export function str2int(str: string, defaultValue: number | null = null) {
   return result;
 }
 
+export function isPersistedChat(chat:Partial<IChat>): boolean {
+  return !!chat.id && chat.id !==  tempChatId
+}
 export function fmtDate(date: Date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');

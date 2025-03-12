@@ -22,6 +22,7 @@ import useNav from 'hooks/useNav';
 import useToast from 'hooks/useToast';
 import ChatSettingsDrawer from './ChatSettingsDrawer';
 import { IChatFolder } from 'intellichat/types';
+import { isPersistedChat } from 'utils/util';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const MoreHorizontalIcon = bundleIcon(
@@ -70,7 +71,7 @@ export default function Header() {
   const getKeyword = useChatStore((state) => state.getKeyword);
   const setKeyword = useChatStore((state) => state.setKeyword);
 
-  const keyword = activeChat.isPersisted ? getKeyword(activeChat?.id) : null;
+  const keyword = isPersistedChat(activeChat) ? getKeyword(activeChat?.id) : null;
 
   useEffect(() => {
     Mousetrap.bind('mod+d', () => {
