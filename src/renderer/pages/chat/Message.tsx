@@ -64,7 +64,7 @@ export default function Message({ message }: { message: IChatMessage }) {
   );
 
   useEffect(() => {
-    if(message.isActive) return; // no need to add event listener when message is active
+    if (message.isActive) return; // no need to add event listener when message is active
     const observer = new MutationObserver((mutations) => {
       const links = document.querySelectorAll(`#${message.id} .msg-reply a`);
       if (links.length > 0) {
@@ -91,9 +91,6 @@ export default function Message({ message }: { message: IChatMessage }) {
     };
   }, [message.id, message.isActive, onCitationClick]);
 
-  const [reply, setReply] = useState('');
-  const [reasoning, setReasoning] = useState('');
-
   const [isReasoning, setIsReasoning] = useState(true);
   const [reasoningSeconds, setReasoningSeconds] = useState(0);
   const [isReasoningShow, setIsReasoningShow] = useState(false);
@@ -111,14 +108,18 @@ export default function Message({ message }: { message: IChatMessage }) {
     isReasoningRef.current = isReasoning;
   }, [isReasoning]);
 
+  const reply = useMemo(() => getNormalContent(message.reply), [message.reply]);
+  const reasoning = useMemo(
+    () => getReasoningContent(message.reply, message.reasoning),
+    [message.reply, message.reasoning],
+  );
+
   useEffect(() => {
     const _reply = getNormalContent(message.reply);
     const _reasoning = getReasoningContent(message.reply, message.reasoning);
-    setReply(_reply);
-    setReasoning(_reasoning);
     replyRef.current = reply;
     reasoningRef.current = reasoning;
-  }, [message.reply, message.reasoning]);
+  }, [reply, reasoning]);
 
   function monitorThinkStatus() {
     // 清除之前的计时器
@@ -162,7 +163,7 @@ export default function Message({ message }: { message: IChatMessage }) {
     setIsReasoningShow(!isReasoningShow);
   }, [isReasoningShow]);
 
-  const replyNode = useCallback(() => {
+  const replyNode = () => {
     const isLoading = message.isActive && states.loading;
     const isEmpty =
       (!message.reply || message.reply === '') &&
@@ -229,16 +230,7 @@ export default function Message({ message }: { message: IChatMessage }) {
         )}
       </div>
     );
-  }, [
-    reply,
-    reasoning,
-    keyword,
-    states,
-    fontSize,
-    isReasoning,
-    reasoningSeconds,
-    isReasoningShow,
-  ]);
+  };
 
   return (
     <div className="leading-6 message" id={message.id}>

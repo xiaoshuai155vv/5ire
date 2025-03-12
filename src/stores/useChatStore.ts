@@ -570,18 +570,14 @@ const useChatStore = create<IChatStore>((set, get) => ({
     return msg;
   },
   appendReply: (msgId: string, reply: string, reasoning: string) => {
-    let accReply = '';
-    let accReasoning = '';
     set(
       produce((state: IChatStore) => {
         const message = state.messages.find((msg) => msg.id === msgId);
         if (message) {
-          accReply = message.reply ? `${message.reply}${reply}` : reply;
-          accReasoning = message.reasoning
+          message.reply = message.reply ? `${message.reply}${reply}` : reply;
+          message.reasoning = message.reasoning
             ? `${message.reasoning}${reasoning}`
             : reasoning;
-          message.reply = accReply;
-          message.reasoning = accReasoning;
         }
       }),
     );
