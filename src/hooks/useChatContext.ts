@@ -20,10 +20,7 @@ export default function useChatContext(): IChatContext {
     const getActiveChat = () => {
       const { chat } = useChatStore.getState();
       // debug(`Chat(${chat.id}):getActiveChat: ${chat.summary}`);
-      return {
-        ...chat,
-        isPersisted: !!(chat?.id && chat.id !== tempChatId),
-      } as IChat;
+     return chat as IChat;
     };
 
     const getProvider = () => {

@@ -189,7 +189,6 @@ export interface IChat {
   createdAt: number | null;
   prompt: IPrompt | string | null;
   input: string | null;
-  isPersisted?: boolean;
 }
 
 export interface IChatMessage {
