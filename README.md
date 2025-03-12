@@ -11,7 +11,7 @@
      <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"/>
   </div>
    <br />
-  <img src="https://github.com/user-attachments/assets/36ba3c32-6ebb-46d8-810f-df648243fbcc" style="width:100%"/>
+  <img src="https://github.com/user-attachments/assets/e622e1da-09b9-4212-b71c-ad9d39bf3cd5" width="100%"/>
   <br />
   <p>
     <br />
