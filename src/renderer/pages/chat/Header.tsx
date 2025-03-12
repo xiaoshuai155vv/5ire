@@ -96,7 +96,7 @@ export default function Header() {
         {chatFolder.name}
       </div>
       <div className="flex justify-end items-center gap-1">
-        {activeChat.isPersisted ? (
+        {activeChat?.id && activeChat.id !== tempChatId ? (
           <>
             <Button
               icon={<DeleteIcon className="text-color-tertiary" />}
