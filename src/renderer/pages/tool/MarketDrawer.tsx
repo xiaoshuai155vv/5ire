@@ -127,14 +127,18 @@ export default function ToolMarketDrawer({
           </div>
         ) : servers.length > 0 ? (
           <div className="overflow-y-auto -mr-5 pr-5 pb-5">
-            <List navigationMode="items">
+            <List navigationMode="composite">
               {servers.map((server) => (
                 <ListItem key={server.key}>
-                  <div className="p-2 my-1 w-full rounded bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700">
+                  <div
+                    role="gridcell"
+                    className="p-2 my-1 w-full rounded bg-gray-50 hover:bg-gray-100 dark:bg-stone-800 dark:hover:bg-stone-700"
+                  >
                     <div className="flex justify-between items-center">
-                      <div className="flex flex-start items-center flex-grow">
+                      <div className="flex flex-start items-baseline flex-grow">
                         <div
-                          className="text-base font-bold"
+                          role="gridcell"
+                          className="text-base font-bold mt-1 flex"
                           dangerouslySetInnerHTML={{
                             __html: highlight(
                               server.name || server.key,
@@ -143,9 +147,9 @@ export default function ToolMarketDrawer({
                           }}
                         />
                         {server.homepage && (
-                          <span
+                          <button
                             title="homepage"
-                            className=" text-gray-400 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-300 ml-1"
+                            className="text-gray-400 hover:text-gray-800 dark:text-gray-500 dark:hover:text-gray-300 ml-2"
                             onClick={() =>
                               window.electron.openExternal(
                                 server.homepage as string,
@@ -153,7 +157,7 @@ export default function ToolMarketDrawer({
                             }
                           >
                             {new URL(server.homepage).hostname}
-                          </span>
+                          </button>
                         )}
                       </div>
                       {installedServer.has(server.key) ? (
