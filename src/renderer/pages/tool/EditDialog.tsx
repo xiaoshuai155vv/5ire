@@ -110,7 +110,7 @@ export default function ToolEditDialog(options: {
     } else {
       setKeyValidationState('none');
     }
-    if (!cmd || args.length === 0) {
+    if (!cmd) {
       setCommandValidationState('error');
       isValid = false;
     } else {
@@ -134,7 +134,7 @@ export default function ToolEditDialog(options: {
       setName(server.name || '');
       setKey(server.key);
       setDescription(server.description || '');
-      setCommand([server.command, ...server.args||[]].join(' '));
+      setCommand([server.command, ...(server.args || [])].join(' '));
       setEnv(server.env || {});
     }
 
@@ -238,15 +238,10 @@ export default function ToolEditDialog(options: {
                     className="w-full min-w-fit"
                     placeholder={t('Common.Required')}
                     value={command}
-                    onChange={(
-                      _: ChangeEvent<HTMLInputElement>,
-                      data: InputOnChangeData,
-                    ) => {
-                      setCommand(data.value);
-                      if (
-                        data.value.trim() !== '' &&
-                        (!cmd || args.length === 0)
-                      ) {
+                    onInput={(event: ChangeEvent<HTMLInputElement>) => {
+                      const val = event.target.value;
+                      setCommand(val);
+                      if (val.trim() === '') {
                         setCommandValidationState('error');
                       } else {
                         setCommandValidationState('none');
@@ -305,8 +300,12 @@ export default function ToolEditDialog(options: {
                           key={key}
                           className="flex flex-start items-center [&:not(:last-child)]:border-b w-full px-1"
                         >
-                          <div className="w-5/12 px-2 text-xs overflow-hidden text-nowrap truncate">{key}</div>
-                          <div className="w-6/12 px-2 text-xs overflow-hidden text-nowrap truncate">{env[key]}</div>
+                          <div className="w-5/12 px-2 text-xs overflow-hidden text-nowrap truncate">
+                            {key}
+                          </div>
+                          <div className="w-6/12 px-2 text-xs overflow-hidden text-nowrap truncate">
+                            {env[key]}
+                          </div>
                           <div>
                             <Button
                               appearance="subtle"
@@ -330,7 +329,9 @@ export default function ToolEditDialog(options: {
                   <div
                     className="border rounded border-base text-xs"
                     dangerouslySetInnerHTML={{
-                      __html: render(`\`\`\`json\n${JSON.stringify(config, null, 2)}\n\`\`\``),
+                      __html: render(
+                        `\`\`\`json\n${JSON.stringify(config, null, 2)}\n\`\`\``,
+                      ),
                     }}
                   />
                 </Field>
