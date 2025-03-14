@@ -8,6 +8,8 @@ import ImgCtrl from './ImgCtrl';
 import StreamCtrl from './StreamCtrl';
 import KnowledgeCtrl from './KnowledgeCtrl';
 import CtxNumCtrl from './CtxNumCtrl';
+import useChatStore from 'stores/useChatStore';
+import { IChat } from 'intellichat/types';
 
 export default function EditorToolbar({
   onConfirm,
@@ -16,7 +18,7 @@ export default function EditorToolbar({
 }) {
   const ctx = useChatContext();
   const provider = ctx.getProvider();
-  const chat = ctx.getActiveChat();
+  const chat = useChatStore((state) => state.chat) as IChat;
 
   return (
     <div className="py-1.5 bg-brand-surface-1 relative">

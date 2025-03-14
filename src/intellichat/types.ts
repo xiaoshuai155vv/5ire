@@ -224,6 +224,7 @@ export interface IPromptDef {
   createdAt: number;
   updatedAt: number;
   pinedAt: number | null;
+  provider: string | null; // mcp server key or null(built-in)
 }
 
 export interface IPrompt {
