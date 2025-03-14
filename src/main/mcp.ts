@@ -1,9 +1,9 @@
 import path from 'path';
 import fs from 'node:fs';
 import { app } from 'electron';
-import * as logging from './logging';
 import { IMCPConfig, IMCPServer } from 'types/mcp';
 import { isUndefined, omitBy } from 'lodash';
+import * as logging from './logging';
 
 export const DEFAULT_INHERITED_ENV_VARS =
   process.platform === 'win32'
@@ -77,11 +77,10 @@ export default class ModuleContext {
     let mcpSvr = config.servers.find(
       (svr: IMCPServer) => svr.key === server.key,
     );
-    mcpSvr = Object.assign(
-      {},
-      mcpSvr,
-      omitBy({ ...server, isActive: true }, isUndefined),
-    );
+    mcpSvr = {
+      ...mcpSvr,
+      ...omitBy({ ...server, isActive: true }, isUndefined),
+    };
     logging.debug('MCP Server:', mcpSvr);
     return mcpSvr;
   }
@@ -162,13 +161,12 @@ export default class ModuleContext {
   }
 
   public async updateServer(server: IMCPServer) {
-    console.log('updateServer', JSON.stringify(server));
     const config = await this.getConfig();
     const index = config.servers.findIndex(
       (svr: IMCPServer) => svr.key === server.key,
     );
     if (index > -1) {
-      config.servers[index] =server;
+      config.servers[index] = server;
       await this.putConfig(config);
       return true;
     }
@@ -178,7 +176,7 @@ export default class ModuleContext {
   public async activate(server: IMCPServer): Promise<{ error: any }> {
     try {
       const config = await this.getConfig();
-      let mcpSvr = this.getMCPServer(server, config);
+      const mcpSvr = this.getMCPServer(server, config) as IMCPServer;
       const { key, command, args, env } = mcpSvr;
       let cmd: string = command;
       if (command === 'npx') {
