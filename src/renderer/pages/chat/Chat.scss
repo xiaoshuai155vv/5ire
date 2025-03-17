@@ -9,7 +9,7 @@
   font-family: Barlow, -apple-system, BlinkMacSystemFont, PingFang SC, Hiragino Sans GB,
   Roboto, helvetica neue, helvetica, segoe ui, Arial, sans-serif;
 }
-[data-theme='dark'] .message :not(.think):not(.think *) {
+[data-theme='dark'] .message:not(.hljs *):not(.think):not(.think *){
   color: #d6d6d6;
 }
 .message .font-lg{
