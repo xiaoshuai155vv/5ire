@@ -28,7 +28,14 @@ const useAppearanceStore = create<IAppearanceStore>((set, get) => ({
   chatSidebar: {
     show: localStorage.getItem('chat-sidebar-show') === 'true',
   },
-  setTheme: (theme: Omit<ThemeType, 'system'>) => set({ theme }),
+  setTheme: (theme: Omit<ThemeType, 'system'>) => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    set({ theme });
+  },
   toggleSidebarCollapsed: () => {
     set((state) => {
       const collapsed = !state.sidebar.collapsed;
