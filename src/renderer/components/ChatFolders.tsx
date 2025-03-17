@@ -5,8 +5,8 @@ import {
 import { IChat } from 'intellichat/types';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import useChatStore from 'stores/useChatStore';
-import ChatFolder from './ChatFolder';
 import { tempChatId } from 'consts';
+import ChatFolder from './ChatFolder';
 
 export default function ChatFolders({
   chats,

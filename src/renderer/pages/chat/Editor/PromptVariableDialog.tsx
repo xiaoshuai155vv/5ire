@@ -21,7 +21,7 @@ export default function PromptVariableDialog(args: {
   onCancel: () => void;
   onConfirm: (
     systemVars: { [key: string]: string },
-    userVars: { [key: string]: string }
+    userVars: { [key: string]: string },
   ) => void;
 }) {
   const { t } = useTranslation();

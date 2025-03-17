@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Spinner from './Spinner';
 import { t } from 'i18next';
 import {
   Button,
@@ -12,6 +11,7 @@ import {
   DialogTrigger,
 } from '@fluentui/react-components';
 import { CheckmarkCircle16Regular } from '@fluentui/react-icons';
+import Spinner from './Spinner';
 
 export default function UpgradeIndicator() {
   const [completed, setCompleted] = useState<boolean>(false);

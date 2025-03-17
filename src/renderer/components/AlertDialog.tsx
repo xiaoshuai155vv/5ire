@@ -28,7 +28,7 @@ export default function AlertDialog(args: {
 }) {
   const { t } = useTranslation();
   const { type, open, setOpen, title, message, onConfirm } = args;
-  const getPalette = useAppearanceStore.getState().getPalette;
+  const { getPalette } = useAppearanceStore.getState();
   const renderIcon = useCallback(() => {
     switch (type) {
       case 'success':
@@ -74,7 +74,7 @@ export default function AlertDialog(args: {
             {title}
           </DialogTitle>
           <DialogContent>
-            <div dangerouslySetInnerHTML={{ __html: message }}></div>
+            <div dangerouslySetInnerHTML={{ __html: message }} />
           </DialogContent>
           <DialogActions>
             <DialogTrigger disableButtonEnhancement>

@@ -11,13 +11,12 @@ import {
   IGoogleTool,
 } from 'intellichat/types';
 import { isBlank } from 'utils/validators';
-import { splitByImg, stripHtmlTags } from 'utils/util';
+import { splitByImg, stripHtmlTags, urlJoin } from 'utils/util';
 import OpenAIReader from 'intellichat/readers/OpenAIReader';
 import { ITool } from 'intellichat/readers/IChatReader';
 import NextChatService from './NextChatService';
 import INextChatService from './INextCharService';
 import OpenAI from '../../providers/OpenAI';
-import { urlJoin } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:OpenAIChatService');
 

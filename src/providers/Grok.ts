@@ -20,7 +20,7 @@ export default {
       'grok-2-vision': {
         label: 'grok-2-vision',
         contextWindow: 32768,
-        defaultMaxTokens:4000,
+        defaultMaxTokens: 4000,
         maxTokens: 4096,
         inputPrice: 0.002,
         outputPrice: 0.01,
@@ -37,7 +37,7 @@ export default {
       'grok-2': {
         label: 'grok-2',
         contextWindow: 128000,
-        defaultMaxTokens:128000,
+        defaultMaxTokens: 128000,
         maxTokens: 128000,
         inputPrice: 0.002,
         outputPrice: 0.01,

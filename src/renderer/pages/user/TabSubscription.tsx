@@ -1,4 +1,3 @@
-import { captureException } from '../../logging';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from 'stores/useAuthStore';
@@ -18,6 +17,7 @@ import {
   Input,
 } from '@fluentui/react-components';
 import { fmtDateTime } from 'utils/util';
+import { captureException } from '../../logging';
 
 const debug = Debug('5ire:pages:user:TabSubscription');
 
@@ -101,7 +101,7 @@ export default function TabSubscription() {
           .maybeSingle();
         if (error || !data) {
           notifyError(
-            error?.message || t('Subscription.Notification.RedeemFailed')
+            error?.message || t('Subscription.Notification.RedeemFailed'),
           );
         } else {
           notifySuccess(t('Subscription.Notification.RedeemSuccess'));
@@ -116,7 +116,7 @@ export default function TabSubscription() {
         setRedeeming(false);
       }
     },
-    [redeemCode]
+    [redeemCode],
   );
 
   const loadSubscription = async (userId: string) => {

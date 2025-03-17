@@ -1,19 +1,17 @@
 import Debug from 'debug';
-import Ollama from '../../providers/Ollama';
-import {
-  IChatContext,
-  IChatRequestMessage,
-} from 'intellichat/types';
-import INextChatService from './INextCharService';
-import OpenAIChatService from './OpenAIChatService';
+import { IChatContext, IChatRequestMessage } from 'intellichat/types';
 import OllamaReader from 'intellichat/readers/OllamaChatReader';
 import { ITool } from 'intellichat/readers/IChatReader';
 import { urlJoin } from 'utils/util';
+import OpenAIChatService from './OpenAIChatService';
+import INextChatService from './INextCharService';
+import Ollama from '../../providers/Ollama';
 
 const debug = Debug('5ire:intellichat:OllamaChatService');
 export default class OllamaChatService
   extends OpenAIChatService
-  implements INextChatService {
+  implements INextChatService
+{
   constructor(context: IChatContext) {
     super(context);
     this.provider = Ollama;
@@ -52,7 +50,7 @@ export default class OllamaChatService
   }
 
   protected async makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response> {
     const payload = await this.makePayload(messages);
     debug('Send Request, payload:\r\n', payload);

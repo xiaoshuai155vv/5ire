@@ -1,13 +1,12 @@
 /* eslint-disable no-console */
 import Database, { Statement } from 'better-sqlite3';
 import { app, ipcMain } from 'electron';
-import * as logging from './logging';
 import path from 'path';
+import * as logging from './logging';
 import { isOneDimensionalArray } from '../utils/util';
 
 const dbPath = path.join(app.getPath('userData'), '5ire.db');
 const database = new Database(dbPath);
-
 
 function createTableFolders() {
   database
@@ -212,7 +211,9 @@ function alertTableChats() {
   } else {
     logging.debug('[input] column already exists in [chats] table');
   }
-  const hasFolderIdColumn = columns.some((column: any) => column.name === 'folderId');
+  const hasFolderIdColumn = columns.some(
+    (column: any) => column.name === 'folderId',
+  );
   if (!hasFolderIdColumn) {
     database.prepare(`ALTER TABLE chats ADD COLUMN folderId TEXT`).run();
     logging.debug('Added [folderId] column to [chats] table');

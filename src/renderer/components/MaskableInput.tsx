@@ -2,7 +2,7 @@ import { Button, Input } from '@fluentui/react-components';
 import { Eye20Filled, EyeOff20Filled } from '@fluentui/react-icons';
 import { forwardRef, useState } from 'react';
 
-const MaskableInput = (props: any, ref:any) => {
+function MaskableInput(props: any, ref: any) {
   const [showRaw, setShowRaw] = useState(false);
   return (
     <Input
@@ -27,6 +27,6 @@ const MaskableInput = (props: any, ref:any) => {
       }
     />
   );
-};
+}
 
 export default forwardRef(MaskableInput);

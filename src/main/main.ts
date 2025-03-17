@@ -12,16 +12,13 @@ import {
   shell,
   ipcMain,
   nativeTheme,
+  MessageBoxOptions,
 } from 'electron';
 import crypto from 'crypto';
-dotenv.config({
-  path: app.isPackaged
-    ? path.join(process.resourcesPath, '.env')
-    : path.resolve(process.cwd(), '.env'),
-});
 import { autoUpdater } from 'electron-updater';
 import { Deeplink } from 'electron-deeplink';
 import Store from 'electron-store';
+import { update } from 'lodash';
 import * as logging from './logging';
 import axiom from '../vendors/axiom';
 import MenuBuilder from './menu';
@@ -31,7 +28,6 @@ import Downloader from './downloader';
 import { Embedder } from './embedder';
 import initCrashReporter from '../CrashReporter';
 import { encrypt, decrypt } from './crypt';
-import { MessageBoxOptions } from 'electron';
 import ModuleContext from './mcp';
 import Knowledge from './knowledge';
 import {
@@ -39,7 +35,12 @@ import {
   MAX_FILE_SIZE,
   SUPPORTED_IMAGE_TYPES,
 } from '../consts';
-import { update } from 'lodash';
+
+dotenv.config({
+  path: app.isPackaged
+    ? path.join(process.resourcesPath, '.env')
+    : path.resolve(process.cwd(), '.env'),
+});
 
 logging.init();
 
@@ -489,7 +490,7 @@ const createWindow = async () => {
     minHeight: 600,
     frame: false,
     autoHideMenuBar: true,
-    //trafficLightPosition: { x: 15, y: 18 },
+    // trafficLightPosition: { x: 15, y: 18 },
     icon: getAssetPath('icon.png'),
     webPreferences: {
       nodeIntegration: true,

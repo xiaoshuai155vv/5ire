@@ -143,9 +143,7 @@ export default function Form() {
       return;
     }
     if (isBlank($prompt.userMessage) && isBlank($prompt.systemMessage)) {
-      notifyInfo(
-        t('Prompt.Notifications.MessageRequired')
-      );
+      notifyInfo(t('Prompt.Notifications.MessageRequired'));
       return;
     }
     if ($prompt.id) {
@@ -161,7 +159,7 @@ export default function Form() {
 
   return (
     <div className="page h-full">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header flex items-center justify-between">
         <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl flex-shrink-0 mr-6">{t('Common.Prompts')}</h1>
@@ -186,7 +184,7 @@ export default function Form() {
                   defaultValue={prompt.name || ''}
                   onChange={(
                     ev: ChangeEvent<HTMLInputElement>,
-                    data: InputOnChangeData
+                    data: InputOnChangeData,
                   ) => setName(data.value || '')}
                 />
               </Field>
@@ -203,7 +201,6 @@ export default function Form() {
                   onOptionSelect={onModelSelect}
                 >
                   {Object.keys(groupedModelNames).map((group: string) => (
-
                     <OptionGroup label={group} key={group}>
                       {groupedModelNames[group].map((model: string) => (
                         <Option key={model} value={model}>
@@ -211,7 +208,6 @@ export default function Form() {
                         </Option>
                       ))}
                     </OptionGroup>
-
                   ))}
                 </Combobox>
               </Field>

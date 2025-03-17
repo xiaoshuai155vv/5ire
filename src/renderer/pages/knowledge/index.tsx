@@ -3,10 +3,10 @@ import useNav from 'hooks/useNav';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Empty from 'renderer/components/Empty';
-import Grid from './Grid';
 import { ICollection } from 'types/knowledge';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import { debounce } from 'lodash';
+import Grid from './Grid';
 
 export default function Knowledge() {
   const { t } = useTranslation();
@@ -14,12 +14,16 @@ export default function Knowledge() {
   const { listCollections, collectionChangedAt } = useKnowledgeStore();
   const [collections, setCollections] = useState<ICollection[]>([]);
 
-  const debouncedLoad= useRef(
-    debounce(() => {
-      listCollections().then((collections: ICollection[]) => {
-        setCollections(collections);
-      });
-    }, 1000, { leading: true })
+  const debouncedLoad = useRef(
+    debounce(
+      () => {
+        listCollections().then((collections: ICollection[]) => {
+          setCollections(collections);
+        });
+      },
+      1000,
+      { leading: true },
+    ),
   ).current;
 
   useEffect(() => {
@@ -28,10 +32,12 @@ export default function Knowledge() {
 
   return (
     <div className="page h-full">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header">
         <div className="flex items-center justify-between w-full">
-          <h1 className="text-2xl flex-shrink-0 mr-6">{t('Common.Knowledge')}</h1>
+          <h1 className="text-2xl flex-shrink-0 mr-6">
+            {t('Common.Knowledge')}
+          </h1>
           <div className="flex justify-end w-full items-center gap-2">
             <Button
               appearance="primary"

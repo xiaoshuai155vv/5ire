@@ -2,8 +2,8 @@ import path from 'path';
 import { app } from 'electron';
 import log from 'electron-log';
 import { Schema, Field, FixedSizeList, Utf8, Float16 } from 'apache-arrow';
-import { captureException } from '../main/logging';
 import { Data } from '@lancedb/lancedb';
+import { captureException } from './logging';
 import { loadDocument } from './docloader';
 import { randomId, smartChunk } from './util';
 import { embed } from './embedder';
@@ -19,7 +19,7 @@ const knowledgeSchema = new Schema([
   new Field(
     'vector',
     new FixedSizeList(dim, new Field('item', new Float16(), true)),
-    false
+    false,
   ),
 ]);
 
@@ -134,7 +134,7 @@ export default class Knowledge {
   public static async search(
     collectionIds: string[],
     query: string,
-    options?: { stayOpen?: boolean; limit?: number }
+    options?: { stayOpen?: boolean; limit?: number },
   ) {
     const db = await this.getDatabase();
     const table = await db.openTable(TABLE_NAME);
@@ -162,7 +162,7 @@ export default class Knowledge {
       collectionId,
       fileId,
     }: { id?: string; collectionId?: string; fileId?: string },
-    options?: { stayOpen: boolean }
+    options?: { stayOpen: boolean },
   ) {
     if (!id && !collectionId && !fileId) {
       log.warn('id, collectionId, fileId are all undefined');

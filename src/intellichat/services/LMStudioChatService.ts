@@ -1,6 +1,6 @@
+import { IChatContext } from 'intellichat/types';
 import OpenAIChatService from './OpenAIChatService';
 import LMStudio from '../../providers/LMStudio';
-import { IChatContext } from 'intellichat/types';
 import INextChatService from './INextCharService';
 
 export default class LMStudioChatService

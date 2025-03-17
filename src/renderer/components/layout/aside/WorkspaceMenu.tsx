@@ -74,7 +74,7 @@ export default function WorkspaceMenu({ collapsed }: { collapsed: boolean }) {
   }, []);
 
   return (
-    <div className='pr-0.5'>
+    <div className="pr-0.5">
       <Menu open={open} onOpenChange={onOpenChange}>
         <div
           className={`${collapsed ? '' : 'flex items-center justify-between '}`}

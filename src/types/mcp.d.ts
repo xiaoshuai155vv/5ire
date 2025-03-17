@@ -9,18 +9,16 @@ export interface IMCPServer {
   homepage?: string;
 }
 
-export type MCPArgType = 'string'|'list'|'number'
-export type MCPEnvType = 'string'|'number'
-export type MCPArgParameter = {[key:string]:MCPArgType}
-export type MCPEnvParameter = {[key:string]:MCPEnvType}
+export type MCPArgType = 'string' | 'list' | 'number';
+export type MCPEnvType = 'string' | 'number';
+export type MCPArgParameter = { [key: string]: MCPArgType };
+export type MCPEnvParameter = { [key: string]: MCPEnvType };
 
 export interface IMCPServerParameter {
   name: string;
-  type: MCPArgType|MCPEnvType;
+  type: MCPArgType | MCPEnvType;
   description: string;
 }
-
-
 
 export interface IMCPConfig {
   servers: IMCPServer[];

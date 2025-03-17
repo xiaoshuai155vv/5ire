@@ -1,4 +1,4 @@
-import {  IChatContext } from '../types';
+import { IChatContext } from '../types';
 import { ProviderType } from '../../providers/types';
 import AnthropicChatService from './AnthropicChatService';
 import AzureChatService from './AzureChatService';
@@ -18,7 +18,7 @@ import INextChatService from './INextCharService';
 
 export default function createService(
   providerName: ProviderType,
-  chatCtx: IChatContext
+  chatCtx: IChatContext,
 ): INextChatService {
   switch (providerName) {
     case 'Anthropic':

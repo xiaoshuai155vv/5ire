@@ -1,5 +1,11 @@
 import Debug from 'debug';
-import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+} from 'react';
 import { useParams } from 'react-router-dom';
 import { debounce, isNumber } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +28,6 @@ import { IChat, IChatResponseMessage } from 'intellichat/types';
 import { isBlank } from 'utils/validators';
 import useChatKnowledgeStore from 'stores/useChatKnowledgeStore';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
-import CitationDialog from './CitationDialog';
 import { ICollectionFile } from 'types/knowledge';
 import {
   extractCitationIds,
@@ -31,9 +36,9 @@ import {
 } from 'utils/util';
 import INextChatService from 'intellichat/services/INextCharService';
 import useSettingsStore from 'stores/useSettingsStore';
-import Sidebar from './Sidebar/Sidebar';
 import useInspectorStore from 'stores/useInspectorStore';
-import React from 'react';
+import Sidebar from './Sidebar/Sidebar';
+import CitationDialog from './CitationDialog';
 
 const debug = Debug('5ire:pages:chat');
 

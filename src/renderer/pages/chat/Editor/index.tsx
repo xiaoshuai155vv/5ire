@@ -9,11 +9,11 @@ import {
 import useChatStore from 'stores/useChatStore';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@fluentui/react-components';
-import Toolbar from './Toolbar';
-import Spinner from '../../../components/Spinner';
 import { removeTagsExceptImg, setCursorToEnd } from 'utils/util';
 import { debounce } from 'lodash';
 import { tempChatId } from 'consts';
+import Spinner from '../../../components/Spinner';
+import Toolbar from './Toolbar';
 
 export default function Editor({
   onSubmit,
@@ -172,8 +172,8 @@ export default function Editor({
       ) : null}
       <Toolbar onConfirm={onToolbarActionConfirm} />
       <div
-        contentEditable={true}
-        suppressContentEditableWarning={true}
+        contentEditable
+        suppressContentEditableWarning
         id="editor"
         ref={editorRef}
         className="w-full outline-0 pl-2.5 pr-2.5 pb-2.5 bg-brand-surface-1 flex-grow overflow-y-auto overflow-x-hidden"

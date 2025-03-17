@@ -65,15 +65,10 @@ export default function Sidebar({ chatId }: { chatId: string }) {
                   </span>
                 </AccordionHeader>
                 <AccordionPanel>
-                  <div
-                    className="inspector-message"
-                    style={{ marginLeft: 8 }}
-                  >
+                  <div className="inspector-message" style={{ marginLeft: 8 }}>
                     <div
                       dangerouslySetInnerHTML={{
-                        __html: render(
-                          `\`\`\`json\n${item.message}\n\`\`\``,
-                        ),
+                        __html: render(`\`\`\`json\n${item.message}\n\`\`\``),
                       }}
                     />
                   </div>

@@ -1,14 +1,14 @@
 import Debug from 'debug';
+import { date2unix, urlJoin } from 'utils/util';
 import Baidu from '../../providers/Baidu';
 import { IChatContext, IChatRequestMessage } from '../types';
-import { date2unix, urlJoin } from 'utils/util';
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
 
 const debug = Debug('5ire:intellichat:BaiduChatService');
 
 function formatDateToISO(date: Date): string {
-  return date.toISOString().split('.')[0] + 'Z';
+  return `${date.toISOString().split('.')[0]}Z`;
 }
 export interface IBaiduToken {
   token: string;
@@ -68,7 +68,7 @@ export default class BaiduChatService
   // /v1/BCE-BEARER/token?expireInSeconds=2592000
   private async createAuthString(
     uri: string,
-    timestamp: string
+    timestamp: string,
   ): Promise<string> {
     const { key, secret } = this.apiSettings;
     const signedHeaders = 'content-type;host;x-bce-date';
@@ -80,11 +80,11 @@ export default class BaiduChatService
     const canonicalQueryString = queries
       .map((q) => {
         const [key, val] = q.split('=');
-        return encodeURIComponent(key) + '=' + encodeURIComponent(val);
+        return `${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
       })
       .join('&');
     const canonicalRequest = `GET\n${canonicalURI}\n${canonicalQueryString}\ncontent-type:${encodeURIComponent(
-      'application/json'
+      'application/json',
     )}\nhost:${host}\nx-bce-date:${encodeURIComponent(timestamp)}`;
     // debug(`canonicalRequest:\n\n${canonicalRequest}`);
 
@@ -94,12 +94,12 @@ export default class BaiduChatService
     // debug('authStringPrefix:', authStringPrefix);
     const signingKey = await window.electron.crypto.hmacSha256Hex(
       authStringPrefix,
-      secret as string
+      secret as string,
     );
     // debug('signingKey:', signingKey);
     const signature = await window.electron.crypto.hmacSha256Hex(
       canonicalRequest,
-      signingKey
+      signingKey,
     );
     // debug('signature:', signature);
     // bce-auth-v1/{accessKeyId}/{timestamp}/{expirationPeriodInSeconds }/{signedHeaders}/{signature}
@@ -107,7 +107,7 @@ export default class BaiduChatService
   }
 
   protected async makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response> {
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
@@ -116,7 +116,7 @@ export default class BaiduChatService
     const token = await this.geToken();
     payload.model = this.context.getModel().name.toLowerCase();
 
-    const url = urlJoin("/v2/chat/completions", base);
+    const url = urlJoin('/v2/chat/completions', base);
     const response = await fetch(url, {
       method: 'POST',
       headers: {

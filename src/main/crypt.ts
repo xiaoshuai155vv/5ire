@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
 
 const algorithm = 'aes-256-cbc'; // 选择加密算法
-const baseKey = process.env.CRYPTO_SECRET // please change this key
+const baseKey = process.env.CRYPTO_SECRET; // please change this key
 
 const makeKey = (key: string): string => {
   return crypto
@@ -13,7 +13,7 @@ const makeKey = (key: string): string => {
 
 export function encrypt(
   text: string,
-  key: string
+  key: string,
 ): { iv: string; encrypted: string } {
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(algorithm, makeKey(key), iv);

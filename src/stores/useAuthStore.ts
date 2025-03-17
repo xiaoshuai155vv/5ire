@@ -21,11 +21,11 @@ export interface IAuthStore {
   }) => Promise<AuthResponse>;
   signInWithEmailAndPassword: (
     email: string,
-    password: string
+    password: string,
   ) => Promise<AuthResponse>;
   signOut: () => Promise<{ error: AuthError | null }>;
   onAuthStateChange: (
-    callback?: (event: any, session: any) => void
+    callback?: (event: any, session: any) => void,
   ) => Subscription;
   saveInactiveUser: (user: User) => void;
 }

@@ -40,10 +40,10 @@ import ConfirmDialog from 'renderer/components/ConfirmDialog';
 import useNav from 'hooks/useNav';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IPromptDef } from '../../../intellichat/types';
 import { fmtDateTime, unix2date, highlight, date2unix } from 'utils/util';
 import usePromptStore from 'stores/usePromptStore';
 import useToast from 'hooks/useToast';
+import { IPromptDef } from '../../../intellichat/types';
 
 const EditIcon = bundleIcon(EditFilled, EditRegular);
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
@@ -105,7 +105,7 @@ export default function Grid({
           pined: !!prompt.pinedAt,
         };
       }),
-    [prompts]
+    [prompts],
   );
 
   type NameCell = {

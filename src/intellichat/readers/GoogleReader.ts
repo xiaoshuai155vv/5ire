@@ -1,14 +1,14 @@
 import Debug from 'debug';
 import { IChatResponseMessage } from 'intellichat/types';
-import BaseReader from './BaseReader';
 import { extractFirstLevelBrackets } from 'utils/util';
+import BaseReader from './BaseReader';
 import { IReadResult, ITool } from './IChatReader';
 
 const debug = Debug('5ire:intellichat:GoogleReader');
 
 export default class GoogleReader extends BaseReader {
   protected parseReply(chunk: string): IChatResponseMessage {
-    let _chunk = chunk.trim();
+    const _chunk = chunk.trim();
     try {
       const data = JSON.parse(_chunk);
       if (data.candidates) {
@@ -20,14 +20,13 @@ export default class GoogleReader extends BaseReader {
           outputTokens: data.usageMetadata.candidatesTokenCount,
           toolCalls: firstCandidate.content.parts[0].functionCall,
         };
-      } else {
-        return {
-          content: '',
-          isEnd: false,
-          inputTokens: data.usageMetadata?.promptTokenCount,
-          outputTokens: data.usageMetadata?.candidatesTokenCount,
-        };
       }
+      return {
+        content: '',
+        isEnd: false,
+        inputTokens: data.usageMetadata?.promptTokenCount,
+        outputTokens: data.usageMetadata?.candidatesTokenCount,
+      };
     } catch (err) {
       console.error('Error parsing JSON:', err);
       return {
@@ -106,8 +105,8 @@ export default class GoogleReader extends BaseReader {
       return {
         content,
         tool,
-        inputTokens: inputTokens,
-        outputTokens: outputTokens,
+        inputTokens,
+        outputTokens,
       };
     }
   }

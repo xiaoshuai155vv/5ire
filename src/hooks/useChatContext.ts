@@ -7,9 +7,9 @@ import { useMemo } from 'react';
 import { isNil, isNumber, isUndefined } from 'lodash';
 import { isValidMaxTokens, isValidTemperature } from 'intellichat/validators';
 
-import useProvider from './useProvider';
 import { IChat, IChatContext, IChatMessage, IPrompt } from 'intellichat/types';
 import { IChatModel } from 'providers/types';
+import useProvider from './useProvider';
 
 const debug = Debug('5ire:hooks:useChatContext');
 
@@ -20,7 +20,7 @@ export default function useChatContext(): IChatContext {
     const getActiveChat = () => {
       const { chat } = useChatStore.getState();
       // debug(`Chat(${chat.id}):getActiveChat: ${chat.summary}`);
-     return chat as IChat;
+      return chat as IChat;
     };
 
     const getProvider = () => {
@@ -53,7 +53,7 @@ export default function useChatContext(): IChatContext {
     };
 
     const getSystemMessage = () => {
-      const chat = useChatStore.getState().chat;
+      const { chat } = useChatStore.getState();
       const prompt = chat.prompt as IPrompt | null;
       const systemMessage =
         prompt?.systemMessage || chat?.systemMessage || null;

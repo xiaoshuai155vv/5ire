@@ -1,4 +1,3 @@
-import { captureException } from '../../logging';
 import { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,6 +5,7 @@ import {
   Radio,
   RadioGroupOnChangeData,
 } from '@fluentui/react-components';
+import { captureException } from '../../logging';
 import { LanguageType } from '../../../types/settings.d';
 import useSettingsStore from '../../../stores/useSettingsStore';
 
@@ -16,7 +16,7 @@ export default function LanguageSettings() {
 
   const onLanguageChange = (
     ev: FormEvent<HTMLDivElement>,
-    data: RadioGroupOnChangeData
+    data: RadioGroupOnChangeData,
   ) => {
     setLanguage(data.value as LanguageType);
     if (data.value === 'system') {
@@ -24,7 +24,6 @@ export default function LanguageSettings() {
         .getSystemLanguage()
         .then((_lang) => {
           i18n.changeLanguage(_lang as LanguageType);
-          return;
         })
         .catch(captureException);
     } else {
@@ -47,7 +46,11 @@ export default function LanguageSettings() {
             value="zh-CN"
             label={t('Common.SimpleChinese')}
           />
-          <Radio name="language" value="system" label={t('Appearance.System')} />
+          <Radio
+            name="language"
+            value="system"
+            label={t('Appearance.System')}
+          />
         </RadioGroup>
       </div>
     </div>

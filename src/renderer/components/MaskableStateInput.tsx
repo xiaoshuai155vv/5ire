@@ -1,16 +1,17 @@
 import { Button, Tooltip } from '@fluentui/react-components';
 import { FluentIcon, Warning20Regular } from '@fluentui/react-icons';
-import MaskableInput from './MaskableInput';
 import useAppearanceStore from 'stores/useAppearanceStore';
 import { forwardRef } from 'react';
+import MaskableInput from './MaskableInput';
 
-const MaskableStateInput = (
+function MaskableStateInput(
   props: {
     isValid: boolean;
     errorMsg: string;
     icon: FluentIcon;
-  } & any, ref:any
-) => {
+  } & any,
+  ref: any,
+) {
   const getPalette = useAppearanceStore((state) => state.getPalette);
   const { isValid, errorMsg, icon, ...rest } = props;
   return (
@@ -32,6 +33,6 @@ const MaskableStateInput = (
       }
     />
   );
-};
+}
 
 export default forwardRef(MaskableStateInput);

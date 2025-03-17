@@ -33,8 +33,8 @@ export function str2int(str: string, defaultValue: number | null = null) {
   return result;
 }
 
-export function isPersistedChat(chat:Partial<IChat>): boolean {
-  return !!chat.id && chat.id !==  tempChatId
+export function isPersistedChat(chat: Partial<IChat>): boolean {
+  return !!chat.id && chat.id !== tempChatId;
 }
 export function fmtDate(date: Date) {
   const year = date.getFullYear();

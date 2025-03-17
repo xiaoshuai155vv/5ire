@@ -3,9 +3,10 @@ import { FluentIcon, Warning20Regular } from '@fluentui/react-icons';
 import { forwardRef } from 'react';
 import useAppearanceStore from 'stores/useAppearanceStore';
 
-const StateInput = (
-  props: { isValid: boolean; errorMsg: string; icon: FluentIcon } & any, ref:any
-) => {
+function StateInput(
+  props: { isValid: boolean; errorMsg: string; icon: FluentIcon } & any,
+  ref: any,
+) {
   const getPalette = useAppearanceStore((state) => state.getPalette);
   const { isValid, errorMsg, icon, ...rest } = props;
   return (
@@ -27,5 +28,5 @@ const StateInput = (
       }
     />
   );
-};
+}
 export default forwardRef(StateInput);

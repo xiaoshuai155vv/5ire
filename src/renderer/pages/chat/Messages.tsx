@@ -1,5 +1,5 @@
-import Message from './Message';
 import { IChatMessage } from 'intellichat/types';
+import Message from './Message';
 
 export default function Messages({ messages }: { messages: IChatMessage[] }) {
   return (

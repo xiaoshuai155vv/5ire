@@ -11,8 +11,8 @@ export default function Empty({
   text?: string;
 }) {
   const theme = useAppearanceStore((state) => state.theme);
-  const darkImg = getImage(image,'dark')
-  const lightImag = getImage(image, 'light')
+  const darkImg = getImage(image, 'dark');
+  const lightImag = getImage(image, 'light');
   return (
     <div className="text-center flex flex-col items-start justify-center h-4/5">
       <picture className="mx-auto">
@@ -36,4 +36,3 @@ export default function Empty({
     </div>
   );
 }
-

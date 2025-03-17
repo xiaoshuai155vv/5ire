@@ -11,7 +11,6 @@ import Footer from './Footer';
 import './AppSidebar.scss';
 import BookmarkNav from './BookmarkNav';
 
-
 export default function Sidebar() {
   const location = useLocation();
   const sidebar = useAppearanceStore((state) => state.sidebar);
@@ -19,14 +18,13 @@ export default function Sidebar() {
   const left = sidebar.hidden ? 'md:left-0' : '-left-64 md:left-0';
   const leftCollapsed = sidebar.hidden ? '-left-64' : '-left-64 md:left-0';
 
-
   const renderNav = () => {
     const activeRoute = location.pathname.split('/')[1];
     switch (activeRoute) {
       case 'apps':
         return <AppNav collapsed={sidebar.collapsed} />;
       case 'bookmarks':
-        return <BookmarkNav  collapsed={sidebar.collapsed}/>;
+        return <BookmarkNav collapsed={sidebar.collapsed} />;
       default:
         return <ChatNav collapsed={sidebar.collapsed} />;
     }

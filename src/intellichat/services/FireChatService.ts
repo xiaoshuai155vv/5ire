@@ -5,12 +5,12 @@ import {
   IChatResponseMessage,
 } from 'intellichat/types';
 
-import OpenAIChatService from './OpenAIChatService';
 import Fire from 'providers/Fire';
 import useAuthStore from 'stores/useAuthStore';
-import INextChatService from './INextCharService';
 import FireReader from 'intellichat/readers/FireReader';
 import { urlJoin } from 'utils/util';
+import INextChatService from './INextCharService';
+import OpenAIChatService from './OpenAIChatService';
 
 const debug = Debug('5ire:intellichat:FireChatService');
 
@@ -33,7 +33,7 @@ export default class FireChatService
   }
 
   protected async makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response> {
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);

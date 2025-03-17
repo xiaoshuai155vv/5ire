@@ -84,7 +84,7 @@ export default function EmbedSettings() {
           ...prev,
           [fileName as string]: value as number,
         }));
-      }
+      },
     );
     window.electron.ipcRenderer.on(
       'download-completed',
@@ -100,9 +100,11 @@ export default function EmbedSettings() {
             }));
           })
           .catch(() => {
-            notifyError(t('Settings.Embeddings.Notification.ModelSaveFailedError'));
+            notifyError(
+              t('Settings.Embeddings.Notification.ModelSaveFailedError'),
+            );
           });
-      }
+      },
     );
     window.electron.ipcRenderer.on(
       'download-failed',
@@ -112,7 +114,7 @@ export default function EmbedSettings() {
           ...prev,
           [fileName as string]: false,
         }));
-      }
+      },
     );
     return () => {
       window.electron.ipcRenderer.unsubscribeAll('download-started');
@@ -161,9 +163,7 @@ export default function EmbedSettings() {
 
   return (
     <div className="settings-section">
-      <div className="settings-section--header">
-        {t('Common.Embeddings')}
-      </div>
+      <div className="settings-section--header">{t('Common.Embeddings')}</div>
       <div className="py-4 flex-grow mt-1">
         <div className="flex justify-between items-start">
           <div className="mr-2">

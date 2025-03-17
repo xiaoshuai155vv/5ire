@@ -12,15 +12,15 @@ import useToast from 'hooks/useToast';
 import ToolSpinner from 'renderer/components/ToolSpinner';
 import useSettingsStore from 'stores/useSettingsStore';
 import {
+  ChevronDown16Regular,
+  ChevronUp16Regular,
+} from '@fluentui/react-icons';
+import {
   getNormalContent,
   getReasoningContent,
   highlight,
 } from '../../../utils/util';
 import MessageToolbar from './MessageToolbar';
-import {
-  ChevronDown16Regular,
-  ChevronUp16Regular,
-} from '@fluentui/react-icons';
 
 const debug = Debug('5ire:pages:chat:Message');
 
@@ -168,9 +168,9 @@ export default function Message({ message }: { message: IChatMessage }) {
     const isEmpty =
       (!message.reply || message.reply === '') &&
       (!message.reasoning || message.reasoning === '');
-    const thinkTitle =
-      (isReasoning ? t('Reasoning.Thinking') : t('Reasoning.Thought')) +
-      `${reasoningSeconds > 0 ? ` ${reasoningSeconds}s` : ''}`;
+    const thinkTitle = `${
+      isReasoning ? t('Reasoning.Thinking') : t('Reasoning.Thought')
+    }${reasoningSeconds > 0 ? ` ${reasoningSeconds}s` : ''}`;
     return (
       <div className={`w-full mt-1.5 ${isLoading ? 'is-loading' : ''}`}>
         {message.isActive && states.runningTool ? (

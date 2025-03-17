@@ -1,7 +1,5 @@
 import Debug from 'debug';
-import {
-  IChatContext,
-} from 'intellichat/types';
+import { IChatContext } from 'intellichat/types';
 import Moonshot from 'providers/Moonshot';
 import OpenAIChatService from './OpenAIChatService';
 import INextChatService from './INextCharService';

@@ -7,11 +7,10 @@ export function init() {
       {
         dsn: window.envVars.SENTRY_DSN,
       },
-      reactInit
+      reactInit,
     );
   }
 }
-
 
 export function captureException(error: Error | string) {
   console.error(error);

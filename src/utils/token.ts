@@ -29,8 +29,8 @@ export function countGPTTokens(messages: IChatRequestMessage[], model: string) {
     console.warn('Model not found. Using cl100k_base encoding.');
     encoding = getEncoding('cl100k_base');
   }
-  let tokensPerMessage = 3;
-  let tokensPerName = 1;
+  const tokensPerMessage = 3;
+  const tokensPerName = 1;
   let numTokens = 0;
 
   messages.forEach((msg: any) => {
@@ -73,20 +73,17 @@ export async function countTokensOfMoonshot(
   model: string,
 ) {
   try {
-    const response = await fetch(
-      `${apiBase}/tokenizers/estimate-token-count`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + apiKey,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ model, messages }),
+    const response = await fetch(`${apiBase}/tokenizers/estimate-token-count`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({ model, messages }),
+    });
     const json = await response.json();
     return json.data.total_tokens;
-  } catch (err:any) {
+  } catch (err: any) {
     captureException(err);
     return 0;
   }
@@ -99,7 +96,9 @@ export async function countTokenOfLlama(
   const tokensPerMessage = 3;
   const tokensPerName = 1;
   let numTokens = 0;
-  let tokenizer = model.startsWith('llama3') ? llama3Tokenizer : llamaTokenizer;
+  const tokenizer = model.startsWith('llama3')
+    ? llama3Tokenizer
+    : llamaTokenizer;
   messages.forEach((msg: any) => {
     numTokens += tokensPerMessage;
     Object.keys(msg).forEach((key: string) => {

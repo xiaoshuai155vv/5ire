@@ -11,8 +11,7 @@ import {
 import Mousetrap from 'mousetrap';
 import { useTranslation } from 'react-i18next';
 import { Dismiss24Regular } from '@fluentui/react-icons';
-import { useCallback, useEffect } from 'react';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 export default function ConfirmDialog(args: {
   open: boolean;
@@ -35,11 +34,11 @@ export default function ConfirmDialog(args: {
   useEffect(() => {
     if (open) {
       setTimeout(() => confirmButtonRef.current?.focus(), 200);
-      Mousetrap.bind('esc', ()=>setOpen(false))
+      Mousetrap.bind('esc', () => setOpen(false));
     }
-    return ()=>{
-      Mousetrap.unbind('esc')
-    }
+    return () => {
+      Mousetrap.unbind('esc');
+    };
   }, [open]);
 
   return (

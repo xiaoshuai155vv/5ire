@@ -27,8 +27,8 @@ import useAuthStore from 'stores/useAuthStore';
 import { getChatModel, getProvider } from 'providers';
 import { IChatModel } from 'providers/types';
 import useProvider from 'hooks/useProvider';
-import ToolStatusIndicator from './ToolStatusIndicator';
 import { DEFAULT_TEMPERATURE, tempChatId } from 'consts';
+import ToolStatusIndicator from './ToolStatusIndicator';
 
 export default function FolderSettingsDialog({
   open,
@@ -181,7 +181,7 @@ export default function FolderSettingsDialog({
                             <ToolStatusIndicator
                               provider={api.provider}
                               model={model.name}
-                              withTooltip={true}
+                              withTooltip
                             />
                             <span> {model.label || model.name}</span>
                           </div>
@@ -196,7 +196,7 @@ export default function FolderSettingsDialog({
                       <ToolStatusIndicator
                         provider={api.provider}
                         model={api.model}
-                        withTooltip={true}
+                        withTooltip
                       />
                       <span>{api.model}</span>
                     </div>

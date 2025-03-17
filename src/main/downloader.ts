@@ -5,8 +5,11 @@ import { app } from 'electron';
 
 export default class Downloader {
   private win: any;
+
   private downloads: { [key: string]: any } = {};
+
   private onFailed: Function | undefined;
+
   constructor(
     win: any,
     { onStart, onCompleted, onFailed, onProgress } = {
@@ -14,7 +17,7 @@ export default class Downloader {
       onCompleted: (fileName: string, savePath: string) => {},
       onFailed: (fileName: string, savePath: string, state: string) => {},
       onProgress: (fileName: string, progress: number) => {},
-    }
+    },
   ) {
     this.win = win;
     this.onFailed = onFailed;
@@ -24,7 +27,7 @@ export default class Downloader {
       const savePath = path.join(
         app.getPath('userData'),
         'downloads',
-        item.getFilename()
+        item.getFilename(),
       );
       item.setSavePath(savePath);
 

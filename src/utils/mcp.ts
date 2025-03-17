@@ -33,7 +33,7 @@ export function getParameters(params: string[]): IMCPServerParameter[] {
 export function fillArgs(args: string[], params: MCPArgParameter): string[] {
   const pattern =
     /\{\{(?<name>[^@]+)@(?<type>[^:]+)(::(?<description>[^}]*)?)?\}\}/;
-  let _args: (string | string[])[] = [...args];
+  const _args: (string | string[])[] = [...args];
   for (let index = 0; index < args.length; index++) {
     const arg = args[index];
     const match = arg.match(pattern);
@@ -56,7 +56,7 @@ export function FillEnv(
   if (!env) return {};
   const pattern =
     /\{\{(?<name>[^@]+)@(?<type>[^:]+)(::(?<description>[^}]*)?)?\}\}/;
-  let _env = { ...env };
+  const _env = { ...env };
   const envKeys = Object.keys(env);
   for (const envKey of envKeys) {
     const envItem = env[envKey];

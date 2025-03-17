@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import Empty from 'renderer/components/Empty';
 import TooltipIcon from 'renderer/components/TooltipIcon';
 import useMCPStore from 'stores/useMCPStore';
-import Grid from './Grid';
 import { Button } from '@fluentui/react-components';
 import {
   ArrowSyncCircleRegular,
@@ -11,10 +10,11 @@ import {
   BuildingShopRegular,
   bundleIcon,
 } from '@fluentui/react-icons';
-import ToolEditDialog from './EditDialog';
 import { IMCPServer } from 'types/mcp';
 import useToast from 'hooks/useToast';
 import ConfirmDialog from 'renderer/components/ConfirmDialog';
+import ToolEditDialog from './EditDialog';
+import Grid from './Grid';
 import DetailDialog from './DetailDialog';
 import ToolInstallDialog from './InstallDialog';
 import ToolMarketDrawer from './MarketDrawer';
@@ -87,7 +87,7 @@ export default function Tools() {
 
   return (
     <div className="page h-full">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header w-full">
         <div className="flex flex-col items-start w-full">
           <div className="flex justify-between items-baseline w-full">

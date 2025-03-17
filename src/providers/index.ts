@@ -1,3 +1,4 @@
+import { merge } from 'lodash';
 import { ProviderType, IChatModel, IServiceProvider } from './types';
 import Azure from './Azure';
 import Baidu from './Baidu';
@@ -9,7 +10,6 @@ import Anthropic from './Anthropic';
 import Fire from './Fire';
 import Ollama from './Ollama';
 import LMStudio from './LMStudio';
-import { merge } from 'lodash';
 import Doubao from './Doubao';
 import Grok from './Grok';
 import DeepSeek from './DeepSeek';
@@ -29,7 +29,7 @@ export const providers: { [key: string]: IServiceProvider } = {
   Doubao,
   DeepSeek,
   LMStudio,
-  '5ire':Fire,
+  '5ire': Fire,
 };
 
 export function getProvider(providerName: ProviderType): IServiceProvider {
@@ -38,14 +38,14 @@ export function getProvider(providerName: ProviderType): IServiceProvider {
 
 export function getChatModel(
   providerName: ProviderType,
-  modelName: string
+  modelName: string,
 ): IChatModel {
   const provider = getProvider(providerName);
-  if(Object.keys(provider.chat.models).length===0){
+  if (Object.keys(provider.chat.models).length === 0) {
     return {} as IChatModel;
   }
-  let model = provider.chat.models[modelName];
-  return model||{} as IChatModel;
+  const model = provider.chat.models[modelName];
+  return model || ({} as IChatModel);
 }
 
 export function getGroupedChatModelNames(): { [key: string]: string[] } {
@@ -59,9 +59,9 @@ export function getGroupedChatModelNames(): { [key: string]: string[] } {
       return acc;
     }, {});
   const models = Object.values(providers).map((provider: IServiceProvider) =>
-    group(Object.values(provider.chat.models))
+    group(Object.values(provider.chat.models)),
   );
-  const result={}
-  merge(result,...models)
-  return result
+  const result = {};
+  merge(result, ...models);
+  return result;
 }

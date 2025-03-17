@@ -37,7 +37,7 @@ export default function Account() {
 
   return (
     <div className="page h-full">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header flex items-center justify-between">
         <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl flex-shrink-0 mr-6">{t('Common.Account')}</h1>

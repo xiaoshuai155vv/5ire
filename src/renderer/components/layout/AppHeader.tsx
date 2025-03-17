@@ -33,7 +33,7 @@ const OfflineIcon = bundleIcon(WifiOff24Filled, WifiOff24Regular);
 export default function AppHeader() {
   const collapsed = useAppearanceStore((state) => state.sidebar.collapsed);
   const toggleSidebarVisibility = useAppearanceStore(
-    (state) => state.toggleSidebarVisibility
+    (state) => state.toggleSidebarVisibility,
   );
   const { t } = useTranslation();
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
@@ -72,7 +72,7 @@ export default function AppHeader() {
           collapsed ? 'md:w-[10rem]' : 'md:w-[17rem]'
         } flex items-center`}
       >
-        <TrafficLights></TrafficLights>
+        <TrafficLights />
         <div className="block md:hidden pl-1">
           <Button
             icon={<PanelLeftIcon />}
@@ -88,7 +88,9 @@ export default function AppHeader() {
           />
         </div>
         <div>{NetworkStatusIcon}</div>
-        <div className='ml-2'><UpgradeIndicator /></div>
+        <div className="ml-2">
+          <UpgradeIndicator />
+        </div>
       </div>
       <SearchDialog open={searchOpen} setOpen={setSearchOpen} />
     </div>

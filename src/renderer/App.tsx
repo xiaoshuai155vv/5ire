@@ -1,6 +1,4 @@
-import * as logging from './logging';
 import Debug from 'debug';
-import FluentApp from './components/FluentApp';
 import useAuthStore from 'stores/useAuthStore';
 import { useEffect } from 'react';
 import useToast from 'hooks/useToast';
@@ -8,6 +6,8 @@ import { useTranslation } from 'react-i18next';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useMCPStore from 'stores/useMCPStore';
 import Mousetrap from 'mousetrap';
+import FluentApp from './components/FluentApp';
+import * as logging from './logging';
 
 import './App.scss';
 import './fluentui.scss';
@@ -67,7 +67,7 @@ export default function App() {
         const { collectionId, file, numOfChunks } = data as any;
         createFile({
           id: file.id,
-          collectionId: collectionId,
+          collectionId,
           name: file.name,
           size: file.size,
           numOfChunks,

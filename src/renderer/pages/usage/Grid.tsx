@@ -14,10 +14,10 @@ import {
 import { BoxMultiple24Regular } from '@fluentui/react-icons';
 import useProvider from 'hooks/useProvider';
 
-import { ProviderType } from '../../../providers/types';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { IUsageStatistics } from 'types/usage';
+import { ProviderType } from '../../../providers/types';
 
 type modelCell = {
   value: string;
@@ -175,7 +175,7 @@ export default function Grid({
         total: {
           cost: 0,
         },
-      }
+      },
     );
     return [...$items, totalItem];
   }, [statistics, t]);

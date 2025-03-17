@@ -3,7 +3,7 @@ export interface IBookmark {
   msgId: string;
   prompt: string;
   reply: string;
-  reasoning?:string;
+  reasoning?: string;
   model: string;
   temperature: number;
   memo?: string;

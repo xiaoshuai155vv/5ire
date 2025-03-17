@@ -49,7 +49,7 @@ export default class FireReader extends OpenAIReader implements IChatReader {
           .split('data:')
           .map((i) => i.replace('\r\n', ''))
           .filter((i) => i !== '');
-        for (let curChunk of chunks) {
+        for (const curChunk of chunks) {
           if (curChunk === '[DONE]') {
             done = true;
             break;

@@ -1,24 +1,22 @@
-import {
-  IAnthropicTool,
-  IGeminiChatRequestMessagePart,
-  IGoogleTool,
-  IMCPTool,
-  IOpenAITool,
-} from '../types';
 import Debug from 'debug';
 import {
   IChatContext,
   IChatRequestMessage,
   IChatRequestPayload,
+  IAnthropicTool,
+  IGeminiChatRequestMessagePart,
+  IGoogleTool,
+  IMCPTool,
+  IOpenAITool,
 } from 'intellichat/types';
 import { isBlank } from 'utils/validators';
 import Google from 'providers/Google';
 import { getBase64, splitByImg, stripHtmlTags, urlJoin } from 'utils/util';
-import INextChatService from './INextCharService';
-import NextChatService from './NextChatService';
 import BaseReader from 'intellichat/readers/BaseReader';
 import GoogleReader from 'intellichat/readers/GoogleReader';
 import { ITool } from 'intellichat/readers/IChatReader';
+import NextChatService from './NextChatService';
+import INextChatService from './INextCharService';
 
 const debug = Debug('5ire:intellichat:GoogleChatService');
 
@@ -99,7 +97,7 @@ export default class GoogleChatService
        * cause gemini-pro-vision not support additionalProperties
        */
       if (prop.items) {
-        delete prop.items['additionalProperties'];
+        delete prop.items.additionalProperties;
       }
       properties[key] = {
         type: prop.type,
@@ -113,7 +111,7 @@ export default class GoogleChatService
       description: tool.description,
       parameters: {
         type: tool.inputSchema.type,
-        properties: properties,
+        properties,
         required: tool.inputSchema.required,
       },
     };
@@ -125,7 +123,7 @@ export default class GoogleChatService
     if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content, false);
       const result: IGeminiChatRequestMessagePart[] = [];
-      for (let item of items) {
+      for (const item of items) {
         if (item.type === 'image') {
           if (item.dataType === 'URL') {
             result.push({
@@ -163,7 +161,7 @@ export default class GoogleChatService
   protected async makeMessages(
     messages: IChatRequestMessage[],
   ): Promise<IChatRequestMessage[]> {
-    let result: IChatRequestMessage[] = [];
+    const result: IChatRequestMessage[] = [];
     const systemMessage = this.context.getSystemMessage();
     if (!isBlank(systemMessage)) {
       result.push({
@@ -171,7 +169,7 @@ export default class GoogleChatService
         parts: [{ text: systemMessage as string }],
       });
     }
-    for (let msg of this.context.getCtxMessages()) {
+    for (const msg of this.context.getCtxMessages()) {
       result.push({
         role: 'user',
         parts: [{ text: msg.prompt }],

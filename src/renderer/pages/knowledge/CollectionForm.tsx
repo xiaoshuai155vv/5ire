@@ -21,20 +21,20 @@ export default function CollectionForm() {
   const [name, setName] = useState<string>('');
   const [memo, setMemo] = useState<string>('');
 
-  useEffect(()=>{
+  useEffect(() => {
     const loadCollection = async () => {
-      if(id){
+      if (id) {
         const collection = await getCollection(id);
         if (!collection) {
           notifyError(t('Knowledge.Form.Notification.CollectionNotFound'));
           return;
         }
         setName(collection.name);
-        setMemo(collection.memo||'');
+        setMemo(collection.memo || '');
       }
-    }
+    };
     loadCollection();
-  },[id])
+  }, [id]);
 
   const onSave = async () => {
     if (isBlank(name)) {
@@ -59,7 +59,7 @@ export default function CollectionForm() {
   };
   return (
     <div className="page h-full">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header flex items-center justify-between">
         <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl flex-shrink-0 mr-6">
@@ -84,7 +84,7 @@ export default function CollectionForm() {
                 placeholder={t('Common.Required')}
                 onChange={(
                   _: ChangeEvent<HTMLInputElement>,
-                  data: InputOnChangeData
+                  data: InputOnChangeData,
                 ) => setName(data.value || '')}
               />
             </Field>
@@ -96,7 +96,7 @@ export default function CollectionForm() {
                 placeholder={t('Common.Optional')}
                 onChange={(
                   _: ChangeEvent<HTMLInputElement>,
-                  data: InputOnChangeData
+                  data: InputOnChangeData,
                 ) => setMemo(data.value || '')}
               />
             </Field>

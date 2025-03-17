@@ -2,9 +2,9 @@
 import { Axiom } from '@axiomhq/js';
 import { captureException } from '../main/logging';
 
-let axiom:any = null;
+let axiom: any = null;
 
-function getAxiom(){
+function getAxiom() {
   if (!axiom) {
     try {
       axiom = new Axiom({

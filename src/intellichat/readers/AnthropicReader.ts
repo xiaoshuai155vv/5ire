@@ -25,7 +25,7 @@ export default class AnthropicReader extends BaseReader {
             {
               id: data.content_block.id,
               name: data.content_block.name,
-              args:'',
+              args: '',
             },
           ],
           isEnd: false,
@@ -35,7 +35,8 @@ export default class AnthropicReader extends BaseReader {
         content: data.content_block.text,
         isEnd: false,
       };
-    } else if (data.type === 'content_block_delta') {
+    }
+    if (data.type === 'content_block_delta') {
       if (data.delta.type === 'input_json_delta') {
         return {
           content: '',
@@ -51,25 +52,29 @@ export default class AnthropicReader extends BaseReader {
         content: data.delta.text,
         isEnd: false,
       };
-    } else if (data.type === 'message_start') {
+    }
+    if (data.type === 'message_start') {
       return {
         content: '',
         isEnd: false,
         inputTokens: data.message.usage.input_tokens,
         outputTokens: data.message.usage.output_tokens,
       };
-    } else if (data.type === 'message_delta') {
+    }
+    if (data.type === 'message_delta') {
       return {
         content: '',
         isEnd: false,
         outputTokens: data.usage.output_tokens,
       };
-    } else if (data.type === 'message_stop') {
+    }
+    if (data.type === 'message_stop') {
       return {
         content: '',
         isEnd: true,
       };
-    } else if (data.type === 'error') {
+    }
+    if (data.type === 'error') {
       return {
         content: '',
         error: {
@@ -77,18 +82,18 @@ export default class AnthropicReader extends BaseReader {
           message: data.delta.text,
         },
       };
-    } else if (data.type === 'ping') {
-      return {
-        content: '',
-        isEnd: false,
-      };
-    } else {
-      console.warn('Unknown message type', data);
+    }
+    if (data.type === 'ping') {
       return {
         content: '',
         isEnd: false,
       };
     }
+    console.warn('Unknown message type', data);
+    return {
+      content: '',
+      isEnd: false,
+    };
   }
 
   protected parseTools(respMsg: IChatResponseMessage): ITool | null {

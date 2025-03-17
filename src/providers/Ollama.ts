@@ -1,11 +1,12 @@
 import { IServiceProvider } from './types';
+
 export default {
   name: 'Ollama',
   apiBase: 'http://127.0.0.1:11434',
   currency: 'USD',
   options: {
     apiBaseCustomizable: true,
-    modelsEndpoint: '/api/tags'
+    modelsEndpoint: '/api/tags',
   },
   chat: {
     apiSchema: ['base', 'model'],
@@ -36,6 +37,6 @@ export default {
     options: {
       modelCustomizable: true,
     },
-    models: {}
+    models: {},
   },
 } as IServiceProvider;

@@ -17,7 +17,7 @@ export default {
         'The server will only allow operations within directories specified via args',
       args: [
         '-y',
-         '--prefer-offline',
+        '--prefer-offline',
         '@modelcontextprotocol/server-filesystem',
         '<dirs:list: directories you about to access>',
       ],
@@ -34,8 +34,7 @@ export default {
     {
       key: 'Git',
       command: 'uvx',
-      description:
-        'Tools to read, search, and manipulate Git repositories',
+      description: 'Tools to read, search, and manipulate Git repositories',
       args: [
         'mcp-server-git',
         '--repository',
@@ -48,7 +47,7 @@ export default {
       command: 'npx',
       description:
         'A Model Context Protocol server that provides macOS-specific system information and operations.',
-      args: ['-y',  '--prefer-offline', '@mcp-get-community/server-macos'],
+      args: ['-y', '--prefer-offline', '@mcp-get-community/server-macos'],
       isActive: false,
     },
     {
@@ -56,7 +55,7 @@ export default {
       command: 'npx',
       description:
         'An MCP server gives LLMs read - only access to MySQL databases for schema inspection and query execution.',
-      args: ['-y',  '--prefer-offline', '@benborla29/mcp-server-mysql'],
+      args: ['-y', '--prefer-offline', '@benborla29/mcp-server-mysql'],
       env: {
         MYSQL_HOST: '<host:string:database host>',
         MYSQL_PORT: '<port:string:database port>',
@@ -73,7 +72,7 @@ export default {
         'Read and search through your Obsidian vault or any directory containing Markdown notes.',
       args: [
         '-y',
-         '--prefer-offline',
+        '--prefer-offline',
         'mcp-obsidian',
         '<vaultPath:string:Folder where md files are stored>',
       ],
@@ -82,8 +81,7 @@ export default {
     {
       key: 'Postgres',
       command: 'npx',
-      description:
-        'Read-only database access with schema inspection.',
+      description: 'Read-only database access with schema inspection.',
       args: [
         '-y',
         '@modelcontextprotocol/server-postgres',
@@ -94,9 +92,8 @@ export default {
     {
       key: 'Linear',
       command: 'npx',
-      description:
-        "This server allowing LLMs to interact with Linear issues.",
-      args: ['-y',  '--prefer-offline', 'mcp-linear'],
+      description: 'This server allowing LLMs to interact with Linear issues.',
+      args: ['-y', '--prefer-offline', 'mcp-linear'],
       env: {
         LINEAR_API_KEY: '<apiKey:string:Get the api key from linear.app>',
       },
@@ -119,7 +116,7 @@ export default {
       command: 'npx',
       description:
         'A Node.js MCP implementation enables secure shell command execution for AI models.',
-      args: ['-y',  '--prefer-offline', 'mcp-shell'],
+      args: ['-y', '--prefer-offline', 'mcp-shell'],
       isActive: false,
     },
     {
@@ -127,7 +124,7 @@ export default {
       command: 'npx',
       description:
         'MCP Server for the Slack API, enabling Claude to interact with Slack workspaces.',
-      args: ['-y',  '--prefer-offline', '@modelcontextprotocol/server-slack'],
+      args: ['-y', '--prefer-offline', '@modelcontextprotocol/server-slack'],
       env: {
         SLACK_BOT_TOKEN: '<botToken:string:Your slack bot token>',
         SLACK_TEAM_ID: '<teamId:string:Your slack team id>',
@@ -149,14 +146,11 @@ export default {
     {
       key: 'Tavily',
       command: 'npx',
-      description:
-        'Tavily MCP Server',
-      args: [
-        '-y',
-        'tavily-mcp@0.1.2',
-      ],
-      "env": {
-        "TAVILY_API_KEY": "<apiKey:string:You can get the API key from https://tavily.com>"
+      description: 'Tavily MCP Server',
+      args: ['-y', 'tavily-mcp@0.1.2'],
+      env: {
+        TAVILY_API_KEY:
+          '<apiKey:string:You can get the API key from https://tavily.com>',
       },
       isActive: false,
     },
@@ -176,7 +170,11 @@ export default {
       command: 'npx',
       description:
         'An MCP server tool for dynamic problem-solving with structured thinking.',
-      args: ['-y',  '--prefer-offline', '@modelcontextprotocol/server-sequential-thinking'],
+      args: [
+        '-y',
+        '--prefer-offline',
+        '@modelcontextprotocol/server-sequential-thinking',
+      ],
       isActive: false,
     },
     {

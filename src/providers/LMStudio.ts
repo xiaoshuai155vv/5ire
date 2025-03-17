@@ -1,11 +1,12 @@
 import { IServiceProvider } from './types';
+
 export default {
   name: 'LMStudio',
   apiBase: 'http://127.0.0.1:1234/v1',
   currency: 'USD',
   options: {
     apiBaseCustomizable: true,
-    modelsEndpoint:'/models'
+    modelsEndpoint: '/models',
   },
   chat: {
     apiSchema: ['base', 'model'],
@@ -36,6 +37,6 @@ export default {
     options: {
       modelCustomizable: true,
     },
-    models: {}
+    models: {},
   },
 } as IServiceProvider;

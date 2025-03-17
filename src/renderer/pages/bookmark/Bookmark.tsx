@@ -71,7 +71,6 @@ export default function Bookmark() {
     [id],
   );
 
-
   const citedFiles = useMemo(
     () => JSON.parse(bookmark?.citedFiles || '[]'),
     [bookmark],
@@ -124,7 +123,7 @@ export default function Bookmark() {
 
   return (
     <div className="page h-full">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header">
         <div className="bookmark-topbar p-1 rounded flex justify-between items-center">
           <div className="flex justify-start items-center">

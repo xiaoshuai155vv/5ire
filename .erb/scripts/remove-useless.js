@@ -11,7 +11,7 @@ async function removeLocales(context) {
     'Frameworks',
     'Electron Framework.framework',
     'Resources',
-    `!(${languages.join('|')}).lproj`
+    `!(${languages.join('|')}).lproj`,
   );
   console.log(`\nRemove useless language files\n`);
   const res = glob.GlobSync(localeDirs);
@@ -28,17 +28,17 @@ async function removeUnusedOnnxRuntime(context) {
     'Contents',
     'Resources',
     'app.asar.unpacked',
-    'node_modules'
+    'node_modules',
   );
   const onnxruntimeDir = path.join(
     nodeModulesDir,
     'onnxruntime-node',
     'bin',
-    'napi-v3'
+    'napi-v3',
   );
   const onnxruntimeUnusedDirs = path.join(
     onnxruntimeDir,
-    `!(${context.packager.platform.nodeName})`
+    `!(${context.packager.platform.nodeName})`,
   );
   console.log(`\nRemove unused onnx runtime from\n`, onnxruntimeUnusedDirs);
   const res = glob.GlobSync(onnxruntimeUnusedDirs);

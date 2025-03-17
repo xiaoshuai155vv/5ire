@@ -48,7 +48,7 @@ export default function Register() {
 
   const onNameChange = (
     ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setName(data.value);
     setIsNameValid(true); // 不要干扰用户的输入，当失去焦点时才验证
@@ -56,7 +56,7 @@ export default function Register() {
 
   const onPasswordChange = (
     ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setPassword(data.value);
     setIsPasswordValid(true);
@@ -64,7 +64,7 @@ export default function Register() {
 
   const onEmailChange = (
     ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setEmail(data.value);
     setIsEmailValid(true);
@@ -100,7 +100,7 @@ export default function Register() {
   const validate = useCallback(
     () =>
       validateName(name) && validateEmail(email) && validatePassword(password),
-    [name, email, password]
+    [name, email, password],
   );
 
   const submit = async () => {
@@ -145,7 +145,7 @@ export default function Register() {
 
   return (
     <div className="page h-full">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header flex items-center justify-between">
         <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl flex-shrink-0 mr-6">
@@ -260,7 +260,7 @@ export default function Register() {
         title={t('Account.Notification.Created')}
         message={t('Account.Notification.EmailConfirmation')}
         onConfirm={() => navigate('/user/account')}
-      ></AlertDialog>
+      />
     </div>
   );
 }

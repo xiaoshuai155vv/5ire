@@ -119,7 +119,7 @@ const useBookmarkStore = create<IBookmarkStore>((set, get) => ({
       );
       const updatedBookmarks = get().bookmarks.map((m: IBookmark) => {
         if (m.id === $bookmark.id) {
-          return Object.assign({}, m, $bookmark);
+          return { ...m, ...$bookmark };
         }
         return m;
       });

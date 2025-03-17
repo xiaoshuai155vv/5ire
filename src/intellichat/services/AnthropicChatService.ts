@@ -9,13 +9,13 @@ import {
   IMCPTool,
   IOpenAITool,
 } from 'intellichat/types';
-import Anthropic from '../../providers/Anthropic';
 import { isBlank } from 'utils/validators';
 import { getBase64, splitByImg, stripHtmlTags, urlJoin } from 'utils/util';
-import INextChatService from './INextCharService';
 import AnthropicReader from 'intellichat/readers/AnthropicReader';
-import NextChatService from './NextChatService';
 import { ITool } from 'intellichat/readers/IChatReader';
+import INextChatService from './INextCharService';
+import NextChatService from './NextChatService';
+import Anthropic from '../../providers/Anthropic';
 
 const debug = Debug('5ire:intellichat:AnthropicChatService');
 
@@ -82,7 +82,7 @@ export default class AnthropicChatService
     if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content);
       const result: IChatRequestMessageContent[] = [];
-      for (let item of items) {
+      for (const item of items) {
         if (item.type === 'image') {
           let data = '';
           if (item.dataType === 'URL') {
@@ -137,7 +137,7 @@ export default class AnthropicChatService
       } else if (msg.role === 'assistant' && msg.tool_calls) {
         result.push(msg);
       } else {
-        const content = msg.content;
+        const { content } = msg;
         if (typeof content === 'string') {
           result.push({
             role: msg.role,

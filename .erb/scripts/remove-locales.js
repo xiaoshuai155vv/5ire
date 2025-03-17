@@ -7,7 +7,7 @@ exports.default = async function removeLocales(context) {
   const localeDirs = `${context.appOutDir}/${
     context.packager.appInfo.productName
   }.app/Contents/Frameworks/Electron Framework.framework/Resources/!(${languages.join(
-    '|'
+    '|',
   )}).lproj`;
   console.log('After Pack, remove unused locales:', localeDirs);
   const res = glob.GlobSync(localeDirs);
