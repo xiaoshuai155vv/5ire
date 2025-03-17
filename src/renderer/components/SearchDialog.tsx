@@ -14,10 +14,10 @@ import {
 } from '@fluentui/react-components';
 import { Dismiss24Regular, Search24Regular } from '@fluentui/react-icons';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { IChatMessage } from '../../intellichat/types';
 import useNav from 'hooks/useNav';
 import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { IChatMessage } from '../../intellichat/types';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const debug = Debug('5ire:components:SearchDialog');
@@ -130,7 +130,7 @@ export default function SearchDialog(args: {
           `;
           const $messages = (await window.electron.db.all(
             sql,
-            params
+            params,
           )) as IChatMessage[];
           const searchResult = extractMatchedSnippet($messages, keywords);
           setMessages(searchResult);
@@ -139,14 +139,14 @@ export default function SearchDialog(args: {
         {
           leading: true,
           maxWait: 2000,
-        }
+        },
       ),
-    []
+    [],
   );
 
   const onKeywordChange = (
     ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setKeyword(data.value);
     search(data.value);

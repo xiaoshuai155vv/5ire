@@ -73,16 +73,16 @@ const useMCPStore = create<IMCPStore>((set, get) => ({
     env?: Record<string, string>,
   ) => {
     debug('Activating server:', {
-      key: key,
-      command: command,
-      args: args,
-      env: env,
+      key,
+      command,
+      args,
+      env,
     });
     const { error } = await window.electron.mcp.activate({
-      key: key,
-      command: command,
-      args: args,
-      env: env,
+      key,
+      command,
+      args,
+      env,
     });
     if (error) {
       throw new Error(error);

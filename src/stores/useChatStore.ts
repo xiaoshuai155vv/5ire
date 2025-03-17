@@ -12,10 +12,8 @@ import {
   pick,
 } from 'lodash';
 import { DEFAULT_MAX_TOKENS, NUM_CTX_MESSAGES, tempChatId } from 'consts';
-import { captureException } from '../renderer/logging';
 import { date2unix } from 'utils/util';
 import { isBlank, isNotBlank } from 'utils/validators';
-import useSettingsStore from './useSettingsStore';
 import {
   IChat,
   IChatFolder,
@@ -25,10 +23,12 @@ import {
 } from 'intellichat/types';
 import { isValidTemperature } from 'intellichat/validators';
 import { getProvider } from 'providers';
+import useSettingsStore from './useSettingsStore';
+import { captureException } from '../renderer/logging';
 
 const debug = Debug('5ire:stores:useChatStore');
 
-let defaultTempStage = {
+const defaultTempStage = {
   model: '',
   systemMessage: '',
   prompt: null,
@@ -303,17 +303,15 @@ const useChatStore = create<IChatStore>((set, get) => ({
   },
   initChat: (chat: Partial<IChat>) => {
     const { api } = useSettingsStore.getState();
-    const $chat = Object.assign(
-      {
-        model: api.model,
-        temperature: getProvider(api.provider).chat.temperature.default,
-        maxTokens: null,
-        maxCtxMessages: NUM_CTX_MESSAGES,
-        id: tempChatId,
-      },
-      get().tempStage,
-      chat,
-    ) as IChat;
+    const $chat = {
+      model: api.model,
+      temperature: getProvider(api.provider).chat.temperature.default,
+      maxTokens: null,
+      maxCtxMessages: NUM_CTX_MESSAGES,
+      id: tempChatId,
+      ...get().tempStage,
+      ...chat,
+    } as IChat;
     debug('Init a chat', $chat);
     set({ chat: $chat, messages: [] });
     return $chat;

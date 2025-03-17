@@ -1,7 +1,7 @@
 import fs from 'fs';
-import * as logging from './logging';
 import pdf from 'pdf-parse';
 import officeParser from 'officeparser';
+import * as logging from './logging';
 
 abstract class BaseLoader {
   protected abstract read(filePath: string): Promise<string>;
@@ -45,7 +45,7 @@ class PdfLoader extends BaseLoader {
 
 export async function loadDocument(
   filePath: string,
-  fileType: string
+  fileType: string,
 ): Promise<string> {
   logging.info(`load file from  ${filePath} on ${process.platform}`);
   let Loader: new () => BaseLoader;

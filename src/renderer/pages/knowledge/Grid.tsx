@@ -46,8 +46,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fmtDateTime, unix2date, date2unix } from 'utils/util';
 import useToast from 'hooks/useToast';
-import FileDrawer from './FileDrawer';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
+import FileDrawer from './FileDrawer';
 
 const EditIcon = bundleIcon(EditFilled, EditRegular);
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);

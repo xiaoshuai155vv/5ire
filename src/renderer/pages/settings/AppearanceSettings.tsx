@@ -1,4 +1,3 @@
-import { captureException } from '../../logging';
 import { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,10 +5,11 @@ import {
   Radio,
   RadioGroupOnChangeData,
 } from '@fluentui/react-components';
+import { set } from 'lodash';
+import { captureException } from '../../logging';
 import { FontSize, ThemeType } from '../../../types/appearance.d';
 import useSettingsStore from '../../../stores/useSettingsStore';
 import useAppearanceStore from '../../../stores/useAppearanceStore';
-import { set } from 'lodash';
 
 export default function AppearanceSettings() {
   const { t } = useTranslation();
@@ -21,7 +21,7 @@ export default function AppearanceSettings() {
 
   const onThemeChange = (
     ev: FormEvent<HTMLDivElement>,
-    data: RadioGroupOnChangeData
+    data: RadioGroupOnChangeData,
   ) => {
     setThemeSetting(data.value as ThemeType);
     if (data.value === 'system') {
@@ -38,7 +38,7 @@ export default function AppearanceSettings() {
 
   const onFontSizeChange = (
     ev: FormEvent<HTMLDivElement>,
-    data: RadioGroupOnChangeData
+    data: RadioGroupOnChangeData,
   ) => {
     setFontSize(data.value as FontSize);
   };
@@ -48,7 +48,7 @@ export default function AppearanceSettings() {
       <div className="py-4 flex-grow">
         <p className="pt-1 pb-2">{t('Appearance.ColorTheme')}</p>
         <RadioGroup
-          name='theme'
+          name="theme"
           aria-labelledby={t('Common.Appearance')}
           value={themeSetting}
           onChange={onThemeChange}
@@ -65,7 +65,7 @@ export default function AppearanceSettings() {
       <div className="py-4 flex-grow">
         <p className="pt-1 pb-2">{t('Appearance.ChatFontSize')}</p>
         <RadioGroup
-          name='fontSize'
+          name="fontSize"
           aria-labelledby={t('Common.FontSize')}
           value={fontSize}
           onChange={onFontSizeChange}

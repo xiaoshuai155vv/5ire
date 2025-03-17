@@ -6,7 +6,7 @@ export default {
   currency: 'USD',
   options: {
     apiBaseCustomizable: true,
-    apiKeyCustomizable: true
+    apiKeyCustomizable: true,
   },
   chat: {
     apiSchema: ['base', 'key', 'deploymentId', 'model'],
@@ -36,10 +36,10 @@ export default {
         inputPrice: 0.005,
         outputPrice: 0.015,
         toolEnabled: true,
-        vision:{
-          enabled:true,
-          allowBase64:true,
-          allowUrl:true,
+        vision: {
+          enabled: true,
+          allowBase64: true,
+          allowUrl: true,
         },
         group: 'GPT-4',
       },
@@ -52,10 +52,10 @@ export default {
         outputPrice: 0.0006,
         description: `GPT-4o mini (“o” for “omni”) is OpenAI's advanced model in the small models category, and it's cheapest model yet. It is multimodal (accepting text or image inputs and outputting text), has higher intelligence than gpt-3.5-turbo but is just as fast. It is meant to be used for smaller tasks, including vision tasks.`,
         toolEnabled: true,
-        vision:{
-          enabled:true,
-          allowBase64:true,
-          allowUrl:true,
+        vision: {
+          enabled: true,
+          allowBase64: true,
+          allowUrl: true,
         },
         group: 'GPT-4',
       },
@@ -88,7 +88,7 @@ export default {
         outputPrice: 0.12,
         toolEnabled: true,
         group: 'GPT-4',
-      }
+      },
     },
   },
   embedding: {

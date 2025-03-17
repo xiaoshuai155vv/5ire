@@ -14,7 +14,7 @@ export interface IPromptStore {
   prompts: IPromptDef[];
   createPrompt: (prompt: Partial<IPromptDef>) => Promise<IPromptDef>;
   updatePrompt: (
-    prompt: { id: string } & Partial<IPromptDef>
+    prompt: { id: string } & Partial<IPromptDef>,
   ) => Promise<boolean>;
   deletePrompt: (id: string) => Promise<boolean>;
   setPrompt: (prompt: IPromptDef | null) => void;
@@ -61,7 +61,7 @@ const usePromptStore = create<IPromptStore>((set, get) => ({
     await window.electron.db.run(
       `INSERT INTO prompts (${columns.join(',')})
       VALUES(${placeholders.join(',')})`,
-      values
+      values,
     );
     set((state) => ({
       prompts: [...state.prompts, $prompt],
@@ -124,7 +124,7 @@ const usePromptStore = create<IPromptStore>((set, get) => ({
       params.push($prompt.id);
       await window.electron.db.run(
         `UPDATE prompts SET ${stats.join(', ')} WHERE id = ?`,
-        params
+        params,
       );
       const updatedPrompts = sortPrompts(
         get().prompts.map((p: IPromptDef) => {
@@ -132,7 +132,7 @@ const usePromptStore = create<IPromptStore>((set, get) => ({
             return { ...p, ...$prompt };
           }
           return p;
-        })
+        }),
       );
       set({ prompts: updatedPrompts });
       debug('Update Prompt ', $prompt);
@@ -143,7 +143,7 @@ const usePromptStore = create<IPromptStore>((set, get) => ({
   deletePrompt: async (id: string) => {
     const ok = await window.electron.db.run(
       `DELETE FROM prompts WHERE id = ?`,
-      [id]
+      [id],
     );
     if (!ok) {
       throw new Error('Delete prompt failed');
@@ -172,7 +172,7 @@ const usePromptStore = create<IPromptStore>((set, get) => ({
        pinedAt
        FROM prompts
        WHERE id = ?`,
-      [id]
+      [id],
     )) as any;
     prompt.systemVariables = prompt.systemVariables
       ? JSON.parse(prompt.systemVariables as string)
@@ -211,7 +211,7 @@ const usePromptStore = create<IPromptStore>((set, get) => ({
     const rows = await window.electron.db.all(
       `${sql} ORDER BY pinedAt DESC, createdAt ASC
        LIMIT ? OFFSET ?`,
-      params
+      params,
     );
     const prompts = rows.map((row: any) => {
       row.models = row.models ? JSON.parse(row.models) : [];

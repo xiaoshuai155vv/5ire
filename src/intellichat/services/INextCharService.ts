@@ -1,5 +1,5 @@
-import { IChatContext, IChatRequestMessage } from "intellichat/types";
-import { IServiceProvider } from "providers/types";
+import { IChatContext, IChatRequestMessage } from 'intellichat/types';
+import { IServiceProvider } from 'providers/types';
 
 export default interface INextChatService {
   context: IChatContext;
@@ -8,12 +8,12 @@ export default interface INextChatService {
     base: string;
     key: string;
     model: string;
-    secret?:string; // baidu
-    deploymentId?:string; // azure
+    secret?: string; // baidu
+    deploymentId?: string; // azure
   };
   modelMapping: Record<string, string>;
-  chat(message:IChatRequestMessage[]):void;
-  abort():void;
+  chat(message: IChatRequestMessage[]): void;
+  abort(): void;
   isReady(): boolean;
   onComplete(callback: (result: any) => Promise<void>): void;
   onToolCalls(callback: (toolName: string) => void): void;

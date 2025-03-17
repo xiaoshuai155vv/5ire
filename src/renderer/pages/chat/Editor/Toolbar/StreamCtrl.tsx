@@ -17,7 +17,13 @@ import { Stream20Filled } from '@fluentui/react-icons';
 
 const debug = Debug('5ire:pages:chat:Editor:Toolbar:StreamCtrl');
 
-export default function StreamCtrl({ ctx, chat }: { ctx: IChatContext, chat: IChat}) {
+export default function StreamCtrl({
+  ctx,
+  chat,
+}: {
+  ctx: IChatContext;
+  chat: IChat;
+}) {
   const { t } = useTranslation();
 
   const editStage = useChatStore((state) => state.editStage);
@@ -25,10 +31,10 @@ export default function StreamCtrl({ ctx, chat }: { ctx: IChatContext, chat: ICh
 
   const updateStream = (
     ev: ChangeEvent<HTMLInputElement>,
-    data: SwitchOnChangeData
+    data: SwitchOnChangeData,
   ) => {
     const $stream = data.checked;
-    editStage(chat.id, {stream: $stream})
+    editStage(chat.id, { stream: $stream });
     window.electron.ingestEvent([
       { app: 'toggle-stream', stream: $stream ? 'on' : 'off' },
     ]);

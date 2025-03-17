@@ -11,10 +11,9 @@
 // import DarkHint from 'assets/images/hint.dark.png'; //1387
 // import LightHint from 'assets/images/hint.light.png';
 
-
-export function getImage(name:string, theme?:'light'|'dark'){
-    if(theme){
-      return require(`assets/images/${name}.${theme}.png`);
-    }
-    return require(`assets/images/${name}`);
+export function getImage(name: string, theme?: 'light' | 'dark') {
+  if (theme) {
+    return require(`assets/images/${name}.${theme}.png`);
+  }
+  return require(`assets/images/${name}`);
 }

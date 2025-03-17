@@ -1,2 +1,2 @@
 export type ThemeType = 'light' | 'dark' | 'system';
-export type FontSize = 'base' | 'large'
+export type FontSize = 'base' | 'large';

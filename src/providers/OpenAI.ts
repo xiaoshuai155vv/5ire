@@ -73,7 +73,7 @@ export default {
           allowUrl: true,
         },
         toolEnabled: true,
-        isDefault:true,
+        isDefault: true,
         description: `GPT-4o it's most advanced multimodal model of OpenAI that’s faster and cheaper than GPT-4 Turbo with stronger vision capabilities`,
         group: 'GPT-4',
       },
@@ -126,7 +126,7 @@ export default {
       'gpt-3.5-turbo': {
         label: 'gpt-3.5-turbo',
         contextWindow: 16385,
-        maxTokens:4096,
+        maxTokens: 4096,
         defaultMaxTokens: 4000,
         inputPrice: 0.0005,
         outputPrice: 0.0015,

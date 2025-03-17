@@ -57,8 +57,8 @@ export default class ChatBroReader extends OpenAIReader implements IChatReader {
             .split('data:')
             .filter((i) => i !== '')
             .map((i) => i.trim());
-          for (let curChunk of chunks) {
-            let chunk = decodeURIComponent(curChunk);
+          for (const curChunk of chunks) {
+            const chunk = decodeURIComponent(curChunk);
             if (chunk === '[DONE]') {
               done = true;
               break;

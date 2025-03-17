@@ -29,7 +29,6 @@ import { ICollectionFile } from 'types/knowledge';
 import { fileSize, paddingZero } from 'utils/util';
 import useNav from 'hooks/useNav';
 
-
 export default function FileDrawer({
   collection,
   open,
@@ -74,7 +73,7 @@ export default function FileDrawer({
           ...prev,
           [filePath as string]: percent,
         }));
-      }
+      },
     );
 
     listFiles(collection.id).then((files: any[]) => {
@@ -96,7 +95,7 @@ export default function FileDrawer({
           name: file.name,
           path: file.path,
           size: file.size,
-          type: file.type
+          type: file.type,
         },
         collectionId,
       });
@@ -186,40 +185,54 @@ export default function FileDrawer({
         )}
         <div className="absolute inset-x-0 bottom-0 p-2.5">
           {isEmbeddingModelReady ? (
-            <>
-              <Button className="w-full" appearance="primary" onClick={()=>{
+            <Button
+              className="w-full"
+              appearance="primary"
+              onClick={() => {
                 window.electron.knowledge.selectFiles().then((data: any) => {
                   importFiles(JSON.parse(data));
                 });
-              }}>
+              }}
+            >
               {t('Knowledge.Action.AddFiles')}
-              </Button>
-            </>
+            </Button>
           ) : (
             <Dialog>
-            <DialogTrigger disableButtonEnhancement>
-            <Button className="w-full" appearance="primary">
-                {t('Knowledge.Action.AddFiles')}
-              </Button>
-            </DialogTrigger>
-            <DialogSurface>
-              <DialogBody>
-                <DialogTitle>{t('Knowledge.FileDrawer.DialogTitle.EmbeddingModelIsMissing')}</DialogTitle>
-                <DialogContent>
-                  <p>{t('Knowledge.FileDrawer.DialogContent.EmbeddingModelIsRequired')}</p>
-                </DialogContent>
-                <DialogActions>
-                  <DialogTrigger disableButtonEnhancement>
-                    <Button appearance="secondary">Close</Button>
-                  </DialogTrigger>
-                  <Button appearance="primary" onClick={() => navigate('/settings')}>Go Settings</Button>
-                </DialogActions>
-              </DialogBody>
-            </DialogSurface>
-          </Dialog>
+              <DialogTrigger disableButtonEnhancement>
+                <Button className="w-full" appearance="primary">
+                  {t('Knowledge.Action.AddFiles')}
+                </Button>
+              </DialogTrigger>
+              <DialogSurface>
+                <DialogBody>
+                  <DialogTitle>
+                    {t(
+                      'Knowledge.FileDrawer.DialogTitle.EmbeddingModelIsMissing',
+                    )}
+                  </DialogTitle>
+                  <DialogContent>
+                    <p>
+                      {t(
+                        'Knowledge.FileDrawer.DialogContent.EmbeddingModelIsRequired',
+                      )}
+                    </p>
+                  </DialogContent>
+                  <DialogActions>
+                    <DialogTrigger disableButtonEnhancement>
+                      <Button appearance="secondary">Close</Button>
+                    </DialogTrigger>
+                    <Button
+                      appearance="primary"
+                      onClick={() => navigate('/settings')}
+                    >
+                      Go Settings
+                    </Button>
+                  </DialogActions>
+                </DialogBody>
+              </DialogSurface>
+            </Dialog>
           )}
         </div>
-
       </DrawerBody>
     </Drawer>
   );

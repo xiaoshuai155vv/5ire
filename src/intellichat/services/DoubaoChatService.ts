@@ -1,19 +1,20 @@
+import { IChatContext, IChatRequestMessage } from 'intellichat/types';
+import { urlJoin } from 'utils/util';
 import OpenAIChatService from './OpenAIChatService';
 import Doubao from '../../providers/Doubao';
-import { IChatContext, IChatRequestMessage } from 'intellichat/types';
 import INextChatService from './INextCharService';
-import { urlJoin } from 'utils/util';
 
 export default class DoubaoChatService
   extends OpenAIChatService
-  implements INextChatService {
+  implements INextChatService
+{
   constructor(chatContext: IChatContext) {
     super(chatContext);
     this.provider = Doubao;
   }
 
   protected async makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response> {
     const { base, deploymentId, key } = this.apiSettings;
     const payload = await this.makePayload(messages);

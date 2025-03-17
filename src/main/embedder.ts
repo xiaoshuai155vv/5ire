@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import fs from 'fs';
 import path from 'path';
-import url from 'url'
+import url from 'url';
 import * as logging from './logging';
 
 const BASE_DIR = path.join(app.getPath('userData'), 'transformers-models');
@@ -12,7 +12,7 @@ const FILES: { [key: string]: string } = {
   'model_quantized.onnx': path.join(
     BGE_MODEL_DIR,
     'onnx',
-    'model_quantized.onnx'
+    'model_quantized.onnx',
   ),
   'config.json': path.join(BGE_MODEL_DIR, 'config.json'),
   'tokenizer_config.json': path.join(BGE_MODEL_DIR, 'tokenizer_config.json'),
@@ -21,7 +21,9 @@ const FILES: { [key: string]: string } = {
 
 export class Embedder {
   static task: any = 'feature-extraction';
+
   static model = 'Xenova/bge-m3';
+
   static instance: any = null;
 
   public static getFileStatus(): { [key: string]: boolean } {
@@ -46,11 +48,9 @@ export class Embedder {
 
     if (fs.existsSync(modelPath)) {
       fs.unlinkSync(modelPath);
-    } else {
-      if (!fs.existsSync(modelDir)) {
-        logging.debug(`${modelDir} doesn't exist, create it now.`);
-        fs.mkdirSync(modelDir, { recursive: true });
-      }
+    } else if (!fs.existsSync(modelDir)) {
+      logging.debug(`${modelDir} doesn't exist, create it now.`);
+      fs.mkdirSync(modelDir, { recursive: true });
     }
     fs.renameSync(filePath, modelPath);
   }
@@ -68,16 +68,16 @@ export class Embedder {
           '@xenova',
           'transformers',
           'src',
-          'transformers.js'
+          'transformers.js',
         );
         const modelUrl = url.pathToFileURL(modelPath).href.replace(/\\/g, '/');
-        logging.debug(`Import transformers.js from ${modelUrl}`)
+        logging.debug(`Import transformers.js from ${modelUrl}`);
         const dynamicImport = Function(`return import("${modelUrl}")`);
         transformers = await dynamicImport();
       } else {
         transformers = await import('@xenova/transformers');
       }
-      let { pipeline, env } = transformers;
+      const { pipeline, env } = transformers;
       env.allowRemoteModels = false;
       env.localModelPath = BASE_DIR;
       this.instance = pipeline(this.task, this.model);
@@ -95,7 +95,7 @@ function sleep() {
 // The run function is used by the `transformers:run` event handler.
 export async function embed(
   texts: string[],
-  progressCallback?: (total: number, done: number) => void
+  progressCallback?: (total: number, done: number) => void,
 ): Promise<any> {
   const updateProgress = (done: number) => {
     if (progressCallback) {

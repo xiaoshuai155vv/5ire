@@ -12,9 +12,9 @@ import {
   countTokensOfMoonshot,
   countTokenOfLlama,
 } from 'utils/token';
-import useChatContext from './useChatContext';
 import { IChatMessage, IChatRequestMessage } from 'intellichat/types';
 import useSettingsStore from 'stores/useSettingsStore';
+import useChatContext from './useChatContext';
 
 export default function useToken() {
   const { api } = useSettingsStore();

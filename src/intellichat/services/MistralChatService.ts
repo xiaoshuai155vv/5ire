@@ -1,6 +1,6 @@
+import { IChatContext } from 'intellichat/types';
 import OpenAIChatService from './OpenAIChatService';
 import Mistral from '../../providers/Mistral';
-import { IChatContext } from 'intellichat/types';
 import INextChatService from './INextCharService';
 
 export default class MistralChatService
@@ -11,5 +11,4 @@ export default class MistralChatService
     super(chatContext);
     this.provider = Mistral;
   }
-
 }

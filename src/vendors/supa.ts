@@ -7,15 +7,19 @@ const debug = Debug('5ire:vendors:supa');
 
 const supabase = createClient(
   `https://${window.envVars.SUPA_PROJECT_ID}.supabase.co`,
-  window.envVars.SUPA_KEY as string
+  window.envVars.SUPA_KEY as string,
 );
 
 export async function fetchById<Type>(
   table: string,
   id: number,
-  columns: string = '*'
+  columns: string = '*',
 ): Promise<Type> {
-  let { data, error } = await supabase.from(table).select(columns).eq('id', id).single();
+  const { data, error } = await supabase
+    .from(table)
+    .select(columns)
+    .eq('id', id)
+    .single();
   if (error) {
     debug(error);
     captureException(error);
@@ -26,13 +30,13 @@ export async function fetchById<Type>(
 
 export async function fetchMime<Type>(
   table: string,
-  columns: string = '*'
+  columns: string = '*',
 ): Promise<Type[]> {
   const { user } = useAuthStore.getState();
   if (!user) {
     throw Error('Your session is expired, please sign in.');
   }
-  let { data, error } = await supabase
+  const { data, error } = await supabase
     .from(table)
     .select(columns)
     .eq('created_by', user.id);

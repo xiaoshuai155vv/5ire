@@ -6,7 +6,7 @@ export default {
   currency: 'CNY',
   options: {
     apiBaseCustomizable: true,
-    apiKeyCustomizable: true
+    apiKeyCustomizable: true,
   },
   chat: {
     apiSchema: ['base', 'key', 'model'],

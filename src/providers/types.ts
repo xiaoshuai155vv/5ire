@@ -12,12 +12,12 @@ export type ProviderType =
   | 'ChatBro'
   | '5ire'
   | 'Doubao'
-  | 'Grok'
+  | 'Grok';
 
 export interface INumberRange {
   min: number;
   max: number;
-  default: number|null;
+  default: number | null;
   interval?: {
     leftOpen: boolean;
     rightOpen: boolean;
@@ -43,8 +43,7 @@ export type ChatModelGroup =
   | 'Doubao-Lite'
   | 'Open Source';
 
-
-export interface IChatModelVision{
+export interface IChatModelVision {
   enabled: boolean;
   allowUrl?: boolean;
   allowBase64?: boolean;
@@ -109,7 +108,7 @@ export interface IEmbeddingConfig {
   apiSchema: string[];
   docs?: { [key: string]: string };
   placeholders?: { [key: string]: string };
-  models:  { [key: string]: IEmbeddingModel };
+  models: { [key: string]: IEmbeddingModel };
   options?: {
     modelCustomizable?: boolean;
   };
@@ -126,7 +125,7 @@ export interface IServiceProvider {
   options: {
     apiBaseCustomizable?: boolean;
     apiKeyCustomizable?: boolean;
-    modelsEndpoint?:string
+    modelsEndpoint?: string;
   };
   chat: IChatConfig;
   embedding?: IEmbeddingConfig;

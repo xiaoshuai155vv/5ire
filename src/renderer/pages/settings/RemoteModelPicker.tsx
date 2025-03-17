@@ -29,7 +29,8 @@ const makeItems = (providerName: string, data: any): Item[] => {
         isEnabled: model.name.indexOf('embed') < 0, // filter out embedding models
       };
     });
-  } else if (providerName === 'lmstudio') {
+  }
+  if (providerName === 'lmstudio') {
     return data.data.map((model: any) => {
       return {
         name: model.id,

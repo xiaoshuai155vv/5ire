@@ -4,7 +4,7 @@ export interface ICollection {
   memo?: string;
   numOfFiles?: number;
   favorite?: boolean;
-  pinedAt?: number|null;
+  pinedAt?: number | null;
   createdAt: number;
   updatedAt: number;
 }

@@ -1,5 +1,7 @@
 import { Toolbar } from '@fluentui/react-components';
 import useChatContext from 'hooks/useChatContext';
+import useChatStore from 'stores/useChatStore';
+import { IChat } from 'intellichat/types';
 import ModelCtrl from './ModelCtrl';
 import PromptCtrl from './PromptCtrl';
 import TemperatureCtrl from './TemperatureCtrl';
@@ -8,8 +10,6 @@ import ImgCtrl from './ImgCtrl';
 import StreamCtrl from './StreamCtrl';
 import KnowledgeCtrl from './KnowledgeCtrl';
 import CtxNumCtrl from './CtxNumCtrl';
-import useChatStore from 'stores/useChatStore';
-import { IChat } from 'intellichat/types';
 
 export default function EditorToolbar({
   onConfirm,

@@ -21,15 +21,15 @@ import {
 } from '@fluentui/react-icons';
 import { IChat, IChatFolder } from 'intellichat/types';
 import { useDroppable } from '@dnd-kit/core';
-import ChatItem from './ChatItem';
 import useChatStore from 'stores/useChatStore';
 import { t } from 'i18next';
 import { useEffect, useRef, useState } from 'react';
 import Mousetrap from 'mousetrap';
-import ConfirmDialog from './ConfirmDialog';
-import FolderSettingsDialog from './FolderSettingsDialog';
 import useNav from 'hooks/useNav';
 import { tempChatId } from 'consts';
+import ConfirmDialog from './ConfirmDialog';
+import FolderSettingsDialog from './FolderSettingsDialog';
+import ChatItem from './ChatItem';
 
 const MoreVerticalIcon = bundleIcon(MoreVerticalFilled, MoreVerticalRegular);
 

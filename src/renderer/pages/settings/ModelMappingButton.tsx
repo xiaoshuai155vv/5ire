@@ -20,7 +20,7 @@ export default function ModelMappingButton() {
   const { notifyError, notifySuccess } = useToast();
   const { modelMapping, setModelMapping } = useSettingsStore();
   const [modelMappingText, setModelMappingText] = useState(
-    JSON.stringify(modelMapping, null, 2)
+    JSON.stringify(modelMapping, null, 2),
   );
   const numOfMapping = useMemo(() => {
     return Object.keys(modelMapping).length;
@@ -67,7 +67,7 @@ export default function ModelMappingButton() {
                           .replace(/｛/g, '{') // 全角大括号替换为半角
                           .replace(/｝/g, '}') // 全角大括号替换为半角
                           .replace(/"/g, '"') // 全角引号替换为半角
-                          .replace(/"/g, '"') // 全角引号替换为半角
+                          .replace(/"/g, '"'), // 全角引号替换为半角
                       )
                     }
                   />

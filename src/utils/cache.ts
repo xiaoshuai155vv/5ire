@@ -6,7 +6,7 @@ export default {
   // default expiration is 1 hour
   set(key: string, value: any, expiration = 3600000) {
     const item = {
-      value: value,
+      value,
       expiration: Date.now() + expiration,
     };
     localStorage.setItem(cacheKey(key), JSON.stringify(item));

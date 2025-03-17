@@ -16,7 +16,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="6;10;10;16;16"
-        ></animate>
+        />
         <animate
           attributeName="y"
           dur="1360ms"
@@ -24,7 +24,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="16;5;5;16;16"
-        ></animate>
+        />
         <animate
           attributeName="height"
           dur="680ms"
@@ -32,7 +32,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="2;4;4;2;2"
-        ></animate>
+        />
         <animate
           attributeName="width"
           dur="680ms"
@@ -40,7 +40,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="2;4;4;2;2"
-        ></animate>
+        />
       </rect>
       <rect fill="currentColor" height="2" rx="2" width="2" x="11" y="6">
         <animate
@@ -50,7 +50,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="11;16;16;6;6"
-        ></animate>
+        />
         <animate
           attributeName="y"
           dur="1360ms"
@@ -58,7 +58,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="7;15;15;16;16"
-        ></animate>
+        />
         <animate
           attributeName="height"
           dur="680ms"
@@ -66,7 +66,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="2;4;4;2;2"
-        ></animate>
+        />
         <animate
           attributeName="width"
           dur="680ms"
@@ -74,7 +74,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="2;4;4;2;2"
-        ></animate>
+        />
       </rect>
       <rect fill="currentColor" height="2" rx="2" width="2" x="17" y="16">
         <animate
@@ -84,7 +84,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="16;4;4;11;11"
-        ></animate>
+        />
         <animate
           attributeName="y"
           dur="1360ms"
@@ -92,7 +92,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="16;15;15;7;7"
-        ></animate>
+        />
         <animate
           attributeName="height"
           dur="680ms"
@@ -100,7 +100,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="2;4;4;2;2"
-        ></animate>
+        />
         <animate
           attributeName="width"
           dur="680ms"
@@ -108,7 +108,7 @@ export default function ToolSpinner(props: { size?: number } & any) {
           keyTimes="0;0.25;0.5;0.75;1"
           repeatCount="indefinite"
           values="2;4;4;2;2"
-        ></animate>
+        />
       </rect>
     </svg>
   );

@@ -8,13 +8,13 @@ import {
   Option,
 } from '@fluentui/react-components';
 import { Premium16Regular } from '@fluentui/react-icons';
-import useSettingsStore from '../../../stores/useSettingsStore';
-import ModelField from './ModelField';
-import { IServiceProvider } from '../../../providers/types';
 import MaskableInput from 'renderer/components/MaskableInput';
 import useProvider from 'hooks/useProvider';
 import useAuthStore from 'stores/useAuthStore';
 import TooltipIcon from 'renderer/components/TooltipIcon';
+import { IServiceProvider } from '../../../providers/types';
+import ModelField from './ModelField';
+import useSettingsStore from '../../../stores/useSettingsStore';
 import ModelMappingButton from './ModelMappingButton';
 
 export default function APISettings() {

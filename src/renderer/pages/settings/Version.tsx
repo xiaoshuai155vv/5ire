@@ -1,7 +1,7 @@
-import { captureException } from '../../logging';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Spinner from 'renderer/components/Spinner';
+import { captureException } from '../../logging';
 
 interface IUpdateInfo {
   version: string;
@@ -28,7 +28,6 @@ export default function Version() {
         }
         setUpdateInfo(updateInfo);
       }, 1000);
-
     }
     window.electron
       .getAppVersion()
@@ -60,7 +59,7 @@ export default function Version() {
                 </div>
               </>
             ) : (
-              <div className='tips'>
+              <div className="tips">
                 {updateInfo?.version} will be installed after you restart the
                 app.
               </div>

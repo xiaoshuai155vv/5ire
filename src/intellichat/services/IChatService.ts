@@ -1,5 +1,5 @@
-import { IChatContext, IChatResponseMessage } from "intellichat/types";
-import { IServiceProvider } from "providers/types";
+import { IChatContext, IChatResponseMessage } from 'intellichat/types';
+import { IServiceProvider } from 'providers/types';
 
 export default interface IChatService {
   context: IChatContext;
@@ -8,8 +8,8 @@ export default interface IChatService {
     base: string;
     key: string;
     model: string;
-    secret?:string; // baidu
-    deploymentId?:string; // azure
+    secret?: string; // baidu
+    deploymentId?: string; // azure
   };
 
   chat({
@@ -21,8 +21,8 @@ export default interface IChatService {
     message: string;
     onMessage: (message: string) => void;
     onComplete: (result: IChatResponseMessage) => void;
-    onError: (error:any, aborted:boolean) => void;
-  }):void;
-  abort():void;
+    onError: (error: any, aborted: boolean) => void;
+  }): void;
+  abort(): void;
   isReady(): boolean;
 }

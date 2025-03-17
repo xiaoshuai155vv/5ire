@@ -20,12 +20,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import useNav from 'hooks/useNav';
 import { tempChatId } from 'consts';
-import WorkspaceMenu from './WorkspaceMenu';
 import useMCPStore from 'stores/useMCPStore';
 import { useEffect, useMemo } from 'react';
 import Spinner from 'renderer/components/Spinner';
 import { IMCPServer } from 'types/mcp';
 import useChatStore from 'stores/useChatStore';
+import WorkspaceMenu from './WorkspaceMenu';
 
 const AppsIcon = bundleIcon(Apps24Filled, Apps24Regular);
 const BookmarkMultipleIcon = bundleIcon(
@@ -49,7 +49,7 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
   const config = useMCPStore((store) => store.config);
   const loadConfig = useMCPStore((state) => state.loadConfig);
   const isMCPServersLoading = useMCPStore((state) => state.isLoading);
-  const { createFolder,selectFolder } = useChatStore();
+  const { createFolder, selectFolder } = useChatStore();
 
   const numOfActiveServers = useMemo(
     () => config.servers.filter((server: IMCPServer) => server.isActive).length,
@@ -167,8 +167,8 @@ export default function GlobalNav({ collapsed }: { collapsed: boolean }) {
             appearance="subtle"
             icon={<FolderAddIcon />}
             onClick={async () => {
-              const folder = await createFolder()
-              selectFolder(folder.id)
+              const folder = await createFolder();
+              selectFolder(folder.id);
             }}
           />
         </div>

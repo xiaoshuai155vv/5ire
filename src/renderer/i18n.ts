@@ -7,8 +7,8 @@ i18n
   .use(
     resourcesToBackend(
       (language: string, namespace: string) =>
-        import(`../../public/locales/${language}/${namespace}.json`)
-    )
+        import(`../../public/locales/${language}/${namespace}.json`),
+    ),
   )
   // detect user language
   // learn more: https://github.com/i18next/i18next-browser-languageDetector

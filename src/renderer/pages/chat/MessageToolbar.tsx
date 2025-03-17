@@ -42,7 +42,7 @@ export default function MessageToolbar({ message }: { message: IChatMessage }) {
       msgId: message.id,
       prompt: message.prompt,
       reply: message.reply,
-      reasoning: message.reasoning||'',
+      reasoning: message.reasoning || '',
       model: message.model,
       temperature: message.temperature,
       citedFiles: message.citedFiles,
@@ -65,94 +65,96 @@ export default function MessageToolbar({ message }: { message: IChatMessage }) {
 
   const copy = () => {
     const content = `user: \n${message.prompt}\n\nassistant:\n${message.reply}`;
-    navigator.clipboard.writeText(content)
+    navigator.clipboard.writeText(content);
     notifySuccess(t('Common.Notification.Copied'));
   };
 
-  return !message.isActive && (
-    <div className="message-toolbar p-0.5 rounded-md flex justify-between items-center">
-      <div className="flex justify-start items-center gap-3">
-        {message.bookmarkId ? (
-          <Tooltip
-            content={t('Common.Action.Bookmark')}
-            relationship="label"
-          >
-            <Button
-              size="small"
-              icon={<BookmarkOffIcon />}
-              appearance="subtle"
-              onClick={() => unbookmark()}
-            />
-          </Tooltip>
-        ) : (
-          <Tooltip
-            content={t('Common.Action.Bookmark')}
-            relationship="label"
-          >
-            <Button
-              size="small"
-              icon={<BookmarkAddIcon />}
-              appearance="subtle"
-              onClick={() => bookmark()}
-            />
-          </Tooltip>
-        )}
-        <Button size="small" icon={<CopyIcon />} appearance="subtle" onClick={copy} />
-        <Popover withArrow open={delPopoverOpen}>
-          <PopoverTrigger disableButtonEnhancement>
-            <Button
-              size="small"
-              icon={<DeleteIcon />}
-              appearance="subtle"
-              onClick={() => setDelPopoverOpen(true)}
-            />
-          </PopoverTrigger>
-          <PopoverSurface>
-            <div>
-              <div className="p-2 mb-2 text-center">
-                {t('Common.DeleteConfirmation')}
+  return (
+    !message.isActive && (
+      <div className="message-toolbar p-0.5 rounded-md flex justify-between items-center">
+        <div className="flex justify-start items-center gap-3">
+          {message.bookmarkId ? (
+            <Tooltip content={t('Common.Action.Bookmark')} relationship="label">
+              <Button
+                size="small"
+                icon={<BookmarkOffIcon />}
+                appearance="subtle"
+                onClick={() => unbookmark()}
+              />
+            </Tooltip>
+          ) : (
+            <Tooltip content={t('Common.Action.Bookmark')} relationship="label">
+              <Button
+                size="small"
+                icon={<BookmarkAddIcon />}
+                appearance="subtle"
+                onClick={() => bookmark()}
+              />
+            </Tooltip>
+          )}
+          <Button
+            size="small"
+            icon={<CopyIcon />}
+            appearance="subtle"
+            onClick={copy}
+          />
+          <Popover withArrow open={delPopoverOpen}>
+            <PopoverTrigger disableButtonEnhancement>
+              <Button
+                size="small"
+                icon={<DeleteIcon />}
+                appearance="subtle"
+                onClick={() => setDelPopoverOpen(true)}
+              />
+            </PopoverTrigger>
+            <PopoverSurface>
+              <div>
+                <div className="p-2 mb-2 text-center">
+                  {t('Common.DeleteConfirmation')}
+                </div>
+                <div className="flex justify-evenly gap-5 items-center">
+                  <Button
+                    size="small"
+                    appearance="subtle"
+                    onClick={() => setDelPopoverOpen(false)}
+                  >
+                    {t('Common.Cancel')}
+                  </Button>
+                  <Button
+                    size="small"
+                    appearance="primary"
+                    onClick={() => {
+                      deleteMessage(message.id);
+                      setDelPopoverOpen(false);
+                      notifySuccess(t('Message.Notification.Deleted'));
+                    }}
+                  >
+                    {t('Common.Yes')}
+                  </Button>
+                </div>
               </div>
-              <div className="flex justify-evenly gap-5 items-center">
-                <Button
-                  size="small"
-                  appearance="subtle"
-                  onClick={() => setDelPopoverOpen(false)}
-                >
-                  {t('Common.Cancel')}
-                </Button>
-                <Button
-                  size="small"
-                  appearance="primary"
-                  onClick={() => {
-                    deleteMessage(message.id);
-                    setDelPopoverOpen(false);
-                    notifySuccess(t('Message.Notification.Deleted'));
-                  }}
-                >
-                  {t('Common.Yes')}
-                </Button>
-              </div>
-            </div>
-          </PopoverSurface>
-        </Popover>
-      </div>
-      <div className="mr-2.5">
-        <div className="flex justify-start items-center gap-5">
-          <Text size={200}>
-            <span className="latin hidden sm:block">
-              {(message.inputTokens || 0) + (message.outputTokens || 0)} tokens
-            </span>
-          </Text>
-          <Text size={200}>
-            <span className="latin">{message.model}</span>
-          </Text>
-          <Text size={200} truncate>
-            <span className="latin">
-              {fmtDateTime(unix2date(message.createdAt))}
-            </span>
-          </Text>
+            </PopoverSurface>
+          </Popover>
+        </div>
+        <div className="mr-2.5">
+          <div className="flex justify-start items-center gap-5">
+            <Text size={200}>
+              <span className="latin hidden sm:block">
+                {(message.inputTokens || 0) + (message.outputTokens || 0)}{' '}
+                tokens
+              </span>
+            </Text>
+            <Text size={200}>
+              <span className="latin">{message.model}</span>
+            </Text>
+            <Text size={200} truncate>
+              <span className="latin">
+                {fmtDateTime(unix2date(message.createdAt))}
+              </span>
+            </Text>
+          </div>
         </div>
       </div>
-    </div>
+    )
   );
 }

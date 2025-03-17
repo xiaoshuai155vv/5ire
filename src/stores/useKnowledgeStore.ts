@@ -17,13 +17,13 @@ export interface IKnowledgeStore {
   getChunk: (id: string) => Promise<IKnowledgeChunk | null>;
   createCollection: (collection: Partial<ICollection>) => Promise<ICollection>;
   updateCollection: (
-    collection: { id: string } & Partial<ICollection>
+    collection: { id: string } & Partial<ICollection>,
   ) => Promise<boolean>;
   deleteCollection: (id: string) => Promise<boolean>;
   listCollections: () => Promise<ICollection[]>;
   getCollection: (id: string) => Promise<ICollection | null>;
   createFile: (
-    file: { collectionId: string; name: string } & Partial<ICollectionFile>
+    file: { collectionId: string; name: string } & Partial<ICollectionFile>,
   ) => Promise<ICollectionFile>;
   getFiles: (fileIds: string[]) => Promise<ICollectionFile[]>;
   deleteFile: (id: string) => Promise<boolean>;
@@ -79,7 +79,7 @@ const useKnowledgeStore = create<IKnowledgeStore>((set, get) => ({
         _collection.memo,
         _collection.createdAt,
         _collection.updatedAt,
-      ]
+      ],
     );
     if (!ok) {
       throw new Error(`Create collection "${_collection.name}" failed`);
@@ -110,7 +110,7 @@ const useKnowledgeStore = create<IKnowledgeStore>((set, get) => ({
     columns.push('updatedAt = ?');
     params.push(collection.id);
     const sql = `UPDATE knowledge_collections SET ${columns.join(
-      ', '
+      ', ',
     )} WHERE id = ?`;
     const ok = await window.electron.db.run(sql, params);
     if (!ok) {
@@ -145,7 +145,7 @@ const useKnowledgeStore = create<IKnowledgeStore>((set, get) => ({
       collectionChangedAt: date2unix(new Date()),
       chunks: omitBy(
         state.chunks,
-        (chunk: IKnowledgeChunk) => chunk.collectionId === id
+        (chunk: IKnowledgeChunk) => chunk.collectionId === id,
       ),
     }));
     console.log('deleteCollection, id:', id, ' at ', get().collectionChangedAt);
@@ -159,14 +159,14 @@ const useKnowledgeStore = create<IKnowledgeStore>((set, get) => ({
 LEFT JOIN knowledge_files f on f.collectionId = c.id
 GROUP BY c.id, c.name, c.memo, c.updatedAt, c.createdAt, c.pinedAt
 ORDER BY c.pinedAt DESC, c.updatedAt DESC`,
-      []
+      [],
     )) as ICollection[];
   },
   getCollection: async (id) => {
     debug('getCollection', id);
     return (await window.electron.db.get(
       `SELECT id, name, memo FROM knowledge_collections WHERE id = ?`,
-      id
+      id,
     )) as ICollection | null;
   },
   createFile: async (file) => {
@@ -190,7 +190,7 @@ ORDER BY c.pinedAt DESC, c.updatedAt DESC`,
         _file.numOfChunks,
         _file.createdAt,
         _file.updatedAt,
-      ]
+      ],
     );
     if (!ok) {
       throw new Error(`Create collection file "${file.name}" failed`);
@@ -203,7 +203,7 @@ ORDER BY c.pinedAt DESC, c.updatedAt DESC`,
   deleteFile: async (id) => {
     const ok = await window.electron.db.run(
       `DELETE FROM knowledge_files WHERE id = ?`,
-      [id]
+      [id],
     );
     if (!ok) {
       throw new Error(`Delete knowledge file(${id}) failed`);
@@ -212,7 +212,7 @@ ORDER BY c.pinedAt DESC, c.updatedAt DESC`,
       collectionChangedAt: date2unix(new Date()),
       chunks: omitBy(
         state.chunks,
-        (chunk: IKnowledgeChunk) => chunk.fileId === id
+        (chunk: IKnowledgeChunk) => chunk.fileId === id,
       ),
     }));
     debug(`Delete knowledge file(${id}) success`);
@@ -234,7 +234,7 @@ ORDER BY c.pinedAt DESC, c.updatedAt DESC`,
       id IN (${fileIds.map((f) => `'${f}'`).join(',')})
     ORDER BY
       updatedAt DESC`,
-      []
+      [],
     )) as ICollectionFile[];
   },
   listFiles: async (collectionId: string) => {
@@ -253,7 +253,7 @@ ORDER BY c.pinedAt DESC, c.updatedAt DESC`,
       collectionId = ?
     ORDER BY
       updatedAt DESC`,
-      [collectionId]
+      [collectionId],
     )) as ICollectionFile[];
   },
 }));

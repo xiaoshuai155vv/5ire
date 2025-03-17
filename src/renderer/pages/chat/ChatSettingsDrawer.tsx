@@ -94,7 +94,7 @@ export default function ChatSettingsDrawer({
           </DrawerHeaderTitle>
         </DrawerHeader>
         <DrawerBody className="mt-2.5 flex flex-col gap-2 relative">
-          {isPersistedChat(activeChat)? (
+          {isPersistedChat(activeChat) ? (
             <div className="mb-2.5">
               <Input
                 id="inchat-search"

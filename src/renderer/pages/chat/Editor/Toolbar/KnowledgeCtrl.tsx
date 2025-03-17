@@ -12,7 +12,7 @@ import {
   Divider,
 } from '@fluentui/react-components';
 import Mousetrap from 'mousetrap';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Debug from 'debug';
 
@@ -27,7 +27,6 @@ import {
 import { ICollection } from 'types/knowledge';
 import useKnowledgeStore from 'stores/useKnowledgeStore';
 import useChatKnowledgeStore from 'stores/useChatKnowledgeStore';
-import React from 'react';
 
 const debug = Debug('5ire:pages:chat:Editor:Toolbar:KnowledgeCtrl');
 
@@ -47,10 +46,10 @@ export default function KnowledgeCtrl({
   const [open, setOpen] = useState<boolean>(false);
   const [collections, setCollections] = useState<ICollection[]>([]);
   const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>(
-    []
+    [],
   );
   const [selectedCollections, setSelectedCollections] = useState<ICollection[]>(
-    []
+    [],
   );
 
   const openDialog = () => {
@@ -92,11 +91,11 @@ export default function KnowledgeCtrl({
 
   const onCollectionSelect: ComboboxProps['onOptionSelect'] = async (
     _,
-    data
+    data,
   ) => {
     setSelectedCollectionIds(data.selectedOptions);
-    let selectedCollections = collections.filter((collection: ICollection) =>
-      data.selectedOptions.includes(collection.id)
+    const selectedCollections = collections.filter((collection: ICollection) =>
+      data.selectedOptions.includes(collection.id),
     );
     const ok = await setChatCollections(chat.id, selectedCollections);
     ok && setSelectedCollections(selectedCollections);
@@ -105,13 +104,13 @@ export default function KnowledgeCtrl({
   const onCollectionRemove = async (collection: ICollection) => {
     setSelectedCollectionIds(
       selectedCollectionIds.filter(
-        (collectionId: string) => collectionId !== collection.id
-      )
+        (collectionId: string) => collectionId !== collection.id,
+      ),
     );
     const ok = await removeChatCollection(chat.id, collection.id);
     ok &&
       setSelectedCollections(
-        selectedCollections.filter((c: ICollection) => c.id !== collection.id)
+        selectedCollections.filter((c: ICollection) => c.id !== collection.id),
       );
   };
 
@@ -124,7 +123,12 @@ export default function KnowledgeCtrl({
             title="Mod+Shift+3"
             aria-label={t('Common.Knowledge')}
             className="justify-start text-color-secondary"
-            style={{ padding: 1, minWidth: 20,borderColor: 'transparent', boxShadow: 'none' }}
+            style={{
+              padding: 1,
+              minWidth: 20,
+              borderColor: 'transparent',
+              boxShadow: 'none',
+            }}
             appearance="subtle"
             onClick={openDialog}
             icon={<KnowledgeIcon />}
@@ -152,7 +156,7 @@ export default function KnowledgeCtrl({
               <div>
                 <Combobox
                   className="w-full"
-                  multiselect={true}
+                  multiselect
                   placeholder="Select one or more knowledge collections"
                   onOptionSelect={onCollectionSelect}
                   selectedOptions={selectedCollectionIds}

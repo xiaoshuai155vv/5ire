@@ -15,34 +15,38 @@ const hoverStyles = {
   style: { top: '10.5px' },
 };
 
-const Icon = ({
+function Icon({
   children,
   className,
   ...props
 }: {
   children: ReactNode;
   className: string;
-}) => (
-  <svg className={className} {...props}>
-    {children}
-  </svg>
-);
+}) {
+  return (
+    <svg className={className} {...props}>
+      {children}
+    </svg>
+  );
+}
 
 type TrafficLightButtonProps = {
   message: 'minimize-app' | 'maximize-app' | 'close-app';
   children: ReactNode;
 };
 
-const TrafficLightButton = ({ message, children }: TrafficLightButtonProps) => (
-  <button
-    style={{ width: 20, height: 20, position: 'relative' }}
-    onClick={() => {
-      window.electron.ipcRenderer.sendMessage(message);
-    }}
-  >
-    {children}
-  </button>
-);
+function TrafficLightButton({ message, children }: TrafficLightButtonProps) {
+  return (
+    <button
+      style={{ width: 20, height: 20, position: 'relative' }}
+      onClick={() => {
+        window.electron.ipcRenderer.sendMessage(message);
+      }}
+    >
+      {children}
+    </button>
+  );
+}
 
 export default function TrafficLights() {
   return (

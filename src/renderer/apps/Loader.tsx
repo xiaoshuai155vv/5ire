@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { IAppConfig } from './types';
 import { useParams } from 'react-router-dom';
+import { IAppConfig } from './types';
 import apps from './index';
 
 const APPS: Record<
@@ -9,12 +9,12 @@ const APPS: Record<
 > = apps.reduce(
   (
     acc: Record<string, React.LazyExoticComponent<() => React.ReactElement>>,
-    app: IAppConfig
+    app: IAppConfig,
   ) => {
     acc[app.key] = lazy(() => import(`./${app.key}/App`));
     return acc;
   },
-  {}
+  {},
 );
 
 const NotFound = lazy(() => import('./NotFound'));
@@ -26,7 +26,7 @@ export default function Loader() {
   useEffect(() => {
     const importApp = async () => {
       const config: IAppConfig | undefined = apps.find(
-        (app: IAppConfig) => app.key === key
+        (app: IAppConfig) => app.key === key,
       );
       if (!config || !config.isEnabled) {
         setApp(<NotFound />);

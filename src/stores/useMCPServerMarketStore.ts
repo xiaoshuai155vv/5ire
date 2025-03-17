@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { IMCPServer } from './../types/mcp.d';
+import { IMCPServer } from '../types/mcp.d';
 import { captureException } from '../renderer/logging';
 
 const REMOTE_CONFIG_TTL: number = 1000 * 60 * 60 * 24; // 1 day

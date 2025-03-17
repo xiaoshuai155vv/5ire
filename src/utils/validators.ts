@@ -3,7 +3,7 @@ export function isNotBlank(str: string | undefined | null): str is string {
 }
 
 export function isNumeric(str: string) {
-  if (typeof str != 'string') return false; // we only process strings!
+  if (typeof str !== 'string') return false; // we only process strings!
   return !isNaN(Number(str)) && !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
 }
 
@@ -17,7 +17,7 @@ export function isValidUsername(name: string) {
     return false;
   }
   // regular expression for username validation
-  var regex = /^[^.][a-z0-9.]*[^.]$/i;
+  const regex = /^[^.][a-z0-9.]*[^.]$/i;
   // check invalid characters
   if (/[\&\*\?=_'"“‘,,+\-<>]/.test(name)) {
     return false;
@@ -52,7 +52,7 @@ export function isValidHttpHRL(url: string) {
   return pattern.test(url);
 }
 
-//containing only letters (can be both cases) and numbers, and can't start with a digit.
+// containing only letters (can be both cases) and numbers, and can't start with a digit.
 export function isValidMCPServerKey(key: string) {
   return /^[a-zA-Z][a-zA-Z0-9]*$/.test(key);
 }

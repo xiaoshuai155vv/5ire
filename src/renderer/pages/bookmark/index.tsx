@@ -21,7 +21,7 @@ export default function Bookmarks() {
 
   const onKeywordChange = (
     ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setKeyword(data.value || '');
   };
@@ -36,9 +36,9 @@ export default function Bookmarks() {
         {
           leading: true,
           maxWait: 2000,
-        }
+        },
       ),
-    [loadBookmarks]
+    [loadBookmarks],
   );
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function Bookmarks() {
               __html: highlight(
                 bookmark.reply?.substring(0, 140) +
                   (bookmark.reply.length > 140 ? '...' : ''),
-                keyword
+                keyword,
               ),
             }}
           />
@@ -83,7 +83,7 @@ export default function Bookmarks() {
   };
   return (
     <div className="page h-full">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header flex items-center justify-between w-full">
         <h1 className="text-2xl flex-shrink-0 mr-6">{t('Common.Bookmarks')}</h1>
         <Input

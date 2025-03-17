@@ -3,7 +3,7 @@ import { IServiceProvider } from './types';
 export default {
   name: '5ire',
   apiBase: 'https://skyfire.agisurge.com',
-  //apiBase: 'http://127.0.0.1:8000',
+  // apiBase: 'http://127.0.0.1:8000',
   currency: 'USD',
   isPremium: true,
   options: {

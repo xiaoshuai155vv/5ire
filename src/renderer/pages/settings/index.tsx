@@ -7,9 +7,6 @@ import {
   bundleIcon,
   MoreHorizontal24Filled,
 } from '@fluentui/react-icons';
-import APISettings from './APISettings';
-import AppearanceSettings from './AppearanceSettings';
-import Version from './Version';
 import Debug from 'debug';
 import './Settings.scss';
 import useAuthStore from 'stores/useAuthStore';
@@ -18,7 +15,6 @@ import { useEffect, useState } from 'react';
 import StateButton from 'renderer/components/StateButton';
 import supabase from 'vendors/supa';
 import useSettingsStore from 'stores/useSettingsStore';
-import { captureException } from '../../logging';
 import {
   MessageBar,
   MessageBarBody,
@@ -30,6 +26,10 @@ import {
   MenuPopover,
   MenuTrigger,
 } from '@fluentui/react-components';
+import { captureException } from '../../logging';
+import Version from './Version';
+import AppearanceSettings from './AppearanceSettings';
+import APISettings from './APISettings';
 import EmbedSettings from './EmbedSettings';
 import LanguageSettings from './LanguageSettings';
 
@@ -37,12 +37,12 @@ const debug = Debug('5ire:pages:settings:index');
 
 const CloudArrowUpIcon = bundleIcon(
   CloudArrowUp24Filled,
-  CloudArrowUp24Regular
+  CloudArrowUp24Regular,
 );
 
 const CloudArrowDownIcon = bundleIcon(
   CloudArrowDown20Filled,
-  CloudArrowDown20Regular
+  CloudArrowDown20Regular,
 );
 
 export default function Settings() {
@@ -67,14 +67,12 @@ export default function Settings() {
           .maybeSingle();
         if (error) {
           notifyError(error.message);
+        } else if (data?.updated_at) {
+          const dt = new Date(data.updated_at);
+          setUpdatedAtCloud(dt.toLocaleString());
+          setUpdated(false);
         } else {
-          if (data?.updated_at) {
-            const dt = new Date(data.updated_at);
-            setUpdatedAtCloud(dt.toLocaleString());
-            setUpdated(false);
-          } else {
-            setUpdatedAtCloud(undefined);
-          }
+          setUpdatedAtCloud(undefined);
         }
       } catch (error) {
         debug(error);
@@ -94,24 +92,22 @@ export default function Settings() {
         .from('settings')
         .select('data')
         .eq('id', user.id)
-        .maybeSingle()
+        .maybeSingle();
       if (error) {
         notifyError(error.message);
+      } else if (data?.data) {
+        const { iv, encrypted } = data.data;
+        const decrypted = await window.electron.crypto.decrypt(
+          encrypted,
+          user.id,
+          iv,
+        );
+        const { theme, api } = JSON.parse(decrypted);
+        useSettingsStore.getState().setTheme(theme);
+        useSettingsStore.getState().setAPI(api);
+        notifySuccess(t('Settings.Notification.RestoreFromCloudSuccess'));
       } else {
-        if (data?.data) {
-          const { iv, encrypted } = data.data;
-          const decrypted = await window.electron.crypto.decrypt(
-            encrypted,
-            user.id,
-            iv
-          );
-          const { theme, api } = JSON.parse(decrypted);
-          useSettingsStore.getState().setTheme(theme);
-          useSettingsStore.getState().setAPI(api);
-          notifySuccess(t('Settings.Notification.RestoreFromCloudSuccess'));
-        } else {
-          notifyError(t('Settings.Notification.RestoreFromCloudFailed'));
-        }
+        notifyError(t('Settings.Notification.RestoreFromCloudFailed'));
       }
     } catch (error) {
       debug(error);
@@ -131,7 +127,7 @@ export default function Settings() {
       const { theme, api } = useSettingsStore.getState();
       const encrypted = await window.electron.crypto.encrypt(
         JSON.stringify({ theme, api }),
-        user.id
+        user.id,
       );
       const { error } = await supabase
         .from('settings')
@@ -152,7 +148,7 @@ export default function Settings() {
 
   return (
     <div className="page h-full" id="page-settings">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl">{t('Common.Settings')}</h1>
@@ -161,7 +157,7 @@ export default function Settings() {
               <MenuButton
                 appearance="transparent"
                 icon={<MoreHorizontal24Filled />}
-              ></MenuButton>
+              />
             </MenuTrigger>
             <MenuPopover>
               <MenuList>

@@ -13,15 +13,15 @@ export interface IChatKnowledgeStore {
   listChatCollections: (chatId: string) => Promise<ICollection[]>;
   moveChatCollections: (
     fromChatId: string,
-    targetChatId: string
+    targetChatId: string,
   ) => ICollection[];
   setChatCollections: (
     chatId: string,
-    collections: ICollection[]
+    collections: ICollection[],
   ) => Promise<boolean>;
   removeChatCollection: (
     chatId: string,
-    collectionId: string
+    collectionId: string,
   ) => Promise<boolean>;
 }
 
@@ -32,11 +32,14 @@ const useKnowledgeStore = create<IChatKnowledgeStore>((set, get) => ({
     set((state) => {
       const fromCollections = state.chatCollections[fromChatId] || [];
       const targetCollections = state.chatCollections[targetChatId] || [];
-      state.chatCollections[targetChatId] = union(targetCollections, fromCollections);
+      state.chatCollections[targetChatId] = union(
+        targetCollections,
+        fromCollections,
+      );
       state.chatCollections[fromChatId] = [];
       debug(
-      `move collections from ${fromChatId} to ${targetChatId}`,
-      state.chatCollections[targetChatId]
+        `move collections from ${fromChatId} to ${targetChatId}`,
+        state.chatCollections[targetChatId],
       );
       return state;
     });
@@ -53,7 +56,7 @@ LEFT JOIN knowledge_files kf on kc.id = kf.collectionId
 WHERE rel.chatId = ?
 GROUP BY kc.id, kc.name, kc.updatedAt, kc.createdAt
 ORDER BY kc.updatedAt DESC`,
-        [chatId]
+        [chatId],
       )) as ICollection[];
       set((state) => {
         state.chatCollections[chatId] = collections;
@@ -70,7 +73,7 @@ ORDER BY kc.updatedAt DESC`,
       if (collections.length === 0) {
         ok = await window.electron.db.run(
           `DELETE FROM chat_knowledge_rels WHERE chatId = ?`,
-          [chatId]
+          [chatId],
         );
         ok = true;
       } else {
@@ -106,13 +109,13 @@ ORDER BY kc.updatedAt DESC`,
     if (chatId !== tempChatId) {
       ok = await window.electron.db.run(
         `DELETE FROM chat_knowledge_rels WHERE chatId = ? AND collectionId = ?`,
-        [chatId, collectionId]
+        [chatId, collectionId],
       );
     }
     if (ok) {
       set((state) => {
         state.chatCollections[chatId] = state.chatCollections[chatId].filter(
-          (collection) => collection.id !== collectionId
+          (collection) => collection.id !== collectionId,
         );
         return state;
       });

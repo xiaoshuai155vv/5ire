@@ -44,9 +44,7 @@ export default function CitationDialog() {
             {t('Citation')}
           </DialogTitle>
           <DialogContent>
-            <pre className='max-h-80'>
-              {citation.content}
-            </pre>
+            <pre className="max-h-80">{citation.content}</pre>
           </DialogContent>
         </DialogBody>
       </DialogSurface>

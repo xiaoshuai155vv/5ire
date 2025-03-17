@@ -4,11 +4,11 @@ import {
   IChatRequestMessage,
   IChatRequestPayload,
 } from 'intellichat/types';
+import ChatBroReader from 'intellichat/readers/ChatBroReader';
+import { urlJoin } from 'utils/util';
 import ChatBro from '../../providers/ChatBro';
 import INextChatService from './INextCharService';
 import OpenAIChatService from './OpenAIChatService';
-import ChatBroReader from 'intellichat/readers/ChatBroReader';
-import { urlJoin } from 'utils/util';
 
 const debug = Debug('5ire:intellichat:ChatBroChatService');
 
@@ -26,7 +26,7 @@ export default class ChatBroChatService
   }
 
   protected async makePayload(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<IChatRequestPayload> {
     const payload: IChatRequestPayload = {
       model: this.getModelName(),
@@ -42,7 +42,7 @@ export default class ChatBroChatService
   }
 
   protected async makeRequest(
-    messages: IChatRequestMessage[]
+    messages: IChatRequestMessage[],
   ): Promise<Response> {
     const payload = await this.makePayload(messages);
     debug('About to make a request, payload:\r\n', payload);
@@ -66,7 +66,7 @@ export default class ChatBroChatService
           'x-api-key': key,
         },
         signal: this.abortController.signal,
-      }
+      },
     );
     return response;
   }

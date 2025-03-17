@@ -12,14 +12,14 @@ export interface IUsageStore {
   create: (usage: Partial<IUsage>) => Promise<IUsage>;
   statistics: (
     startDateUnix: number,
-    endDateUnix: number
+    endDateUnix: number,
   ) => Promise<IUsageStatistics[]>;
 }
 
 const getModelPrice = (
   providerName: ProviderType,
   modelName: string,
-  type: 'input' | 'output'
+  type: 'input' | 'output',
 ) => {
   if (type === 'input') {
     return getChatModel(providerName, modelName).inputPrice;
@@ -47,7 +47,7 @@ const useUsageStore = create<IUsageStore>(() => ({
         getModelPrice($usage.provider, $usage.model, 'input'),
         getModelPrice($usage.provider, $usage.model, 'output'),
         $usage.createdAt,
-      ]
+      ],
     );
     if (!ok) {
       throw new Error('Write the usage into database failed');
@@ -70,7 +70,7 @@ const useUsageStore = create<IUsageStore>(() => ({
       createdAt >= ? AND createdAt <= ?
     GROUP BY
       provider, model`,
-      [startDateUnix, endDateUnix]
+      [startDateUnix, endDateUnix],
     )) as IUsageStatistics[];
   },
 }));

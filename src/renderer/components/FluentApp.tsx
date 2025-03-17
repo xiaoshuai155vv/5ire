@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import Debug from 'debug';
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import { captureException } from '../logging';
 import {
   FluentProvider,
   Toaster,
@@ -10,6 +9,8 @@ import {
   Theme,
   createDarkTheme,
 } from '@fluentui/react-components';
+import { useTranslation } from 'react-i18next';
+import { captureException } from '../logging';
 import useSettingsStore from '../../stores/useSettingsStore';
 import useAppearanceStore from '../../stores/useAppearanceStore';
 import AppHeader from './layout/AppHeader';
@@ -28,7 +29,6 @@ import Settings from '../pages/settings';
 import Prompts from '../pages/prompt';
 import PromptForm from '../pages/prompt/Form';
 import AppLoader from '../apps/Loader';
-import { useTranslation } from 'react-i18next';
 
 const debug = Debug('5ire:components:FluentApp');
 
@@ -140,7 +140,7 @@ export default function FluentApp() {
             <div
               id="portal"
               style={{ zIndex: 9999999, position: 'absolute' }}
-            ></div>
+            />
           </main>
         </div>
       </Router>

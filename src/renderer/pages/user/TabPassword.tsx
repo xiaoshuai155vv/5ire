@@ -1,7 +1,4 @@
-import {
-  Field,
-  InputOnChangeData,
-} from '@fluentui/react-components';
+import { Field, InputOnChangeData } from '@fluentui/react-components';
 import { Password20Regular } from '@fluentui/react-icons';
 import useToast from 'hooks/useToast';
 import { ChangeEvent, useState } from 'react';
@@ -20,7 +17,7 @@ export default function TabPassword() {
   const { notifyError, notifySuccess } = useToast();
 
   const updatePassword = async () => {
-    if(!isValidPassword(password)) return;
+    if (!isValidPassword(password)) return;
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
@@ -28,7 +25,7 @@ export default function TabPassword() {
     } else {
       notifySuccess(t('Account.Notification.PasswordChanged'));
       setIsPasswordValid(true);
-      setPassword('')
+      setPassword('');
     }
     setLoading(false);
   };
@@ -49,9 +46,9 @@ export default function TabPassword() {
           value={password}
           onChange={(
             _ev: ChangeEvent<HTMLInputElement>,
-            data: InputOnChangeData
+            data: InputOnChangeData,
           ) => {
-            setPassword(data.value)
+            setPassword(data.value);
             setIsPasswordValid(true);
           }}
         />

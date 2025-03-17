@@ -80,6 +80,6 @@ export default function useMarkdown() {
     return defaultRender(tokens, idx, options, env, self);
   };
   return {
-    render: (str: string): string => md.render(str)
+    render: (str: string): string => md.render(str),
   };
 }

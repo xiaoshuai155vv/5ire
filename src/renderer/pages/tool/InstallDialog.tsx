@@ -15,11 +15,11 @@ import { useTranslation } from 'react-i18next';
 import { Dismiss24Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as mcpUtils from 'utils/mcp';
-import { captureException } from '../../logging';
 import { IMCPServer, IMCPServerParameter, MCPArgParameter } from 'types/mcp';
 import ListInput from 'renderer/components/ListInput';
 import useMCPStore from 'stores/useMCPStore';
 import { isNumeric } from 'utils/validators';
+import { captureException } from '../../logging';
 
 export default function ToolInstallDialog(options: {
   server: IMCPServer;
@@ -86,14 +86,12 @@ export default function ToolInstallDialog(options: {
             }));
             isValid = false;
           }
-        } else {
-          if (((paramValue as string) || '').trim() === '') {
-            setErrorMessages((state) => ({
-              ...state,
-              [param.name]: t('Common.Required'),
-            }));
-            isValid = false;
-          }
+        } else if (((paramValue as string) || '').trim() === '') {
+          setErrorMessages((state) => ({
+            ...state,
+            [param.name]: t('Common.Required'),
+          }));
+          isValid = false;
         }
         if (isValid) {
           setErrorMessages((state) => {
@@ -136,7 +134,7 @@ export default function ToolInstallDialog(options: {
     };
   }, [open]);
 
-  const Form = (type: 'args' | 'env', params: IMCPServerParameter[]) => {
+  function Form(type: 'args' | 'env', params: IMCPServerParameter[]) {
     if (params.length === 0) return null;
     return (
       <div className="mb-4">
@@ -186,7 +184,7 @@ export default function ToolInstallDialog(options: {
         </div>
       </div>
     );
-  };
+  }
 
   return (
     <Dialog open={open}>

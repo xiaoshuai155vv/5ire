@@ -1,9 +1,9 @@
 import { Button } from '@fluentui/react-components';
 import { IChat } from 'intellichat/types';
 import useChatStore from 'stores/useChatStore';
-import ChatIcon from './ChatIcon';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
+import ChatIcon from './ChatIcon';
 
 export default function ChatItem({
   chat,

@@ -120,7 +120,7 @@ export interface IChatRequestPayload {
   presence_penalty?: number;
   top_p?: number;
   stream?: boolean;
-  prompt?: string; //ollama
+  prompt?: string; // ollama
   context?: number[]; // ollama
   system?: string; // baidu, anthropic, ollama
   options?: {

@@ -19,7 +19,7 @@ export default function BookmarkNav({ collapsed }: { collapsed: boolean }) {
 
   const renderIconWithTooltip = (
     isActiveBookmark: boolean,
-    summary: string
+    summary: string,
   ) => {
     return (
       <Tooltip
@@ -48,7 +48,7 @@ export default function BookmarkNav({ collapsed }: { collapsed: boolean }) {
             <Button
               icon={renderIconWithTooltip(
                 !!activeBookmarkId && activeBookmarkId === bookmark.id,
-                bookmark.prompt
+                bookmark.prompt,
               )}
               appearance="subtle"
               className="w-full justify-start"

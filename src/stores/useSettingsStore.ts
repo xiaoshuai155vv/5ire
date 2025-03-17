@@ -1,13 +1,17 @@
-import { IModelMapping, IToolStates } from './../types/settings.d';
-/* eslint-disable no-console */
 import Debug from 'debug';
 import { create } from 'zustand';
 import { isNil, pick, set } from 'lodash';
+import { getProvider } from 'providers';
+import {
+  IModelMapping,
+  IToolStates,
+  LanguageType,
+  IAPISettings,
+  ISettings,
+} from '../types/settings.d';
+/* eslint-disable no-console */
 
 import { FontSize, ThemeType } from '../types/appearance';
-import { LanguageType } from '../types/settings';
-import { IAPISettings, ISettings } from '../types/settings';
-import { getProvider } from 'providers';
 
 const debug = Debug('5ire:stores:useSettingsStore');
 

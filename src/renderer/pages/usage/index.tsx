@@ -57,7 +57,7 @@ export default function Usage() {
           'Load statistics, start date:',
           onFormatDate($startDate),
           ', end date:',
-          onFormatDate($endDate || undefined)
+          onFormatDate($endDate || undefined),
         );
       }
     };
@@ -72,10 +72,12 @@ export default function Usage() {
 
   return (
     <div className="page h-full">
-      <div className="page-top-bar"></div>
+      <div className="page-top-bar" />
       <div className="page-header flex items-center justify-between">
         <div className="flex items-center justify-between w-full">
-          <h1 className="text-2xl flex-shrink-0 mr-6">{t('Common.Analytics')}</h1>
+          <h1 className="text-2xl flex-shrink-0 mr-6">
+            {t('Common.Analytics')}
+          </h1>
           <div className="flex justify-end w-full items-center gap-2">
             <Field label="Start  date">
               <DatePicker

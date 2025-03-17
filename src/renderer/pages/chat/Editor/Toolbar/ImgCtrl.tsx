@@ -57,10 +57,10 @@ export default function ImgCtrl({
       () =>
         document
           .querySelector<HTMLInputElement>(
-            imgType === 'url' ? '#image-url-input' : '#select-file-button'
+            imgType === 'url' ? '#image-url-input' : '#select-file-button',
           )
           ?.focus(),
-      500
+      500,
     );
     Mousetrap.bind('esc', closeDialog);
   };
@@ -90,7 +90,7 @@ export default function ImgCtrl({
 
   const onImageUrlChange = (
     ev: ChangeEvent<HTMLInputElement>,
-    data: InputOnChangeData
+    data: InputOnChangeData,
   ) => {
     setImgURL(data.value);
   };
@@ -111,7 +111,7 @@ export default function ImgCtrl({
     editStage(chat.id, {
       input: insertAtCursor(
         editor,
-        `<img src="${url}" style="width:260px; display:block;" />`
+        `<img src="${url}" style="width:260px; display:block;" />`,
       ),
     });
     setOpen(false);
@@ -169,7 +169,7 @@ export default function ImgCtrl({
           className="justify-start text-color-secondary"
           onClick={openDialog}
           icon={<ImageAddIcon />}
-        ></Button>
+        />
       </DialogTrigger>
       <DialogSurface aria-labelledby="add image">
         <DialogBody>

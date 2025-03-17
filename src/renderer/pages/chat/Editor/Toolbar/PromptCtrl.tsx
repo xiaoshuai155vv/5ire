@@ -23,9 +23,9 @@ import { useTranslation } from 'react-i18next';
 import usePromptStore from 'stores/usePromptStore';
 import { fillVariables, highlight, insertAtCursor } from 'utils/util';
 import { isNil, pick } from 'lodash';
-import PromptVariableDialog from '../PromptVariableDialog';
 import { IChat, IChatContext, IPrompt } from 'intellichat/types';
 import useChatStore from 'stores/useChatStore';
+import PromptVariableDialog from '../PromptVariableDialog';
 
 const PromptIcon = bundleIcon(Prompt20Filled, Prompt20Regular);
 

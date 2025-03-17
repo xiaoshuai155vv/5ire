@@ -20,9 +20,9 @@ import ConfirmDialog from 'renderer/components/ConfirmDialog';
 import { tempChatId } from 'consts';
 import useNav from 'hooks/useNav';
 import useToast from 'hooks/useToast';
-import ChatSettingsDrawer from './ChatSettingsDrawer';
 import { IChatFolder } from 'intellichat/types';
 import { isPersistedChat } from 'utils/util';
+import ChatSettingsDrawer from './ChatSettingsDrawer';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const MoreHorizontalIcon = bundleIcon(
@@ -49,11 +49,11 @@ export default function Header() {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const chatFolder: Partial<IChatFolder> = useMemo(() => {
-    if(activeChat.id!==tempChatId){
-      if(activeChat.folderId){
+    if (activeChat.id !== tempChatId) {
+      if (activeChat.folderId) {
         return folders[activeChat.folderId] || {};
       }
-      return {}
+      return {};
     }
     return folder || {};
   }, [folder, activeChat.id, activeChat.folderId, folders]);
@@ -71,7 +71,9 @@ export default function Header() {
   const getKeyword = useChatStore((state) => state.getKeyword);
   const setKeyword = useChatStore((state) => state.setKeyword);
 
-  const keyword = isPersistedChat(activeChat) ? getKeyword(activeChat?.id) : null;
+  const keyword = isPersistedChat(activeChat)
+    ? getKeyword(activeChat?.id)
+    : null;
 
   useEffect(() => {
     Mousetrap.bind('mod+d', () => {

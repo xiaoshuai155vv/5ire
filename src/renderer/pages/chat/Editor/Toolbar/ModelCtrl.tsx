@@ -111,7 +111,7 @@ export default function ModelCtrl({
             <ToolStatusIndicator
               provider={providerName}
               model={activeModel.name}
-              withTooltip={true}
+              withTooltip
             />
           </div>
           <div className="flex-shrink overflow-hidden whitespace-nowrap text-ellipsis min-w-12">
@@ -174,7 +174,7 @@ export default function ModelCtrl({
           />
         </div>
         <span className="latin">
-          {api.provider} / {activeModel.label||activeModel.name}
+          {api.provider} / {activeModel.label || activeModel.name}
         </span>
         {modelMapping[activeModel.label || ''] && (
           <span className="text-gray-300 dark:text-gray-600 -ml-1">
