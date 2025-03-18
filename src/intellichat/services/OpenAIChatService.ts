@@ -31,6 +31,7 @@ export default class OpenAIChatService
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected getReaderType() {
     return OpenAIReader;
   }
@@ -63,13 +64,18 @@ export default class OpenAIChatService
     return stripHtmlTags(content);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected async makeMessages(
     messages: IChatRequestMessage[],
   ): Promise<IChatRequestMessage[]> {
     const result = [];
     const systemMessage = this.context.getSystemMessage();
     let sysRole = 'system';
-    if (['o1', 'o3'].some((prefix) => this.getModelName().startsWith(prefix))) {
+    if (
+      ['o1', 'o3'].some((prefix) =>
+        (this.getModelName() as string).startsWith(prefix),
+      )
+    ) {
       sysRole = 'developer';
     }
     if (!isBlank(systemMessage)) {
@@ -88,34 +94,38 @@ export default class OpenAIChatService
         content: msg.reply,
       });
     });
-    for (const msg of messages) {
-      if (msg.role === 'tool') {
-        result.push({
-          role: 'tool',
-          content: JSON.stringify(msg.content),
-          name: msg.name,
-          tool_call_id: msg.tool_call_id,
-        });
-      } else if (msg.role === 'assistant' && msg.tool_calls) {
-        result.push(msg);
-      } else {
+
+    const processedMessages = await Promise.all(
+      messages.map(async (msg) => {
+        if (msg.role === 'tool') {
+          return {
+            role: 'tool',
+            content: JSON.stringify(msg.content),
+            name: msg.name,
+            tool_call_id: msg.tool_call_id,
+          };
+        }
+        if (msg.role === 'assistant' && msg.tool_calls) {
+          return msg;
+        }
         const { content } = msg;
         if (typeof content === 'string') {
-          result.push({
+          return {
             role: 'user',
             content: await this.convertPromptContent(content),
-          });
-        } else {
-          result.push({
-            role: 'user',
-            content,
-          });
+          };
         }
-      }
-    }
+        return {
+          role: 'user',
+          content,
+        };
+      }),
+    );
+    result.push(...processedMessages);
     return result as IChatRequestMessage[];
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected makeTool(
     tool: IMCPTool,
   ): IOpenAITool | IAnthropicTool | IGoogleTool {
@@ -134,6 +144,7 @@ export default class OpenAIChatService
     };
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected makeToolMessages(
     tool: ITool,
     toolResult: any,
@@ -165,7 +176,7 @@ export default class OpenAIChatService
   protected async makePayload(
     message: IChatRequestMessage[],
   ): Promise<IChatRequestPayload> {
-    const modelName = this.getModelName();
+    const modelName = this.getModelName() as string;
     const payload: IChatRequestPayload = {
       model: modelName,
       messages: await this.makeMessages(message),
@@ -175,13 +186,13 @@ export default class OpenAIChatService
     if (this.context.isToolEnabled()) {
       const tools = await window.electron.mcp.listTools();
       if (tools) {
-        const _tools = tools
+        const unusedTools = tools
           .filter((tool: any) => !this.usedToolNames.includes(tool.name))
           .map((tool: any) => {
             return this.makeTool(tool);
           });
-        if (_tools.length > 0) {
-          payload.tools = _tools;
+        if (unusedTools.length > 0) {
+          payload.tools = unusedTools;
           payload.tool_choice = 'auto';
         }
       }
