@@ -24,7 +24,8 @@
     "start:main": "cross-env NODE_ENV=development DEBUG=5ire:* NODE_OPTIONS=\"--import tsx\" electronmon .",
     "start:preload": "cross-env NODE_ENV=development DEBUG=5ire:* webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development DEBUG=5ire:* webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky"
   },
   "browserslist": [],
   "prettier": {
@@ -156,6 +157,7 @@
     "fix-path": "^4.0.0",
     "highlight.js": "^11.8.0",
     "html-webpack-plugin": "^5.5.1",
+    "husky": "^9.1.7",
     "i18next": "^23.2.3",
     "i18next-browser-languagedetector": "^7.1.0",
     "i18next-resources-to-backend": "^1.1.4",
