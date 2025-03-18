@@ -23,7 +23,7 @@ import { IChat, IChatFolder } from 'intellichat/types';
 import { useDroppable } from '@dnd-kit/core';
 import useChatStore from 'stores/useChatStore';
 import { t } from 'i18next';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Mousetrap from 'mousetrap';
 import useNav from 'hooks/useNav';
 import { tempChatId } from 'consts';
@@ -56,6 +56,17 @@ export default function ChatFolder({
   const { updateFolder, deleteFolder, markFolderAsOld, selectFolder } =
     useChatStore();
   const [folderSettingsOpen, setFolderSettingsOpen] = useState(false);
+
+  const saveName = useCallback(() => {
+    setEditable(false);
+    const folderName = name.trim() || 'New Folder';
+    updateFolder({
+      id: folder.id,
+      name: folderName,
+    });
+    setName(folderName);
+    Mousetrap.unbind('esc');
+  }, [name]);
 
   useEffect(() => {
     if (folder.isNew) {
@@ -110,23 +121,13 @@ export default function ChatFolder({
                 appearance="underline"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    setEditable(false);
-                    const folderName = name.trim() || 'New Folder';
-                    updateFolder({
-                      id: folder.id,
-                      name: folderName,
-                    });
-                    setName(folderName);
-                    Mousetrap.unbind('esc');
+                    saveName();
                   }
                 }}
                 onChange={(e) => {
                   setName(e.target.value);
                 }}
-                onBlur={() => {
-                  setEditable(false);
-                  Mousetrap.unbind('esc');
-                }}
+                onBlur={saveName}
               />
             ) : collapsed ? (
               ''
