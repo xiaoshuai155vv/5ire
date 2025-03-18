@@ -79,7 +79,7 @@ export default function Settings() {
         captureException(error as Error);
       }
     })();
-  }, [user, updated]);
+  }, [user, updated, notifyError]);
 
   const restoreFromCloud = async () => {
     if (!user) {
@@ -103,13 +103,14 @@ export default function Settings() {
           iv,
         );
         const { theme, api } = JSON.parse(decrypted);
+        const apiSettings = api.providers[api.activeProvider];
         useSettingsStore.getState().setTheme(theme);
-        useSettingsStore.getState().setAPI(api);
+        useSettingsStore.getState().setAPI(apiSettings);
         notifySuccess(t('Settings.Notification.RestoreFromCloudSuccess'));
       } else {
         notifyError(t('Settings.Notification.RestoreFromCloudFailed'));
       }
-    } catch (error) {
+    } catch (error: any) {
       debug(error);
       captureException(error);
     } finally {
@@ -124,7 +125,8 @@ export default function Settings() {
     }
     setLoading(true);
     try {
-      const { theme, api } = useSettingsStore.getState();
+      const { theme } = useSettingsStore.getState();
+      const { api } = window.electron.store.get('settings');
       const encrypted = await window.electron.crypto.encrypt(
         JSON.stringify({ theme, api }),
         user.id,
@@ -138,7 +140,7 @@ export default function Settings() {
         notifySuccess(t('Settings.Notification.SaveToCloudSuccess'));
         setUpdated(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       debug(error);
       captureException(error);
     } finally {
