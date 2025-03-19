@@ -26,6 +26,16 @@ import { isValidMCPServerKey } from 'utils/validators';
 import useMCPStore from 'stores/useMCPStore';
 import useToast from 'hooks/useToast';
 
+const parseCommand = (cmd: string) => {
+  const regex = /[^\s"']+|"([^"]*)"|'([^']*)'/g;
+
+  const matches = cmd.match(regex) || [];
+
+  return matches.map((match) => {
+    return match.replace(/^['"](.*)['"]$/, '$1');
+  });
+};
+
 export default function ToolEditDialog(options: {
   server: IMCPServer | null;
   open: boolean;
@@ -52,17 +62,17 @@ export default function ToolEditDialog(options: {
   >('none');
 
   const cmd = useMemo(() => {
-    const arr = command.split(/\s+/).filter((i: string) => i.trim() !== '');
-    if (arr.length > 0) {
-      return arr[0];
+    const parsed = parseCommand(command);
+    if (parsed.length > 0) {
+      return parsed[0];
     }
     return '';
   }, [command]);
 
   const args = useMemo(() => {
-    const arr = command.split(/\s+/).filter((i: string) => i.trim() !== '');
-    if (arr.length > 1) {
-      return arr.slice(1);
+    const parsed = parseCommand(command);
+    if (parsed.length > 1) {
+      return parsed.slice(1);
     }
     return [];
   }, [command]);
@@ -295,16 +305,16 @@ export default function ToolEditDialog(options: {
                       </div>
                     </div>
                     <div className="overflow-y-auto min-h-6 max-h-40 flex flex-col">
-                      {Object.keys(env).map((key: string) => (
+                      {Object.keys(env).map((envKey: string) => (
                         <div
-                          key={key}
+                          key={envKey}
                           className="flex flex-start items-center [&:not(:last-child)]:border-b w-full px-1"
                         >
                           <div className="w-5/12 px-2 text-xs overflow-hidden text-nowrap truncate">
-                            {key}
+                            {envKey}
                           </div>
                           <div className="w-6/12 px-2 text-xs overflow-hidden text-nowrap truncate">
-                            {env[key]}
+                            {env[envKey]}
                           </div>
                           <div>
                             <Button
@@ -313,7 +323,7 @@ export default function ToolEditDialog(options: {
                               size="small"
                               onClick={() => {
                                 const newEnv = { ...env };
-                                delete newEnv[key];
+                                delete newEnv[envKey];
                                 setEnv(newEnv);
                               }}
                             />
