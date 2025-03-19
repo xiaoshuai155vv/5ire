@@ -30,11 +30,13 @@ export default class AnthropicChatService
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected makeToolMessages(
     tool: ITool,
     toolResult: any,
+    content?: string,
   ): IChatRequestMessage[] {
-    return [
+    const result = [
       {
         role: 'assistant',
         content: [
@@ -52,14 +54,21 @@ export default class AnthropicChatService
           {
             type: 'tool_result',
             tool_use_id: tool.id,
-            content:
-              typeof toolResult === 'string' ? toolResult : toolResult.content,
+            content: toolResult.content,
           },
         ],
       },
-    ];
+    ] as IChatRequestMessage[];
+    if (content) {
+      (result[0].content as any[]).unshift({
+        type: 'text',
+        text: content,
+      });
+    }
+    return result;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected makeTool(tool: IMCPTool): IOpenAITool | IAnthropicTool {
     return {
       name: tool.name,
@@ -72,6 +81,7 @@ export default class AnthropicChatService
     };
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected getReaderType() {
     return AnthropicReader;
   }
@@ -81,33 +91,35 @@ export default class AnthropicChatService
   ): Promise<string | IChatRequestMessageContent[]> {
     if (this.context.getModel().vision?.enabled) {
       const items = splitByImg(content);
-      const result: IChatRequestMessageContent[] = [];
-      for (const item of items) {
+      const promises = items.map(async (item) => {
         if (item.type === 'image') {
           let data = '';
           if (item.dataType === 'URL') {
             data = await getBase64(item.data);
           } else {
-            data = item.data.split(',')[1]; // remove data:image/png;base64,
+            [, data] = item.data.split(','); // remove data:image/png;base64,
           }
-          result.push({
+          return {
             type: 'image',
             source: {
               type: 'base64',
               media_type: item.mimeType as string,
               data,
             },
-          });
-        } else if (item.type === 'text') {
-          result.push({
+          };
+        }
+        if (item.type === 'text') {
+          return {
             type: 'text',
             text: item.data,
-          });
-        } else {
-          console.error('Unknown message type', item);
-          throw new Error('Unknown message type');
+          };
         }
-      }
+        throw new Error('Unknown message type');
+      });
+
+      const result = (await Promise.all(
+        promises,
+      )) as IChatRequestMessageContent[];
       return result;
     }
     return stripHtmlTags(content);
@@ -116,42 +128,49 @@ export default class AnthropicChatService
   protected async makeMessages(
     messages: IChatRequestMessage[],
   ): Promise<IChatRequestMessage[]> {
-    const result = [];
-    this.context.getCtxMessages().forEach((msg: IChatMessage) => {
-      result.push({
-        role: 'user',
-        content: msg.prompt,
-      });
-      result.push({
-        role: 'assistant',
-        content: msg.reply,
-      });
-    });
-    for (const msg of messages) {
-      if (msg.role === 'tool') {
-        result.push({
-          content: JSON.stringify(msg.content),
-          type: 'tool_result',
-          tool_use_id: msg.tool_call_id,
-        });
-      } else if (msg.role === 'assistant' && msg.tool_calls) {
-        result.push(msg);
-      } else {
+    const result = this.context
+      .getCtxMessages()
+      .reduce((acc: IChatRequestMessage[], msg: IChatMessage) => {
+        return [
+          ...acc,
+          {
+            role: 'user',
+            content: msg.prompt,
+          },
+          {
+            role: 'assistant',
+            content: msg.reply,
+          },
+        ] as IChatRequestMessage[];
+      }, []);
+
+    const processedMessages = (await Promise.all(
+      messages.map(async (msg) => {
+        if (msg.role === 'tool') {
+          return {
+            content: JSON.stringify(msg.content),
+            type: 'tool_result',
+            tool_use_id: msg.tool_call_id,
+          };
+        }
+        if (msg.role === 'assistant' && msg.tool_calls) {
+          return msg;
+        }
         const { content } = msg;
         if (typeof content === 'string') {
-          result.push({
+          return {
             role: msg.role,
             content: await this.convertPromptContent(content),
-          });
-        } else {
-          result.push({
-            role: msg.role,
-            content,
-          });
+          };
         }
-      }
-    }
-    return result as IChatRequestMessage[];
+        return {
+          role: msg.role,
+          content,
+        };
+      }),
+    )) as IChatRequestMessage[];
+
+    return [...result, ...processedMessages];
   }
 
   protected async makePayload(
@@ -173,13 +192,13 @@ export default class AnthropicChatService
     if (this.context.isToolEnabled()) {
       const tools = await window.electron.mcp.listTools();
       if (tools) {
-        const _tools = tools
+        const unusedTools = tools
           .filter((tool: any) => !this.usedToolNames.includes(tool.name))
           .map((tool: any) => {
             return this.makeTool(tool);
           });
-        if (_tools.length > 0) {
-          payload.tools = _tools;
+        if (unusedTools.length > 0) {
+          payload.tools = unusedTools;
           payload.tool_choice = {
             type: 'auto',
             disable_parallel_tool_use: true,
