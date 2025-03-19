@@ -93,6 +93,7 @@ export default abstract class NextCharService {
   protected abstract makeToolMessages(
     tool: ITool,
     toolResult: any,
+    content?: string,
   ): IChatRequestMessage[];
 
   protected abstract makeTool(
@@ -128,6 +129,7 @@ export default abstract class NextCharService {
     this.onErrorCallback = callback;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected onReadingError(chunk: string) {
     try {
       const { error } = JSON.parse(chunk);
@@ -137,6 +139,7 @@ export default abstract class NextCharService {
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   protected async convertPromptContent(
     content: string,
   ): Promise<
@@ -236,11 +239,15 @@ export default abstract class NextCharService {
             JSON.stringify(toolCallsResult, null, 2),
           );
         }
-        const _messages = [
+        const messagesWithTool = [
           ...messages,
-          ...this.makeToolMessages(readResult.tool, toolCallsResult),
+          ...this.makeToolMessages(
+            readResult.tool,
+            toolCallsResult,
+            readResult.content,
+          ),
         ] as IChatRequestMessage[];
-        await this.chat(_messages);
+        await this.chat(messagesWithTool);
       } else {
         await this.onCompleteCallback({
           content: reply,
