@@ -21,6 +21,7 @@ import {
   highlight,
 } from '../../../utils/util';
 import MessageToolbar from './MessageToolbar';
+import useMermaid from '../../../hooks/useMermaid';
 
 const debug = Debug('5ire:pages:chat:Message');
 
@@ -31,6 +32,7 @@ export default function Message({ message }: { message: IChatMessage }) {
   const keywords = useChatStore((state: any) => state.keywords);
   const states = useChatStore().getCurState();
   const { showCitation } = useKnowledgeStore();
+  const { renderMermaid } = useMermaid();
   const keyword = useMemo(
     () => keywords[message.chatId],
     [keywords, message.chatId],
@@ -65,6 +67,7 @@ export default function Message({ message }: { message: IChatMessage }) {
 
   useEffect(() => {
     if (message.isActive) return; // no need to add event listener when message is active
+    renderMermaid();
     const observer = new MutationObserver((mutations) => {
       const links = document.querySelectorAll(`#${message.id} .msg-reply a`);
       if (links.length > 0) {
@@ -96,7 +99,7 @@ export default function Message({ message }: { message: IChatMessage }) {
   const [isReasoningShow, setIsReasoningShow] = useState(false);
   const messageRef = useRef(message);
   const isReasoningRef = useRef(isReasoning);
-  const reasoningInterval = useRef<NodeJS.Timeout | null>(null);
+  const reasoningInterval = useRef<number | null>(null);
   const reasoningRef = useRef('');
   const replyRef = useRef('');
 
@@ -115,8 +118,6 @@ export default function Message({ message }: { message: IChatMessage }) {
   );
 
   useEffect(() => {
-    const _reply = getNormalContent(message.reply);
-    const _reasoning = getReasoningContent(message.reply, message.reasoning);
     replyRef.current = reply;
     reasoningRef.current = reasoning;
   }, [reply, reasoning]);
@@ -137,13 +138,13 @@ export default function Message({ message }: { message: IChatMessage }) {
         isReasoningRef.current &&
         messageRef.current.isActive
       ) {
-        clearInterval(reasoningInterval.current as NodeJS.Timeout); // 停止计时
+        clearInterval(reasoningInterval.current as number); // 停止计时
         setIsReasoning(false);
 
         debug('Reasoning ended');
         debug(`Total thinking time: ${reasoningSeconds} seconds`);
       }
-    }, 1000);
+    }, 1000) as any;
   }
 
   useEffect(() => {
@@ -154,7 +155,7 @@ export default function Message({ message }: { message: IChatMessage }) {
       setIsReasoning(false);
     }
     return () => {
-      clearInterval(reasoningInterval.current as NodeJS.Timeout);
+      clearInterval(reasoningInterval.current as number);
       setReasoningSeconds(0);
     };
   }, [message.isActive]);

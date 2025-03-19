@@ -30,6 +30,7 @@ import useKnowledgeStore from 'stores/useKnowledgeStore';
 import { IBookmark } from 'types/bookmark';
 import { fmtDateTime, unix2date } from 'utils/util';
 import CitationDialog from '../chat/CitationDialog';
+import useMermaid from '../../../hooks/useMermaid';
 
 const ArrowLeftIcon = bundleIcon(ArrowLeft16Filled, ArrowLeft16Regular);
 const DeleteIcon = bundleIcon(Delete16Filled, Delete16Regular);
@@ -51,10 +52,31 @@ export default function Bookmark() {
   const { showCitation } = useKnowledgeStore();
   const { notifyInfo } = useToast();
   const bookmarks = useBookmarkStore((state) => state.bookmarks);
+  const { renderMermaid } = useMermaid();
 
+  const onCitationClick = async (event: any) => {
+    const url = new URL(event.target?.href);
+    if (url.pathname === '/citation' || url.protocol.startsWith('file:')) {
+      event.preventDefault();
+      const chunkId = url.hash.replace('#', '');
+      const chunk = JSON.parse(bookmark.citedChunks || '[]').find(
+        (chunk: any) => chunk.id === chunkId,
+      );
+      if (chunk) {
+        showCitation(chunk.content);
+      } else {
+        notifyInfo(t('Knowledge.Notification.CitationNotFound'));
+      }
+    }
+  };
+
+
+  // @disable-lint react-hooks/exhaustive-deps
   useEffect(() => {
     setUpdated(false);
     setActiveBookmarkId(id as string);
+    renderMermaid();
+
     const links = document.querySelectorAll('.bookmark-reply a');
     links.forEach((link) => {
       link.addEventListener('click', onCitationClick);
@@ -82,22 +104,6 @@ export default function Bookmark() {
   }, [isThinkShow]);
 
   const { notifySuccess } = useToast();
-
-  const onCitationClick = async (event: any) => {
-    const url = new URL(event.target?.href);
-    if (url.pathname === '/citation' || url.protocol.startsWith('file:')) {
-      event.preventDefault();
-      const chunkId = url.hash.replace('#', '');
-      const chunk = JSON.parse(bookmark.citedChunks || '[]').find(
-        (chunk: any) => chunk.id === chunkId,
-      );
-      if (chunk) {
-        showCitation(chunk.content);
-      } else {
-        notifyInfo(t('Knowledge.Notification.CitationNotFound'));
-      }
-    }
-  };
 
   const onDeleteBookmark = async () => {
     await deleteBookmark(bookmark.id);

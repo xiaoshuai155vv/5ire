@@ -17,17 +17,17 @@ export default function Version() {
   const [version, setVersion] = useState('0');
 
   useEffect(() => {
-    let timer: NodeJS.Timer | null = null;
-    let updateInfo = window.electron.store.get('updateInfo');
-    setUpdateInfo(updateInfo);
-    if (updateInfo?.isDownloading) {
+    let timer: number | null = null;
+    let info = window.electron.store.get('updateInfo');
+    setUpdateInfo(info);
+    if (info?.isDownloading) {
       timer = setInterval(() => {
-        updateInfo = window.electron.store.get('updateInfo');
-        if (timer && !updateInfo?.isDownloading) {
+        info = window.electron.store.get('updateInfo');
+        if (timer && !info?.isDownloading) {
           clearInterval(timer);
         }
-        setUpdateInfo(updateInfo);
-      }, 1000);
+        setUpdateInfo(info);
+      }, 1000) as any;
     }
     window.electron
       .getAppVersion()

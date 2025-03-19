@@ -4,11 +4,15 @@ import { useTranslation } from 'react-i18next';
 import MarkdownIt from 'markdown-it';
 // @ts-ignore
 import mathjax3 from 'markdown-it-mathjax3';
+// @ts-ignore
+import markdownItMermaid from 'markdown-it-mermaid';
 import hljs from 'highlight.js/lib/common';
 import MarkdownItCodeCopy from '../libs/markdownit-plugins/CodeCopy';
 import useToast from './useToast';
+import useAppearanceStore from 'stores/useAppearanceStore';
 
 export default function useMarkdown() {
+  const theme = useAppearanceStore((state) => state.theme);
   const { notifySuccess } = useToast();
   const { t } = useTranslation();
   const md = new MarkdownIt({
@@ -55,6 +59,10 @@ export default function useMarkdown() {
     },
   })
     .use(mathjax3)
+    .use(markdownItMermaid, {
+      startOnLoad: false,
+      securityLevel: 'loose',
+    })
     .use(MarkdownItCodeCopy, {
       element:
         '<svg class="___1okpztj f1w7gpdv fez10in fg4l7m0 f16hsg94 fwpfdsa f88nxoq f1e2fz10" fill="currentColor" aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M4 4.09v6.41A2.5 2.5 0 0 0 6.34 13h4.57c-.2.58-.76 1-1.41 1H6a3 3 0 0 1-3-3V5.5c0-.65.42-1.2 1-1.41ZM11.5 2c.83 0 1.5.67 1.5 1.5v7c0 .83-.67 1.5-1.5 1.5h-5A1.5 1.5 0 0 1 5 10.5v-7C5 2.67 5.67 2 6.5 2h5Zm0 1h-5a.5.5 0 0 0-.5.5v7c0 .28.22.5.5.5h5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5Z" fill="currentColor"></path></svg>',
@@ -62,6 +70,17 @@ export default function useMarkdown() {
         notifySuccess(t('Common.Notification.Copied'));
       },
     });
+  md.mermaid.loadPreferences({
+    get: (key: string) => {
+      if (key === 'mermaid-theme') {
+        return theme === 'dark' ? 'dark' : 'default';
+      } else if (key === 'gantt-axis-format') {
+        return '%Y/%m/%d';
+      } else {
+        return undefined;
+      }
+    },
+  });
   const defaultRender =
     md.renderer.rules.link_open ||
     function (tokens: any, idx: any, options: any, env: any, self: any) {
