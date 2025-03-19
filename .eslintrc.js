@@ -12,6 +12,7 @@ module.exports = {
     'no-shadow': 'warn',
     '@typescript-eslint/no-shadow': 'error',
     'no-unused-vars': 'warn',
+    'react-hooks/exhaustive-deps': 'warn',
     '@typescript-eslint/no-unused-vars': 'error',
   },
   parserOptions: {
