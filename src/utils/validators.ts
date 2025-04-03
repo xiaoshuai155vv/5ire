@@ -56,3 +56,12 @@ export function isValidHttpHRL(url: string) {
 export function isValidMCPServerKey(key: string) {
   return /^[a-zA-Z][a-zA-Z0-9]*$/.test(key);
 }
+
+export function isValidUrl(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}

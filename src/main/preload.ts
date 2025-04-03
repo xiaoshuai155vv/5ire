@@ -195,8 +195,8 @@ const electronHandler = {
 contextBridge.exposeInMainWorld('electron', electronHandler);
 
 const envVars = {
-  SUPA_PROJECT_ID: process.env.SUPA_PROJECT_ID,
-  SUPA_KEY: process.env.SUPA_KEY,
+  SUPA_PROJECT_ID: process.env.SUPABASE_URL ? process.env.SUPABASE_URL.replace(/^https:\/\//, '').replace(/\.supabase\.co$/, '') : '',
+  SUPA_KEY: process.env.SUPABASE_KEY,
   SENTRY_DSN: process.env.SENTRY_DSN,
   NODE_ENV: process.env.NODE_ENV,
 };

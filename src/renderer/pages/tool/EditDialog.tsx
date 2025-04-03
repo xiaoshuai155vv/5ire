@@ -10,6 +10,10 @@ import {
   Input,
   DialogActions,
   InputOnChangeData,
+  RadioGroup,
+  Radio,
+  Dropdown,
+  Option,
 } from '@fluentui/react-components';
 import { useTranslation } from 'react-i18next';
 import {
@@ -22,7 +26,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import 'highlight.js/styles/atom-one-light.css';
 import { IMCPServer } from 'types/mcp';
 import useMarkdown from 'hooks/useMarkdown';
-import { isValidMCPServerKey } from 'utils/validators';
+import { isValidMCPServerKey, isValidUrl } from 'utils/validators';
 import useMCPStore from 'stores/useMCPStore';
 import useToast from 'hooks/useToast';
 
@@ -52,12 +56,17 @@ export default function ToolEditDialog(options: {
   const [envName, setEnvName] = useState('');
   const [envValue, setEnvValue] = useState('');
   const [env, setEnv] = useState<{ [key: string]: string }>({});
+  const [transportType, setTransportType] = useState<'stdio' | 'sse'>('stdio');
+  const [url, setUrl] = useState('');
   const { addServer, updateServer } = useMCPStore();
 
   const [keyValidationState, setKeyValidationState] = useState<
     'none' | 'error'
   >('none');
   const [commandValidationState, setCommandValidationState] = useState<
+    'none' | 'error'
+  >('none');
+  const [urlValidationState, setUrlValidationState] = useState<
     'none' | 'error'
   >('none');
 
@@ -88,12 +97,23 @@ export default function ToolEditDialog(options: {
     if (description.trim() !== '') {
       payload.description = description;
     }
-    if (cmd) {
-      payload.command = cmd;
+    
+    // 根据传输类型设置不同的属性
+    payload.transportType = transportType;
+    
+    if (transportType === 'stdio') {
+      if (cmd) {
+        payload.command = cmd;
+      }
+      if (args.length > 0) {
+        payload.args = args;
+      }
+    } else if (transportType === 'sse') {
+      if (url.trim() !== '') {
+        payload.url = url.trim();
+      }
     }
-    if (args.length > 0) {
-      payload.args = args;
-    }
+    
     if (Object.keys(env).length > 0) {
       payload.env = env;
     }
@@ -101,7 +121,7 @@ export default function ToolEditDialog(options: {
       payload.env = { ...env, [envName.trim()]: envValue.trim() };
     }
     return payload;
-  }, [name, key, description, cmd, args, env, envName, envValue]);
+  }, [name, key, description, cmd, args, env, envName, envValue, transportType, url]);
 
   const addEnv = useCallback(() => {
     if (envName.trim() === '' || envValue.trim() === '') {
@@ -120,12 +140,24 @@ export default function ToolEditDialog(options: {
     } else {
       setKeyValidationState('none');
     }
-    if (!cmd) {
-      setCommandValidationState('error');
-      isValid = false;
-    } else {
-      setCommandValidationState('none');
+    
+    // 根据传输类型验证不同的字段
+    if (transportType === 'stdio') {
+      if (!cmd) {
+        setCommandValidationState('error');
+        isValid = false;
+      } else {
+        setCommandValidationState('none');
+      }
+    } else if (transportType === 'sse') {
+      if (!url || !isValidUrl(url)) {
+        setUrlValidationState('error');
+        isValid = false;
+      } else {
+        setUrlValidationState('none');
+      }
     }
+    
     if (!isValid) {
       return;
     }
@@ -137,14 +169,21 @@ export default function ToolEditDialog(options: {
     } else {
       notifyError(server ? 'Cannot update server' : 'Server already exists');
     }
-  }, [name, key, description, cmd, args, env, envName, envValue, server]);
+  }, [name, key, description, cmd, args, env, envName, envValue, transportType, url, server]);
 
   useEffect(() => {
     if (open && server) {
       setName(server.name || '');
       setKey(server.key);
       setDescription(server.description || '');
-      setCommand([server.command, ...(server.args || [])].join(' '));
+      setTransportType(server.transportType || 'stdio');
+      
+      if (server.transportType === 'sse') {
+        setUrl(server.url || '');
+      } else {
+        setCommand([server.command, ...(server.args || [])].join(' '));
+      }
+      
       setEnv(server.env || {});
     }
 
@@ -156,6 +195,8 @@ export default function ToolEditDialog(options: {
       setEnvName('');
       setEnvValue('');
       setEnv({});
+      setTransportType('stdio');
+      setUrl('');
     };
   }, [open, server]);
 
@@ -238,28 +279,71 @@ export default function ToolEditDialog(options: {
                   />
                 </Field>
               </div>
+              
+              {/* 传输类型选择 */}
               <div>
-                <Field
-                  label={t('Tools.Command')}
-                  validationMessage={`${t('Tools.Hint.CommandIsRequired')}, like: npx -y @mcp-server"`}
-                  validationState={commandValidationState}
-                >
-                  <Input
-                    className="w-full min-w-fit"
-                    placeholder={t('Common.Required')}
-                    value={command}
-                    onInput={(event: ChangeEvent<HTMLInputElement>) => {
-                      const val = event.target.value;
-                      setCommand(val);
-                      if (val.trim() === '') {
-                        setCommandValidationState('error');
-                      } else {
-                        setCommandValidationState('none');
-                      }
-                    }}
-                  />
+                <Field label={t('Tools.TransportType')}>
+                  <RadioGroup
+                    value={transportType}
+                    onChange={(_, data) => setTransportType(data.value as 'stdio' | 'sse')}
+                  >
+                    <Radio value="stdio" label={t('Tools.StdioTransport')} />
+                    <Radio value="sse" label={t('Tools.SSETransport')} />
+                  </RadioGroup>
                 </Field>
               </div>
+              
+              {/* 根据传输类型显示不同的配置选项 */}
+              {transportType === 'stdio' ? (
+                <div>
+                  <Field
+                    label={t('Tools.Command')}
+                    validationMessage={`${t('Tools.Hint.CommandIsRequired')}, like: npx -y @mcp-server"`}
+                    validationState={commandValidationState}
+                  >
+                    <Input
+                      className="w-full min-w-fit"
+                      placeholder={t('Common.Required')}
+                      value={command}
+                      onInput={(event: ChangeEvent<HTMLInputElement>) => {
+                        const val = event.target.value;
+                        setCommand(val);
+                        if (val.trim() === '') {
+                          setCommandValidationState('error');
+                        } else {
+                          setCommandValidationState('none');
+                        }
+                      }}
+                    />
+                  </Field>
+                </div>
+              ) : (
+                <div>
+                  <Field
+                    label={t('Tools.URL')}
+                    validationMessage={t('Tools.Hint.URLIsRequired')}
+                    validationState={urlValidationState}
+                  >
+                    <Input
+                      className="w-full min-w-fit"
+                      placeholder="https://example.com/sse-endpoint"
+                      value={url}
+                      onChange={(
+                        _: ChangeEvent<HTMLInputElement>,
+                        data: InputOnChangeData,
+                      ) => {
+                        setUrl(data.value);
+                        if (!data.value || isValidUrl(data.value)) {
+                          setUrlValidationState('none');
+                        } else {
+                          setUrlValidationState('error');
+                        }
+                      }}
+                    />
+                  </Field>
+                </div>
+              )}
+              
               <div>
                 <Field label={t('Tools.EnvVars')}>
                   <div className="bg-gray-50 dark:bg-neutral-800 border rounded border-base">

@@ -11,9 +11,13 @@ import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
 import checkNodeEnv from '../scripts/check-node-env';
 import deleteSourceMaps from '../scripts/delete-source-maps';
+import { DefinePlugin } from 'webpack';
+import dotenv from 'dotenv';
 
 checkNodeEnv('production');
 deleteSourceMaps();
+
+const env = dotenv.config().parsed;
 
 const configuration: webpack.Configuration = {
   devtool: 'source-map',
@@ -66,6 +70,13 @@ const configuration: webpack.Configuration = {
 
     new webpack.DefinePlugin({
       'process.type': '"browser"',
+    }),
+
+    new DefinePlugin({
+      'process.env': JSON.stringify({
+        ...env,
+        NODE_ENV: process.env.NODE_ENV || 'production',
+      }),
     }),
     // 与@xenova/transfomers 有冲突，暂时禁用。https://github.com/bytenode/bytenode/issues/197
     // new BytenodeWebpackPlugin({

@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { app } from 'electron';
 import { IMCPConfig, IMCPServer } from 'types/mcp';
 import { isUndefined, omitBy } from 'lodash';
-import * as logging from './logging';
+import EventSource from 'eventsource';
 
 export const DEFAULT_INHERITED_ENV_VARS =
   process.platform === 'win32'
@@ -41,12 +41,36 @@ export function getDefaultEnvironment() {
   return env;
 }
 
+// 修改日志工具函数
+function log(message: string, type: 'info' | 'error' = 'info') {
+  // 使用英文消息替代中文，避免编码问题
+  const timestamp = new Date().toISOString();
+  const prefix = type === 'info' ? '[INFO]' : '[ERROR]';
+  
+  // 控制台输出英文消息
+  if (type === 'info') {
+    console.log(`${prefix} ${timestamp} - ${message}`);
+  } else {
+    console.error(`${prefix} ${timestamp} - ${message}`);
+  }
+  
+  // 同时将原始消息写入日志文件
+  try {
+    const logPath = path.join(app.getPath('userData'), 'mcp.log');
+    fs.appendFileSync(logPath, `${prefix} ${timestamp} - ${message}\n`);
+  } catch (e) {
+    console.error('Failed to write to log file:', e);
+  }
+}
+
 export default class ModuleContext {
   private clients: { [key: string]: any } = {};
 
   private Client: any;
 
-  private Transport: any;
+  private StdioTransport: any;
+  
+  private SSETransport: any;
 
   private cfgPath: string;
 
@@ -56,7 +80,8 @@ export default class ModuleContext {
 
   public async init() {
     this.Client = await this.importClient();
-    this.Transport = await this.importTransport();
+    this.StdioTransport = await this.importStdioTransport();
+    this.SSETransport = await this.importSSETransport();
   }
 
   private async importClient() {
@@ -66,11 +91,25 @@ export default class ModuleContext {
     return Client;
   }
 
-  private async importTransport() {
+  private async importStdioTransport() {
     const { StdioClientTransport } = await import(
       '@modelcontextprotocol/sdk/client/stdio.js'
     );
     return StdioClientTransport;
+  }
+
+  private async importSSETransport() {
+    try {
+      log('正在导入 SSE 传输模块...');
+      const { SSEClientTransport } = await import(
+        '@modelcontextprotocol/sdk/client/sse.js'
+      );
+      log('SSE 传输模块导入成功');
+      return SSEClientTransport;
+    } catch (error) {
+      log(`导入 SSE 传输模块失败: ${error.message}`);
+      throw error;
+    }
   }
 
   private getMCPServer(server: IMCPServer, config: IMCPConfig) {
@@ -81,7 +120,7 @@ export default class ModuleContext {
       ...mcpSvr,
       ...omitBy({ ...server, isActive: true }, isUndefined),
     };
-    logging.debug('MCP Server:', mcpSvr);
+    log('MCP Server:', mcpSvr);
     return mcpSvr;
   }
 
@@ -122,7 +161,7 @@ export default class ModuleContext {
       }
       return config;
     } catch (err: any) {
-      logging.captureException(err);
+      log(err);
       return defaultConfig;
     }
   }
@@ -132,7 +171,7 @@ export default class ModuleContext {
       fs.writeFileSync(this.cfgPath, JSON.stringify(config, null, 2));
       return true;
     } catch (err: any) {
-      logging.captureException(err);
+      log(err);
       return false;
     }
   }
@@ -141,10 +180,10 @@ export default class ModuleContext {
     const { servers } = await this.getConfig();
     for (const server of servers) {
       if (server.isActive) {
-        logging.debug('Activating server:', server.key);
+        log(`Activating server: ${server.key}`);
         const { error } = await this.activate(server);
         if (error) {
-          logging.error('Failed to activate server:', server.key, error);
+          log(`Failed to activate server: ${server.key}`, 'error');
         }
       }
     }
@@ -177,16 +216,15 @@ export default class ModuleContext {
     try {
       const config = await this.getConfig();
       const mcpSvr = this.getMCPServer(server, config) as IMCPServer;
-      const { key, command, args, env } = mcpSvr;
-      let cmd: string = command;
-      if (command === 'npx') {
-        cmd = process.platform === 'win32' ? `${command}.cmd` : command;
+      const { key, command, args, env, transportType, url, authProvider } = mcpSvr;
+      
+      log(`Activating MCP server: ${key}, transport type: ${transportType}`);
+      
+      if (transportType === 'sse' && !this.SSETransport) {
+        log('SSE 传输模块未正确加载', 'error');
+        throw new Error('SSE 传输模块未正确加载，请重启应用后重试');
       }
-      const mergedEnv = {
-        ...getDefaultEnvironment(),
-        ...env,
-        PATH: process.env.PATH,
-      };
+      
       const client = new this.Client(
         {
           name: key,
@@ -196,18 +234,226 @@ export default class ModuleContext {
           capabilities: {},
         },
       );
-      const transport = new this.Transport({
-        command: cmd,
-        args,
-        stderr: process.platform === 'win32' ? 'pipe' : 'inherit',
-        env: mergedEnv,
-      });
-      await client.connect(transport);
-      this.clients[key] = client;
-      await this.updateConfigAfterActivation(mcpSvr, config);
-      return { error: null };
+
+      let transport;
+      
+      if (transportType === 'sse') {
+        if (!url) {
+          throw new Error('URL is required for SSE transport');
+        }
+        
+        log(`Using SSE transport to connect to: ${url}`);
+        
+        try {
+          log('Creating SSE transport object...');
+          
+          // 创建一个自定义的 EventSource 类，添加更多调试信息
+          const OriginalEventSource = global.EventSource || EventSource;
+          global.EventSource = function(url, options) {
+            log(`Creating EventSource for URL: ${url}`);
+            
+            const eventSource = new OriginalEventSource(url, options);
+            
+            // 添加调试事件处理器
+            const originalOnOpen = eventSource.onopen;
+            eventSource.onopen = function(event) {
+              log('EventSource.onopen called');
+              if (originalOnOpen) originalOnOpen.call(eventSource, event);
+            };
+            
+            const originalOnError = eventSource.onerror;
+            eventSource.onerror = function(event) {
+              log(`EventSource.onerror called: ${JSON.stringify(event)}`);
+              if (originalOnError) originalOnError.call(eventSource, event);
+            };
+            
+            const originalOnMessage = eventSource.onmessage;
+            eventSource.onmessage = function(event) {
+              log(`EventSource.onmessage called: ${event.data}`);
+              if (originalOnMessage) originalOnMessage.call(eventSource, event);
+            };
+            
+            // 添加对所有事件类型的监听
+            const originalAddEventListener = eventSource.addEventListener;
+            eventSource.addEventListener = function(type, listener, options) {
+              log(`EventSource.addEventListener called for type: ${type}`);
+              
+              // 包装监听器以添加日志
+              const wrappedListener = function(event) {
+                log(`EventSource event '${type}' received: ${event.data}`);
+                listener.call(eventSource, event);
+              };
+              
+              return originalAddEventListener.call(eventSource, type, wrappedListener, options);
+            };
+            
+            return eventSource;
+          };
+          
+          // 修改 SSETransport 类，添加更多调试信息
+          const originalSSETransport = this.SSETransport;
+          this.SSETransport = function(...args) {
+            log(`Creating SSETransport with args: ${JSON.stringify(args)}`);
+            
+            const transport = new originalSSETransport(...args);
+            
+            // 保存原始的 start 方法
+            const originalStart = transport.start;
+            transport.start = async function() {
+              log('SSETransport.start called');
+              
+              // 创建一个新的 Promise 包装原始的 start 方法
+              return new Promise((resolve, reject) => {
+                // 设置超时
+                const timeout = setTimeout(() => {
+                  log('SSETransport.start timeout');
+                  reject(new Error('SSE connection timeout'));
+                }, 10000);
+                
+                // 调用原始的 start 方法
+                originalStart.call(this)
+                  .then(() => {
+                    log('SSETransport.start completed successfully');
+                    clearTimeout(timeout);
+                    resolve();
+                  })
+                  .catch((error) => {
+                    log(`SSETransport.start failed: ${error.message}`);
+                    clearTimeout(timeout);
+                    reject(error);
+                  });
+              });
+            };
+            
+            // 保存原始的 onMessage 方法
+            const originalOnMessage = transport.onMessage;
+            transport.onMessage = function(callback) {
+              log('SSETransport.onMessage called');
+              
+              // 包装回调以添加日志
+              const wrappedCallback = function(message) {
+                log(`Message received in onMessage: ${JSON.stringify(message)}`);
+                callback(message);
+              };
+              
+              originalOnMessage.call(this, wrappedCallback);
+            };
+            
+            return transport;
+          };
+          
+          // 使用修改后的 SSETransport
+          const sseOptions = {
+            eventSourceInit: {
+              withCredentials: false
+            }
+          };
+          
+          if (authProvider) {
+            sseOptions.authProvider = authProvider;
+          }
+          
+          transport = new this.SSETransport(new URL(url), sseOptions);
+          log('SSE transport object created successfully');
+          
+          // 拦截 Client.connect 方法
+          const originalConnect = client.connect;
+          client.connect = async function(transport) {
+            log('Client.connect called');
+            try {
+              const result = await originalConnect.apply(this, arguments);
+              log('Client.connect completed successfully');
+              return result;
+            } catch (error) {
+              log(`Client.connect failed: ${error.message}`, 'error');
+              throw error;
+            }
+          };
+          
+          log(`Connecting MCP client: ${key}`);
+          
+          // 使用较短的超时时间
+          const connectPromise = client.connect(transport);
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Connection timeout (10s)')), 10000);
+          });
+          
+          await Promise.race([connectPromise, timeoutPromise]);
+          log(`MCP client connection successful: ${key}`);
+          
+          this.clients[key] = client;
+          await this.updateConfigAfterActivation(mcpSvr, config);
+          
+          // 添加一个心跳检查，确保连接保持活跃
+          const heartbeatInterval = setInterval(async () => {
+            try {
+              // 尝试调用一个简单的方法来检查连接是否活跃
+              await client.listTools();
+              log(`SSE connection heartbeat successful for: ${key}`);
+            } catch (heartbeatError) {
+              log(`SSE connection heartbeat failed for: ${key}: ${heartbeatError.message}`, 'error');
+              
+              // 如果心跳失败，尝试重新连接
+              try {
+                log(`Attempting to reconnect SSE for: ${key}`);
+                await client.connect(transport);
+                log(`SSE reconnection successful for: ${key}`);
+              } catch (reconnectError) {
+                log(`SSE reconnection failed for: ${key}: ${reconnectError.message}`, 'error');
+                
+                // 如果重连失败，清除心跳检查
+                clearInterval(heartbeatInterval);
+              }
+            }
+          }, 30000); // 每30秒检查一次
+          
+          // 存储心跳间隔引用，以便在关闭时清除
+          client._heartbeatInterval = heartbeatInterval;
+          
+          return { error: null };
+        } catch (error) {
+          log(`SSE connection failed: ${error.message}`, 'error');
+          throw error;
+        }
+      } else {
+        let cmd: string = command;
+        if (command === 'npx') {
+          cmd = process.platform === 'win32' ? `${command}.cmd` : command;
+        }
+        
+        const mergedEnv = {
+          ...getDefaultEnvironment(),
+          ...env,
+          PATH: process.env.PATH,
+        };
+        
+        transport = new this.StdioTransport({
+          command: cmd,
+          args,
+          stderr: process.platform === 'win32' ? 'pipe' : 'inherit',
+          env: mergedEnv,
+        });
+        
+        const connectPromise = client.connect(transport);
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(() => reject(new Error('Connection timeout, please check if the server is running')), 30000);
+        });
+        
+        try {
+          await Promise.race([connectPromise, timeoutPromise]);
+          log(`MCP client connection successful: ${key}`);
+          
+          this.clients[key] = client;
+          await this.updateConfigAfterActivation(mcpSvr, config);
+          return { error: null };
+        } catch (connectError: any) {
+          log(`MCP client connection failed: ${connectError.message}`, 'error');
+          throw connectError;
+        }
+      }
     } catch (error: any) {
-      logging.captureException(error);
+      log(`MCP server activation failed: ${error.message}`, 'error');
+      log(error, 'error');
       this.deactivate(server.key);
       return { error };
     }
@@ -216,20 +462,31 @@ export default class ModuleContext {
   public async deactivate(key: string) {
     try {
       if (this.clients[key]) {
+        // 清除心跳检查（如果存在）
+        if (this.clients[key]._heartbeatInterval) {
+          clearInterval(this.clients[key]._heartbeatInterval);
+        }
+        
         await this.clients[key].close();
         delete this.clients[key];
       }
       await this.updateConfigAfterDeactivation(key, await this.getConfig());
       return { error: null };
     } catch (error: any) {
-      logging.captureException(error);
+      log(error, 'error');
       return { error };
     }
   }
 
   public async close() {
     for (const key in this.clients) {
-      logging.info(`Closing MCP Client ${key}`);
+      log(`Closing MCP Client ${key}`);
+      
+      // 清除心跳检查（如果存在）
+      if (this.clients[key]._heartbeatInterval) {
+        clearInterval(this.clients[key]._heartbeatInterval);
+      }
+      
       await this.clients[key].close();
       delete this.clients[key];
     }
@@ -273,7 +530,7 @@ export default class ModuleContext {
     if (!this.clients[client]) {
       throw new Error(`MCP Client ${client} not found`);
     }
-    logging.debug('Calling:', client, name, args);
+    log('Calling:', client, name, args);
     const result = await this.clients[client].callTool({
       name,
       arguments: args,

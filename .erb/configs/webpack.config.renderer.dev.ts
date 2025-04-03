@@ -1,7 +1,7 @@
 import 'webpack-dev-server';
 import path from 'path';
 import fs from 'fs';
-import webpack, { HotModuleReplacementPlugin } from 'webpack';
+import webpack, { HotModuleReplacementPlugin, DefinePlugin } from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import chalk from 'chalk';
 import { merge } from 'webpack-merge';
@@ -10,6 +10,7 @@ import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import webpackPaths from './webpack.paths';
 import checkNodeEnv from '../scripts/check-node-env.js';
+import dotenv from 'dotenv';
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment
@@ -37,6 +38,8 @@ if (
   );
   execSync('npm run postinstall');
 }
+
+const env = dotenv.config().parsed;
 
 const configuration: webpack.Configuration = {
   devtool: 'inline-source-map',
@@ -139,8 +142,11 @@ const configuration: webpack.Configuration = {
      * By default, use 'development' as NODE_ENV. This can be overriden with
      * 'staging', for example, by changing the ENV variables in the npm scripts
      */
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development',
+    new DefinePlugin({
+      'process.env': JSON.stringify({
+        ...env,
+        NODE_ENV: process.env.NODE_ENV || 'development',
+      }),
     }),
 
     new webpack.LoaderOptionsPlugin({

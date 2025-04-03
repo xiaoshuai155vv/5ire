@@ -1,12 +1,17 @@
 export interface IMCPServer {
   key: string;
   name?: string;
-  command: string;
+  command?: string;
   description?: string;
-  args: string[];
+  args?: string[];
   env?: Record<string, string>;
-  isActive: boolean;
+  isActive?: boolean;
   homepage?: string;
+  
+  // 新增 SSE 相关配置
+  transportType?: 'stdio' | 'sse'; // 传输类型
+  url?: string; // SSE 服务器 URL
+  authProvider?: any; // 认证提供者配置
 }
 
 export type MCPArgType = 'string' | 'list' | 'number';

@@ -29,7 +29,7 @@
   "Common.Cancel": "取消",
   "Common.Required": "必填",
   "Common.Optional": "可选",
-  "Tooltip.SystemMessage": "系统消息有助于设置助手的行为。 \n例如，您可以修改助手的个性或提供有关其在整个对话过程中应如何表现的具体说明。\n但请注意，系统消息是可选的，没有系统消息的模型行为默认类似于使用通用消息，例如“你是一个有用的助手”。",
+  "Tooltip.SystemMessage": "系统消息有助于设置助手的行为。 \n例如，您可以修改助手的个性或提供有关其在整个对话过程中应如何表现的具体说明。\n但请注意，系统消息是可选的，没有系统消息的模型行为默认类似于使用通用消息，例如\"你是一个有用的助手\"。",
   "Prompt.Form.Tooltip.Variable": "变量可以在使用时填写，变量的语法为：{{name}}。",
   "Prompt.Notifications.PromptNotFound": "提示词未找到。",
   "Prompt.Notifications.PromptUpdated": "提示词已更新。",
@@ -125,7 +125,7 @@
   "Editor.Toolbar.KnowledgeCtrl.SelectedCollections": "已选知识集",
   "Editor.Toolbar.StreamEnabled": "流式响应已启用",
   "Knowledge.Collection": "知识集",
-  "Knowledge.FileDrawer.DialogContent.EmbeddingModelIsRequired": "为解析文件内容，需要嵌入模型。请先导航至“设置”>“嵌入”以下载所需的嵌入模型。",
+  "Knowledge.FileDrawer.DialogContent.EmbeddingModelIsRequired": "为解析文件内容，需要嵌入模型。请先导航至\"设置\">\"嵌入\"以下载所需的嵌入模型。",
   "Knowledge.Confirmation.DeleteCollection": "该集合和所有相关数据将被删除，且该操作不可撤销。",
   "Knowledge.FileDrawer.DialogTitle.EmbeddingModelIsMissing": "缺少嵌入模型",
   "Knowledge.Notification.FileDeleted": "该文件已被删除。",
@@ -263,5 +263,10 @@
   "Upgrade.Ready": "已就绪",
   "Upgrade.Install": "安装",
   "Upgrade.QuitAndInstall": "退出并安装新版本",
-  "Folder.Settings.Description": "对话默认继承文件夹设置。修改文件夹设置将覆盖其内部对话的相关配置。"
+  "Folder.Settings.Description": "对话默认继承文件夹设置。修改文件夹设置将覆盖其内部对话的相关配置。",
+  "Tools.TransportType": "传输类型",
+  "Tools.StdioTransport": "标准输入输出",
+  "Tools.SSETransport": "服务器发送事件",
+  "Tools.URL": "服务器 URL",
+  "Tools.Hint.URLIsRequired": "请输入有效的 URL"
 }

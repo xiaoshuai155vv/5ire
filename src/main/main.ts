@@ -576,6 +576,9 @@ app.setName('5ire');
 app
   .whenReady()
   .then(async () => {
+    // 设置环境变量以确保正确的字符编码
+    process.env.LANG = 'zh_CN.UTF-8';
+    
     createWindow();
     // Remove this if your app does not use auto updates
     // eslint-disable-next-line
@@ -614,6 +617,13 @@ app
       },
     );
     axiom.ingest([{ app: 'launch' }]);
+
+    // 在主进程启动时添加
+    console.log('环境变量加载状态:', {
+      NODE_ENV: process.env.NODE_ENV,
+      SUPABASE_URL: process.env.SUPABASE_URL ? '已设置' : '未设置',
+      SUPABASE_KEY: process.env.SUPABASE_KEY ? '已设置' : '未设置',
+    });
   })
   .catch(logging.captureException);
 

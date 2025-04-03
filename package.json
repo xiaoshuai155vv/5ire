@@ -20,7 +20,7 @@
     "package": "tsx ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never",
     "electron:build": "electron-builder build --publish never",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
-    "start": "tsx ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
+    "start": "set CHCP=65001 && tsx ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
     "start:main": "cross-env NODE_ENV=development DEBUG=5ire:* NODE_OPTIONS=\"--import tsx\" electronmon .",
     "start:preload": "cross-env NODE_ENV=development DEBUG=5ire:* webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development DEBUG=5ire:* webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
@@ -80,7 +80,8 @@
     }
   },
   "dependencies": {
-    "@lancedb/lancedb": "^0.14.1"
+    "@lancedb/lancedb": "^0.14.1",
+    "eventsource": "^3.0.6"
   },
   "devDependencies": {
     "@axiomhq/js": "^1.0.0-rc.1",
@@ -131,11 +132,13 @@
     "debug": "^4.3.4",
     "detect-port": "^1.5.1",
     "dotenv": "^16.4.5",
+    "dotenv-webpack": "^8.1.0",
     "electron": "31.7.1",
     "electron-builder": "^24.6.3",
     "electron-debug": "^3.2.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-log": "^4.4.8",
+    "electron-rebuild": "^3.2.9",
     "electron-store": "^8.1.0",
     "electron-updater": "^5.3.0",
     "electronmon": "^2.0.2",
